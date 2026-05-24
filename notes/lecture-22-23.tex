@@ -30,11 +30,11 @@ Let's black-box a solution to FFT for now.  How might it be useful?
 
     The driving principle behind our solution is the following.
     \begin{quote}
-        \textbf{Fact.} Any degree-$n$ polynomial is uniquely determined by its evaluations on any $n + 1$ points.
+        \textbf{Fact.} Any degree-$n$ polynomial is uniquely determined by its evaluations on any $n + 1$ values.
     \end{quote}
-    For ease of writing, say that $n$ and $m$ are powers of two.  Denote $\omega := e^{\frac{2\pi i}{n}}$.
+    A good choice of values to evaluate our polynomials on, it turns out, is any set of $(2^t)^{\text{th}}$ roots of unity.
     \begin{quote}
-        \textbf{Claim.} We can compute $\{p(\omega^{k}) \}_{k = 0}^n$ in $O(n \log n)$ time.
+        \textbf{Claim (Discrete Fourier Transform).} Let $n$ be a power of two.  For any polynomial $p$ with degree $(n - 1)$ or lower, we can compute $\{p(\omega^{k}) \}_{k = 0}^n$ in $O(n \log n)$ time.
 
         \emph{Proof:} Divide and conquer.  Say the runtime is $T(n)$.
         \begin{itemize}
@@ -48,6 +48,25 @@ Let's black-box a solution to FFT for now.  How might it be useful?
         \end{itemize}
         This yields $T(n) = 2T\left(\frac{n}{2}\right) + O(n)$, which solves to $T(n) = O(n \log n)$. ~ $\square$
     \end{quote}
+    Thus, we select $\omega = e^{\frac{2\pi i}{T}}$ for some power-of-two $T > m + n$, then compute $\{p(\omega^k) \cdot q(\omega^k)\}_{k = 1}^{T}$ in $O((m + n) \log (m + n))$ time.  It remains to invert the DFT process above to extract $p(x) \cdot q(x)$ from here.
+    \begin{quote}
+        \textbf{Claim (Inverse Discrete Fourier Transform).} Given the values $\{p(\omega^k)\}_{k = 1}^n$ for some degree $(n - 1)$ polynomial $p$, we can compute $p(x)$ in $O(n \log n)$ time.
+
+        \emph{Proof:} The point is that the Inverse DFT is no harder than the DFT.
+
+        Say $p(x) = a_0 + a_1x + a_2x^2 + \dots + a_{n - 1}x^{n - 1}$.  Then the DFT computes a matrix product:
+        \[ \begin{bmatrix} p(\omega^0) \\ p(\omega^1) \\ p(\omega^2) \\ \vdots \\ p(\omega^{n - 1}) \end{bmatrix}
+        = \underbrace{\begin{bmatrix} 1 & 1 & 1 & \cdots & 1 \\ 1 & \omega & \omega^2 & \cdots & \omega^{n - 1} \\ 1 & \omega^2 & \omega^4 & \cdots & \omega^{2(n - 1)} \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 1 & \omega^{n - 1} & \omega^{2(n - 1)} & \cdots & \omega^{(n - 1)(n - 1)} \end{bmatrix}}_{W} \begin{bmatrix} a_0 \\ a_1 \\ a_2 \\ \vdots \\ a_{n - 1} \end{bmatrix}. \]
+        We effectively wish to find an efficient way to multiply the LHS by $W^{-1}$.  The trick is that $W$ satisfies a really nice property:
+        \[ \left(\overline{W} W\right)_{s, t} = \sum_{k = 0}^{n - 1} \overline{W}_{s, k} \cdot W_{k, t} = \sum_{k = 0}^{n - 1} \overline{\omega^{s \cdot k}} \cdot \omega^{k \cdot t} = \sum_{k = 0}^{n - 1} \omega^{k \cdot (t - s)} = \begin{cases} n & \text{ if } s = t. \\
+            0 & \text{ otherwise.} \end{cases} \]
+        Therefore, $\overline{W}W = nI$, so all we need to do is perform the DFT on the LHS and divide by $n$. ~ $\square$
+    \end{quote}
+    And that completes the implemntation of FFT! ~ $\blacksquare$
 \end{solution}
+
+\begin{remark}
+    In 18.701 terms, the DFT matrix $W$ satisfies the property that $\frac{1}{\sqrt{n}}W$ is unitary.
+\end{remark}
 
 \end{document}
