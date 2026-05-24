@@ -7,7 +7,7 @@ Here's another way to handle key collisions.
 
 \begin{solution}{Open Addressing}
     Every key $k \in \mathcal{U}$ is assigned not just one hash value in $\{0, 1, \dots, m - 1\}$, but rather a \emph{permutation} of $\{0, 1, \dots, m - 1\}$ called a \emph{probing sequence}:
-    \[ h: \mathcal{U} \times \{0, 1, \dots, m - 1\} \to \{0, 1, \dots, m-  1\} ~ \text{ such that } ~ u \mapsto (h(u, 0), h(u, 1), \dots, h(u, m - 1)). \]
+    \[ h: \mathcal{U} \times \{0, 1, \dots, m - 1\} \to \{0, 1, \dots, m-  1\} ~ \text{ such that } ~ k \mapsto (h(k, 0), h(k, 1), \dots, h(k, m - 1)). \]
     We implement our desired operations as follows:
     \begin{itemize}
         \item $\textsc{Insert}(k, v)$: Find the smallest $p$ such that $T[h(k, p)] = \textsc{Null} \text{ or } \textsc{Deleted}$, then set $T[h(k, p)] = (k, v)$.
@@ -50,14 +50,14 @@ Generating probing sequences uniformly at random is hard, so in practice, we imp
     \end{itemize}
 \end{solution}
 
-\begin{remark}
-    If $\alpha$ gets too large, we should \emph{double} the value of $m$.  Too small, we \emph{halve} it.  (Recitation \#3) \textcolor{red}{TODO}
-\end{remark}
+% \begin{remark}
+%     If $\alpha$ gets too large, we should \emph{double} the value of $m$.  Too small, we \emph{halve} it.  (Recitation \#3) \textcolor{red}{TODO}
+% \end{remark}
 
 Now for something new.  Let's try to implement\dots
 
 \begin{problem}{Static Dictionaries \& Perfect Hashing}
-    We are given $\{(k_1, v_1), \dots, (k_n, v_n)\}$ up front, at which point only $\textsc{Search}(k)$ may be called.  We would like the following:
+    We are given $\{(k_1, v_1), \dots, (k_n, v_n)\}$ up front, after which point only $\textsc{Search}(k)$ may be called.  We would like the following:
     \[ \text{Expected Pre-Processing Time: } O(n) ~~ \mid ~~ \text{Space: } O(n) ~~ \mid ~~ \text{Search Operations: } O(1) \text{ always} \]
     In particular, we require \emph{perfect hashing}: no collisions occur at all!
 \end{problem}
@@ -71,37 +71,35 @@ Here's a naive solution that passes all constraints except the space requirement
 \end{solution}
 
 \begin{proof}
-    This works in expected $O(n)$ pre-processing time because $\underset{h \sim \mathcal{H}}{\mathrm{Pr}}[\text{no collisions}] \geq \frac{1}{2}$.
-    
-    The proof is by Union Bound---try it yourself!  (When does \emph{universality} of $\mathcal{H}$ get used?) ~ $\blacksquare$
+    This works in expected $O(n)$ pre-processing time because $\underset{h \sim \mathcal{H}}{\mathrm{Pr}}[\text{no collisions}] \geq \frac{1}{2}$ by Union Bound---try it yourself!  (When does \emph{universality} of $\mathcal{H}$ get used?) ~ $\blacksquare$
 \end{proof}
 
 Here's the smart solution by Fredman-Komlos-Szemeredi (1984) that passes the space requirement.
 
 \begin{solution}{Optimal-Space Solution}
-    Take a hash function $h_1 \in \mathcal{H}_1$ that goes $h_1: \mathcal{U} \to \{0, 1, \dots, n - 1\}$.
+    Sample a hash function $h_1 \in \mathcal{H}_1$ that goes $h_1: \mathcal{U} \to \{0, 1, \dots, n - 1\}$.
     \begin{itemize}
         \item Suppose $N_{\ell} := |h_1^{-1}(\ell)|$ for all $\ell \in \{0, 1, \dots, n - 1\}$.
         \item Use the suboptimal-space solution to fit $N_{\ell}$ key-value pairs in the $\ell^{\text{th}}$ bucket.
         
-        Using $O(N_{\ell})$ time and $O(N_{\ell}^2)$ space, give the $\ell^{\text{th}}$ bucket a hash function $h_{2, \ell}: h_1^{-1}(\ell) \to \{0, 1, \dots, N_{\ell}^2 - 1\}$.
+        Using $O(N_{\ell})$ time and $O(N_{\ell}^2)$ space, give the $\ell^{\text{th}}$ bucket a sampled hash function $h_{2, \ell}: h_1^{-1}(\ell) \to \{0, 1, \dots, N_{\ell}^2 - 1\} \in \mathcal{H}_{2, \ell}$.
     \end{itemize}
-    Our data structure is then a \emph{two-dimensional} array.
+    Our data structure is then a \emph{two-dimensional} array: $n$ buckets, the $\ell^{\text{th}}$ of which has $N_{\ell}^2$ slots to hash into.
 \end{solution}
 
 \begin{proof}
-    It's easy to see that this has $O(1)$ search time, and trivial to check that it has $O(n)$ pre-processing time.
+    It's easy to see that this has $O(1)$ search time, and that we only need $O(n)$ pre-processing time once $h_1$ is chosen.
 
-    It remains to show that this uses $O(n)$ space.  Well\dots we might get unlucky, and it might not.  But\dots!
+    The hard part is achieving $O(n)$ space.  If we choose $h_1$ unluckily, we won't actually get $O(n)$ space!  However,
     \[ \textbf{Claim.} ~~~~~ \underset{h \sim \mathcal{H}_1}{\mathrm{Pr}} \left [ \left(\sum_{\ell = 0}^{n - 1} N_{\ell}^2\right) > 4n \right ] < \dfrac{1}{2}. \]
-    By Markov's inequality, it suffices to to show $\underset{h \sim \mathcal{H}_1}{\mathbb{E}}\left [ \sum_{\ell = 0}^{n - 1} N_{\ell}^2 \right ] < 2n$.  Here's the smart idea:
+    To prove this, note that by Markov's inequality, it suffices to to show $\underset{h \sim \mathcal{H}_1}{\mathbb{E}}\left [ \sum_{\ell = 0}^{n - 1} N_{\ell}^2 \right ] < 2n$.  This takes some clever work:
     \begin{align*}
         \underset{h \sim \mathcal{H}_1}{\mathbb{E}} \left [ \sum_{\ell = 0}^{n - 1} N_{\ell}^2 \right ] = \ & \underset{h \sim \mathcal{H}_1}{\mathbb{E}} \left [ \sum_{\ell = 0}^{n - 1} \left ( N_{\ell} + \sum_{j \neq j'} \mathds{1}\left [ h(k_j) = h(k_{j'}) = \ell \right ] \right ) \right ] \\
         = \ & \underset{h \sim \mathcal{H}_1}{\mathbb{E}}\left [ \sum_{\ell = 0}^{n - 1} N_{\ell} \right ] + \underset{h \sim \mathcal{H}_1}{\mathbb{E}} \left [  \sum_{\ell = 0}^{n - 1}  \sum_{j \neq j'} \mathds{1}\left [ h(k_j) = h(k_{j'}) = \ell \right ] \right ] \\
         = \ & n + \sum_{j \neq j'} \left(\underset{h \sim \mathcal{H}_1}{\mathrm{Pr}}[h(k_j) = h(k_{j'})] \right) \\
         \leq \ & n + \frac{n^2}{n} = 2n.
     \end{align*}
-    And that concludes the proof. ~ $\blacksquare$
+    Thus, we can guarantee $O(n)$ space in expected $O(n)$ time by repeatedly resampling $h_1$ until the space is less than $4n$. ~ $\blacksquare$
 \end{proof}
 
 

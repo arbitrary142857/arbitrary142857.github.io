@@ -54,31 +54,31 @@ We can sacrifice a little time complexity to be slightly more efficient, too.
 In expectation, Paranoid Select requires two tries to pick a good $x$, yielding $\Theta(n)$ runtime in expectation.
 
 \begin{remark}
-    In practice, Quick Select is just better.  But Paranoid Select is easier to analyze, so\dots
+    Though the analysis of Paranoid Select is simpler, it turns out Quick Select is just better in practice.
 \end{remark}
 
 \begin{problem}{Sorting}
     Just sort an array $A$.
 \end{problem}
 
-\begin{solution}{Quick Sort}
-    Pick a random pivot $x \in A$, and compute $L(x)$ and $G(x)$.  Then write $\textsc{QS}(L) + \{x\} + \textsc{QS}(G)$.  Pick $x$ by trying until a $\frac{3}{4}$-balance is achieved.
+\begin{solution}{Paranoid Quick Sort}
+    Pick a random pivot $x \in A$, and compute $L(x)$ and $G(x)$.  Then write $\textsc{QS}(L) + \{x\} + \textsc{QS}(G)$.  Pick $x$ by randomly trying pivots until a $\frac{3}{4}$-balance is achieved.
 \end{solution}
 
 This yields the following recurrence:
 \[ T(n) \leq \max_{\frac{n}{4} \leq i \leq \frac{3n}{4}} \{ T(i) + T(n - i) \} + \Theta(n) \leq T\left(\dfrac{n}{4}\right) + T\left(\dfrac{3n}{4}\right) + \Theta(n), \]
 which solves to $T(n) = \Theta(n \log n)$.  (We skipped over the step of showing $i = \frac{n}{4}$ is worst-case.)
 
-To finish, we'll analyze the non-paranoid version of quick sort.
+To finish, we'll analyze the non-paranoid version of quick sort: what happens if we allow randomly-chosen unbalanced pivots?
 
 \begin{boxed-text}[34em]
     \textbf{Chernoff Bound.} For a random binomial variable $Y = B(n, p)$ and $\beta \in [0, 1]$: \vspace{-0.3cm}
     \[ \mathbb{E}[Y] = np ~~ \text{ and } ~~ \mathbb{P}[Y \geq (1 + \beta) \cdot np] \leq e^{-\frac{1}{3} \beta^2  np}. \] \vspace{-0.8cm}
     
-    For example, when $\beta = 0.2$, this upper-bounds the probability \\ that a binomial variable exceeds $20\%$ the expected value.
+    For example, when $\beta = 0.2$, this upper-bounds the probability \\ that a binomial variable exceeds $20\%$ its expected value.
 \end{boxed-text}
 
-\textbf{Claim.} With high probability, Quick Sort runs in $O(n \log n)$ time.
+\textbf{Claim.} With high probability (e.g., at least $1 - \frac{1}{n}$), Quick Sort runs in $O(n \log n)$ time.
 
 \begin{proof}
     Call a choice of pivot \emph{good} if it is $\frac{3}{4}$-balanced, and \emph{bad} otherwise.

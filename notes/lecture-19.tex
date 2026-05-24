@@ -94,7 +94,7 @@ The space is $O(k \log u) = O\left(\frac{\log u}{\epsilon^2}\right)$, and so is 
         \textbf{Definition.} A hash family $\mathcal{H} = \{h_i: \mathcal{U} \to M\}$ is $t$-wise independent if, for all distinct keys $k_1, \dots, k_t \in \mathcal{U}$ and (not necessarily distinct!) values $i_1, \dots, i_t \in M$, we have:
         \[ \underset{h \sim \mathcal{H}}{\mathrm{Pr}} \left [ \bigwedge_{j = 1}^t h(k_j) = i_j \right ] = \dfrac{1}{|M|^t}. \]
         For prime values of $m$, one possible $t$-wise independent hash family is:
-        \[ \mathcal{H} := \left \{ h_{(a_0, \dots, a_{t - 1})}(k) := \left( \left(\sum_{i = 0}^{t - 1} a_i k^i\right) \ \% \ m \right) \right \}_{(a_0, \dots, a_{t - 1}) \in M^t}. \]
+        \[ \mathcal{H} := \left \{ h_{(a_0, \dots, a_{t - 1})}(k) := \left( \left(\sum_{i = 0}^{t - 1} a_i k^i\right) \% m \right) \right \}_{(a_0, \dots, a_{t - 1}) \in M^t}. \]
     \end{quote}
     Note that $2$-wise hash families are guaranteed universal, and $s$-wise independence implies $t$-wise independence for $s > t$.
 \end{remark}
@@ -185,7 +185,7 @@ In other words, Count-Min has $d$ hash functions each use $m$ space to try to es
 
         \emph{Proof:} Count-Min returns such an $x_k$ if every single $h_i$ overestimates by at least $\epsilon n$.  Well,
         \[ \underset{h_i \sim \mathcal{H}}{\mathbb{E}}[\text{how much } h_i \text{ overestimates } (\text{true \#})(x_k)] = \sum_{x_j \neq x_k} \underset{h_i \sim \mathcal{H}}{\mathrm{Pr}} \left [ h_i(x_j) = h_i(x_k) \right ] < \dfrac{n}{m}. \]
-        (The previous step requires $\mathcal{H}$ to be universal.) Therefore, by Markov's inequality,
+        (This step requires $\mathcal{H}$ to be universal.) Therefore, by Markov's inequality,
         \[ \underset{h_i \sim \mathcal{H}}{\mathrm{Pr}}[h_i \text{ overestimates (true \#)($x_k$) by more than } \epsilon n] \leq \dfrac{n / m}{\epsilon n} \leq \dfrac{1}{2}. \]
         So the probability that every single $h_i$ overestimates by too much is at most $\left(\frac{1}{2}\right)^{d} = \delta$. ~ $\square$
     \end{quote}
@@ -203,7 +203,7 @@ The solution to this problem is fairly complex and generalizable, so we only giv
 \begin{solution}{Approximate Similarity Search}
     Sample $tL$ random hash functions $h_{1, 1}, \dots, h_{L, t}: \mathcal{U} \to [0, 1]$, and define:
     \[ \sigma_{\ell}(K) := \left( \underset{k \in K}{\min} \{ h_{\ell, 1}(k) \}, \ \underset{k \in K}{\min} \{ h_{\ell, 2}(k) \}, \ \dots, \ \underset{k \in K}{\min} \{ h_{\ell, t}(k) \} \} \right). \]
-    Then output \textsc{Yes} if there is some set $A_j$ and some $1 \leq \ell \leq L$ such that $\sigma_{\ell}(A_j) = \sigma_{\ell}(A)$.  The point is the following:
+    Then output \textsc{Yes} if there is some set $A_j$ and some $1 \leq \ell \leq L$ such that $\sigma_{\ell}(A_j) = \sigma_{\ell}(A)$, and \textsc{No} otherwise.
     \begin{quote}
         \textbf{Claim.} If $J(A_j, A) = \lambda$, then $\mathrm{Pr}[\sigma_{\ell}(A_j) = \sigma_{\ell}(A) \text{ for some } \ell] \geq 1 - (1 - \lambda^t)^L$. 
     \end{quote}
