@@ -1,0 +1,74 @@
+\lecture{4}
+\title{Online Algorithms and Competitive Analysis}
+
+\begin{document}
+
+Recall that an offline algorithm sees the whole input, whereas an online algorithm only sees prefixes at a time.
+
+\textbf{Definition (Competitive Analysis).} A deterministic online algorithm $A$ is $\alpha$-competitive if, for all sequences $R$, we have $\textsc{Cost}_{\textsc{A}}(R) \leq \alpha \cdot \textsc{Cost}_{\textsc{Opt}}(R) + c$ for some fixed constant $c$.  (Here $\textsc{Opt}$ is the best offline algorithm.)
+
+\begin{problem}{Self-Organizing List}
+    Given a list $L$ of $n$ distinct elements, we have:
+    \begin{itemize}
+        \item $\textsc{Access}(x)$: Finds and returns $x$ in the list, has a cost of $\textsc{Rank}(x)$.
+        \item $\textsc{Transpose}(i)$: Swaps the $i^{\text{th}}$ and $(i + 1)^{\text{th}}$ elements of the list, has a cost of $1$.
+    \end{itemize}
+    So the cost of an algorithm is $\textsc{Cost}_A(R) = \sum_{i = 1}^k \left [ \textsc{Rank}_{L_{i - 1}}(x_i) + t_i \right ]$, where $t_i$ is the \# of transpositions in step $i$.
+
+    An adversary gives a sequence $(x_1, x_2, \dots, x_k)$ online.  How should we perform transpositions to minimize cost?
+\end{problem}
+
+First, some preliminary observations about the problem:
+\begin{itemize}
+    \item Swapping $L_i$ and $L_{i + 1}$ decreases the cost of $\textsc{Access}(L_{i + 1})$ by $1$ and increases the cost of $\textsc{Access}(L_i)$ by $1$.
+    \item Transpositions only help is, say, $L_{i + 1}$ is accessed more than once.
+    \item An adversary can just ``unluckily'' always pick $x_i$ to be the last element of $L$.  So the worst case is $\Omega(n \cdot |R|)$.
+\end{itemize}
+\textbf{Example.} If $L = [1, 2, \dots, n]$, and $R = (n, n - 1, \dots, 1)$, then we might as well do no transpositions, which is $\Theta(n^2)$.  This is because each $x_i$ appears in $R$ only once, so transpositions are not useful.
+
+\textbf{Example.} If $L = [1, 2, \dots, n]$, and $R = (n, n, \dots, n)$, then we can use $n - 1$ transpositions,  then perform $|R|$ accesses with cost $1$.  This is the best \emph{offline} algorithm, and it is $\Theta(n + |R|)$.
+
+In contrast, the \emph{online} algorithm called ``don't transpose anything'' is $\Theta(n^2)$.  Can we do better---be competitive?
+
+\begin{solution}{Move To Front}
+    After every $\textsc{Access}(x_i)$, move $x_i$ to the front via transposition.  This yields:
+    \[ \textsc{Cost}_{\textsc{Mtf}}(R) = \sum_{i = 1}^k \left [ 2 \textsc{Rank}_{L_{i - 1}}(x_i) - 1 \right ]. \]
+    We claim that $\textsc{Mtf}$ is $4$-competitive: for any $R$, $\textsc{Mtf}$ does at most $\times 4$ worse than the best (offline) algorithm.
+\end{solution}
+
+\begin{proof}
+    First, some notation.  Say that $\textsc{Mtf}$ and $\textsc{Opt}$ look like:
+    \[ \textsc{Mtf}: L_0 \to L_1 \to L_2 \to \dots \to L_k ~ \text{ and } ~ \textsc{Opt}: L_0 \to L_1^* \to L_2^* \to \dots \to L_k^*, \]
+    and let's make the following definitions:
+    \[ r_i := \textsc{Rank}_{L_{i - 1}}(x_i) ~ \text{ and } ~ r_i^* := \textsc{Rank}_{L_{i - 1}^*}(x_i) ~ \text{ and } ~ c_i := 2r_i - 1 ~ \text{ and } c_i^* := r_i + t_i, \]
+    where \textsc{Opt} uses $t_i$ transpositions on the $i^{\text{th}}$ step.  Let's also define:
+
+    \textbf{Definition.} An \textbf{inversion} is a pair $(a, b)$ such that $\textsc{Rank}_{L_i}(a) < \textsc{Rank}_{L_i}(b)$ yet $\textsc{Rank}_{L_i^*}(a) > \textsc{Rank}_{L_i^*}(b)$.
+
+    Finally, let's define a potential function:
+    \[ \Phi_i = \Phi(L_i, L_i^*) := 2 \times [ \text{\# of inversions between $L_i$ and $L_i^*$} ]. \]
+    Note that $\Phi_i$ is also twice the minimum \# of transpositions to transform $L_i$ into $L_i^*$.
+    \begin{itemize}
+        \item Every $\textsc{Access}(x_i)$ yields an effect of $\Delta \Phi = 0$.
+        \item Every $\textsc{Transpose}(i)$ yields an effect of either $\Delta \Phi = +2$ or $\Delta \Phi = -2$.
+    \end{itemize}
+    Given a state $(L_{i - 1}, L_{i - 1}^*)$ and a query $\textsc{Access}(x_i)$, we put every element $x$ in one of four categories:
+    \begin{itemize}
+        \item Say $x \in A_i$ if $x$ comes \emph{before} $x_i$ in $L_{i - 1}$ and $x$ comes \emph{before} $x_i$ in $L_{i - 1}^*$.
+        \item Say $x \in B_i$ if $x$ comes \emph{before} $x_i$ in $L_{i - 1}$ and $x$ comes \emph{after} $x_i$ in $L_{i - 1}^*$.
+        \item Say $x \in C_i$ if $x$ comes \emph{after} $x_i$ in $L_{i - 1}$ and $x$ comes \emph{before} $x_i$ in $L_{i - 1}^*$.
+        \item Say $x \in D_i$ if $x$ comes \emph{after} $x_i$ in $L_{i - 1}$ and $x$ comes \emph{after} $x_i$ in $L_{i - 1}^*$.
+    \end{itemize}
+    Given these labels, we can say the following about the $i^{\text{th}}$ step of \textsc{Mtf}.
+    \[ r_i = |A_i| + |B_i| + 1 ~ \text{ and } ~ r_i^* = |A_i| + |C_i| + 1 ~ \text{ and } ~ \Delta \Phi_i \leq 2 \times [|A_i| - |B_i| + t_i]. \]
+    We can now bound our imaginary costs $\hat{c_i}$ like so:
+    \begin{align*}
+        \hat{c_i} = c_i+ \Delta \Phi_i \leq \ & 2(|A_i| + |B_i| + 1) + 2(|A_i| - |B_i| + t_i) \\
+        = \ & 4|A_i| + 2t_i + 2 \\
+        \leq \ & 4(|A_i| + |C_i|) + 4t_i + 1 \\
+        < \ & 4c_i^*,
+    \end{align*}
+    as desired. ~ $\blacksquare$
+\end{proof}
+
+\end{document}

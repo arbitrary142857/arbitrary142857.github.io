@@ -1,0 +1,34 @@
+\lecture{20}
+\title{Random Walks (Part I)}
+
+\begin{document}
+
+\textbf{Definition (Markov Chain).} A \textbf{Markov chain} is a sequence of random variables $\{X_t \mid t \in \mathbb{N}\}$ such that $X_{t + 1}$ is independent of history $X_0, \dots, X_{t - 1}$ given $X_t$.
+
+\begin{remark}
+    Even if a Markov chain depends on more history than just the previous state, it is sometimes possible to interpret it as a Markov chain by extending the state space.
+\end{remark}
+
+\textbf{Definition (Time-Homogeneous).} A Markov chain is \textbf{time-homogeneous} if there is a finite \textbf{transition probability matrix} $W$ such that, for all pairs of states $(u, v)$, we have $\mathrm{Pr}[X_{t + 1} = v \mid X_t = u] = W(u, v)$ for all $t$.
+
+\textbf{Definition (Stationary).} A distribution $\pi_*$ is \textbf{stationary} with respect to $W$ if $\pi_* = \pi_*W$.
+
+\textbf{Definition (DG Terms).} Two vertices $u, v$ are said to \textbf{communicate with each other} (denoted $u \leftrightsquigarrow v$) if there is a directed path from $u$ to $v$ and vice versa.  Equivalence classes under $\leftrightsquigarrow$ are called \textbf{strongly connected components}.  A component is \textbf{transient} if it has an outgoing edge, and \textbf{recurrent} otherwise.
+
+\textbf{Definition (Period).} The \textbf{period} of a vertex $v$ is the GCD of the lengths of all directed cycles through $v$.  A vertex is \textbf{periodic} if its period is greater than $1$, and \textbf{aperiodic} otherwise.
+
+\begin{remark}
+    Only the recurrent components matter; you can WLOG our distribution began strictly inside of a recurrent component, for any choice of recurrent component.
+\end{remark}
+
+\begin{claim}
+\emph{(Fundamental Theorem of Markov Chains.)}
+
+Every time-homogeneous Markov chain $W$ has a stationary distribution.  Furthermore,
+\begin{itemize}
+    \item The stationary distribution $\pi^*$ is unique if and only if the DG has a \emph{unique} recurrent component.
+    \item If all vertices in the recurrent components are aperiodic, then for every choice of initial distribution $\pi_0$, the distribution $\pi_t = \pi_0W^t$ of $X_t$ converges as $t \to \infty$.
+\end{itemize}
+\end{claim}
+
+\end{document}

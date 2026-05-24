@@ -1,0 +1,55 @@
+\lectures{22,23}
+\title{Fast Fourier Transform}
+
+\begin{document}
+
+\textbf{Definition (Convolution).} Given sequences $\{a_j\}_{j = 0}^n$ and $\{b_k\}_{k = 0}^m$ of numbers, their \textbf{convolution} $a \ast b$ is:
+\[ \{c_\ell\}_{\ell = 0}^{n + m} ~~~~ \text{ given by } ~~~~ c_{\ell} = (a \ast b)_{\ell} := \sum_{j = 0}^{\ell} a_j b_{\ell - j}.\]
+This is just polynomial multiplication, or the PMF of the sum of two independent discrete PMFs.
+
+\begin{problem}{FFT}
+    Given $\{a_j\}_{j = 0}^m$ and $\{b_k\}_{k = 0}^n$, compute their convolution $a \ast b$ in $O((m + n) \log (m + n))$ time.
+\end{problem}
+
+\begin{remark}
+    The naive brute-force algorithm runs in $O(mn)$ time.
+\end{remark}
+
+Let's black-box a solution to FFT for now.  How might it be useful?
+
+\begin{problem}{String Matching}
+    Fix a string $s = (s_0, \dots, s_n) \in \{0, 1\}^{n + 1}$ and a pattern $p = (p_0, \dots, p_m) \in \{0, 1\}^{m + 1}$.  Find the set $H$ of all indices $k$ for which $s_{k + i} = p_i$ for all $i = 0, \dots, m$.
+\end{problem}
+
+\begin{solution}{String Matching}
+    Switch to a $\pm 1$ encoding, reverse $p$, and compute $s \ast p$.  This is $O(n \log n)$. ~ $\blacksquare$
+\end{solution}
+
+\begin{solution}{FFT}
+    It's equivalent to compute $p(x) \cdot q(x)$ for polynomials satisfying $\deg (p) = m$ and $\deg(q) = n$.
+
+    The driving principle behind our solution is the following.
+    \begin{quote}
+        \textbf{Fact.} Any degree-$n$ polynomial is uniquely determined by its evaluations on any $n + 1$ points.
+    \end{quote}
+    For ease of writing, say that $n$ and $m$ are powers of two.  Denote $\omega := e^{\frac{2\pi i}{n}}$.
+    \begin{quote}
+        \textbf{Claim.} We can compute $\{p(\omega^{k}) \}_{k = 0}^n$ in $O(n \log n)$ time.
+
+        \emph{Proof:} Divide and conquer.  Say the runtime is $T(n)$.
+        \begin{itemize}
+            \item Denote $p_{\text{even}}(x)$ and $p_{\text{odd}}(x)$ so that $p(x) = p_{\text{even}}(x^2) + x \cdot p_{\text{odd}}(x^2)$.
+            \item In $2T\left(\frac{n}{2}\right)$ time, compute $\{p_{\text{even}}(\omega^{2k})\}_{k = 0}^{n / 2}$ and $\{p_{\text{odd}}(\omega^{2k})\}_{k = 0}^{n / 2}$.
+            \item In $O(n)$ time, we can then compute:
+            \[ p(\omega^k) = \begin{cases}
+                p_{\text{even}}\left(\omega^{2k}\right) + \omega^k \cdot p_{\text{odd}}\left(\omega^{2k}\right) & \text{if $k < \frac{n}{2}$.} \\
+                p_{\text{even}}\left(\omega^{2k - n}\right) - \omega^k \cdot p_{\text{odd}}\left(\omega^{2k - n}\right) & \text{if $k \geq \frac{n}{2}$.}
+            \end{cases} \]
+        \end{itemize}
+        This yields $T(n) = 2T\left(\frac{n}{2}\right) + O(n)$, which solves to $T(n) = O(n \log n)$. ~ $\square$
+    \end{quote}
+
+    TODO: Finish the explanation of FFT.
+\end{solution}
+
+\end{document}

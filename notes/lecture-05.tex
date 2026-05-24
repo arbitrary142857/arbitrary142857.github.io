@@ -1,0 +1,115 @@
+\lecture{5}
+\title{Randomized Algorithms}
+
+\begin{document}
+
+\textbf{Definition.} There are two types of randomized algorithms.
+\begin{itemize}
+    \item \textbf{Monte-Carlo.} Necessarily a good runtime, but not necessarily a good answer.
+    \item \textbf{Las Vegas.} Not necessarily a good runtime, but necessarily a good answer.
+\end{itemize}
+
+\begin{problem}{Matrix Product}
+    Given $n \times n$ matrices $A$ and $B$, compute $AB$.
+\end{problem}
+
+You could just compute $\Theta(n^2)$ dot products, each of which takes $\Theta(n)$ time, yielding $\Theta(n^3)$ runtime.
+
+\begin{remark}
+    If you're smarter about it, you might discover Strassen's divide-and-conquer algorithm, with recursion $T(n) = 7T\left(\frac{n}{2}\right) + \Theta(n^2)$, yielding a runtime of $T(n) = n^{\log_2(7)} \approx n^{2.81}$.
+    
+    The best algorithm we've achieved so far is $\Theta(n^{2.371339\dots})$.
+\end{remark}
+
+\begin{problem}{Matrix Product Verification}
+Given $n \times n$ matrices $A, B, C \in \mathbb{F}_2^{n \times n}$, verify whether $AB = C$.
+\end{problem}
+
+\begin{solution}{Randomized Solution \#1}
+    Pick a random $v \in \mathbb{F}_2^n$.  Check whether $Cv = A(Bv)$ in $\Theta(n^2)$ time.
+\end{solution}
+
+This is a guaranteed success if $\det(C - AB) \neq 0$, and performs worse the lower the nonzero rank of $C - AB$ is.  Notably, if $C \neq AB$, the algorithm succeeds with probability at least $\frac{1}{2}$.
+
+Thus, we could run this algorithm multiple times to decrease the false positive rate.
+
+\begin{problem}{Rank Finding}
+    Let $A$ be an unsorted array of $N$ numbers, and let $r \in [1, N]$ be a rank.
+    
+    Output the $r^{\text{th}}$ smallest number (i.e. the unique number with rank $r$).
+\end{problem}
+
+Recall the following solution outline, altered slightly to integrate randomness:
+
+\begin{solution}{Quick Select}
+    Pick a \emph{random} pivot $x \in A$, with $L(x) := \{ y \in A \mid y < x\}$ and $G(x) := \{ y \in A \mid y > x \}$.  Then recurse either on $L(x)$ or $G(x)$, depending on whether $|L(x)| \geq r$.
+\end{solution}
+
+We can sacrifice a little time complexity to be slightly more efficient, too.
+
+\begin{solution}{Paranoid Select}
+    Randomly try pivots $x \in A$ until $x$ is $\frac{3}{4}$-balanced, that is, $\frac{1}{4}A \leq \mathrm{Rank}(x) \leq \frac{3}{4}A$.
+\end{solution}
+
+In expectation, Paranoid Select requires two tries to pick a good $x$, yielding $\Theta(n)$ runtime in expectation.
+
+\begin{remark}
+    In practice, Quick Select is just better.  But Paranoid Select is easier to analyze, so\dots
+\end{remark}
+
+\begin{problem}{Sorting}
+    Just sort an array $A$.
+\end{problem}
+
+\begin{solution}{Quick Sort}
+    Pick a random pivot $x \in A$, and compute $L(x)$ and $G(x)$.  Then write $\textsc{QS}(L) + \{x\} + \textsc{QS}(G)$.  Pick $x$ by trying until a $\frac{3}{4}$-balance is achieved.
+\end{solution}
+
+This yields the following recurrence:
+\[ T(n) \leq \max_{\frac{n}{4} \leq i \leq \frac{3n}{4}} \{ T(i) + T(n - i) \} + \Theta(n) \leq T\left(\dfrac{n}{4}\right) + T\left(\dfrac{3n}{4}\right) + \Theta(n), \]
+which solves to $T(n) = \Theta(n \log n)$.  (We skipped over the step of showing $i = \frac{n}{4}$ is worst-case.)
+
+To finish, we'll analyze the non-paranoid version of quick sort.
+
+\begin{boxed-text}[34em]
+    \textbf{Chernoff Bound.} For a random binomial variable $Y = B(n, p)$ and $\beta \in [0, 1]$: \vspace{-0.3cm}
+    \[ \mathbb{E}[Y] = np ~~ \text{ and } ~~ \mathbb{P}[Y \geq (1 + \beta) \cdot np] \leq e^{-\frac{1}{3} \beta^2  np}. \] \vspace{-0.8cm}
+    
+    For example, when $\beta = 0.2$, this upper-bounds the probability \\ that a binomial variable exceeds $20\%$ the expected value.
+\end{boxed-text}
+
+\textbf{Claim.} With high probability, Quick Sort runs in $O(n \log n)$ time.
+
+\begin{proof}
+    Call a choice of pivot \emph{good} if it is $\frac{3}{4}$-balanced, and \emph{bad} otherwise.
+
+    Suppose a run of Quick Sort goes to depth $L$.  We'd like to show that for any $a_i \in A$, if we follow $a_i$ down $L$ steps of the recursion tree, then with high probability $a_i$ encounters sufficiently many good pivots.
+    
+    To be precise, let's define for every index $i$ a set of indicator variables $(Y_{i, 1}, \ Y_{i, 2}, \ \dots, \ Y_{i, L})$.
+    \[ Y_{i, k} := \begin{cases}
+    1 & \text{if } a_i \text{ is involved in a bad pivot at depth } k \\
+    0 & \text{if } a_i \text{ is involved in a good pivot at depth } k
+    \end{cases} \]
+    We want $a_i$ to encounter good pivots, so we want $Y_i = \sum_{k = 0}^L Y_{i, k}$ to (probably) be small.  Well, $Y_i = B(L, 0.5)$, so:
+    \[ \mathbb{P}[Y_i \geq 0.6L] \leq e^{-\frac{1}{3} (0.2)^2 L (0.5)} = e^{-\frac{1}{150}L} ~ \implies ~ \mathbb{P}[Y_i \leq 0.6L] \geq 1 - e^{-\frac{1}{150}L}. \]
+    We must declare a \emph{logarithmic} depth $L$ for which the following hold:
+    \begin{enumerate}
+        \item If $Y_i \leq 0.6L$ for all $i$, then Quick Sort has succeeded (i.e. no $a_i$ is still in a subset with $>1$ size).
+        \item The probability that $Y_i \leq 0.6L$ for all $i$ is high.
+    \end{enumerate}
+    We claim $L = 300 \cdot \ln n$ works.  For part 1, the condition $Y_i \leq 0.6L$ tells us:
+    \[ \text{size of the subset containing } a_i \text{ at depth } L \leq n \cdot \left(\dfrac{3}{4}\right)^{0.6L} = n \cdot n^{\ln \left(\frac{3}{4}\right) \times 0.6 \times 300} \approx n^{-33} < 1. \]
+    For part 2, we can use the union bound:
+    \[ \mathbb{P}[Y_i \geq 0.6L] \leq e^{-\frac{1}{150}L} = \dfrac{1}{n^2} ~ \implies ~  \mathbb{P}[Y_i \geq 0.6L \text{ for some } i] \leq n \cdot \dfrac{1}{n^2} = \dfrac{1}{n}. \]
+    So with probability at least $1 - \frac{1}{n}$, every $a_i$ is ``done with quick sort'' by depth $L = 300 \cdot \ln n$.  Since the depth $L$ is logarithmic in $n$, this means Quick Sort has run in $O(n \log n)$ time, as desired. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    We could have set $L = 15000 \cdot \ln n$ to show that Quick Sort runs in $O(n \log n)$ time with probability at least $1 - \frac{1}{n^{99}}$.  This sounds even better, but the cost of this improvement is hidden in the big-$O$.
+    
+    In the very likely case that Quick Sort finishes with depth at most $L = 15000 \cdot \ln n$, the coefficient of the bound on the time complexity is very large.  So it'd be a pretty bad $O(n \log n)$.
+    
+    Thus, we care about achieving ``high probability'', but not how high that ``high probability'' is.
+\end{remark}
+
+\end{document}

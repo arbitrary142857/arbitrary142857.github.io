@@ -1,0 +1,157 @@
+\lecture{21}
+\title{Random Walks (Part II)}
+
+\begin{document}
+
+\begin{problem}{Card Shuffling}
+    Among all $52!$ permutations of a deck of cards, pick one at random.
+\end{problem}
+
+The challenge is that we cannot just define a map $f: [1, 2, \dots, 52!] \to \{\text{permutations}\}$, because $52!$ is huge.
+
+\begin{center}
+    \textbf{Meta-Algorithm.} To efficiently sample from a very large probability distribution $\pi$, \\ just define a Markov chain that converges to $\pi$ as $t \to \infty$.
+\end{center}
+
+\begin{solution}{Card Shuffling}
+    In this particular case: riffle-shuffle seven times.
+\end{solution}
+
+To clarify the rules a little:
+\begin{itemize}
+    \item We are told that $\pi(x) = \frac{F(x)}{\sum_y F(y)}$, and we can efficiently compute $F(x)$ given $x$.
+    \item We can sample from simple distributions (e.g. $\mathcal{N}(0, 1)$, $\mathrm{Unif}[0, 1]$, coin-flipping).
+\end{itemize}
+
+\begin{problem}{Independent Set}
+    Given a graph $G$ (e.g. a hexagonal lattice), sample an independent set of vertices.  In the language as above, we have $F(S) := \mathds{1}[S \text{ is independent}]$.  So $F(x)$ is computable, but $\sum_{y} F(y)$ is not.
+\end{problem}
+
+\begin{solution}{Independent Set}
+    Start with an independent set $I$.  Repeat the following process.
+    \begin{quote}
+        \textbf{Process.} If $v \in I$, then remove $v$ with probability $\frac{1}{2}$. \\
+        If $v \not \in I$ and $v$ can be added to $I$, then add $v$ with probability $\frac{1}{2}$.
+    \end{quote}
+    We claim that $\pi$ is the unique stationary distribution of $W$, and that $\pi_0W^T \to \pi$ as $T \to \infty$.
+\end{solution}
+
+\begin{proof}
+The desired (uniform) distribution $\pi$ is stationary with respect to $W$.  This is because $W$ is symmetric:
+\[ \text{For all } (I, I'), \text{ we have } W(I \to I') = \frac{1}{2 |V|} \text{ or } W(I \to I') = 0. \]
+It thus remains to check convergence and uniqueness.
+\begin{itemize}
+    \item Uniqueness: The Markov chain has a unique recurrent component; that's because it's strongly connected.
+    \item Convergence: The Markov chain is aperiodic because there are some cycles $v \to v$ of length $1$. 
+\end{itemize}
+Therefore, $\pi$ must be the stationary distribution of $W$. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    The constant $\frac{1}{2}$ is necessary to encourage ``mixing'' and avoid periodicity.
+\end{remark}
+
+We'd like to generalize the approach from above.  More specifically,
+\begin{quote}
+    \textbf{Problem.} Given $F(x)$, determine a Markov chain which converges to the distribution $\pi(x) := \frac{F(x)}{\sum_y F(y)}$.
+\end{quote}
+The tricky part is guaranteeing that the $\pi$ we want truly is stationary with respect to $W$.  Here's how.
+
+\textbf{Definition (Metropolis-Hastings Algorithm.)} Say our target distribution is $\pi$, and let $Q$ be \emph{any} Markov chain.  We don't know $\pi$, but we do know $F$, so we may create a new Markov chain like so:
+\[ W(x \to y) := Q(x \to y) \cdot \underbrace{\min \left \{ 1, \ \dfrac{F(y)}{F(x)} \cdot \dfrac{Q(y \to x)}{Q(x \to y)} \right \}}_{\text{acceptance factor}} ~~~ \text{ and } ~~~ W(x \to x) = 1 - \sum_{y \neq x} W(x \to y). \]
+\begin{remark}
+    When the target distribution $\pi$ is \emph{uniform}, Metropolis-Hastings returns the Markov chain
+    \[ W(x \to y) = W(y \to x) = \min \{ Q(x \to y), \ Q(y \to x)\}. \]
+\end{remark}
+The claim, of course, is that our target $\pi$ is always stationary with respect to this choice of $W$.
+
+\begin{remark}
+This new Markov chain is equivalent to the following:
+\begin{itemize}
+    \item Starting at state $x$, sample a transition $x \to y$ according to $Q$.
+    \item Actually move to $y$ with probability $p_{\text{accept}}$.  Otherwise, stay at $x$.
+\end{itemize}
+The acceptance factor, in a sense, adjusts our generic Markov chain $Q$ to account for the distribution $F$ desired.
+\end{remark}
+
+To see the motivation and validity for this selection of $W$, we introduce the notion of \textbf{reversible} Markov chains.
+
+\begin{quote}
+    \textbf{Definition (Reversible).} Informally, a Markov chain $W$ is \textbf{reversible} if it ``looks the same'' viewed forward and backwards.
+    
+    Mathematically, this reads $P(x \to y) = P(y \to x \mid \bullet \to x)$, for all pairs of states $(x, y)$ and all times $t$.  However, the RHS depends on the probability distribution $X_t$ of states.
+
+    What distribution $X_t$ should we choose?  The stationary distribution $\pi$, naturally.  Then:
+    \begin{align*}
+        P(x \to y) = P(y \to x \mid \bullet \to x) \implies ~ W(x \to y) = \dfrac{\pi(y) \cdot W(y \to x)}{\pi(x)}
+    \end{align*}
+    The above is \textbf{detailed balance}: for all states $x, y$, we have $\pi(x) W(x \to y) = \pi(y) W(y \to x)$.
+\end{quote}
+
+\textbf{Example.} All random walks on \emph{undirected} weighted graphs are reversible.
+
+The choice to pick the stationary distribution $\pi$ for our $X_t$ was not arbitrary.
+
+\begin{claim}
+    If $W$ is a Markov chain and $\pi$ is a distribution satisfying detailed balance, then $\pi$ must be stationary.
+\end{claim}
+
+\begin{proof}
+    Intuitively, detailed balance \emph{locally} says that the flow along $x \to y$ equals the flow along $y \to x$.  Meanwhile, stationary \emph{globally} says that the net flow out of any state $x$ is zero.
+    
+    The local condition implies the global one. ~ $\blacksquare$
+\end{proof}
+
+\begin{claim}
+    In Metropolis-Hastings, the target distribution $\pi$ is stationary with respect to $W$.
+\end{claim}
+
+\begin{proof}
+    The upshot of all these definitions is that it suffices to check $\pi$ satisfies detailed balance.
+
+    Suppose, WLOG, that the $x \to y$ acceptance factor $\frac{F(y)}{F(x)} \cdot \frac{Q(y \to x)}{Q(x \to y)}$ is less than $1$.  Then detailed balance says:
+    \[ \pi(x) W(x \to y) = \pi(x) \cdot \left(Q(x \to y) \cdot \dfrac{F(y)}{F(x)} \cdot \dfrac{Q(y \to x)}{Q(x \to y)}\right) = \left(\pi(x) \cdot \dfrac{F(y)}{F(x)}\right) \cdot Q(y \to x) = \pi(y) \cdot Q(y \to x). \]
+    So indeed, detailed balance is satisfied, and we win. ~ $\blacksquare$
+\end{proof}
+
+Of course, Metropolis-Hastings doesn't do \emph{all} the work---we still need to check for convergence, which requires checking recurrent components and periodicity of $Q$.
+
+\begin{remark}
+    Metropolis-Hastings isn't all that \emph{necessary}, either.  Our solution to \emph{Independent Set} from earlier showed $\pi(x) := \frac{F(x)}{\sum_y F(y)}$ was stationary by noting that $\pi$ was uniform and $W$ was symmetric.
+\end{remark}
+
+\begin{problem}{Graph Colorings}
+    Given a graph $G$, sample a coloring of its vertices with $q > \max\{\deg v\} + 1$ colors, uniformly at random across all colorings.
+\end{problem}
+
+\begin{solution}{Graph Colorings}
+    Begin with a graph coloring $\chi$.  Repeat the following process.
+    \begin{quote}
+        \textbf{Process.} Pick a vertex $v \in V$ uniformly at random, and a color $c \in \{1, 2, \dots, q\}$ uniformly at random. \\ If it will yield a valid graph coloring, then update $\chi(v) \leftarrow c$.
+    \end{quote}
+    We claim the uniform distribution $\pi$ is the unique stationary distribution of $W$, and that convergence holds.
+\end{solution}
+
+\begin{proof}
+    To show that $\pi$ is a stationary distribution, just note that $\pi$ is uniform and $W$ is symmetric:
+    \[ W(\chi, \chi') = W(\chi', \chi) = \begin{cases} 0 & \text{if $\chi$ and $\chi'$ more than one vertex apart} \\ \dfrac{1}{nq} & \text{if $\chi$ and $\chi'$ are exactly one vertex apart} \end{cases} \]
+    It remains to show uniqueness.  The main difficulty is connectivity.
+    \begin{quote}
+        \textbf{Claim.} For any pair of $q$-colorings $(\chi, \chi')$, there is a sequence of Markov chain transitions $\chi \to \chi'$.
+
+        \emph{Proof:} It suffices to find $\chi \to \chi''$ for which $(\chi'', \chi')$ has fewer disagreements than $(\chi, \chi')$.
+
+        Pick some vertex $v$ for which $\chi(v) \neq \chi'(v)$.  If updating $\chi(v) \leftarrow \chi'(v)$ is permitted, we're done.  
+        
+        Otherwise, $\chi'(v) = \chi(u)$ for some neighbor $u \sim v$.  The key is that any such $u$ must also be a disagreeing vertex.  Thus, we can recolor every such neighbor $u$ without creating any new disagreements; this is possible because $q > \deg(u) + 1$.
+
+        So if $\chi'(v) = \chi(u)$ for some neighbor $u \sim v$, just recolor $u$, reducing to the easy case. ~ $\square$
+    \end{quote}
+    So connectivity holds.  Aperiodicity does, too, as there are edges $v \to v$.  I'm convinced. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    This fails when $q = \max \{ \deg v \} + 1$ because the graph is disconnected.  (Take $G = K_4$ and $q = 4$.)
+\end{remark}
+
+\end{document}

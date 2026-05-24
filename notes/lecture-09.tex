@@ -1,0 +1,112 @@
+\lecture{9}
+\title{Maximum Flow (Part I)}
+
+\begin{document}
+
+\begin{problem}{Max Flow}
+    Consider a directed graph $G = (V, E)$ with a source vertex $s$ and a sink vertex $t$.  Every (directed) edge has a capacity $c: E \to \mathbb{R}^{\geq 0}$.  We'd like to assign a flow to every edge such that:
+    \begin{enumerate}
+        \item For any $e \in E$, the flow across $e$ is at most the capacity of $e$.
+        \item There is zero net flow into or out of any vertex other than $s$ or $t$.
+    \end{enumerate}
+    Formally, let $f: V \times V \to \mathbb{R}$ such that $f(u, v)$ is the (signed) flow from $u$ to $v$, with $f(u, v) = 0$ if $(u, v) \not \in E$.
+
+    The net flow is defined by $\sum_{v \in V} f(s, v)$.  Find the maximum possible total flow.
+\end{problem}
+
+\begin{center}
+    \frame{\includegraphics[width=0.45\textwidth]{lecture-09/flow-example}}
+\end{center}
+
+\begin{claim} % Flow Decomposition Lemma
+    Any flow assignment can be decomposed as the linear combination of \emph{paths from $s$ to $t$} and \emph{cycles}.
+\end{claim}
+
+\begin{proof}
+    Just induct.  You never get ``stuck'' because of the ``zero net flow'' constraint, which is invariant. ~ $\blacksquare$
+\end{proof}
+
+There's an easy upper-bound on the max flow: the minimum cut.
+
+\textbf{Definition (Min Cut).} Cut the directed graph via $V = S \sqcup T$, with $s \in S$ and $t \in T$.  We define:
+\begin{itemize}
+\item The total cut $c(S)$ is the sum of the (nonnegative) capacities $c(a, b)$ for all $a \in S$ and $b \in T$.
+\item The total flow $f(S)$ is the sum of the (not necessarily nonnegative) flows $f(a, b)$ for all $a \in S$ and $b \in T$.
+\end{itemize}
+Evidently, $f(S) \leq c(S)$.
+
+\begin{claim} % Weak Duality
+    Consider any flow assignment $f$.  Given any two cuts $S_1 \sqcup T_1$ and $S_2 \sqcup T_2$, we have $f(S_1) = f(S_2)$.
+    
+    (By corollary, for any cut $S \sqcup T$, we have $f(S)$ is the net flow of $f$.)
+\end{claim}
+
+\begin{proof}
+    Because the divergence is zero.  (Formally, use the decomposition of flow into paths and cycles.) ~ $\blacksquare$
+\end{proof}
+
+Be careful, though---the above does \emph{not} say that all cuts have the same cut.  It only says that all cuts have the same \emph{flow}---that is, the same measure with respect to edge weights with divergence $0$ everywhere.
+
+\begin{boxed-text}
+    \textbf{Claim.} The maximum possible flow of a graph equal the minimum possible cut.
+\end{boxed-text}
+
+Here's the key idea.
+
+\textbf{Definition (Residual Network).} Given an assigned flow $f$ to a graph $G = (V, E)$, the \textbf{residual network} consists of $G_f = (V, E_f)$ with edge weights $c_f(u, v) := c(u, v) - f(u, v)$, and edges $E_f := \{(u, v) \in E \mid c_f(u, v) > 0\}$.
+
+Importantly, some edges in $G_f$ will have \emph{greater} weight than edge in $G$, because an edge $u \to v$ increases $c_f(v, u)$.
+
+\begin{center}
+    \frame{\includegraphics[width=0.75\textwidth]{lecture-09/residual-network}}
+\end{center}
+
+Think of this as reflecting our ability to ``undo our mistakes''.
+
+\begin{claim}
+    The max flow is zero if and only if there is a cut of zero.
+\end{claim}
+
+\begin{proof}
+    If there's a zero cut, there's obviously zero flow.  If there is zero possible flow, that means there is no path from $s$ to $t$, so the cut defined by $S := \{v \in V \mid \text{there is a path from } s \text{ to } v\}$ works. ~ $\blacksquare$
+\end{proof}
+
+It turns out that the zero case is all we need!  (Like proving JNF\dots)
+
+\begin{claim}
+    The maximum possible flow is equal to the minimum possible cut.
+\end{claim}
+
+\begin{proof}
+    Consider an optimal flow assignment $f$.  Then $G_f$ must have zero maximum possible flow, or else $f$ would not be optimal.  This means $G_f$ has a cut $S \sqcup T$ of zero.
+
+    \begin{quote}
+        \textbf{Claim.} For any graph $G$, any cut $S$, and any flow $f$, we have $c_f(S) = c(S) - f(S)$.
+
+        \emph{Proof:} Pretty obvious.  Do the algebra if you want. ~ $\square$
+    \end{quote}    
+    When there is a cut $S \sqcup T$ of value zero in $G_f$, we have $f(S) = c(S)$.  Lower bound meets upper bound. ~ $\blacksquare$
+\end{proof}
+
+More generally, the following is true.
+
+\begin{claim}
+    Given any network $G$, the following statements are equivalent.
+    \begin{enumerate}
+        \item We have that $f$ is a max flow.
+        \item We have that $|f| = c(S)$ for some cut $S$.
+        \item We have that $G_f$ has no augmenting paths.
+    \end{enumerate}
+\end{claim}
+
+\begin{proof}
+    Omitted to be DRY.  (I am not writing a helper proof.) ~ $\blacksquare$
+\end{proof}
+
+And so the most naive algorithm actually just works.
+
+\begin{solution}{Ford-Fulkerson}
+    Repeatedly find augmenting paths $P := s \to \dots \to t$, then recompute the residual network each time.  Repeat until no more augmenting paths exist.  This is optimal.
+\end{solution}
+
+\end{document}

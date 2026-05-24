@@ -1,0 +1,98 @@
+\lecture{2}
+\title{Divide and Conquer}
+
+\begin{document}
+
+\textbf{Divide and Conquer.} Given any problem of size $N$, we\dots
+\begin{itemize}
+    \item \textbf{Divide.} Split the problem into $A$ subproblems, each of size $\frac{N}{B}$.
+    \item \textbf{Conquer.} Solve each subproblem recursively.
+    \item \textbf{Combine.} Use the subproblem solutions to get a solution of the original problem.
+\end{itemize}
+The runtime $T(N)$ is recursive: $T(N) = A \cdot T\left(\frac{N}{B}\right) + \text{(time to divide)} + \text{(time to combine)}$.
+
+\begin{problem}{Rank Finding}
+    Let $A$ be an unsorted array of $N$ numbers, and let $r \in [1, N]$ be a rank.
+    
+    Output the $r^{\text{th}}$ smallest number (i.e. the unique number with rank $r$).
+\end{problem}
+
+\textbf{Example.} If $r = 1$ or $r = N$, this asks for the minimum / maximum.  If $r = \frac{N + 1}{2}$, this asks for the median.
+
+\begin{solution}{Rank Finding \#1}
+    For each $x \in A$, compute $L(x) := \{ y \in A \mid y < x\}$.  Find the $x$ with $|L(x)| = r - 1$.
+\end{solution}
+
+Unfortunately, finding $L(x)$ takes $O(N)$ time, and so this is an $O(N^2)$ algorithm.  But this is also extremely wasteful:
+
+\begin{boxed-text}[32em]
+    \emph{Observation.} If $|L(x)| \geq r$, then our target must be in $L(x)$.
+\end{boxed-text}
+
+\begin{solution}{Rank Finding \#2}
+    Pick a pivot $x \in A$, and consider $L(x) := \{ y \in A \mid y < x\}$ and $G(x) := \{ y \in A \mid y > x \}$.  Then recurse either on $L(x)$ or $G(x)$, depending on whether $|L(x)| \geq r$.
+\end{solution}
+
+Unfortunately, picking the pivot is important.  If we unluckily always pick $x = \min(A)$, this is $O(N^2)$ worst-case.
+
+\begin{boxed-text}[32em]
+    \emph{Observation.} If an oracle could tell us the median in $O(N)$ time, \\ then we'd have $T(N) = T\left(\frac{N}{2}\right) + O(N)$, which implies $T(N) = O(N)$.
+\end{boxed-text}
+
+In fact, we don't even need to pick \emph{exactly} the median.
+
+\textbf{Definition.} For any $\frac{1}{2} \leq c \leq 1$, we say $x \in A$ is $c$-balanced if $\max \{ |L(x)|, |G(x)|\} \leq cN$.
+
+\begin{boxed-text}[32em]
+    \emph{Observation.} If an oracle could tell us a $c$-balanced element in $O(N)$ time, \\ then we'd have $T(N) = T\left(cN\right) + O(N)$, which implies $T(N) = O(N)$.
+\end{boxed-text}
+
+How do we find $c$-balanced element?  The trick is to use Rank Finding again!
+
+\begin{solution}{Rank Finding \#3}
+    Divide $A$ into $\frac{N}{5}$ buckets of size $5$.  Say $M$ is the set of all bucket medians, with $|M| = \frac{N}{5}$.  Then set $x = \textsc{RankFindFast}\left(M, \frac{|M|}{2}\right)$ as the pivot, and proceed from there.
+\end{solution}
+
+\begin{proof}
+    For algorithm correctness, it suffices to show:
+    \begin{quote}
+        \textbf{Claim.} Our choice of pivot $x$ is $\frac{7}{10}$-balanced.
+
+        \emph{Proof:} The constant $\frac{7}{10}$ is $1 - \frac{1}{2} \times \frac{3}{5}$.  More generally, when $5 = 2k + 1$, we have $c = \frac{3k + 1}{4k + 2}$.  ~ $\square$
+    \end{quote}
+    
+    Now let's discuss the time complexity.  The recursion for this problem looks like:
+    \[ T(N) = O(N) + T\left(\frac{N}{5}\right) + O(N) + T\left(\frac{7N}{10}\right) = T\left(\frac{N}{5}\right) + T\left(\frac{7N}{10}\right) + c_1 \cdot N, \]
+    corresponding to (i) constructing $M$, (ii) finding $x$, (iii) computing $L(x)$ and $G(x)$, and (iv) solving the subproblem.
+
+    Now we show by induction that $T(N) \leq c_2N$ for some $c_2 > 0$.  The inductive step is:
+    \[ T(N) = T\left(\frac{N}{5}\right) + T\left(\frac{7N}{10}\right) + c_1 \cdot N \leq c_2 \cdot \left(\frac{9N}{10}\right) + c_1 \cdot N. \]
+    And so of course $c_2 = 10c_1$ works, for example. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    The key success of this algorithm is that $\frac{1}{2k + 1} + \frac{3k + 1}{4k + 2} < 1$ when $k \geq 2$, meaning our algorithm does meaningfully cut down our search space by a factor.
+
+    The reason why $k = 2$ is better than $k = 50$ is in step (i) constructing $M$.  Even though $\frac{1}{2k + 1} + \frac{3k + 1}{4k + 2}$ tends to $\frac{3}{4}$ for very large $k$, the constant $c_1$ also grows very large for large $k$.
+\end{remark}
+
+\begin{problem}{Integer Multiplication}
+    Given two $N$-bit numbers $a$ and $b$, compute their product $a \cdot b$.
+\end{problem}
+
+\begin{solution}{Karatsuba}
+    Write $a = y + 2^{N/2} \cdot x$ and $b = w + 2^{N/2} \cdot z$, so $a = [x] [y]$ and $b = [w] [z]$ and:
+    \begin{align*}
+        ab = \ & 2^N \cdot xw + 2^{N / 2} \cdot (xz + yw) + yz \\
+        = \ & (2^N - 2^{N / 2}) \cdot xw + 2^{N / 2} \cdot (x + y)(w + z) + (1 - 2^{N / 2}) \cdot yz.
+    \end{align*}
+    So we only need $xw$, $yz$, and $(x + y)(w + z)$, which yields $T(N) = 3T\left(\frac{N}{2}\right) + O(N)$, or $T(N) = O(N^{\log_2(3)})$.
+\end{solution}
+
+In 1971, the Fast Fourier Transform was used to find an $O(N \cdot \log(N) \cdot \log(\log(N)))$ solution.
+
+In 2007, $O(N \cdot \log(N) \cdot 2^{\log^*(N)})$ was found, where $\log^*(N)$ is the \# of $\log$'s with $\log(\log(\dots(\log(N))\dots)) < 1$.
+
+And then in 2019, an $O(N \cdot \log(N))$ solution was found.  And we still don't know if we can do better.
+
+\end{document}

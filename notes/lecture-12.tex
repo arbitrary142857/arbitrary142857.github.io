@@ -1,0 +1,51 @@
+\lecture{12}
+\title{Linear Programming (Part II)}
+
+\begin{document}
+
+Here's an example of this duality.
+\begin{align*}
+    \text{Maximize } x_1 + 2x_2 \text{ given } -3x_1 + 2x_2 \leq 10 \text{ and } x_1 + x_2 \leq 15 \text{ and } x_1, x_2 \geq 0. \\
+    \text{Minimize } 10y_1 + 15y_2 \text{ given } -3y_1 + y_2 \geq 1 \text{ and } 2y_1 + y_2 \geq 2 \text{ and } y_1, y_2 \geq 0.
+\end{align*}
+More generally, the dual looks like this:
+
+\begin{claim}
+The following is true.
+\[ \max\{ c^{\top} x \mid A x \leq b \text{ and } x \geq 0 \} = \min\{ b^{\top}y \mid A^{\top}y \geq c \text{ and } y \geq 0 \} \]
+\end{claim} \vspace{-0.8cm}
+
+\begin{proof}
+    To show weak duality, just write $c^{\top}x = x^{\top}c \leq x^{\top}A^{\top}y = (Ax)^{\top}y \leq b^{\top}y$.
+
+    To show strong duality, ehhhh it's like vibe-ly obvious, but proving it requires Farkas' Lemma. ~ $\blacksquare$
+\end{proof}
+
+Some jargon dumping:
+\begin{itemize}
+    \item In the former, we have $m$ primal constraints and $n$ primal decision variables.
+    \item In the dual, we have $m$ dual decision variables and $n$ dual constraints. 
+    \item The dual of the dual is itself.
+\end{itemize}
+
+\begin{remark}
+    It is possible for both an LP and its dual to be infeasible.  Try to construct one!
+\end{remark}
+
+\textbf{Example.} More generally, we might want to find the dual of more complicated linear programs.
+\[ \text{Maximize } x_1 - x_2 + 2x_3 \text{ given } -x_1 + 3x_2 \leq -3 \text{ and } x_1 + 3x_3 \geq 2 \text{ and } x_2 + x_3 = 7 \text{ and } x_1, x_2 \geq 0. \]
+Take some time to convince yourself that the dual is the following.
+\[ \text{Minimize } -3y_1 + 2y_2 + 7y_3 \text{ given } -y_1 + y_2 \geq 1 \text{ and } 3y_1 + y_3 \geq -1 \text{ and } 3y_2 + y_3 = 2 \text{ and } y_1 \geq 0, y_2 \leq 0. \]
+Be very careful about the choices of $\{\geq, \leq, =\}$.
+
+\begin{remark}
+    Given a solution to the primal, we can find a solution to the dual.  We do this by identifying the constraints in the primal that are slacked, ignoring those, and setting everything else to be strict.  This is DCW-Equality.
+\end{remark}
+
+We can use LP to solve the MST problem.  Give indicator variables $x_e$ for all edges with $x_e \geq 0$.
+\[ \text{Minimize } \sum_{e \in E} w(e) x_e \text{ given } \sum_{e \text{ crosses } \Pi} x_e \geq |\Pi| - 1 \text{ and } x_e \geq 0. \]
+The optimal value is at most the weight of an MST.  The hope is that the optimal solution uses $x_e \in \{0, 1\}$, in which case the optimal solution \emph{is} an MST.  Note that the \emph{dual} of this problem looks like:
+\[ \text{Maximize } \sum_{\text{partitions } \Pi} (|\Pi| - 1)y_{\Pi} \text{ given } \sum_{e \text{ crosses } \Pi} y_{\Pi} \leq w(e) \text{ and } y_{\Pi} \geq 0. \]
+(We did not finish this example in lecture.)
+
+\end{document}

@@ -1,0 +1,68 @@
+\lecture{16}
+\title{Approximation Algorithms (Part II)}
+
+\begin{document}
+
+\begin{problem}{Weighted Vertex Cover}
+    Given a graph $G$, find a minimum-weight vertex cover.
+\end{problem}
+
+\begin{solution}{Weighted Vertex Cover}
+    Write the appropriate minimization LP: the variables are $\{x_v\}_{v \in V}$, the constraints are $x_v \in [0, 1]$ and $x_u + x_v \geq 1$ for each $(u, v) \in E$, and the quantity to be minimized is $\sum_{v \in V} w(v) \cdot x_v$.
+
+    Find the optimal solution, then \emph{round it}: output $S = \{v \in V: x_v^* \geq 0.5\}$.
+\end{solution}
+
+\begin{proof}
+    Say $x^*$ is the LP optimal we find, $x$ is the rounded solution, and $S^*$ is the vertex-cover optimal.
+
+    The proof is in two inequalities.  The former holds because rounding incurs at most a factor-of-two increase.  The latter holds because all ILP solutions are LP solutions.
+    \[ \sum_{v \in V} w(v) \cdot x_v \leq 2 \cdot \sum_{v \in V} w(v) \cdot x_v^* \leq 2 \cdot \sum_{v \in S^*} w(v). \]
+    You should show $x$ is a valid solution to begin with.  You can also show $\alpha = 2$ is tight. ~ $\blacksquare$
+\end{proof}
+
+\begin{problem}{Set Cover}
+    Given subsets $\{S_i\}_{i = 1}^n \subseteq \mathcal{U}$, find a cover of $\mathcal{U}$ using as few subsets as possible.
+\end{problem}
+
+\begin{solution}{Set Cover}
+    Greedily pick sets of maximum cardinality.  This is an $O(\log |\mathcal{U}|)$-approximation algorithm---for the same reasons as our bad Vertex Cover approximation algorithm!
+
+    (The Vertex Cover approximation algorithm never used the fact that edges connect \emph{two} vertices\dots)
+\end{solution}
+
+It turns out that if $\textbf{P} \neq \textbf{NP}$, then we cannot do better.  All of this is true for the weighted case, too.
+
+\begin{problem}{Clique}
+    Find a maximum clique in a graph $G$.
+\end{problem}
+
+\begin{solution}{Clique}
+    Partition $V$ into $\frac{n}{\log n}$ subsets $\{G_i\}$ of size $\log n$.  For each subset $G_i$ of size $\log n$, brute-force through every subgraph of $G_i$ to find the maximum clique in $G_i$.  Output the largest clique you found.
+
+    This is an $\left(\frac{n}{\log n}\right)$-approximation.  Obviously.  And this is tight.  Obviously.
+\end{solution}
+
+It turns out that we can't do better.
+
+\begin{remark}
+    Recall that \textsc{Clique} reduces to \textsc{Vertex-Cover} very easily.  And \textsc{Vertex-Cover} has a $2$-approximation algorithm.  Think about that.
+\end{remark}
+
+\begin{problem}{Max-3-SAT}
+    Given a $3$-CNF formula, maximized the number of satisfied clauses.
+
+    Assume each clause has three distinct variables, for simplicity.
+\end{problem}
+
+\begin{solution}{Max-3-SAT}
+    If you output an assignment at random, you get an $\frac{8}{7}$-approximation in expectation.
+
+    To guarantee an $\frac{8}{7}$-approximation, assign the variables $\{x_i\}_{i = 1}^n$ one at a time, at each point assigning $x_i$ so that the \emph{conditional} expected number of clauses satisfied (assuming $\{x_{i + 1}, x_{i + 2}, \dots\}$ are assigned randomly) is largest.
+
+    You can prove inductively that this will yield an $\frac{8}{7}$-approximation. ~ $\blacksquare$
+\end{solution}
+
+And, again, we can't do better.
+
+\end{document}

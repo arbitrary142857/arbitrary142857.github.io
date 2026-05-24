@@ -1,0 +1,135 @@
+\lecture{14}
+\title{Intractibility (Part II)}
+
+\begin{document}
+
+\textbf{Definition (Karp Reduction).} A \textbf{Karp reduction} from $Q$ to $\pi$ is a deterministic algorithm $R$ such that:
+\begin{itemize}
+    \item The algorithm $R$ takes instances $x \in Q$ to instances $y \in \pi$, such that $Q(x) = \pi(y)$.
+    \item The algorithm $R(x)$ runs in $O(|x|^c)$ for some constant $c$.
+\end{itemize}
+If $R$ exists, we say $Q \leq_P \pi$.  In other words, $Q$ is no harder than $\pi$.
+
+\begin{claim}
+    Given a Karp reduction from $Q$ to $\pi$ and an efficient $\pi$-solver, we have an efficient $Q$-solver.
+\end{claim}
+
+\begin{proof}
+    Duh, obviously. ~ $\blacksquare$
+\end{proof}
+
+Note that ``Karp'' is an abbreviation of ``polynomial-time many-one''.
+
+\textbf{Definition (NP-Hard).} A problem $\pi$ is \textbf{NP-hard} if and only if for every $Q \in \textbf{NP}$, then $Q \leq_P \pi$.
+
+\textbf{Definition (NP-Complete).} A problem $\pi$ is \textbf{NP-complete} if and only if $\pi$ is \textbf{NP}-hard and $\pi \in \textbf{NP}$.
+
+\begin{claim}
+    Consider \textsc{Circuit-Sat}, which asks whether there is a satisfying assignment to a boolean circuit.
+
+    We claim that \textsc{Circuit-Sat} is \textbf{NP}-complete.
+\end{claim}
+
+\begin{proof}
+    It's obvious that \textsc{Circuit-Sat} is in \textbf{NP}.
+
+    Now consider any problem $Q \in \textbf{NP}$.  Because $Q$ is in \textbf{NP}, it has a verifier algorithm $A_Q$.  Implement $A_Q$ as a polynomial-sized boolean circuit; that is, express $A_Q$ in hardware.  Now run \textsc{Circuit-Sat} on  this circuit.
+
+    More formally, Turing Machine blah blah blah. ~ $\blacksquare$
+\end{proof}
+
+\textbf{Definition (CNF).} A formula is in $k$-\textbf{CNF (Conjunctive Normal Form)} if it is an AND $(\wedge)$ of clauses, each of which are ORs $(\vee)$ of exactly $k$ literals---variables and their negations $(\neg)$.
+
+\begin{remark}
+    Other definitions exist; for example, some definitions allow $0$ and $1$ to be literals.
+\end{remark}
+
+For example, $(x_1 \vee \neg x_2) \wedge x_3$ is not in CNF, but $(x_1 \vee \neg x_2) \wedge (x_3 \vee x_3)$ is in 2-CNF (but not 3-CNF).
+
+\begin{claim}
+    Consider \textsc{3-Sat}, which asks whether there is a satisfying assignment for a formula in 3-CNF.
+
+    We claim that \textsc{3-Sat} is \textbf{NP}-complete.
+\end{claim}
+
+\begin{proof}
+    Obviously it's in \textbf{NP}.  Now for any problem $Q \in \textbf{NP}$, first reduce it to a boolean circuit, and then encode that circuit as a boolean formula.
+
+    The point is that \textsc{3-Sat} is a normal form of all boolean formulas; any boolean formula can be written in \textsc{3-Sat}.
+\end{proof}
+
+\textbf{Definition (Vertex Cover).} Given a graph, a \textbf{vertex cover} is a set of vertices that contains at least one endpoint from every edge.  (Kind of a satisfying assignment to a 2-CNF formula, without negations.)
+
+\begin{remark}
+    To lower-bound the size of a vertex cover by $k$, find $k$ disjoint edges\dots
+\end{remark}
+
+\begin{claim}
+    Consider \textsc{Vertex-Cover}, which asks whether a graph has a vertex cover of size at most $K$.
+
+    We claim that \textsc{Vertex-Cover} is \textbf{NP}-complete.
+\end{claim}
+
+\begin{proof}
+    Obviously it's \textbf{NP}.  We'll proceed by reducing \textsc{3-Sat} to \textsc{Vertex-Cover}.
+\begin{center}
+    \frame{\includegraphics[width=0.5\textwidth]{lecture-14/vertex-cover}}
+\end{center}
+    The idea is the following:
+    \begin{itemize}
+        \item Each line segment $a \leftrightarrow b$ requires one vertex from $\{a, b\}$.
+        \item Each triangle $a \leftrightarrow b \leftrightarrow c \leftrightarrow a$ requires two vertices from $\{a, b, c\}$.
+    \end{itemize}
+    If we have $n$ variables and $m$ clauses, we'll have $n$ line segments and $m$ triangles.  (Check: poly-time reduction.)
+
+    Now set $K = n + 2m$.  We must then:
+    \begin{itemize}
+        \item Choose \emph{exactly} one of $\{x_i, \neg x_i\}$ for each $i$.
+        
+        That is, set each literal $x_i$ to either True or False.
+        \item Choose \emph{exactly} two of $\{v_{C_i, 1}, v_{C_i, 2}, v_{C_i, 3}\}$ for each $i$.
+        
+        That is, designate \emph{exactly} one literal $L$ from each clause $C$ to \emph{not} shade in\dots so then, by corollary of the green edges, that literal $L$ must satisfy $C$.
+    \end{itemize}
+    Formally, a proof goes both ways: \textsc{3-Sat} $\rightarrow$ \textsc{Vertex-Cover} and \textsc{Vertex-Cover} $\rightarrow$ \textsc{3-Sat}.  Do this! ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    We should really be speaking in levels of abstraction; there's two \textit{gadgets} here, the line segment and the triangle.  In general, these two gadgets are good starting points.
+\end{remark}
+
+\begin{claim}
+    Consider \textsc{Subset-Sum}, which, given a set $S$ of positive integers, asks if there is a $T \subseteq S$ with $\sum_{t \in T} t = \ell$.
+
+    We claim that \textsc{Subset-Sum} is \textbf{NP}-complete.
+\end{claim}
+
+\begin{proof}
+    Obviously it's \textbf{NP}.  We'll proceed by reducing \textsc{Vertex-Cover} to \textsc{Subset-Sum}.
+    \begin{center}
+        \frame{\includegraphics[width=0.5\textwidth]{lecture-14/subset-sum}}
+    \end{center}
+    Suppose $G$ has $m$ edges, enumerated $\{e_i\}_{i = 1}^m$, and we seek a vertex cover of size $K$.
+    \begin{itemize}
+        \item For each edge $e_i$, append $s_{e_{i}} = 4^{i - 1}$ to $S$.
+        \item For each vertex $v$, append $s_v = 4^m + \sum_{i \in N(v)} 4^{i - 1}$, where $N(v)$ is the set of edges connected to $v$.
+        \item Set the target sum to $\ell = K \cdot 4^m + 2 \cdot \sum_{i = 1}^m 4^{i - 1}$.
+    \end{itemize}
+    Of course, we should really be thinking in base $4$.  When we select a subset of $\{s_{e_i}\} \cup \{s_v\}$,
+    \begin{itemize}
+        \item The $4^m$-place of the sum encodes the number of vertices we picked.
+        \item The $4^{i - 1}$-place (for $1 \leq i \leq m$) where $e_i = v_1 \leftrightarrow v_2$ encodes how many $\{e_i, v_1, v_2\}$ were picked.
+    \end{itemize}
+    Let's write out both directions explicitly this time.
+
+    Given a vertex cover $V' \subseteq V$, we pick our subset by choosing:
+    \begin{itemize}
+        \item The vertex-elements $s_v$ for all $v \in V'$.
+        \item The edge-elements $s_e$ for all edges $e = v_1 \leftrightarrow v_2$ with $v_1 \in V'$ and $v_2 \not \in V'$.
+    \end{itemize}
+    Now for the other direction.  Given a subset-sum $T \subseteq S$, just take $V' := \{v \in V \mid s_v \in T\}$.  Then for each edge $e_i = v_1 \leftrightarrow v_2$, exactly two of $\{e_i, v_1, v_2\}$ were picked, so at least one of $\{v_1, v_2\}$ are in $V'$, as desired.
+
+    We chose $4$ as the base so that no regrouping can happen.  (Think vector-sum, not subset-sum.) ~ $\blacksquare$
+\end{proof}
+
+\end{document}

@@ -1,0 +1,150 @@
+\lecture{6}
+\title{Hash Functions (Part I)}
+
+\begin{document}
+
+\begin{problem}{Dictionary}
+    A dictionary is a mapping from \emph{distinct} keys to values; equivalently, it's a collection of objects $\{x_i\}$ such that each object $x_i$ has attributes $x_i.\textsc{Key}$ and $x_i.\textsc{Value}$.  Our dictionary must support:
+    \begin{itemize}
+        \item $\textsc{Insert}(k, v)$: Adds the key-value pair $(k, v)$.
+        \item $\textsc{Delete}(k)$: Removes the item $x$ satisfying $x.\textsc{Key} = k$ (if it exists).
+        \item $\textsc{Search}(k)$: Returns the value $x.\textsc{Value}$ for the $x$ satisfying $x.\textsc{Key} = k$ (or returns $\textsc{Null}$ if no $x$ exists).
+    \end{itemize}
+\end{problem}
+Let $\mathcal{U}$ denote the universe of all possible keys, let $n$ denote the number of objects in the dictionary.
+
+We want $\mathcal{U} \gg n$, of course.  For simplicity, in this lecture we'll assume $\mathcal{U} \subseteq \mathbb{Z}^{\geq 0}$.
+
+\begin{solution}{Solution \#1: Huge Array}
+    Just allocate a huge array of size $|\mathcal{U}|$.  This supports every operation in $\Theta(1)$ time, but requires $\Theta(|\mathcal{U}|)$ space, which is terribly inefficient.
+\end{solution}
+
+\begin{solution}{Solution \#2: Doubly-Linked List}
+    Just store everything in a doubly-linked list.  This requires only $\Theta(n)$ space, but takes $\Theta(n)$ time for all three operations.
+\end{solution}
+
+\begin{solution}{Solution \#3: Balanced Binary Tree}
+    Solution \#2, except every operation only takes $\Theta(\log n)$ time!
+\end{solution}
+
+To do \emph{even better}, involve the following:
+
+\textbf{Definition (Hash Function).} We seek to reduce the universe size by building a hash function $h: \mathcal{U} \to \{1, 2, \dots, m\}$.  This gives us the time complexity of Solution \#1, but the space complexity of Solution \#2!
+
+Here, say $m$ is the \emph{size} of the dictionary, and say $\alpha := \frac{m}{n}$ is its \emph{load factor}.  We have the following concern:
+
+\begin{problem}{Injectivity}
+    Evidently $|\mathcal{U}| \gg n$, so $h$ is not injective.  What if two keys have the same image?
+\end{problem}
+
+\begin{solution}{Hashing \& Chaining}
+    Each of $\{1, 2, \dots, m\}$ maintains a doubly-linked list.  Every $(k, v)$ is appended to the head of the doubly-linked list of $h(k)$.
+
+    Then $\textsc{Insert}(k, v)$ takes $\Theta(1)$ time, and our space complexity if $\Theta(m + n)$.  Meanwhile,
+    \begin{itemize}
+        \item In the best case, $\textsc{Delete}(k)$ and $\textsc{Search}(k)$ take $\Theta\left(\frac{m + n}{n}\right) = \Theta\left(1 + \frac{m}{n}\right) = \Theta(1 + \alpha)$ time complexity.
+        \item In the worst case, $\textsc{Delete}(k)$ and $\textsc{Search}(k)$ take $\Theta(n)$ time complexity.
+    \end{itemize}
+    To be explicit: the cost of $\textsc{Delete}(k)$ and $\textsc{Search}(k)$ depend on the length of the doubly-linked list of $h(k)$.
+\end{solution}
+
+More generally, any \emph{deterministic} hash function will fail in the worst case.  But \emph{random} hash functions\dots
+
+\begin{problem}{Randomization Goal}
+Consider any \emph{worst-case} set of keys $k_1, k_2, \dots, k_n \in \mathcal{U}$.  Still, then, we have:
+\[ \mathrm{Pr}\left [\text{operations } k_1, k_2, \dots, k_n \text{ all take } \Theta\left(1 + \alpha \right) \right ] \geq 0.999. \]
+Note that $\mathrm{Pr}$ is taken over the hash function randomization, \emph{not} the choice of keys.
+\end{problem}
+
+To check your understanding\dots note that we don't seek, more strongly, this instead:
+\[ \mathrm{Pr}\left [ \forall \ k_1, k_2, \dots, k_n, \text{ the operations } k_1, k_2, \dots, k_n \text{ all take } \Theta\left(1 + \alpha\right) \right ] \geq 0.999. \]
+It's because the event described above is literally impossible, for reasons explained earlier.
+
+\begin{problem}{Simpler Goal}
+Instead, we only ask that $\mathbb{E}[\text{running time of any operation}] \leq O(1 + \alpha)$.
+\end{problem}
+
+Proving this simpler goal does not imply the original goal, but the proof idea is similar.
+
+\begin{claim}
+Uniform random hashing satisfies the simpler goal.
+\end{claim}
+
+\begin{proof}
+    Just linearity of expectation. ~ $\blacksquare$
+\end{proof}
+
+Except it's not really the end.  How, exactly, do we implement $h$ itself?  Note that $h$ is, itself, a dictionary!
+
+\textbf{Definition.} Call a family of hash functions $\mathcal{H} \subseteq \{\text{all hash functions } h: \mathcal{U} \to \{0, 1, \dots, m - 1\}\}$ \textbf{uniform} if:
+\[ \underset{h \sim \mathcal{H}}{\mathrm{Pr}} [ h(k) = \ell] = \dfrac{1}{m}, ~~~ \forall \ k \in \mathcal{U}, ~~~ \forall \ 0 \leq \ell \leq m - 1 \]
+Uniform hash families are not good enough.  For example, the uniform family $\{h_\ell: k \mapsto \ell \}_{\ell = 0}^{m - 1}$ is useless.
+
+\textbf{Definition.} Consider some arbitrary sequence of keys $k_1, \dots, k_n \in \mathcal{U}$.  Then for each $j = 1, 2, \dots, n$, we define:
+\[ C_j := \# \{ j' \neq j \mid h(k_{j'}) = h(k_j)\}. \]
+Note that $\textsc{Search}(k_j)$ and $\textsc{Delete}(k_j)$ both take $O(1 + C_j)$ time.
+
+\begin{claim}
+Uniform random hashing satisfies $\mathbb{E}[C_j] \leq \alpha$ for all $j = 1, 2, \dots, n$.
+\end{claim}
+
+\begin{proof}
+    Just linearity of expectation. ~ $\blacksquare$
+\end{proof}
+
+\textbf{Definition.} Call a family of hash functions $\mathcal{H} \subseteq \{\text{all hash functions } h: \mathcal{U} \to \{0, 1, \dots, m - 1\}\}$ \textbf{universal} if:
+\[ \forall \ k_1 \neq k_2, ~~~ \underset{h \sim \mathcal{H}}{\mathrm{Pr}}[h(k_1) = h(k_2)] \leq \dfrac{1}{m}. \]
+\begin{claim}
+Any universal hash family satisfies $\mathbb{E}[C_j] \leq \alpha$ for all $j = 1, 2, \dots, n$.
+\end{claim}
+
+By corollary, any universal hash family achieves our goal of $\mathbb{E}[\text{running time of any operation}] \leq O(1 + \alpha)$.
+
+\begin{proof}
+    Just LoE again.  We've generalized uniform random hashing in a way that preserves the proof. ~ $\blacksquare$
+\end{proof}
+
+\begin{problem}{Universal Hash Family}
+    How can we define a universal hash family?
+\end{problem}
+
+\begin{solution}{Universal Hash Family: Failures}
+    We might try the following things:
+    \begin{itemize}
+        \item \textbf{Failure \#1.} Just take $h(k) := k \% m$.
+        
+        This doesn't work.  It's deterministic and not even a family.
+        \item \textbf{Failure \#2.} Let's try $\mathcal{H} := \{h_s: k \mapsto ((k + s) \% m)\}_{s = 0}^m$.
+        
+        This doesn't work.  If $h_{s}(k_1) = h_{s}(k_2)$ for one $s$, then $h_{s'}(k_1) = h_{s'}(k_2)$ for all other $s'$.
+        \item \textbf{Failure \#3.} How about $\mathcal{H} := \{h_s: k \mapsto ((k \cdot s) \% m)\}_{s = 0}^m$ instead?
+
+        This doesn't work for the same reason.  It's even worse, actually, since $h_s$ isn't surjective; it's wasteful.
+    \end{itemize}
+\end{solution}
+
+Now for the actual construction.
+
+\begin{solution}{Universal Hash Function: Success}
+    Here it is.
+    \begin{itemize}
+        \item Consider the smallest prime $m > n$.  (By Bertrand's Postulate, we have $m < 2n$, nicely.)
+        \item If we say $r = \lceil \log_m(|\mathcal{U}|) \rceil$, then there is a mapping $f: \mathcal{U} \to [m - 1]^r$ via base-$m$ representation.
+        \item Our hash family will have $m^r \approx |\mathcal{U}|$ hash functions $h_a$ indexed by $a = (a_0, a_1, \dots, a_{m - 1}) \in [m - 1]^r$:
+        \[ h_a: \left( k := \sum_{i = 0}^{m - 1} d_i m^i \right) \mapsto \left( h_a(k) :=  \sum_{i = 0}^{m - 1} a_i d_i \right). \]
+    \end{itemize}
+\end{solution}
+
+\begin{proof}
+    This hash function \emph{feels} universal, and the proof is similarly obvious.
+    
+    Say $k_1 \neq k_2$ first differ at position $\ell^*$ in their base-$m$ representations.
+    
+    Then the value of $a_{\ell^*}$ exactly determines whether $h_a(k_1) = h_a(k_1)$ or not. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    We keep writing $O(1 + \alpha)$ instead of just $O(1)$ or $O(\alpha)$ because the relationship between $m$ and $n$ may vary.  (It could be that $n \ll m$ or $n \gg m$.)
+\end{remark}
+
+\end{document}

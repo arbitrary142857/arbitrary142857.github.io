@@ -1,0 +1,98 @@
+\lecture{17}
+\title{Multiplicative Weights}
+
+\begin{document}
+
+\textbf{Setup.} A learner has $n$ experts.  At time step $t$, expert $i$ makes a prediction $p_i^t \in \{0, 1\}$.  The learner makes predictions based on the $n$ experts' predictions.  The learner's goal is to perform well relative to the experts.
+
+\begin{solution}{Weighted Majority}
+    Initialize weights $w_i^0 = 1$ for each expert $i$.  At each step,
+    \begin{itemize}
+        \item Make a prediction based on the weighted majority of experts.
+        \item Updated $w_i^{t + 1} := (1 - \varepsilon) \cdot w_i^t$ if expert $i$ made an incorrect prediction.
+    \end{itemize}
+    Suppose after $T$ time steps that the best expert makes $m^*$ mistakes and the learner makes $m$ mistakes.  Then:
+    \[ m \leq 2 \cdot (1 + \varepsilon) \cdot m^* + \frac{2}{\varepsilon} \cdot \ln (n). \]
+\end{solution}
+
+\begin{remark}
+    If $\varepsilon$ is low, then you take too long to understand your experts, and $\frac{2}{\varepsilon} \cdot \ln(n)$ dominates. \\
+    If $\varepsilon$ is high, then you distrust your experts too easily, and $2 \cdot (1 + \varepsilon) \cdot m^*$ dominates. \\
+    This bound is tight; we'll prove this in the problem set.
+\end{remark}
+
+\begin{proof}
+    Let $W^t := \sum_{i = 1}^n w_i^t$.  Then at time step $t$,
+    \begin{itemize}
+        \item If the learner is correct, we have $W^{t + 1} \leq W^t$.  (This is the best possible bound!)
+        \item If the learner is wrong, we have:
+        \[ W^{t + 1} = W^t - \varepsilon \cdot \left(\sum_{i \text{ wrong}} w_i^t \right) \leq W^t - \varepsilon \cdot \left(\frac{1}{2}W^t\right) = \left(1 - \frac{\varepsilon}{2}\right) \cdot W^t. \]
+    \end{itemize}
+    The above implies that:
+    \[ \left(1 - \dfrac{\varepsilon}{2}\right)^m \cdot n \geq W^T \geq w_{i^*}^T = (1 - \varepsilon)^{m^*}  \]
+    Taking logs yields the result.  The final algebraic step is nonobvious; it holds for $\epsilon < 0.893935$.  ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    As the number of timesteps goes to $T \to \infty$, you do at most twice as bad as the best expert.
+
+    Also, realistically, one would choose $\epsilon \in (0, \frac{1}{2})$.  The bound fails for $\epsilon = 0.9$ for silly post-taking-logs reasons.
+\end{remark}
+
+\textbf{Definition (Online Learning).} Let $A$ be the set of possible actions.  At each time step $t$,
+\begin{itemize}
+    \item The learner picks a probability distribution $p_t$ over $A$.
+    \item The adversary picks a cost function $c_t: A \to [-1, 1]$, possibly dependent on $p_t$.
+    \item The learner picks $a_t$ from $A$ according to $p_t$, incurs cost $c_t(a_t)$, and learns the cost.
+\end{itemize}
+
+\textbf{Example.} The \emph{weighted majority} example has the following:
+\[ A = \{0, 1\} ~~~ \parallel ~~~ p_t = \text{``weighted majority'' (deterministic, not probabilistic)} ~~~ \parallel ~~~ c_t : A \to \{0, 1\} \]
+\textbf{Definition.} We have:
+\begin{itemize}
+    \item The expected cost is $\mathbb{E}[C] = \sum_{t = 1}^T \sum_{a \in A} p_i(a) \cdot c_i(a)$.  There is also an expected benchmark $\mathbb{E}[B]$.
+    \item The \textbf{regret} is $T^{-1} (\mathbb{E}[C] - \mathbb{E}[B])$, and we say there is \textbf{vanishing regret} if $\displaystyle\lim_{T \to \infty} T^{-1} (\mathbb{E}[C] - \mathbb{E}[B]) = 0$.
+\end{itemize}
+
+What is a reasonable benchmark?
+\begin{itemize}
+    \item We might set $B$ to be ``the best action in hindsight''.
+    \begin{itemize}
+        \item However, this is too high a standard: it is impossible to achieve vanishing regret.  (Why?)
+    \end{itemize}
+    \item Instead, set $B$ to be ``the best \emph{fixed} action in hindsight''.
+    \begin{itemize}
+        \item In other words, for each $a \in A$, there is an expert $E_a$ that predicts ``$a$'' at every timestep.
+    \end{itemize}
+\end{itemize}
+Unfortunately, the \emph{weighted majority} algorithm does not achieve vanishing regret.  Indeed, $2 - 1 > 0$.
+
+\begin{solution}{Multiplicative Weights}
+    Update experts' weights as in the \emph{weighted majority} algorithm.
+
+    Instead of making the highest-weighted decision, pick an expert to mimic at each step probabilistically by weight.  Then if $M$ is the total cost incurred by the learner, we have:
+    \[ \mathbb{E}[M] \leq (1 + \varepsilon) \cdot m^* + \dfrac{1}{\varepsilon} \cdot \ln(n). \]
+\end{solution}
+
+\vspace{-0.6cm}
+
+\begin{proof}
+    We use the following notation:
+    \begin{itemize}
+        \item Let $M^t$ be the cost incurred at step $t$.
+        \item Let $M_i^t$ be an indicator variable that equals $1$ if expert $i$ made a mistake at time $t$, and $0$ otherwise.
+    \end{itemize}
+    It follows that $\mathbb{E}[M^t] = \sum_{i = 1}^n M_i^t \cdot \frac{w_i^t}{W^t}$.  Therefore,
+    \[ W^{t + 1} = \sum_{i = 1}^n w_i^{t + 1} = \sum_{i = 1}^n (1 - \varepsilon M_i^t) \cdot w_i^t = (1 - \varepsilon \mathbb{E}[M^t]) \cdot W^t \leq \mathrm{exp}\left(-\varepsilon \mathbb{E}[M^t]\right) \cdot W^t.\]
+    If we keep multiplying these $\mathrm{exp} \left ( - \varepsilon \mathbb{E}[M^t]\right)$ factors across all $t$, we find:
+    \[ (1 - \varepsilon)^{m^*} \leq W^t \leq \mathrm{exp}\left(-\varepsilon \mathbb{E}[M]\right) \cdot n. \]
+    And now take logs to get the desired inequality. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    Again, the post-taking-logs step only holds for $\epsilon < 0.68$.  Again, just assume $\epsilon \in (0, \frac{1}{2})$.
+\end{remark}
+
+And of course, this implies \emph{multiplicative weights} has vanishing regret.
+
+\end{document}

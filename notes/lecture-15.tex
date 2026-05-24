@@ -1,0 +1,80 @@
+\lecture{15}
+\title{Approximation Algorithms (Part I)}
+
+\begin{document}
+
+\textbf{Notation.} We say that $\mathcal{P}$ denotes (optimization) problems, $P$ denotes instances, and $\textsc{Opt}(P)$ denotes the optimal value of a problem $P$.  We say that $\mathcal{A}$ denotes algorithms, and $\mathcal{A}(P)$ denotes the return value of $\mathcal{A}$ with input $P$.
+
+\textbf{Definition.} An algorithm $\mathcal{A}$ for a minimization problem $\mathcal{P}$ is an ``$\alpha$-approximation'' (for $\alpha \geq 1$) if, for all instances $P$ of $\mathcal{P}$, we have $\mathcal{A}(P) \leq \alpha \cdot \textsc{Opt}(P)$.
+
+\textbf{Definition.} For maximization problems, we have $\mathcal{A}(P) \geq \frac{1}{\alpha} \cdot \textsc{Opt}(P)$ instead.  (Always assume $\alpha \geq 1$.)
+
+\begin{problem}{Maximum Matching}
+    Given any graph $G$ (not necessarily bipartite), find a maximum matching.
+\end{problem}
+
+\begin{remark}
+    It turns out this is actually in $\textbf{P}$.  But the point is that the $\textbf{P}$ algorithm is really complicated, whereas\dots
+\end{remark}
+
+\begin{solution}{Maximum Matching}
+    Read the edges in some order; greedily pick edges.  This is a $2$-approximation.
+\end{solution}
+
+\begin{proof}
+    The matching found by this algorithm is \emph{maximal}: no edges can be added.
+    \begin{quote}
+        \textbf{Claim.} Maximal matchings are $2$-approximations to maximum matchings.
+
+        \emph{Proof:} Consider the maximum matching $M^*$ and our maximal matching $M$.
+
+        No edge from $M^*$ can be added to $M$, so for every $e^* \in M^*$, there is some $e \in M$ that disqualifies it.
+
+        However, each $e \in M$ can disqualify at most two $e^* \in M^*$.  So $|M| \leq 2 \cdot |M^*|$. ~ $\square$
+    \end{quote}
+    The end.  Some questions: Why is the constant $2$ tight?  When do we achieve equality? ~ $\blacksquare$
+\end{proof}
+
+\begin{problem}{Vertex Cover}
+    Given a graph $G$, find a minimum vertex cover.
+\end{problem}
+
+\begin{solution}{Vertex Cover}
+    Use the approximation-maximum-matching algorithm to construct a maximal matching.  The vertex cover is the set of all vertices used in a maximal matching.  This is a $2$-approximation.
+\end{solution}
+
+\begin{remark}
+    When the matching is good, the vertex cover is bad, and vice versa. (!!)
+\end{remark}
+
+\begin{proof}
+    We claim endpoints of maximal matchings are $2$-approximations to minimum vertex covers.
+    
+    Why are endpoints of maximal matchings vertex covers? Because.
+        
+    And the bound is easy: for any matching $M$, we have $|V^*| \geq |M|$, but $|V| = 2 \cdot |M|$. ~ $\blacksquare$
+\end{proof}
+
+Assuming widely-believed conjectures (such as $\textbf{P} \neq \textbf{NP}$), this is the best constant we can achieve.
+
+\begin{solution}{Vertex Cover, Badly}
+    Greedily pick vertices of maximum degree.  It turns out this is an $O(\log |V|)$-approximation algorithm---pretty bad.  (Note: $O(\log |V|) = O(\log |E|)$ because $|E| = O(|V|^2)$.)
+\end{solution}
+
+\begin{proof}
+     Say we start with graph $G_0$, and at iteration $i$, we remove the vertex $v_i \in G_{i - 1}$ with degree $d_i$, yielding a graph $G_i$ with $m_i$ edges.  And say $S^*$ is a minimum vertex cover.
+
+     Notice $d_i \geq \frac{m_{i - 1}}{|S^*|}$, because edges in $G_{i - 1}$ map to to vertices in $S^*$ so that each vertex in $S^*$ gets at most $d_i$ edges.
+
+     Therefore, $m_{\ell} \leq \left(1 - \frac{1}{|S^*|}\right)^{\ell} \cdot |E|$, because removing vertex $v_i$ removes at least $\frac{1}{|S^*|}$ of all edges in $G_{i - 1}$.
+     
+     Thus, when $\ell \approx |S^*| \cdot \log |E|$ we have $m_{\ell} \leq 1$, so we have $|V| \leq |S^*| \cdot \log|E|$, done. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    We cannot do better than a $2$-approximation for vertex cover.
+
+    As a (hard!) exercise: show that the $\alpha = \log |V|$ bound on our vertex-cover approximation algorithm is tight.
+\end{remark}
+
+\end{document}

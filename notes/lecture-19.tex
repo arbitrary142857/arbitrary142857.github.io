@@ -1,0 +1,172 @@
+\lecture{19}
+\title{Streaming Algorithms}
+
+\begin{document}
+
+\textbf{Definition (Compression Function).} Given an input stream $X$, we might have a \textbf{compression function} $f(X)$ whose value we would like to compute.
+
+\textbf{Definition (Sketch).} A \textbf{sketch} $C(X)$ is a ``summary'' of the stream $X$, with the property that $C(X \cup \{x\})$ is a simple function of $C(X)$ and $x$, and that $C(X)$ alone is enough to compute or approximate $f(X)$.
+
+Roughly speaking, the quality of our streaming algorithm has to do with:
+\begin{itemize}
+    \item The size of the sketch $C(X)$.
+    \item How well we can compute $f(X)$ given $C(X)$.
+    \item How long it takes to update $C(X \cup \{x\})$ given $C(X)$ and $\{x\}$.
+\end{itemize}
+\begin{remark}
+    An easy exercise: find a streaming algorithm for finding maximum element of a list, such that\dots
+    \begin{itemize}
+        \item The sketch $C(X)$ has size $O(1)$.
+        \item We can compute $f(x)$ exactly given $C(X)$.
+        \item Updating $C(X)$ takes $O(1)$ time.
+    \end{itemize}
+\end{remark}
+
+\begin{problem}{Distinct Elements}
+    Compute the number of distinct elements of a list $X$.
+\end{problem}
+
+In general, our standards for the quality of our estimate $\tilde{f}(X)$ can be summarized by constants $\epsilon, \delta \in [0, 1]$.
+\[ \mathrm{Pr}\left [ \tilde{f}(X) \in ((1 - \epsilon) f(X), (1 + \epsilon)f(X)) \right] \geq 1 - \delta. \]
+The smaller the values of $\epsilon$ and $\delta$, the better.
+
+\begin{solution}{Flajolet-Martin 1985}
+    Suppose the elements of $X$ come from a universe $\mathcal{U}$, and pick a ``truly random'' function $h: \mathcal{U} \to [0, 1]$.  Omit the details of randomness for simplicity.
+
+    Initialize $C(X) = 1$, and update $C(X \cup \{x\}) = \min\{C(X), h(x)\}$.  Then output $\tilde{f}(X) = (C(X))^{-1} - 1$.
+\end{solution}
+
+Perhaps expectedly, Flajolet-Martin sucks; let's analyze its quality using the $(\epsilon, \delta)$ definition from above.
+
+\begin{proof}
+    For any $\epsilon \in [0, 1]$ and sufficiently large $n := (\# \text{ distinct elements of } X) = f(X)$, we have:
+    \begin{align*}
+        \mathrm{Pr}\left [ \tilde{f}(X) \in ((1 - \epsilon) n, (1 + \epsilon)n) \right] = \left(1 - \dfrac{1}{(1 + \epsilon)n + 1}\right)^n - \left(1 - \dfrac{1}{(1 - \epsilon)n + 1}\right)^n \approx e^{-1/(1 + \epsilon)} - e^{-1/(1 - \epsilon)}.
+    \end{align*}
+    Notably, $\delta \approx 1 - (e^{-1/(1 + \epsilon)} - e^{-1/(1 - \epsilon)})$ does not tend very small for large $n$---especially for small $\epsilon$. ~ $\blacksquare$
+\end{proof}
+
+Here's a better algorithm than Flajolet-Martin.
+
+\begin{solution}{KMV}
+    Say the elements of $X$ come from a universe $\mathcal{U}$ of size $u := |\mathcal{U}|$.  Say $M = \{1, 2, \dots, u^3\}$.  Pick a hash function $h: \mathcal{U} \to M$ at random from a $2$-wise independent hash family.
+
+    Initialize $C(X) = \emptyset$, define $k := \lceil 24 \epsilon^{-2} \rceil$, where $\epsilon$ is one of the ``quality constants'' from earlier.  Update like so:
+    \[ C(X) = \min_k\{C(X) \cup \{h(x_i)\}\}, \text{ where } \min_k \clubsuit := \{ \text{the $k$ smallest elements of $\clubsuit$}\}. \]
+    Finally, return the value:
+    \[ \tilde{f}(X) := \begin{cases}
+        |C(X)| & \text{if } |C(X)| < k. \\
+        k u^3 \cdot \left(\max\{C(X)\}\right)^{-1} & \text{otherwise.}
+    \end{cases} \]
+\end{solution}
+
+\begin{remark}
+    Think of this as an improved Flajolet-Martin.
+    \begin{itemize}
+        \item Rather than hashing $h: \mathcal{U} \to [0, 1]$, we discretize the interval $[0, 1]$ into $|\mathcal{U}|^3$ pieces.
+        \item Rather than only considering the minimum hashed value, we consider the $k$ least hashed values.
+    \end{itemize}
+\end{remark}
+
+\begin{claim}
+    For all $\epsilon < \frac{1}{2}$, assuming $u > \frac{1}{\epsilon^2}$, we have that $\delta = \frac{1}{3}$ holds.
+\end{claim}
+
+\begin{proof}
+    Say that $X$ has $d := f(X)$ distinct values.  Let's justify only the bound $\mathrm{Pr}\left [\tilde{f}(X) \geq (1 + \epsilon) d\right ] \leq \frac{1}{12}$.
+
+    If $|C(x)| < k$, then we are in the ``top case'' for $\tilde{f}(X)$, so this probability is obviously zero.
+
+    Otherwise, $\tilde{f}(X) \geq (1 + \epsilon) d$ means that at least $k$ hash values are less than $L = k u^3 \cdot \left [ (1 + \epsilon) d \right ]^{-1}$.  Consider indicator variables $Y_i$ that measure whether the $i^{\text{th}}$ distinct element is hashed to a value at most $L$.  If $Y := \sum_{i = 1}^d Y_i$, then:
+    \[ \mathbb{E}[Y] = d \cdot \mathbb{E}[Y_i] = \dfrac{k}{1 + \epsilon} ~~~ \text{ and } ~~~ \mathbb{V}[Y] = d \cdot \mathbb{V}[Y_i] = d \cdot\left(\mathbb{E}[Y_i^2] - (\mathbb{E}[Y_i])^2\right) \leq d \cdot \mathbb{E}[Y_i^2] = \dfrac{k}{1 + \epsilon}. \]
+    We're allowed to say $\mathbb{V}[Y] = \sum_{i = 1}^d \mathbb{V}[Y_i]$ because the $2$-wise independence means $\mathrm{cov}(Y_i, Y_j) = 0$ for $i \neq j$.
+
+    Now Chebyshev's inequality gives us:
+    \[ \mathrm{Pr}[Y \geq k] = \mathrm{Pr}\left [ Y - \dfrac{k}{1 + \epsilon} \geq \dfrac{\epsilon k}{1 + \epsilon} \right ] \leq \mathrm{Pr} \left [ |Y - \mathbb{E}[Y]| \geq \dfrac{\epsilon k}{1 + \epsilon} \right] \leq \dfrac{\mathbb{V}[Y]}{\left(\frac{\epsilon k}{1 + \epsilon}\right)^2}  \leq \dfrac{1 + \epsilon}{\epsilon^2k} \leq \dfrac{1}{12}. \]
+    The other direction is $\mathrm{Pr}\left [\tilde{f}(X) \leq (1 + \epsilon) d\right ] \leq \frac{1}{4}$ hence the $\delta = \frac{1}{3}$ constant.  It's not exactly symmetric. ~ $\blacksquare$
+\end{proof}
+
+The space is $O(k \log u) = O\left(\frac{\log u}{\epsilon^2}\right)$, and so is the time; the $\log u$ comes from max-heap insertion operations.
+
+\begin{remark}
+    \textcolor{red}{TODO: explain what 2-wise independence is}
+\end{remark}
+
+\begin{problem}{Majority}
+    Given an input stream $X$ with an element $x$ that appears more than half the time, find $x$.
+\end{problem}
+
+\begin{solution}{BM81}
+    Store two variables $c$ and $x$.  Initialize $c = 0$ and $x = \textsc{Null}$.  Upon reading a new $x_i$,
+    \begin{itemize}
+        \item If $x = \textsc{Null}$, then set $c = 1$ and $x = x_i$.
+        \item If $x = x_i$, then increment $c$ and leave $x$ unchanged.
+        \item If $x \neq x_i$, then decrement $c$.  If $c = 0$ now, set $x = \textsc{Null}$.
+    \end{itemize}
+    Then $x$ is the desired answer.
+\end{solution}
+
+\begin{proof}
+    Say $M$ is the majority element.  Consider some transition $(c, x) \to (c - 1, [x \text{ or } \textsc{Null}])$ upon reading in a new $x_i$.  Think of this instance of $x_i$ as ``eliminating'' an instance of $x$ earlier in the stream.
+
+    In this way, instances of $x$ form disjoint pairs with different values $x_i$ later in the stream.  And \emph{removing} any one of these pairs from the stream does not affect the final answer of the algorithm!1
+
+    But if we remove all such pairs, the result is an input stream of only $M$'s.  So $M$ must be the final answer. ~ $\blacksquare$
+
+    % Say $M$ is the majority element, and that $M$ appears more than half the time.
+    
+    % Consider the final time $x$ changes; say inputs $B$ are processed before this, and inputs $A$ processed after.
+
+    % At most half the elements of $B$ can be $M$, so at least half the elements of $A$ are $M$.  But when processing $A$ onward, $x$ never changes, so $M$ must be the final value of $x$. ~ $\blacksquare$
+\end{proof}
+
+\begin{problem}{Heavy Hitters}
+    Given an input stream $X$, find all elements that appear more than $\frac{1}{k}$ of the time.
+\end{problem}
+
+\begin{solution}{MG82}
+    Have $k - 1$ copies of the $(c, x)$ setup from before.  Upon reading a new $x_i$,
+    \begin{itemize}
+        \item If $x_i$ matches any of the $x$ values, increment its corresponding $c$.
+        \item Otherwise, if some $x$ equals $\textsc{Null}$, replace that $\textsc{Null}$ with $x_i$ and set $c = 1$.
+        \item Otherwise, decrement all $c$.
+    \end{itemize}
+    Then every element that appears more than $\frac{1}{k}$ of the time will be one of the $x$ values.
+\end{solution}
+
+\begin{remark}
+    Note that the algorithm might return values that don't appear more than $\frac{1}{k}$ of the time.
+\end{remark}
+
+\begin{proof}
+    Similar argument as before.  Every transition of the form
+    \[ \{(c_1, x_1), (x_2, x_2), \dots, (c_k, x_k)\} \stackrel{x_i}{\longrightarrow} \{(c_1 - 1, x_1), (c_2 - 1, x_2), \dots, (c_k - 1, x_k)\} \]
+    can be viewed as an instance of $x_i$ ``eliminating'' an instance of each of $x_1, x_2, \dots, x_k$.
+
+    Removing any of these $(k + 1)$-tuples does not affect the final result of the algorithm.  Remove $(k + 1)$-tuples until you cannot any longer; the resulting stream still has every $x$ that appears more than $\frac{1}{k}$ of the time. ~ $\blacksquare$
+\end{proof}
+
+\begin{problem}{Approximate Heavy Hitters}
+    Given an input stream $X$, find a set $H$ of elements such that:
+    \begin{itemize}
+        \item If an element appears more than $\frac{1}{k}$ of the time, it must be in $H$.
+        \item If an element appears at most $\frac{1}{k} - \epsilon$ of the time, it is in $H$ with probability at most $\delta$.
+    \end{itemize}
+    In other words, we want to never return elements that barely appear in the stream.
+\end{problem}
+
+\begin{solution}{bloom whatever}
+    TODO
+\end{solution}
+
+\textbf{Definition (Jacard Similarity).} Given sets $S$ and $T$, their \textbf{Jacard similarity} is $J(S, T) := \frac{|S \cap T|}{|S \cup T|}$.
+
+\begin{problem}{Similarity Search}
+    Given a collection of sets and a query, return the sets most similar to the query.
+\end{problem}
+
+\begin{solution}{Approximate Similarity Search}
+    TODO
+\end{solution}
+
+\end{document}

@@ -1,0 +1,99 @@
+\lecture{18}
+\title{Randomized Algorithms}
+
+\begin{document}
+
+\textbf{Definition (Sublinear).} An algorithm is \textbf{sublinear} if it is solved in less than $O(n)$ time---less time than it takes to even read the whole input!  (Naturally, these are approximation algorithms.)
+
+\textbf{Definition (Classical Approximation).} In classical (e.g. optimization) problems, an approximation algorithm should return an answer within a factor of $\alpha$ of the correct one.
+
+\textbf{Definition (Decision Approximation).} In decision problems, an approximation algorithm should:
+\begin{itemize}
+    \item Always return \textsc{Yes} for \textsc{Yes}-instances.
+    \item Return \textsc{No} with probability $\geq \frac{3}{4}$ if the input is ``far'' from a \textsc{Yes}-instance.
+    \item Otherwise, return either \textsc{Yes} or \textsc{No}.  (We don't care.)
+\end{itemize}
+
+\begin{problem}{Diameter}
+    Consider a metric $d: [n] \times [n] \to \mathbb{R}^{\geq 0}$ that satisfies the triangle inequality, presented in the form of a symmetric $n \times n$ matrix $D$.  Output the diameter of $[n]$, or the maximum entry of $D$.
+
+    Find an approximation algorithm that runs in $o(N)$, where $N = n^2$ is the size of the input.
+\end{problem}
+
+\begin{solution}{Diameter}
+    Pick some $i \in [n]$, and just return $\max_{j \in [n]} d(i, j)$.  By the triangle inequality, we're off by at most a factor of $2$, and this runs in $O(n) = o(N)$ time. ~ $\blacksquare$
+\end{solution}
+
+\begin{problem}{Connectivity}
+    The input is a graph $G$ with $n$ vertices, each of which has degree at most $d$.  Decide whether $G$ is connected, as an approximation algorithm.
+\end{problem}
+
+\begin{remark}
+    Solving this problem exactly requires $O(nd)$ time.  To distinguish the graphs $K_{n/2} \sqcup K_{n/2}$ and $K_{n/2, n/2}$, one must check $\frac{n}{2} \times \frac{n}{2} = O(n^2)$ edges, which is in fact greater than $O(nd)$.
+\end{remark}
+
+\begin{solution}{Connectivity}
+    Say an instance is considered \emph{far} if it is \emph{not} \underline{$\epsilon$-close to connected}.
+    \begin{quote}
+        \textbf{Definition.} A graph $G$ on $n$ vertices and max degree $d$ is \underline{$\epsilon$-close to connected} if one can add fewer than $\epsilon nd$ edges to make $G$ connected.
+    \end{quote}
+    Let $G$ be a graph that is not $\epsilon$-close to connected.  Then the following are true.
+    \begin{quote}
+        \textbf{Claim 1.} The graph $G$ must have greater than $\epsilon d n$ connected components.
+
+        \emph{Proof:} Obviously. ~ $\square$
+
+        \textbf{Claim 2.} At least half of the connected components must have less than $\frac{2}{\epsilon d}$ vertices.
+
+        \emph{Proof:} By claim 1, we have a lot of connected components.  But we only have $n$ vertices.  ~ $\square$
+
+        \textbf{Claim 3.} At least $\frac{1}{2} \epsilon d n$ vertices are in connected components with less than $\frac{2}{\epsilon d}$ vertices.
+
+        \emph{Proof:} Combine claims 1 and 2.  Every connected component has at least one vertex. ~ $\square$
+    \end{quote}
+    Our strategy is to run the following process $\frac{C}{\epsilon d}$ times.
+\begin{quote}
+    \textbf{Process.} Pick a random vertex $v$.  Run BFS on $v$ until either $v$ is discovered to be in a connected component with less than $\frac{2}{\epsilon d}$ vertices, or $\frac{2}{\epsilon d}$ vertices have been visited.
+\end{quote}
+    If we ``catch'' a vertex $v$ as being part of a connected component with less than $\frac{2}{\epsilon d}$, we declare \textsc{No}.
+    
+    If $G$ is not $\epsilon$-close to connected, the probability we discover this is:
+    \[ \mathrm{Pr}[\text{one of the vertices is ``caught''}] \geq 1 - \left( 1 - \dfrac{1}{2}\epsilon d \right)^{C/\epsilon d} > 1 - \dfrac{1}{e^{C/2}}. \]
+    And the runtime is $O\left(\frac{C}{\epsilon d} \cdot \frac{2}{\epsilon d} \cdot d\right) = O\left(\frac{1}{\epsilon^2 d}\right)$, which is sublinear. ~ $\blacksquare$
+\end{solution}
+
+\begin{problem}{Sorted}
+    Decide if a list of distinct numbers is sorted.
+\end{problem}
+
+\begin{remark}
+    The list $(1, 3, 5, \dots, 2n - 1, 2, 4, 6, \dots, 2n)$ is a useful counterexample.
+
+    The list $(2, 1, 4, 3, \dots, 2n, 2n - 1)$ is another useful counterexample.  (There's only $\frac{n}{2}$ inversions!)
+\end{remark}
+
+\begin{solution}{Sorted}
+    Say an instance is considered \emph{far} if it is \emph{not} \underline{$\epsilon$-close to sorted}.
+    \begin{quote}
+        \textbf{Definition.} A list is \underline{$\epsilon$-close to sorted} if one can delete at most $\epsilon n$ elements and get a sorted list.
+    \end{quote}
+    Our strategy is to run the following process $\frac{C}{\epsilon}$ times.
+    \begin{quote}
+        \textbf{Process.} Pick an index $i \in [n]$ uniformly at random.  Compute the value $V = x_i$.  Now binary search for $V$ as if the list were sorted and you didn't know where it was.
+    \end{quote}
+    The runtime is $O\left (\frac{C}{\epsilon} \cdot \log n\right )$, which is sublinear.
+
+    To argue correctness, say an index $i$ is \emph{good} if the binary search for $x_i$ succeeds.
+    \begin{quote}
+        \textbf{Claim.} If $i < j$ and $i$ and $j$ are both \emph{good}, then $x_i < x_j$.
+
+        \emph{Proof:} Consider the binary search trees for $x_i$ and $x_j$.
+        
+        At some point they diverge; at that point, everything to the left (including $x_i$) better be smaller, and everything to the right (including $x_j$) better be bigger. ~ $\square$
+    \end{quote}
+    The point is that if we remove all elements that are not good, then the remaining list is sorted.  Thus, if a list is not $\epsilon$-close to sorted, it must have at least $\epsilon n$ vertices.
+    
+    So our probability of success is at least $1 - \left(1 - \frac{1}{\epsilon}\right)^{C/\epsilon} \geq 1 - e^{-C}$, yippee. ~ $\blacksquare$
+\end{solution}
+
+\end{document}

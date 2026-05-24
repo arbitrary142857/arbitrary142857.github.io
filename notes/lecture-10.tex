@@ -1,0 +1,86 @@
+\lecture{10}
+\title{Maximum Flow (Part II)}
+
+\begin{document}
+
+Let's first analyze the runtime of our Ford-Fulkerson algorithm.
+
+\begin{solution}{Ford-Fulkerson}
+    Repeatedly find augmenting paths $P := s \to \dots \to t$, then recompute the residual network each time.  Repeat until no more augmenting paths exist.  This is optimal.
+\end{solution}
+
+Suppose all capacities are integers in $[0, C]$, so our algorithm actually terminates.
+\begin{itemize}
+    \item Computing $G_f$ at each step takes $O(|E|)$.
+    \item Searching for an augmenting path at each step takes $O(|E|)$.
+    \item The number of steps is $F^*$.  This is:
+    \begin{itemize}
+        \item Lower-bounded by the number of augmentations, and\dots
+        \item Upper-bounded by the cut of the cut $\{s\}$, which is upper-bounded by $|V| \cdot C$.
+    \end{itemize}
+\end{itemize}
+So overall, we have a runtime of $O(|E| \cdot |V| \cdot C)$, or $O(|E| \cdot F^*)$ where $F^*$ is the max flow.
+
+\begin{remark}
+    This is a pseudopolynomial runtime; we can still get pseudopolynomial runtime with rational capacities!  But real-numbered capacities might yield an infinite loop, so this is the best we can do.
+\end{remark}
+
+However, if we choose our paths poorly, Ford-Fulkerson can have needlessly long runtime.
+\begin{center}
+    \frame{\includegraphics[width=0.35\textwidth]{lecture-10/stupid-ford-fulkerson}}
+\end{center}
+If Ford-Fulkerson picks paths $s \to u \to t$ and $s \to v \to t$, it can finish in just two steps.  \\ But it might also finish in $19 \ 998$ steps if it picks paths $s \to u \to v \to t$ and $s \to v \to u \to t$.
+
+\begin{solution}{Better Ford-Fulkerson}
+    Repeatedly find the \emph{highest bottleneck capacity} augmenting path $s \to t$, and recompute the residual network each time.
+    
+    How?  Dijkstra's, but store the minimum encountered edge weight at each vertex.  This takes $O(|E| \log |V|)$ time.
+\end{solution}
+
+To analyze the runtime of this algorithm, we make the following claim.
+
+\begin{claim}
+    For any graph $G$ with max flow $F^*$, there exists a path $s \to t$ with bottleneck capacity at least $\frac{F^*}{|E|}$.
+\end{claim}
+
+\begin{proof}
+    Flow Decomposition Lemma.  When decomposing a flow into paths and cycles, every path / cycle created will ``use up'' at least one of the $|E|$ edges.  So the flow can be decomposed into at most $|E|$ paths and cycles.
+    
+    Now apply a probabilistic argument. ~ $\blacksquare$
+\end{proof}
+
+Now for the runtime of Better Ford-Fulkerson.
+
+\begin{claim}
+    The better Ford-Fulkerson runs in $O(|E|^2 \cdot \log |V| \cdot \log (C \cdot |V|))$ time.
+\end{claim}
+
+\begin{proof}
+    Each step takes $O(|E| \cdot \log|V|)$ time (finding the maximum bottleneck path).  Also, each step cuts the flow down by $1 - \frac{1}{|E|}$, so the total number of steps is upper-bounded by $O(|E| \cdot \log(C \cdot |V|))$.  The end. ~ $\blacksquare$
+\end{proof}
+
+The gain here is that the dependence on $C$ is now logarithmic, not linear.  This is \emph{weakly polynomial} runtime.
+
+It turns out we have other solutions.
+
+\begin{solution}{Edmonds-Karp}
+    Repeatedly find the \emph{shortest} (least \# of edges) augmenting path $s \to t$, and recompute the residual network each time.  How?  BFS.
+
+    This has runtime $O(|E|^2 \cdot |V|)$, with no dependence on $C$.
+\end{solution}
+
+\begin{solution}{Chen Kyng Lin \dots '22}
+    You can solve this problem in $O(|E|^{1 + o(1)} \cdot \log C)$ time.
+\end{solution}
+
+We'll end with an application of our newfound max-flow-finding tech.
+
+\begin{problem}{Bipartite Matching}
+    Given a bipartite graph $L \sqcup R$, find the largest possible matching.
+\end{problem}
+
+\begin{solution}{Bipartite Matching}
+    Construct $s$ and $t$, then direct all edges $s \to L \to R \to t$ and give them weight $1$.  Then the maximum flow yields the largest possible matching.   (How is the ``matching'' constraint enforced?)  ~ $\blacksquare$
+\end{solution}
+
+\end{document}

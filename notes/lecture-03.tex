@@ -1,0 +1,115 @@
+\lecture{3}
+\title{DSU and Amortized Analysis}
+
+\begin{document}
+
+\begin{problem}{Disjoint Set}
+    Consider a collection of pairwise disjoint sets $\text{DS} := \{ S_1, S_2, \dots, S_r\}$, where each set $S_i$ contains a single representative $\textsc{Rep}[S_i] \in S_i$.  Suppose $\mathrm{DS}$ supports the following operations:
+    \begin{itemize}
+        \item $\textsc{Make-Set}(x)$: Adds $\{x\}$ to $\text{DS}$, with $\textsc{Rep}[\{x\}] = x$.
+        \item $\textsc{Find-Set}(x)$: Returns $\textsc{Rep}[S(x)]$.
+        \item $\textsc{Union}(x, y)$: Replaces $S(x)$ and $S(y)$ with $S(x) \sqcup S(y)$ and sets $\textsc{Rep}[S(x) \sqcup S(y)]$ to $\textsc{Rep}[S(x)]$ or $\textsc{Rep}[S(y)]$.
+    \end{itemize}
+    This data structure is called the \textbf{Union Find} data structure.
+\end{problem}
+
+The idea is to say each set is a doubly-linked list.  For example,
+\[ \text{DS} = \{ \{3, 9, 4\}, \ \{2, 7, 1, 8\} \} ~ \implies ~ \{ 3 \leftrightarrow 9 \leftrightarrow 4 \} \text{ and } \{ 2 \leftrightarrow 7 \leftrightarrow 1 \leftrightarrow 8 \}. \]
+So each element in each $S_i$ has a \texttt{prev} and \texttt{next} pointer.  And we'll say $\textsc{Rep}[S_i]$ is the head of $S_i$.
+
+\begin{solution*}{Disjoint Set \#1}
+    If every $S_i$ is a doubly-linked list, then:
+    \begin{itemize}
+        \item $\textsc{Make-Set}(x)$: Trivial.
+        \item $\textsc{Find-Set}(x)$: Repeatedly follow \texttt{prev} pointers until you reach the head.
+        \item $\textsc{Union}(x, y)$: Use \texttt{prev} and \texttt{next} to find the head and tail of $S(x)$ and $S(y)$, respectively.  Link them.
+    \end{itemize}
+    The time complexity achieved here is:
+    \[ \textsc{Make-Set}: \Theta(1) ~~~~~~ \text{Find-Set}(x): \Theta(|S(x)|) ~~~~~~ \text{Union}(x, y): \Theta(|S(x)| + |S(y)|). \]
+\end{solution*}
+
+But this is a little silly.  It shouldn't take $\Theta(|S(x)|$ just to find the head; $S(x)$ can just store the head in metadata.
+
+\begin{solution}{Disjoint Set \#2}
+    Every element now furthermore points to a metadata object pointing to the head.
+    \begin{itemize}
+        \item $\textsc{Make-Set}(x)$: Trivial, still $\Theta(1)$.
+        \item $\textsc{Find-Set}(x)$: Now also trivially $\Theta(1)$, since you can just read the metadata.
+        \item $\textsc{Union}(x, y)$: Now $\Theta(|S(y)|)$, because you need all elements in $S(y)$ to point to new metadata.
+    \end{itemize}
+\end{solution}
+
+But we can do even better by considering an \textbf{amortized analysis.}
+
+\textbf{Definition (Amortized Cost).} A data structure $\mathbf{D}$ has an \textbf{amortized cost} of $T$ if any sequence of $k$ operations starting from the initial state of $\mathbf{D}$ has a total cost at most $k \cdot T$.
+
+\begin{solution}{Disjoint Set \#3}
+    Let's be smarter about handling $\textsc{Union}(x, y)$: always merge so that $|S(y)| \leq |S(x)|$.  We claim this yields an \emph{amortized cost} of $\Theta(\log n)$, where $n := \sum_{i = 1}^r |S_i|$.
+\end{solution}
+
+\begin{proof}
+    Any individual element has its pointer updated at most $\Theta(\log n)$ times, so \textsc{Union} steps take at most $\Theta(n \log n)$ time.  Every other step takes $\Theta(1)$ time.  And $k \geq n$.  ~ $\blacksquare$
+\end{proof}
+
+More generally, there are three strategies for computing amortized cost.
+\begin{itemize}
+    \item \textbf{Aggregate Method:} What we did just now.  Just compute the cost as a function of $k$, then divide by $k$.
+    \item \textbf{Accounting Method:} We'll discuss this in recitation!
+    \item \textbf{Potential Method:} Define a potential function $\Phi: \text{DS} \to \mathbb{R}^{\geq 0}$, with $\Phi_i := \Phi(\text{DS}_i)$, forced to satisfy $\Phi_0 = 0$.
+
+    Suppose the real costs of $k$ operations are $c_1, c_2, \dots, c_k$.  Define \emph{fake cost} by $\hat{c_i} := c_i + \Phi_i - \Phi_{i - 1}$.  Note that:
+    \[ \sum_{i = 1}^k \hat{c_i} = \sum_{i = 1}^k c_i + (\Phi_i - \Phi_{i - 1}) = (\Phi_k - \Phi_0) + \sum_{i = 1}^k c_i \geq \sum_{i = 1}^k c_i. \]
+    Thus, we can bound $\sum_{i = 1}^k c_i$ by bounding $\sum_{i = 1}^k \hat{c_i}$ instead.  And maybe the latter is easier.
+\end{itemize}
+
+\begin{solution}{Disjoint Set \#4}
+    Every set is now a rooted tree.
+    \begin{itemize}
+        \item $\textsc{Make-Set}(x)$: Create a singleton tree in $\Theta(1)$ time.
+        \item $\textsc{Find-Set}(x)$: Follow parent pointers from $x$ until you reach the root.  This is $\Theta(|S(x)|)$ in the worst case.
+        \item $\textsc{Union}(x, y)$: Find the roots, then point one root to the other.  This is is $\Theta(|S(x)| + |S(y)|)$ in the worst case.
+    \end{itemize}
+\end{solution}
+Obviously this is pretty bad.  But let's be smarter.
+
+\begin{solution}{Disjoint Set \#5}
+    In $\textsc{Union}$, point roots from the shorter tree to the taller tree (by tree \emph{height}).
+    \begin{itemize}
+        \item $\textsc{Make-Set}(x)$: The same thing, still $\Theta(1)$.
+        \item $\textsc{Find-Set}(x)$: Now reduced to $O(\log n)$ because any tree can have height at most $\log n$.  (Trees are balanced.)
+        \item $\textsc{Union}(x)$: Also $O(\log n)$.
+    \end{itemize}
+\end{solution}
+Great!  We have a second solution that yields $O(\log n)$ amortized cost.  Let's get one more third solution:
+
+\begin{solution}{Disjoint Set \#6}
+    Any time we perform ``traversal to the root'', compress the tree!
+    \[ (r_1 \to r_2 \to \dots \to r_n \to R) ~ \implies ~ (r_1 \to R, ~~ r_2 \to R, ~~ \dots, ~~ r_n \to R) \]
+    We claim this also yields an \emph{amortized} cost of $O(\log n)$.
+\end{solution}
+
+\begin{proof}
+    Define the potential by $\Phi := \sum_{x \in V} \log (L(x))$, where $L(x)$ denotes the size of the subtree rooted at $x$.
+    \begin{itemize}
+        \item $\textsc{Make-Set}(x)$: Yields $\Delta \Phi_i = 0$.
+        \item $\textsc{Find-Set}(x)$: Suppose this step reroots $r_1 \to r_2 \to \dots \to r_n \to R$.  Then:
+        \[ \Delta \Phi_i = \sum_{i = 2}^{n} \log (L(u_i) - L(u_{i - 1})) - \log (L(u_i)) = \sum_{i = 2}^n \log \left ( 1 - \dfrac{L(u_{i - 1})}{L(u_i)}\right). \]
+        We can now bound $\sum_{i = 1}^k \hat{c_i}$, with a computational trick that makes it clean:
+        \begin{align*}
+            \sum_{i = 1}^k \hat{c_i} = n + \sum_{i = 2}^n \log \left(1 - \dfrac{L(u_{i - 1})}{L(u_i)} \right) = 1 + \sum_{i = 2}^n \left [ 1 + \log \left(1 - \dfrac{L(u_{i - 1})}{L(u_i)}\right) \right ].
+        \end{align*}
+        Importantly, we have the following (check this!):
+        \[ 1 + \log \left(1 - \dfrac{L(u_{i - 1})}{L(u_i)}\right) = \begin{cases} \in [0, 1] & \text{for at most } O(\log n) \text{ values of } i. \\ <0 & \text{for all other values of } i. \end{cases} \]
+        This justifies why $\textsc{Find-Set}$ operations have amortized cost $O(\log n)$.
+        \item $\textsc{Union}(x)$: This step is the combination of two $\textsc{Find-Set}(x)$ operations, plus a merge.
+
+        The two $\textsc{Find-Set}(x)$ operations have $O(\log n)$ amortized cost.  The merge has an fake cost of:
+        \[ \log (L(x) + L(y)) - \log (L(x)) = \log \left ( 1 + \dfrac{L(y)}{L(x)} \right) = O( \log n). \]
+        So the $\textsc{Union}$ operation is also amortized cost $O(\log n)$.
+    \end{itemize}
+    And so this solution also has $O(\log n)$ amortized cost overall. ~ $\blacksquare$
+\end{proof}
+
+It turns out that if you \emph{combine} the approaches of Disjoint Set \#5 and Disjoint Set \#6, you get an $O(\alpha(n))$ solution, where $\alpha$ is the \textbf{Inverse-Ackermann Function}.  For most reasonable $n$, we have $\alpha(n) \leq 4$.
+
+\end{document}

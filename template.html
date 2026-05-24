@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{TITLE}}</title>
+<link rel="stylesheet" href="{{ASSET_PREFIX}}katex/katex.min.css">
+<style>
+@font-face {
+  font-family: "TeX Gyre Termes";
+  src: url("{{ASSET_PREFIX}}fonts/texgyretermes-regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: "TeX Gyre Termes";
+  src: url("{{ASSET_PREFIX}}fonts/texgyretermes-italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: "TeX Gyre Termes";
+  src: url("{{ASSET_PREFIX}}fonts/texgyretermes-bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+body {
+  background: #faf8f5;
+  font-family: "TeX Gyre Termes", "Times New Roman", serif;
+  font-size: 14pt;
+  line-height: 1.2;
+  margin: 0;
+  padding: 2rem 1.5rem;
+}
+.katex {
+  font-size: 1em;
+}
+main {
+  max-width: 52em;
+  margin: 0 auto;
+  text-align: left;
+}
+nav.site-nav {
+  margin-bottom: 1.5em;
+  text-align: center;
+}
+nav.site-nav a {
+  color: inherit;
+}
+.center {
+  text-align: center;
+}
+img.note-figure {
+  display: block;
+  height: auto;
+  margin: 0.75em auto;
+  max-width: min(100%, 40em);
+}
+img.note-figure.framed {
+  box-shadow: 0 0 0 1px #000;
+}
+.small-caps,
+.katex .small-caps {
+  font-variant: small-caps;
+}
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+}
+section.env {
+  margin: 1em 0;
+}
+section.env .katex {
+  color: inherit;
+}
+section.env > p:first-child {
+  margin-top: 0;
+}
+blockquote.quote {
+  border-left: 3px solid #ccc;
+  margin: 1em 0;
+  padding-left: 1em;
+}
+ul {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+ol {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+li > p {
+  margin: 0.25em 0;
+}
+.boxed-text {
+  border: 1px solid #333;
+  margin: 0.9em auto;
+  padding: 0.55em 0.5em;
+  text-align: center;
+}
+.boxed-text p {
+  margin: 0.15em 0;
+}
+.boxed-text p:first-child {
+  margin-top: 0;
+}
+.boxed-text p:last-child {
+  margin-bottom: 0;
+}
+.circled {
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  display: inline-block;
+  line-height: 1;
+  min-width: 1.4em;
+  padding: 0.15em 0.35em;
+  text-align: center;
+}
+hr {
+  border: none;
+  border-top: 1px solid #333;
+  margin: 1.5em 0;
+  width: min(100%, 24em);
+}
+header.lecture-header {
+  margin-bottom: 1em;
+  text-align: center;
+}
+header.lecture-header h1 {
+  font-size: 1.1em;
+  font-weight: 700;
+  margin: 0 0 0.25em;
+}
+header.lecture-header .lecture-title {
+  font-style: italic;
+  margin: 0;
+}
+h2.heading-section {
+  font-size: 1.35em;
+  font-weight: 700;
+  margin: 2.25em 0 0.75em;
+}
+main > h2.heading-section:first-of-type,
+section.lecture > h2.heading-section:first-of-type {
+  margin-top: 1.5em;
+}
+h3.heading-subsection {
+  font-size: 1.15em;
+  font-weight: 700;
+  margin: 1.75em 0 0.6em;
+}
+h4.heading-subsubsection {
+  font-size: 1em;
+  font-weight: 700;
+  margin: 1.25em 0 0.5em;
+}
+section.lecture {
+  margin-bottom: 2.5em;
+  padding-bottom: 2.5em;
+  border-bottom: 1px solid #ccc;
+}
+section.lecture:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+h1 {
+  font-size: 1.1em;
+  font-weight: 700;
+  margin: 0 0 1em;
+  text-align: center;
+}
+ul.note-list {
+  list-style: none;
+  margin: 0 0 1.5em;
+  padding: 0;
+  text-align: center;
+}
+ul.note-list li {
+  margin: 0.4em 0;
+}
+p.all-link {
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<main>{{CONTENT}}</main>
+</body>
+</html>

@@ -1,0 +1,6 @@
+node_modules/
+index.html
+all.html
+notes-html/
+katex/
+.DS_Store
