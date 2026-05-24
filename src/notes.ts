@@ -1,7 +1,9 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { extractBracedCommand } from "./tex-read.js";
 
 export interface NoteMeta {
+  courseId: string;
   lectures: number[];
   title: string;
   filename: string;
@@ -11,7 +13,7 @@ export interface Note extends NoteMeta {
   source: string;
 }
 
-export function loadNotes(notesDir: string): Note[] {
+export function loadNotes(notesDir: string, courseId: string): Note[] {
   const files = readdirSync(notesDir)
     .filter((name) => name.endsWith(".tex"))
     .sort();
@@ -19,19 +21,20 @@ export function loadNotes(notesDir: string): Note[] {
   const notes = files.map((filename) => {
     const source = readFileSync(join(notesDir, filename), "utf8");
     const meta = extractNoteMeta(source, filename);
-    return { ...meta, source, filename };
+    return { ...meta, courseId, source, filename };
   });
 
   return notes.sort((a, b) => a.lectures[0] - b.lectures[0]);
 }
 
-export function extractNoteMeta(source: string, filename: string): NoteMeta {
+export function extractNoteMeta(source: string, filename: string): Omit<NoteMeta, "courseId"> {
   const header = source.includes("\\begin{document}")
     ? source.slice(0, source.indexOf("\\begin{document}"))
     : source.slice(0, 500);
 
-  const titleMatch = header.match(/\\title\{([^}]*)\}/);
-  const title = titleMatch?.[1]?.trim() || formatLectureLabel(parseLecturesFromFilename(filename));
+  const title =
+    extractBracedCommand(header, "title") ||
+    formatLectureLabel(parseLecturesFromFilename(filename));
 
   const lectures =
     parseLecturesFromHeader(header) ?? parseLecturesFromFilename(filename);
@@ -99,12 +102,16 @@ export function formatLectureLabel(lectures: number[]): string {
   return `Lectures ${rest}, and ${last}`;
 }
 
-export function lecturePageTitle(note: NoteMeta): string {
-  return `${formatLectureLabel(note.lectures)}: ${note.title}`;
+export function lecturePageTitle(note: NoteMeta, titlePlain = note.title): string {
+  return `${formatLectureLabel(note.lectures)}: ${titlePlain}`;
 }
 
-export function lectureHeaderHtml(note: NoteMeta): string {
-  return `<header class="lecture-header"><h1>${escapeHtml(formatLectureLabel(note.lectures))}</h1><p class="lecture-title">${escapeHtml(note.title)}</p></header>`;
+export function coursePageTitle(courseTitle: string, courseSubtitle: string): string {
+  return `${courseTitle} — ${courseSubtitle}`;
+}
+
+export function lectureHeaderHtml(note: NoteMeta, titleHtml: string): string {
+  return `<header class="lecture-header"><h1>${escapeHtml(formatLectureLabel(note.lectures))}</h1><p class="lecture-title">${titleHtml}</p></header>`;
 }
 
 function escapeHtml(text: string): string {

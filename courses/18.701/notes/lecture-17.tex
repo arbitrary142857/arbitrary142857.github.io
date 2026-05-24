@@ -1,0 +1,230 @@
+\lecture{17}
+\title{Classifying Hermitian Forms, Sylvester's Law of Inertia}
+
+\begin{document}
+
+\subsection{Classifying Hermitian Forms}
+
+Today's lecture will look a lot like Lecture 8 on the Jordan Normal Form.  In Lecture 8, we proved:
+
+\begin{theorem}{Jordan Normal Form}
+    Let $T: V \to V$ be a linear transformation with $n$ eigenvalues $\{\lambda_1, \dots, \lambda_n\}$.  Then with an appropriate choice of basis, the matrix corresponding to $T$ can be made to look like:
+    \[ M_T = \begin{bsmallmatrix} J_{n_1}(\lambda_1) & 0 & \cdots & 0 \\ 0 & J_{n_2}(\lambda_2) & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & J_{n_k}(\lambda_k) \end{bsmallmatrix}. \]
+\end{theorem} \vspace{-0.45cm}
+
+In other words, we showed that all linear transformations---with an appropriate choice of basis---can be made to look like a matrix of Jordan Blocks.  Today is dedicated to proving the following analogous theorem:
+
+\begin{theorem}{Hermitian Form Classification}
+    Let $\langle \bullet, \bullet \rangle : \mathbb{C} \times \mathbb{C} \to \mathbb{C}$ be a Hermitian form with signature $(n_1, n_0, n_{-1})$.  Then with an appropriate choice of basis, $\langle \bullet, \bullet \rangle$ can be made to look like:
+    \[ \langle x, y \rangle = x^{\dagger}My ~~ \text{ where } ~~ M = \begin{bsmallmatrix}
+        J_{n_1}(1) & 0 & 0 \\ 0 & J_{n_{\!-1}}(-1) & 0 \\ 0 & 0 & J_{n_0}(0)
+    \end{bsmallmatrix}. \]
+\end{theorem} \vspace{-0.45cm}
+
+In other words, we'll show that all Hermitian forms---with an appropriate choice of basis---can be made to look like a diagonal matrix with only $1$s, $-1$s, and $0$s.  (We'll define ``signature'' later.)
+
+\begin{remark}
+    Here's another way to see the analogy.  Lecture 8 answered the following question:
+    \begin{center}
+        Take the group action of $GL_n(F)$ on $F^{n \times n}$, where $A \in GL_n(F)$ acts on $M \in F^{n\times n}$ \\ via $M \mapsto A^{-1}MA$.  What are the orbits of this group action?
+    \end{center}
+    Today's lecture will answer the following alternative question:
+    \begin{center}
+        Take the group action of $GL_n(F)$ on $F^{n \times n}$, where $A \in GL_n(F)$ acts on $M \in \mathrm{Herm}_n(\mathbb{C})$ \\ via $M \mapsto A^{\dagger}MA$.  What are the orbits of this group action?
+    \end{center}
+\end{remark}
+
+Notably, because $\mathbb{R} \subseteq \mathbb{C}$, our classification of Hermitian forms over $\mathbb{C}$ also works equally well toward classifying symmetric forms over $\mathbb{R}$: all symmetric forms over $\mathbb{R}^n$ under some basis look diagonal with entries $-1$, $1$, and $0$.
+
+
+
+\subsection{Orthogonality and Nondegenerate Subspaces}
+
+
+
+Our proof relies on a couple definitions.
+
+\textbf{Definition (Orthogonal Subspace).} Let $V$ be a finite-dimensional $\mathbb{C}$-vector space with Hermitian form $\langle \bullet, \bullet \rangle$.  Given a subspace $W \subseteq V$, its \textbf{orthogonal subspace} is $W^{\perp} := \{ v \in V \mid \langle w, v \rangle = 0 ~~ \forall \ w \in W\}$.
+
+\textbf{Example.} Depending on our choice of Hermitian form, orthogonality can be very counter-intuitive!
+\begin{itemize}
+    \item Take $V = \mathbb{C}^2$ with Hermitian form $\langle x, y \rangle = x^{\dagger} \begin{bsmallmatrix} 1 & 0 \\ 0 & -1 \end{bsmallmatrix} y$.  Then $\begin{psmallmatrix} 1 \\ 1 \end{psmallmatrix}$ is orthogonal to itself!
+    \item Take $V = \mathbb{C}^2$ with Hermitian form $\langle x, y \rangle = x^{\dagger} \begin{bsmallmatrix} 1 & 0 \\ 0 & 0 \end{bsmallmatrix} y$.  Then $V^{\perp}$ is nontrivial: it's $\left\{ \begin{psmallmatrix} 0 \\ \lambda \end{psmallmatrix} \mid \lambda \in \mathbb{C}\right\}$.
+\end{itemize}
+
+\textbf{Definition (Nondegenerate).} A Hermitian form $\langle x, y \rangle$ over a $\mathbb{C}$-vector space $V$ is \textbf{nondegenerate} if $V^{\perp} = \{0\}$.  More generally, a subspace $W \subseteq V$ is \textbf{nondegenerate} if $W \cap W^{\perp} = \{0\}$.
+
+\textbf{Example.} As we saw in the previous example, $V = \mathbb{C}^2$ with $\langle x, y \rangle = x^{\dagger} \begin{bsmallmatrix} 1 & 0 \\ 0 & 0 \end{bsmallmatrix}y$ is degenerate.
+
+\textbf{Example.} Also as in the previous example, consider $V = \mathbb{C}^2$ with Hermitian form $\langle x, y \rangle = x^{\dagger} \begin{bsmallmatrix} 1 & 0 \\ 0 & -1 \end{bsmallmatrix} y$.
+\begin{itemize}
+    \item This Hermitian form is nondegenerate.
+    \item The subspace $\mathbb{R}^2$ is also nondegenerate.
+    \item The subspace $W = \left \{ \begin{psmallmatrix} \lambda \\ \lambda \end{psmallmatrix} \mid \lambda \in \mathbb{R} \right\}$ is degenerate!  In particular, $W^{\perp} = W$.
+\end{itemize}
+
+\begin{theorem}{Nondegenerate $\iff$ Invertible}
+    Let $V$ be a $\mathbb{C}$-vector space with a chosen basis and a Hermitian form $\langle x, y \rangle = x^{\dagger}Ay$.  Then $\langle \bullet, \bullet \rangle$ is nondegenerate if and only if $A$ is invertible.
+\end{theorem}
+
+\begin{proof}
+    Suppose $\langle \bullet, \bullet \rangle$ is degenerate, so there is a nonzero $y \in V$ such that $\langle x, y \rangle = 0$ for all $x \in V$.  Equivalently, for all $x \in V$, we have $x^{\dagger}Ay = 0$.  This is possible if and only if $Ay = 0$, that is, $A$ is not invertible. ~ $\blacksquare$
+\end{proof}
+
+The previous theorem will be useful for our proof of Hermitian Classification.  This next one is just a fun fact.
+
+\begin{theorem}{Nondegenerate $\implies$ Injectivity}
+    Let $V$ be a $\mathbb{C}$-vector space with nondegenerate Hermitian form.  Suppose $v, v' \in V$ satisfies $\langle v, w \rangle = \langle v', w \rangle$ for all $w \in V$.  Then $v = v'$.
+\end{theorem}
+
+\begin{proof}
+    Observe $\langle v, w \rangle = \langle v', w \rangle$ implies $\langle v - v', w \rangle = 0$ for all $w \in V$, which means $v - v' \in V^{\perp}$.  But the Hermitian form was nondegenerate, so $V^{\perp} = \{0\}$, meaning $v - v' = 0$. ~ $\blacksquare$
+\end{proof}
+
+\subsection{Proving Hermitian Classification}
+
+Definitions aside, here's the driving theorem of our proof of Hermitian form classification.
+
+\begin{theorem}{Orthogonal Decomposition}
+    Let $W$ be a nondegenerate subspace of a nondegenerate $\mathbb{C}$-vector space $V$.  Then the decomposition $V = W \oplus W^{\perp}$ holds.  Furthermore, $W^{\perp}$ is also nondegenerate.
+\end{theorem}
+
+Assuming this theorem to be true, we propose the following proof of Hermitian form classification: \vspace{0.1cm}
+\begin{quote}
+    \textit{Proof:} We may \textcolor{teal}{assume $V$ is nondegenerate,} as the degenerate subspace of $V$ may be ``taken out''. \vspace{0.2cm}
+    
+    Argue by induction on $\dim V$, where \textcolor{teal}{the base case of $\dim V = 1$ is trivial.}  Now \textcolor{teal}{pick a nondegenerate subspace $W \subseteq V$} and set the basis of $V$ to the union of bases of $W$ and $W^{\perp}$. \vspace{0.2cm}
+    
+    Because \textcolor{teal}{the ``Orthogonal Decomposition'' theorem holds,} the $M$ in $\langle x, y \rangle = x^{\dagger}My$ must now look like:
+    \[ M = \begin{bmatrix} M_1 & 0 \\ 0 & M_2 \end{bmatrix} ~~ \text{ where } ~ ~\langle x, y \rangle = x^{\dagger}M_1y ~ \text{ in } W, ~ \text{ and } \langle x, y \rangle = x^{\dagger}M_2y ~ \text{ in } W^{\perp}. \]
+    The zero-entries are guaranteed because $\langle e_1, e_2 \rangle = 0$ for any basis vectors $e_1 \in M$ and $e_2 \in W^{\perp}$. \vspace{0.2cm}
+    
+    Apply the inductive hypothesis on $W$ and $W^{\perp}$ so $M_1$ and $M_2$ are diagonal with only $-1$s, $0$s, and $1$s.  Rearrange the diagonal entries to finish. ~ $\blacksquare$
+\end{quote}
+
+Pretty simple, right?  It remains to \textcolor{teal}{justify the statements written in teal.}  Starting with the first\dots
+
+\begin{theorem}{Justification \#1: Degeneracy}
+    If the Hermitian form classification holds for all nondegenerate $V$, then it also holds for all degenerate $V$.
+\end{theorem}
+
+\begin{proof}
+    Set the basis of $V$ by first choosing a basis for $V^{\perp}$ and then extending it to all of $V$.  This way, $V = V^{\perp} \oplus V^*$ for some nondegenerate vector space $V^*$.  Then the $M$ in $\langle x, y \rangle = x^{\dagger}My$ looks like:
+    \[ M = \begin{bmatrix} \ \boxed{0} & \boxed{0} \\ \ \boxed{0} & M^* \end{bmatrix}\!, ~ \text{ where } ~ \boxed{0} ~ \text{ indicates a submatrix of zeroes.} \]
+    Then since $V^*$ is nondegenerate, $M^*$ may be written in the desired form, at which point $M$ is too. ~ $\blacksquare$
+\end{proof}
+
+Now to justify the base case\dots
+
+\begin{theorem}{Justification \#2: The Base Case}
+    Let $\langle \bullet, \bullet \rangle$ be a Hermitian form over $\mathbb{C}$.  Under an appropriate choice of basis, $\langle \bullet, \bullet \rangle$ can be made to look like either $\begin{bsmallmatrix} 1 \end{bsmallmatrix}$, $\begin{bsmallmatrix} -1 \end{bsmallmatrix}$, or $\begin{bsmallmatrix} 0 \end{bsmallmatrix}$.
+\end{theorem}
+
+\begin{proof}
+    In the one-dimensional case, any change of basis $M \mapsto A^{\dagger}MA$ looks like the following:
+    \[ \text{Given } M = \begin{bsmallmatrix} m \end{bsmallmatrix} \text{ and } A = \begin{bsmallmatrix} \lambda \end{bsmallmatrix}, ~ \text{we have } A^{\dagger}MA = \begin{bsmallmatrix} |\lambda|^2  m \end{bsmallmatrix}. \]
+    And $|\lambda|^2$ can be any positive real number, so $|\lambda^2|m$ can be made to equal either $1$, $-1$, or $0$ as needed. ~ $\blacksquare$
+\end{proof}
+
+For Justification \#3, we'll use the fact that $V$ is nondegenerate\dots \ (Do you see where?)
+
+\begin{theorem}{Justification \#3: Picking a Nondegenerate Subspace}
+    Let $V$ be a nondegenerate $\mathbb{C}$-vector space with Hermitian form $\langle \bullet, \bullet \rangle$.  Then $V$ has a nondegenerate subspace $W$.
+\end{theorem}
+
+\begin{proof}
+    We begin with the following lemma.
+    \begin{quote}
+        \textbf{Lemma.} There exists some $v \in V$ with $\langle v, v \rangle \neq 0$.
+
+        \emph{Proof:} Pick some $x, y \in V$ such that $\langle x, y \rangle \neq 0$.  We can also pick some $\lambda \in \mathbb{C}$ so that $\langle x, \lambda y \rangle = \lambda \langle x, y \rangle$ is real and nonzero.  Because of this real-ness, $\langle x, \lambda y \rangle = \langle \lambda y, x \rangle$, so the Polarization Identity holds:
+        \[ \langle x, \lambda y \rangle = \dfrac{\langle x + \lambda y, x + \lambda y \rangle - \langle x, x \rangle - \langle \lambda y, \lambda y \rangle}{2}. \]
+        Since $\langle x, \lambda y \rangle \neq 0$, at least one of $\{x + \lambda y, \ x, \ \lambda y \}$ must be a valid choice for $v \in V$ with $\langle v, v \rangle \neq 0$. ~ $\square$
+    \end{quote}
+    Take $v$ as in the above lemma.  Then for any nonzero $a, b \in \mathbb{C}v$, we have $\langle a, b \rangle \neq 0$, so $\mathbb{C}v$ is nondegenerate. ~ $\blacksquare$
+\end{proof}
+
+And finally, the most crucial step: justifying the ``Orthogonal Decomposition'' theorem\dots
+
+\begin{theorem}{Justification \#4: Orthogonal Decomposition}
+    Let $W$ be a nondegenerate subspace of a nondegenerate $\mathbb{C}$-vector space $V$.  Then the decomposition $V = W \oplus W^{\perp}$ holds, and $W^{\perp}$ is nondegenerate.
+\end{theorem}
+
+\begin{proof}
+    Suppose $n = \dim V$ and $k = \dim W$.  We claim the following:
+    \begin{quote}
+        \textbf{Claim.} We always have $\dim W^{\perp} \geq n - k$ (regardless of whether $W$ or $V$ are degenerate or not!).
+        
+        \emph{Proof:} The only constraints on elements $w^{\perp} \in W^{\perp}$ is that $\langle w^{\perp}, w \rangle = 0$ for all $w \in W$.  It's good enough to ensure this constraint holds for exactly $k$ choices of $w$, where these $k$ choices together span $W$.
+
+        So $W^{\perp}$ is the set of vectors $w^{\perp} \in V$ satisfying $k$ linear constraints of the form $\langle w^{\perp}, w \rangle = 0$, which must have dimension at least $n - k$. ~ $\square$
+    \end{quote}
+    However, $W \cap W^{\perp} = \emptyset$ because $W$ is nondegenerate.  Thus, $V = W \oplus W^{\perp}$ follows for dimension reasons.
+
+    It remains to show $W^{\perp}$ is nondegenerate; this is where the nondegeneracy of $V$ becomes necessary.  Suppose, for the sake of contradiction, that some $v \in W^{\perp}$ were also in $(W^{\perp})^{\perp}$.  Then:
+    \begin{itemize}
+        \item Since $v \in (W^{\perp})^{\perp}$, it follows that $v$ is orthogonal to all of $W^{\perp}$.
+        \item Since $v \in W^{\perp}$, it follows that $v$ is orthogonal to all of $W$.
+    \end{itemize}
+    But $V = W \oplus W^{\perp}$, so the above implies $v$ is orthogonal to all of $V$, contradicting the nondegeneracy of $V$. ~ $\blacksquare$
+    % TODO: Why was this here?
+    % Imagine we set the basis of $V$ by first choosing a basis $\{w_i\}$ for $W$ and then extending it to all of $V$.  Then the $M$ in $\langle x, y \rangle = x^{\dagger}My$ would look like this:
+    % \[ M = \begin{bmatrix}
+    %     A & B \\ B^{\dagger} & D
+    % \end{bmatrix}, \text{ where } A = A^{\dagger}, D = D^{\dagger}, \text{ and } A \text{ is invertible.} \]
+    % It suffices to find a change of basis matrix $P$ that preserves $\{w_i\}$ satisfying the following win condition:
+    % \[ \textbf{Win Condition:} ~~~ P^{\dagger}MP = \begin{bmatrix} A & 0 \\ 0 & D' \end{bmatrix} ~ \text{ where } A \text{ and } D' \text{ are invertible.} \]
+    % Why is this sufficient?  Say $P$ encodes the basis $\{v_i\} = \{w_i\} \sqcup \{w_i'\}$.  Then:
+    % \begin{itemize}
+    %     \item The zero-entries imply $\langle w_i, w_j' \rangle = 0$, meaning $\{w_i'\}$ is a basis for $W^{\perp}$. \vspace{-0.15cm}
+        
+    %     Thus $P$ encodes a basis of $V$ that is the union of bases for $W$ and $W^{\perp}$, so $V = W \oplus W^{\perp}$.
+    %     \item The fact that $D'$ is invertible implies $W^{\perp}$ is nondegenerate.
+    % \end{itemize}
+    % And how do we win?  Just take $P = \begin{bsmallmatrix} I & Q \\ 0 & I \end{bsmallmatrix}$, where $I$ indicates an identity submatrix.  This yields:
+    % \[ M' = P^{\dagger}MP = \begin{bsmallmatrix} I & 0 \\ Q^{\dagger} & I \end{bsmallmatrix} \begin{bsmallmatrix} A & B \\ B^{\dagger} & D & \end{bsmallmatrix} \begin{bsmallmatrix} I & Q \\ 0 & I \end{bsmallmatrix} = \begin{bsmallmatrix} A & AQ + B \\ Q^{\dagger}A + B^{\dagger} & D' \end{bsmallmatrix}. \]
+    % But $A$ was invertible, so it must be possible to pick a $Q$ such that $AQ + B = 0$.
+    
+    % And to see why $D'$ is invertible, recall that $\det M' = (\det A)(\det D')$, and the nondegeneracy of $V$ and $W$ imply $\det M' \neq 0$ and $\det A \neq 0$, which yields $\det D' \neq 0$, as desired. ~ $\blacksquare$
+\end{proof}
+
+And that's the proof!
+
+
+\subsection{Signatures and Sylvester's Law of Inertia}
+
+Okay, one more thing\dots \ does every Hermitian form have a \emph{unique} representation in this classification?
+
+\textbf{Definition (Signature).} Take a Hermitian matrix $M$ in the form described by this classification.  Its \textbf{signature} is the ordered triple $(n_1, n_0, n_{-1})$ with the number of $+1$s, $0$s, and $-1$s, respectively along the diagonal of $M$.
+
+\begin{theorem}{Sylvester's Law of Inertia}
+    Every Hermitian form has a unique signature, irrespective of basis.
+\end{theorem}
+
+\begin{proof}
+    Suppose a Hermitian form has two signatures $(n_1, n_0, n_{-1})$ and $(n_1', n_0', n_{-1}')$.  Then:
+    \begin{itemize}
+        \item The signature $(n_1, n_0, n_{-1})$ yields a decomposition $V = W_1 \oplus W_0 \oplus W_{-1}$.
+        \item The signature $(n_1', n_0', n_{-1}')$ yields a decomposition $V = W_1' \oplus W_0' \oplus W_{-1}'$.
+    \end{itemize}
+    Suppose, without loss of generality, that $n_1' > n_1$.  
+    
+    Then $W_1' \cap (W_0 \oplus W_{-1}) \neq \{0\}$ for size reasons.  But this means there is some nonzero $v \in V$ such that:
+    \begin{itemize}
+        \item We have $v \in W_1'$, so $v$ is a nonzero vector with positive norm.
+        \item We have $v \in W_0 \cap W_{-1}$, so $v$ is a nonzero vector with nonpositive norm.
+    \end{itemize}
+    And obviously, that's a contradiction. ~ $\blacksquare$
+\end{proof}
+
+\subsection{Foreshadowing: Signatures are Critical Points\dots}
+
+To conclude, we provide some handwavy foreshadowing on some applications of today's lecture.
+
+Recall from last lecture (Section 16.3) that the Hessian is a matrix that encodes the ``quadratic''-ness of a function $f: \mathbb{R}^n \to \mathbb{R}$.  It turns out the signature of the Hessian describes the behavior of the critical point!
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-17/hessian-plots.png}}
+\end{center}
+
+\end{document}

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "tsx src/build.ts",
-    "watch": "nodemon --watch notes --watch preamble.tex --watch template.html --watch src -e tex,html,ts --exec \"tsx src/build.ts\""
+    "watch": "nodemon"
   },
   "devDependencies": {
     "@types/node": "^22.15.21",

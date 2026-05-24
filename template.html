@@ -45,6 +45,23 @@ nav.site-nav {
 }
 nav.site-nav a {
   color: inherit;
+  text-decoration: none;
+}
+nav.site-nav a:hover {
+  text-decoration: underline;
+  text-decoration-color: rgba(0, 0, 0, 0.35);
+  text-underline-offset: 0.15em;
+}
+a:link,
+a:visited {
+  color: #24536b;
+  text-decoration: underline;
+  text-decoration-color: rgba(36, 83, 107, 0.35);
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+a:hover {
+  text-decoration-color: currentColor;
 }
 .center {
   text-align: center;
@@ -91,6 +108,42 @@ ol {
 li > p {
   margin: 0.25em 0;
 }
+ul.itemize-labeled,
+ol.enumerate-labeled {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.5em 0;
+}
+ul.itemize-labeled > li.item-labeled,
+ol.enumerate-labeled > li.item-labeled {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 0.5em;
+  align-items: baseline;
+  margin: 0;
+}
+ul.itemize-labeled > li.item-labeled > .item-label,
+ol.enumerate-labeled > li.item-labeled > .item-label {
+  grid-column: 1;
+  white-space: nowrap;
+}
+ul.itemize-labeled > li.item-labeled > .item-body,
+ol.enumerate-labeled > li.item-labeled > .item-body {
+  grid-column: 2;
+  min-width: 0;
+}
+ul.itemize-labeled > li.item-labeled > .item-body > p:first-child,
+ol.enumerate-labeled > li.item-labeled > .item-body > p:first-child {
+  margin-top: 0;
+}
+ul.itemize-labeled > li.item-labeled > .item-body > p:last-child,
+ol.enumerate-labeled > li.item-labeled > .item-body > p:last-child {
+  margin-bottom: 0;
+}
+ul.itemize-labeled > li.item-labeled + li.item-labeled,
+ol.enumerate-labeled > li.item-labeled + li.item-labeled {
+  margin-top: 0.25em;
+}
 .boxed-text {
   border: 1px solid #333;
   margin: 0.9em auto;
@@ -106,14 +159,28 @@ li > p {
 .boxed-text p:last-child {
   margin-bottom: 0;
 }
+.vskip {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+}
+.vskip-pull {
+  height: 0;
+}
 .circled {
   border: 1px solid currentColor;
   border-radius: 50%;
-  display: inline-block;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35em;
+  height: 1.35em;
+  padding: 0;
   line-height: 1;
-  min-width: 1.4em;
-  padding: 0.15em 0.35em;
-  text-align: center;
+  vertical-align: -0.125em;
 }
 hr {
   border: none;
@@ -122,20 +189,21 @@ hr {
   width: min(100%, 24em);
 }
 header.lecture-header {
-  margin-bottom: 1em;
+  margin-bottom: 2.5em;
   text-align: center;
 }
 header.lecture-header h1 {
-  font-size: 1.1em;
+  font-size: 2em;
   font-weight: 700;
   margin: 0 0 0.25em;
 }
 header.lecture-header .lecture-title {
   font-style: italic;
+  font-size: 1.25em;
   margin: 0;
 }
 h2.heading-section {
-  font-size: 1.35em;
+  font-size: 1.5em;
   font-weight: 700;
   margin: 2.25em 0 0.75em;
 }
@@ -144,9 +212,12 @@ section.lecture > h2.heading-section:first-of-type {
   margin-top: 1.5em;
 }
 h3.heading-subsection {
-  font-size: 1.15em;
+  font-size: 1.3em;
   font-weight: 700;
   margin: 1.75em 0 0.6em;
+}
+.subsection-marker {
+  font-weight: 700;
 }
 h4.heading-subsubsection {
   font-size: 1em;
@@ -177,6 +248,18 @@ ul.note-list {
 }
 ul.note-list li {
   margin: 0.4em 0;
+}
+ul.lecture-list {
+  text-align: left;
+  border-left: 2px solid #ddd;
+  padding-left: 1em;
+}
+ul.lecture-list li {
+  margin: 0;
+  padding: 0.35em 0;
+}
+ul.lecture-list li + li {
+  border-top: 1px solid #e8e4df;
 }
 p.all-link {
   text-align: center;

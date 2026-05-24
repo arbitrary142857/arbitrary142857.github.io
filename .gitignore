@@ -1,6 +1,7 @@
 node_modules/
 index.html
-all.html
-notes-html/
+courses/*/index.html
+courses/*/all.html
+courses/*/notes-html/
 katex/
 .DS_Store

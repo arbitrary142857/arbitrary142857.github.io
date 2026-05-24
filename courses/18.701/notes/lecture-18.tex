@@ -1,0 +1,194 @@
+\lecture{18}
+\title{Gram-Schmidt, Sylvester's Criterion, The Spectral Theorem}
+
+\begin{document}
+
+\subsection{Inner Product $\iff$ Orthonormal Basis}
+
+\textbf{Definition (Inner Product).} An \textbf{inner product} is a symmetric and positive definite Hermitian / bilinear form.
+
+\textbf{Definition (Euclidean / Hermitian Space).} We say that\dots
+\begin{itemize}
+    \item A \textbf{Euclidean space} is a finite-dimensional $\mathbb{R}$-vector space with an inner product.
+    \item A \textbf{Hermitian space} is a finite-dimensional $\mathbb{C}$-vector space with a Hermitian inner product.
+\end{itemize}
+
+Last time, we showed that all bilinear forms look like $\langle x, y \rangle = x^{\dagger} My$, where $M$ is diagonal with entries $1$, $-1$, or $0$.  In the particular case when $\langle \bullet, \bullet \rangle$ is positive definite, all diagonal entries have to be $1$, so:
+
+\begin{theorem}{Orthonormal Basis}
+    Every Euclidean or Hermitian space has an orthonormal basis; that is, a basis $\{b_i\}$ such that $\langle b_i, b_j \rangle = 1$ whenever $i = j$ and $0$ otherwise.
+\end{theorem}
+
+In particular, the inner product of any Hermitian space might as well just be $\langle x, y \rangle = x^{\dagger}y$.
+
+\begin{problem}{Gram-Schmidt Orthogonalization}
+    Given a basis $\{b_i\}_{i = 1}^n$ of a Euclidean or Hermitian space, how do we make it orthonormal?
+\end{problem}
+
+\begin{solution}
+    Follow a procedure known as the \textbf{Gram-Schmidt Process}.
+    \begin{enumerate}
+        \item Begin by normalizing every basis element: $b_i \mapsto \frac{b_i}{|b_i|}$.  Now $|b_i| = 1$ for all $i$.
+        \item Now for each index $i = 2, \dots, n$, do the following:
+        \begin{enumerate}
+            \item Replace $b_i$ with $b_i - \left(\sum_{j = 1}^{i - 1} \langle b_j, b_i\rangle \cdot b_j\right)$.
+            \item Then normalize $b_i$ again via $b_i \mapsto \frac{b_i}{|b_i|}$.
+        \end{enumerate}
+    \end{enumerate}
+    The point is that $\left(\sum_{j = 1}^{i - 1} \langle b_j, b_i\rangle \cdot b_j\right)$ is the orthogonal projection of $b_i$ onto the span of $\{b_1, \dots, b_{i - 1}\}$.
+        \begin{center}
+            \frame{\includegraphics[width=0.5\textwidth]{lecture-18/gram-schmidt.png}}
+        \end{center}
+    Subtracting the projection of $b_i$ from $b_i$ will yield a $b_i$ orthogonal to all of $\{b_1, \dots, b_{i - 1}\}$, as desired. ~ $\blacksquare$
+\end{solution}
+
+\begin{remark}
+    (Reading Comprehension) Three questions:
+    \begin{itemize}
+        \item Why was normalizing every $\{b_i\}$ necessary?  What goes wrong if the original $\{b_i\}_{i = 1}^n$ isn't a basis?
+        \item What goes wrong is the space is not Hermitian?
+    \end{itemize}
+\end{remark}
+
+\subsection{Positive Definite Matrices and Sylvester's Criterion}
+
+\textbf{Definition (Positive Definite).} A matrix $M \in \mathrm{Herm}_n(\mathbb{C})$ is \textbf{positive definite} if $\langle x, y \rangle = x^{\dagger}My$ is positive definite.
+
+Observe that if $\langle x, y \rangle = x^{\dagger}My$ is positive definite, its signature must be $(n, 0, 0)$.  So any positive definite $M$ must look like $I_n$ after a change of basis by some $B \in GL_n(\mathbb{C})$.  In other words\dots
+
+\textbf{Definition (Positive Definite).} A matrix $M \in \mathrm{Herm}_n(\mathbb{C})$ is \textbf{positive definite} if $M = B^{\dagger}B$ for some $B \in GL_n(\mathbb{C})$.
+
+Finally, here's one more equivalent definition for ``positive definite''.
+
+\begin{theorem}{Sylvester's Criterion}
+    A matrix $A \in \mathrm{Herm}_n(\mathbb{C})$ is positive definite if and only if:
+    \[ \det(A_{ij} \mid _{1 \leq i, j \leq k}) > 0 \text{ for all } k \in \{1, 2, \dots, n\}. \]
+    Note that $A_{ij} \mid _{1 \leq i, j \leq k}$ just refers to the top-left $k \times k$ submatrix of $A$. 
+\end{theorem}
+
+\begin{proof}
+    One direction is easy: if $A$ is positive definite, then $A = B^{\dagger}B$ for some $B \in GL_n(\mathbb{C})$, so:
+    \[ \det (A) = \det(B^{\dagger}B) = \overline{\det(B)} \det(B) = |\det(B)|^2 > 0 ~ \text{ since } \det B \neq 0. \]
+    Furthermore, the top-left $k \times k$ submatrices of $A$ are restrictions of $A$ to a subspace, so they are also positive definite, meaning their determinants are also positive, done.
+
+    Now for the other direction: assume $\det(A_{ij} \mid _{1 \leq i, j \leq k}) > 0$ for all $k$.  To show $A$ is positive definite, it's equivalent to find an orthonormal basis of $\mathbb{C}^n$ through which $A$ is the identity.
+
+    We'll construct our basis in a manner similar to the Gram-Schmidt process.
+    \begin{enumerate}
+        \item Begin with any basis of normalized unit vectors $(e_1, \dots, e_n)$.
+        \item Adjust each of the $e_2, \dots, e_n$ to be orthogonal to $e_1$ in the following manner.
+        \begin{enumerate}
+            \item Replace $e_i$ with $e_i - \frac{\langle e_i, e_1 \rangle}{\langle e_1, e_1 \rangle} e_1$ for all $i > 1$.
+            \item Normalize every $e_i$ again.
+        \end{enumerate}
+        \item We now have $\langle e_i, e_1 \rangle = 0$ for all $i > 1$.  Thus, $A$ must now have the following form:
+        \[ A = \begin{bmatrix}
+        A_{11} & 0 & \cdots & 0 \\ 
+        0 & \clubsuit & \cdots & \clubsuit \\
+        \vdots & \vdots & \ddots & \vdots \\
+        0 & \clubsuit & \cdots & \clubsuit
+        \end{bmatrix}, ~ \text{ where } B = \begin{bmatrix} \clubsuit & \cdots & \clubsuit \\ \vdots & \ddots & \vdots \\  \clubsuit & \cdots & \clubsuit \end{bmatrix} \text{ is an } (n - 1) \times (n - 1) \text{ submatrix.} \]
+        The key now is the following claim, which follows from $A_{11} > 0$ and plain determinant computations: \vskip{0.5em}
+        \begin{center}
+            \textbf{Claim.} The positivity of $\det(A_{ij} \mid_{1 \leq i, j \leq k})$ for all $k \in \{1, 2, \dots, n\}$ \\ translates directly into the positivity of $\det(B_{ij} \mid_{1 \leq i, j \leq k})$ for all $k \in \{1, 2, \dots, n - 1\}$.
+        \end{center} \vskip{0.5em}
+        So we can recursively repeat this process on $B$, inducting downward. ~ $\blacksquare$
+    \end{enumerate}
+\end{proof}
+
+\textit{\textcolor{red!80}{Warning!}} Consider the following claim.
+\begin{quote}
+    \textbf{Claim.} A matrix $A \in \mathrm{Herm}_n(\mathbb{C})$ is positive-semidefinite if and only if $\det(A_{ij} \mid _{1 \leq i, j \leq k}) \geq 0$ for all $k$.
+\end{quote}
+This claim is wrong!  Take $A = \begin{bsmallmatrix} 0 & 0 \\ 0 & -1 \end{bsmallmatrix}$ for a counterexample.
+
+
+
+\subsection{Matrix Adjective Review: Hermitian, Unitary, and Normal}
+
+% \textbf{Definition (Adjoint).} Consider a Hermitian space $V$ with Hermitian form $\langle x, y \rangle = x^{\dagger}y$.  Given a linear transformation $T: \mathbb{C}^{n \times n}$, its \textbf{adjoint} $T^{\dagger}$ is the unique matrix $T^{\dagger} \in \mathbb{C}^{n \times n}$ such that $\langle x, Ty \rangle = \langle T^{\dagger}x, y \rangle$ for all $x, y \in V$.
+
+% It turns out the adjoint is just a funny renaming of a the conjugate transpose.
+
+% \begin{theorem}{Adjoint is Conjugate Transpose}
+%     The adjoint $T^{\dagger}$ of any $T \in GL_n(\mathbb{C})$ satisfies $T^{\dagger} = \overline{T^{\top}}$.
+% \end{theorem}
+
+% \begin{proof}
+%     Suppose $T^{\dagger}$ is the conjugate transpose of $T$.  Then:
+%     \[ \langle T^{\dagger}x, y \rangle = (T^{\dagger}x)^{\dagger}y = x^{\dagger}Ty = \langle x, Ty \rangle. \]
+%     So taking $T^{\dagger}$ to be the conjugate transpose of $T$ just works. ~ $\blacksquare$
+% \end{proof}
+
+\textbf{Definition (Adjoint).} The conjugate transpose $T^{\dagger}$ of a matrix $T$ is also called the \textbf{adjoint} of $T$.
+
+\textbf{Definition (Hermitian, Unitary, Normal).} We have the following adjectives for matrices $T \in \mathbb{C}^{n \times n}$.
+\begin{itemize}
+    \item A matrix $T$ is \textbf{Hermitian} if $\langle x, Ty \rangle = \langle Tx, y \rangle$. (Equivalently, if $T = T^{\dagger}$.)
+    \begin{itemize}
+        \item \textcolor{black!45}{(Why do we care?)} Hermitian forms $\langle x, y \rangle = x^{\dagger}My$ rely on $M$ being Hermitian.
+    \end{itemize}
+    \item A matrix $T$ is \textbf{unitary} if $\langle Tx, Ty \rangle = \langle x, y \rangle$.  (Equivalently, if $TT^{\dagger} = I_n$.)
+    \begin{itemize}
+        \item \textcolor{black!45}{(Why do we care?)} Unitary matrices preserve the inner product, just like orthogonal matrices.
+        \item \textcolor{black!45}{(Why do we care?)} Just as reading off the columns of an orthogonal matrix yields an orthonormal basis, reading off the columns of a unitary matrix yields an orthonormal basis, too!
+    \end{itemize}
+    \item A matrix $T$ is \textbf{normal} if $\langle Tx, Ty \rangle = \langle T^{\dagger}x, T^{\dagger}y \rangle$.  (Equivalently, if $TT^{\dagger} = T^{\dagger}T$.)
+    \begin{itemize}
+        \item \textcolor{black!45}{(Why do we care?)} Normal matrices generalize Hermitian or unitary matrices.  Notably, $\begin{bsmallmatrix} 6i & 0 \\ 0 & 7i \end{bsmallmatrix}$ is normal yet neither Hermitian nor unitary.
+    \end{itemize}
+\end{itemize}
+Note that the equivalencies described above are not entirely trivial: check them for yourself!
+
+\subsection{The Spectral Theorem}
+
+We'll conclude lecture by proving the following (very strong!) theorem.
+
+\begin{theorem}{Spectral Theorem}
+    Consider a Hermitian space $V$ and a matrix $T: V \to V$.  Then the eigenvectors of $T$ form an orthonormal basis of $V$ if and only if $T$ is normal.
+
+    Equivalently, $T$ is normal if and only if $T$ is diagonalizable via conjugation by a unitary matrix; that is,
+    \[ \text{For some } U \in U_n(\mathbb{C}), \text{ we have } T = U^{-1} \Lambda U, ~ \text{where } \Lambda = \begin{bsmallmatrix} \lambda_1 & \cdots & 0 \\ \vdots & \ddots & \vdots \\ 0 & \cdots & \lambda_n \end{bsmallmatrix} \text{ is a matrix of eigenvalues.} \]
+    (Why must $U$ be unitary?  Recall the ``why do we care'' notes about unitary matrices\dots)
+\end{theorem}
+
+Note that the Spectral Theorem is stronger than our result from last lecture!  Since Hermitian matrices are also normal, the Spectral Theorem says they must be diagonalizable.  (Specifically by a unitary matrix, too!)
+
+\begin{proof}
+    One direction is easy: suppose such a $U$ exists.  Since $U$ is unitary, we have $U^{\dagger} = U^{-1}$, so:
+    \[ T = U^{\dagger} \Lambda U \text{ and } T^{\dagger} = U^{\dagger}\Lambda^{\dagger} U. ~ \implies ~ TT^{\dagger} = U^{\dagger} \Lambda \Lambda^{\dagger}U = U^{\dagger} \Lambda^{\dagger} \Lambda U = T^{\dagger}T. ~ \implies ~ T \text{ is normal.} \]
+    Now for the hard part: showing $T$ is diagonalizable given $T$ is normal.  We'll need two lemmas.
+    \begin{quote}
+        \textbf{Lemma 1.} Suppose $W \subseteq V$ such that $TW = W$.  Then we also have $T^{\dagger}W^{\perp} = W^{\perp}$.
+
+        \emph{Proof:} It's just a chain of equivalences.
+        \begin{align*} u \in W^{\perp} ~ \iff ~ & \langle u, w \rangle = 0 \text{ for all } w \in W \\ \iff ~ & \langle u, Tw \rangle = 0 \text{ for all } w \in W \\ \iff ~ & \langle T^{\dagger}u, w \rangle = 0 \text{ for all } w \in W ~ \iff ~ T^{\dagger}u \in W^{\perp}. ~~~ \square \end{align*} \vspace{-0.8cm}
+    \end{quote}
+    Our first lemma didn't actually need $T$ to be normal!  Our second lemma, on the other hand\dots
+    \begin{quote}
+        \textbf{Lemma 2.} Suppose $T$ is normal with eigenvector $v$ satisfying $Tv = \lambda v$.  Then $T^{\dagger}v = \overline{\lambda} v$.
+
+        \emph{Proof:} Let's handle the $\lambda = 0$ case first.
+        \[ \langle T^{\dagger}v, T^{\dagger}v \rangle = \langle Tv, Tv \rangle = \langle 0, 0 \rangle = 0. \]
+        But since $\langle \bullet, \bullet \rangle$ is positive definite, we must have $T^{\dagger}v = 0$ as well.
+
+        In the $\lambda \neq 0$ case, observe that $T' := T - \lambda I_n$ is normal.  This reduces us to the $\lambda = 0$ case, in that we know $(T')^{\dagger}v = 0$.  This implies:
+        \[ (T')^{\dagger}v = 0 ~ \implies ~ (T^{\dagger} - \overline{\lambda}I_n)v = 0 ~ \implies ~ T^{\dagger}v = \overline{\lambda}v. ~~~ \square \] \vspace{-0.8cm}
+    \end{quote}
+    Now for the actual proof: induct on $\dim V$.  Pick some eigenvector $v \in V$, and consider $W = \mathbb{C}v$.  Then:
+    \begin{enumerate}
+        \item Since $W$ is an eigenspace of $T$, we have $TW = W$.
+        \item By Lemma 2, $W$ is an eigenspace of $T^{\dagger}$ as well, so we have $T^{\dagger}W = W$, too.
+        \item By Lemma 1, the previous two points imply $TW^{\perp} = W^{\perp}$ and $T^{\dagger}W^{\perp} = W^{\perp}$.
+    \end{enumerate}
+    That final point means $T_{|W^{\perp}}$ and $T_{|W^{\perp}}^{\dagger}$ are well-defined.  In particular:
+    \begin{itemize}
+        \item We have $T_{|W^{\perp}}$ is normal, so by the inductive hypothesis, $T_{|W^{\perp}}$ can be diagonalized by a unitary matrix.
+        \item We have $W = \mathbb{C}v$ is one-dimensional, so $T_{|W}$ is diagonalized to start with.
+    \end{itemize}
+    Since $V = W \oplus W^{\perp}$, combining the diagonalizations of $T_{|W^{\perp}}$ and $T_{|W}$ yields a diagonalization of $T$.  And since $W$ and $W^{\perp}$ are perpendicular, this diagonalization has an orthonormal basis. ~ $\blacksquare$
+\end{proof}
+
+It turns out that the Spectral Theorem is a very powerful hammer, and there's a lot more nails to use it on than you'd expect.  We'll leave the hammering of nails for next lecture.
+
+\end{document}

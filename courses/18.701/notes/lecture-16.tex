@@ -1,0 +1,222 @@
+\lecture{16}
+\title{Bilinear and Hermitian Forms}
+
+\begin{document}
+
+We now shift our focus to generalizations of the dot product known as \emph{bilinear forms}.
+
+\subsection{Bilinear Forms: Definitions and Properties}
+
+\textbf{Definition (Bilinear Form).} Let $V$ be an $F$-vector space.  Then a \textbf{bilinear form} is a function $\langle \bullet, \bullet \rangle: V \times V \to F$ that is linear in both of its parameters.  In other words, for all $x, y, z \in V$ and $\lambda \in F$, we have:
+\[ \langle \lambda x, y \rangle = \lambda \langle x, y \rangle = \langle x, \lambda y \rangle ~ \text{ and } ~ \langle x + y, z \rangle = \langle x, z \rangle + \langle y, z \rangle ~ \text{ and } ~ \langle x, y + z \rangle = \langle x, y \rangle + \langle x, z \rangle \]
+\textbf{Example.} Some examples and non-examples:
+\begin{itemize}
+    \item The dot product over $\mathbb{R}^n$ defined by $\langle v, w \rangle = v^{\top}w$ is a bilinear form.
+    \item The Hermitian product over $\mathbb{C}^n$ defined by $\langle v, w \rangle = \overline{v}^{\top}w$ is \emph{not} a bilinear form: $\langle \lambda x, y \rangle \neq \langle x, \lambda y \rangle$.
+\end{itemize}
+
+We can also use adjectives to describe bilinear forms.
+
+\textbf{Definition (Symmetric, Semidefinite, Definite).} For a bilinear form $\langle \bullet, \bullet \rangle$ over a $\mathbb{R}$-vector space $V$,
+\begin{itemize}
+    \item Say $\langle \bullet ,\bullet \rangle$ is \textbf{symmetric} if $\langle x, y \rangle = \langle y, x \rangle$ for all $x, y \in V$.
+    \begin{itemize}
+        \item Equivalently, if we pick a basis so that $\langle x, y \rangle = x^{\top} A y$, then $\langle \bullet, \bullet \rangle$ is \textbf{symmetric} if $A^{\top} = A$.
+    \end{itemize}
+    \item Say $\langle \bullet, \bullet \rangle$ is \textbf{positive semidefinite} if $\langle x, x \rangle \geq 0$ for all $x \in V$.
+    \item Say $\langle \bullet, \bullet \rangle$ is \textbf{positive definite} if it is positive semidefinite, \emph{and} $\langle x, x \rangle = 0$ if and only if $x = 0$.
+\end{itemize}
+
+\textbf{Definition (Inner Product).} A bilinear form that is symmetric and positive definite is an \textbf{inner product}.
+
+\textbf{Example.} Consider the following candidates for bilinear forms over $\mathbb{R}^2$.
+\begin{itemize}
+    \item Consider $\langle x, y \rangle = x_1y_2$.  This is a bilinear form, but satisfies none of the properties.
+    \item Consider $\langle x, y \rangle = x_1 y_1$.  This is symmetric and positive semidefinite, but not positive definite.
+    \item Consider $\langle x, y \rangle = x_1 y_1 + x_2y_2$.  This is symmetric and positive definite.  (It's the dot product!)
+    \item Consider $\langle x, y \rangle = x_1 + y_2$.  This is not even a bilinear form!
+    \item Any linear combination of bilinear forms (e.g. $\langle x, y \rangle = 6x_1y_2 + 7x_2y_1$, say) is a bilinear form.
+\end{itemize}
+
+
+\subsection{Bilinear Form $\implies$ Matrix (Only if You Choose a Basis!)}
+
+\begin{theorem}{Bilinear Form Classification}
+    Suppose $V$ is an $F$-vector space with basis $(b_1, \dots, b_n)$.  Then every bilinear form $\langle \bullet, \bullet \rangle$ over $V$ must look like $\langle x, y \rangle = x^{\top}Ay$ for some $A \in F^{n \times n}$.
+\end{theorem}
+
+\begin{proof}
+    Consider $x = \sum_{i} x_i b_i$ and $y = \sum_j y_j b_j$.  Then by the linearity of bilinear forms, \vspace{-0.15cm}
+    \[ \langle x, y \rangle := \left \langle \sum_i x_i b_i, \ \sum_j y_j b_j \right \rangle := \sum_{i, j} x_iy_j \langle b_i, b_j \rangle. \] \vspace{-0.15cm}
+    Then if we take $A \in F^{n \times n}$ via $A_{i, j} = \langle b_i, b_j \rangle$, the above reads $\langle x, y \rangle = x^{\top}Ay$, as desired. ~ $\blacksquare$
+\end{proof}
+
+Notice the analogy with ``Linear Transformations $\implies$ Matrix (Only if You Choose a Basis!)''.  To be explicit,
+\begin{itemize}
+    \item To define a linear transformation $T: V \to W$ given bases $\{v_i\}$ and $\{w_i\}$\dots \\
+    \dots decide on coefficients $A_{i, j}$ such that $Tv_i = \sum_{j} A_{i, j}w_j$.  Then $T$ is represented by the matrix $A$.
+    \item To define a bilinear form $\langle \bullet, \bullet \rangle : V \times V \to F$ given a basis $\{v_i\}$\dots \\
+    \dots decide on coefficients $A_{i, j}$ such that $\langle v_i, v_j \rangle = A_{i, j}$.  Then $\langle \bullet, \bullet \rangle$ is represented by $\langle x, y \rangle = x^{\top}Ay$.
+\end{itemize}
+
+\begin{theorem}{Change of Bilinear Basis}
+    Consider a bilinear form $\langle \bullet, \bullet \rangle: V \times V \to F$.
+    \begin{itemize}
+        \item Under a basis $\{e_1, \dots, e_n\}$, say $\langle x, y \rangle = x^{\top}My$ for the appropriate matrix $M \in F^{n \times n}$.
+        \item Under a new basis $\{b_1, \dots, b_n\}$, say $\langle x, y \rangle = x^{\top}M'y$ for the appropriate matrix $M' \in F^{n \times n}$.
+    \end{itemize}
+    Say $B \in F^{n \times n}$ is the matrix with columns $\{b_1, \dots, b_n\}$, meaning $Be_i = b_i$ for all $i$. Then $M' = B^{\top}MB$.
+\end{theorem}
+
+\begin{proof}
+    The entries $M'_{i, j}$ are determined by the relationship $M_{i, j}' = \langle b_i, b_j \rangle$, since $\{b_1, \dots, b_n\}$ is the basis for $M'$.
+    
+    Using the identity $b_i = Be_i$, this relationship rewrites itself in the basis $\{e_1, \dots, e_n\}$ as:
+    \begin{align*} M'_{i, j} = \langle Be_i, Be_j \rangle = \ & (Be_i)^{\top}M (Be_j) ~ \text{ in the basis } \{e_1, \dots, e_n\} \\
+    = \ & e_i^{\top}(B^{\top}MB)e_j \\ = \ & (B^{\top}MB)_{i, j}. \end{align*}
+    So the entries of $M'$ and $B^{\top}MB$ match everywhere, meaning $M' = B^{\top}MB$. ~ $\blacksquare$
+\end{proof}
+
+\vspace{0.2cm}
+
+\begin{boxed-text}[36em]
+    \textcolor{red}{\textbf{--- Warning: Matrices are Grids of Numbers ---}} \vskip{0.75em}
+
+    Given a choice of basis, every bilinear form corresponds to a matrix.
+    
+    This matrix is \emph{just a matrix}.  It is nothing more than a grid of numbers in $F^{n \times n}$.
+    
+    Do not try to interpret this matrix as a linear transformation---it won't work. \vskip{0.75em}
+    
+    The statement $M' = B^{\top}MB$ is a claim about matrices, NOT linear transformations!
+
+    In particular, the expression $B^{\top}MB$ means nothing irrespective of a basis, \\ because there is no meaning to ``the transpose of a linear map'' without a basis. \vskip{0.75em}
+
+    More explicitly, in the proof above, the line ``$\langle Be_i, Be_j \rangle = (Be_i)^{\top}M(Be_j)$'' \\ is only true if we define the transpose $(\bullet)^{\top}$ using the basis $\{e_1, \dots, e_n\}$. \\ The truth value of this line depends on our choice of basis, \\ because $(Be_i)^{\top}M(Be_j)$ has a basis-dependent value.
+\end{boxed-text}
+
+
+
+\subsection{Foreshadowing: Quadratic Polynomials are Bilinear Forms}
+
+\textbf{Claim:} Every quadratic polynomial in $n$ variables $(x_1, \dots, x_n)$ can be viewed in terms of bilinear forms.
+
+\emph{Proof:} Just note the injection:
+\[ \text{quadratic polynomials} = \underbrace{\left(\sum_{i, j} A_{i, j} x_i x_j\right)}_{\text{degree 2 terms}} + \underbrace{\left(\sum_{i} b_i x_i \right)}_{\text{degree 1 terms}} \ + \ \left(c\right) = x^{\top}Ax + b^{\top}x + c. \]
+So quadratic polynomials inject with ordered triples $(A, b, c) \in \mathbb{R}^{n \times n} \times \mathbb{R}^n \times \mathbb{R}$.  Specifically, both $A_{i, j}$ and $A_{j, i}$ correspond to the coefficient of $x_ix_j$, so the matrix $A$ better be symmetric.
+
+\begin{remark}
+    Only if we're working in a field $F$ where $2 \neq 0$.  If $F = \mathbb{F}_2$, for example, then there is no $A$ that yields $x^{\top}Ax = x_1x_2$.
+\end{remark}
+
+This injection comes naturally with Taylor Series; the $2^{\text{nd}}$ degree Taylor polynomial of $f: \mathbb{R}^n \to \mathbb{R}$ at $x = 0$ is:
+\[ f(x) = \dfrac{1}{2} x^{\top} \!\underbrace{\left[\dfrac{\partial^2 f}{\partial x_i \partial x_j}(x)\right]}_{A} x  + \underbrace{\left[\nabla f(x)\right]}_{b} \!^{\top}x + \underbrace{f(0)}_{c}. \]
+The funny double-partial-derivative $A$ is called the \emph{Hessian}.  The Hessian is always symmetric, expectedly.
+
+
+
+\subsection{Hermitian Forms: Doing it all again\dots}
+
+What if bilinear forms were not actually bilinear and were forced to lived in $\mathbb{C}$?
+
+\textbf{Definition (Hermitian Form).} Let $V$ be a $\mathbb{C}$-vector space.  Then a \textbf{Hermitian form} is a function $\langle \bullet, \bullet \rangle : V \times V \to \mathbb{C}$ that is linear and ``symmetric'' in both of its parameters.  In other words, for all $x, y, z \in V$ and $\mu, \lambda \in \mathbb{C}$, we have:
+\[ \langle x + y, z \rangle = \langle x, z \rangle + \langle y, z \rangle ~ \text{ and } ~ \langle \lambda x, \mu z \rangle = \overline{\lambda} \mu \langle x, z \rangle ~ \text{ and } ~ \langle y, x \rangle = \overline{\langle x, y \rangle} .\]
+\begin{remark}
+    Hermitian forms are not bilinear forms.  They're a completely separate thing.
+\end{remark}
+
+\begin{remark}
+The properties ``positive semidefinite'' and ``positive definite'' carry over to Hermitian forms. However, the ``symmetric'' condition is already forcefully embedded within the definition.
+\end{remark}
+
+\textbf{Definition ($\textbf{Dagger}^\dagger$ and $\textbf{Asterisk}^*$).} Let $x^{\dagger}$ and $x^*$ both be shorthands for the conjugate transpose $\overline{x}^{\top}$.
+
+Our discussion of ``Bilinear form $\implies$ Matrix (Only if You Choose a Basis!)'' carries over.  In particular,
+
+\begin{theorem}{Hermitian Forms w/ Bases}
+    Suppose $V$ is a $\mathbb{C}$-vector space with Hermitian form $\langle \bullet, \bullet \rangle$.
+    \begin{itemize}
+        \item Under a basis $\{e_1, \dots, e_n\}$, we can say $\langle x, y \rangle = x^{\dagger}My$ for the appropriate matrix $M \in \mathbb{C}^{n \times n}$.
+        \item Under a new basis $\{b_1, \dots, b_n\}$, we can say $\langle x, y \rangle = x^{\dagger}M'y$ for the appropriate matrix $M' \in \mathbb{C}^{n \times n}$.
+    \end{itemize}
+    Say $B \in \mathbb{C}^{n \times n}$ is the matrix with columns $\{b_1, \dots, b_n\}$, meaning $Be_i = b_i$ for all $i$. Then $M' = B^{\dagger}MB$.
+\end{theorem}
+
+% \textbf{Definition (Hermitian Inner Product).} A Hermitian form is a \textbf{Hermitian inner product} if it is positive definite.
+
+
+
+
+\subsection{Transformations that Preserve a Bilinear / Hermitian Form}
+
+Which linear transformations preserve a bilinear form?  Phrased more precisely,
+
+\textbf{Question:} For which linear transformations $A: V \to V$ does $\langle x, y \rangle = \langle Ax, Ay \rangle$ for all $x, y \in V$ always hold?
+
+\textbf{Answer:} Work in a fixed basis, and say $\langle x, y \rangle = x^{\top}My$ in this basis.  The answer is all $A$ for which $A^{\top}MA = M$.  The proof follows immediately from the change-of-basis formula.
+
+\begin{remark}
+    This implies $A: V \to V$ preserves the dot product $\langle x, y \rangle = x^{\top}y$ if and only if $A^{\top}A = I_n$, as expected. \\ A subgroup of matrices that preserve a more general bilinear form is called an \emph{indefinite orthogonal group}.
+\end{remark}
+
+We can repeat the same thing for Hermitian forms, too.
+
+\textbf{Answer:} Work in a fixed basis, and say $\langle x, y \rangle = x^{\dagger}My$ in this basis.  The answer is all $A$ for which $A^{\dagger}MA = M$.
+
+Orthogonal matrices preserve bilinear forms $\langle x, y \rangle = x^{\top}y$.  Analogously\dots
+
+\textbf{Definition (Unitary).} Take the Hermitian form to be $\langle x, y \rangle = x^{\dagger}y$.  A matrix $A \in \mathbb{C}^{n \times n}$ is \textbf{unitary} if $\langle x, y \rangle = \langle Ax, Ay \rangle$ for all $x, y \in \mathbb{C}$.  Equivalently, $A$ is unitary if $A^{\dagger}A = I$.
+
+
+
+\subsection{Symmetric Bilinear / Hermitian Forms}
+
+We'll conclude lecture by discussing what happens when bilinear forms are symmetric.
+
+\textbf{Definition (Hermitian Matrix).} A matrix $A \in \mathbb{C}^{n \times n}$ is \textbf{Hermitian} if $A^{\dagger} = A$.
+
+\begin{theorem}{Symmetry Begets Symmetry}
+    Consider a \emph{symmetric} bilinear / Hermitian form $\langle \bullet, \bullet \rangle$.  Pick a basis.
+    \begin{itemize}
+        \item If $\langle x, y \rangle = x^{\top}Ay$ is a bilinear form, then $A$ is symmetric; that is, $A^{\top} = A$.
+        \item If $\langle x, y \rangle = x^{\dagger}Ay$ is a Hermitian form, then $A$ is Hermitian; that is, $A^{\dagger} = A$.
+    \end{itemize}
+\end{theorem}
+
+\begin{proof}
+    For the bilinear form, the symmetry implies $\langle e_i, e_j \rangle = \langle e_j, e_i\rangle$, which reads $A_{i, j} = A_{j, i}$.  So $A^{\top} = A$.
+
+    For the Hermitian form, the symmetry $\langle e_i, e_j \rangle = \overline{\langle e_j, e_i \rangle}$, which reads $A_{i, j} = \overline{A_{j, i}}$.  So $A^{\dagger} = A$. ~ $\blacksquare$
+\end{proof}
+
+We now conclude with the following fun fact:
+
+\begin{theorem}{Eigenvalues are Real}
+    If $A \in \mathbb{C}^{n \times n}$ is Hermitian, then all eigenvalues of $A$ are real.
+\end{theorem}
+
+\begin{proof}
+    Suppose $v$ has eigenvalue $\lambda$.
+    \begin{quote}
+        \textbf{Lemma.} Since $A$ is Hermitian, we have $\langle Av, v \rangle = \langle v, Av \rangle$, where $\langle x, y \rangle = x^{\dagger}y$ is the basic inner product.
+
+        \emph{Proof:} Just compute: $\langle Av, v \rangle = (Av)^{\dagger}v = v^{\dagger}A^{\dagger}v = \langle v, A^{\dagger}v \rangle = \langle v, Av \rangle$. ~ $\square$
+    \end{quote}
+    The lemma says $\langle v, Av \rangle = \langle Av, v \rangle$, which reads $\langle v, \lambda v \rangle = \langle \lambda v, v \rangle$.  Thus $\lambda \langle v, v \rangle = \overline{\lambda} \langle v, v \rangle$, so $\lambda = \overline{\lambda}$, done. ~ $\blacksquare$
+\end{proof} 
+
+For fun, here's another proof of the same theorem.
+
+\begin{proof}
+    Consider the Hermitian form $\langle x, y \rangle = x^{\dagger}Ay$.  Then $\langle v, v \rangle = \overline{\langle v, v \rangle}$, so $\langle v, v \rangle \in \mathbb{R}$.
+
+    This reads $v^{\dagger}Av \in \mathbb{R}$.  But $v^{\dagger}Av = \lambda(v^{\dagger}v)$, and $v^{\dagger}v \in \mathbb{R}$ by inspection (i.e. it's $\sum_i \overline{v_i}v_i = \sum_i |v_i|^2 \in \mathbb{R}$).  So $\lambda \in \mathbb{R}$. ~ $\blacksquare$
+\end{proof}
+
+By corollary, every symmetric real matrix has real eigenvalues!  This is because $\mathbb{R} \subseteq \mathbb{C}$.  The intuition is that the complex-valued Hermitian setting will yield results in the real setting.
+
+\begin{remark}
+    The analogue of ``Hermitian over $\mathbb{C}$'' is ``symmetric over $\mathbb{R}$''.
+\end{remark}
+
+\end{document}

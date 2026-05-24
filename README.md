@@ -1,8 +1,24 @@
 # arbitrary142857.github.io
 
-MIT 6.1220 lecture notes, built as a static site.
+MIT course notes, built as static HTML from LaTeX.
 
 Live site: [https://arbitrary142857.github.io/](https://arbitrary142857.github.io/)
+
+## Layout
+
+```
+courses/
+  6.1220/
+    preamble.tex
+    notes/lecture-*.tex
+    images/lecture-NN/...
+  18.701/
+    preamble.tex
+    notes/lecture-*.tex
+    images/...
+```
+
+Each course has its own preamble, notes, and images. The site home page lists courses; each course has its own index, all-lectures page, and per-lecture HTML under `courses/<id>/notes-html/`.
 
 ## Local development
 
@@ -16,16 +32,12 @@ Open `index.html` in a browser, or serve the repo root with any static file serv
 
 ## Deploy (GitHub Pages)
 
-The site is **not** served from this README. GitHub Actions builds the HTML and deploys it.
+Pushes to `main` deploy via GitHub Actions. In repo settings, set **Pages → Source** to **GitHub Actions**.
 
-### One-time setup
+## Adding a course
 
-1. Open [Settings → Pages](https://github.com/arbitrary142857/arbitrary142857.github.io/settings/pages).
-2. Under **Build and deployment**, set **Source** to **GitHub Actions** (not “Deploy from a branch”).
-3. Go to [Actions](https://github.com/arbitrary142857/arbitrary142857.github.io/actions), open **Deploy to GitHub Pages**, and click **Re-run all jobs**.
+1. Create `courses/<course-id>/` with `preamble.tex`, `notes/`, and `images/`.
+2. Add an entry to `COURSES` in `src/courses.ts`.
+3. Run `npm run build`.
 
-If Source is left on “Deploy from a branch”, GitHub will render this README with Jekyll instead of the built notes site.
-
-### After setup
-
-Pushes to `main` deploy automatically.
+Use `\lecture{N}` or `\lectures{N,M}` in note file headers, as before.

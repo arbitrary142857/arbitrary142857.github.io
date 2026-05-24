@@ -1,0 +1,167 @@
+\lecture{11}
+\title{Point Groups, Lattices, Crystallographic Restriction, Group Actions}
+
+\begin{document}
+
+Last time, we classified all discrete subgroups of $O_2(\mathbb{R})$.  Our goal for today is to answer the following question:
+
+\begin{boxed-text}[42em]
+\textbf{Question.} What do all the \emph{discrete} symmetry groups $G \subseteq M_2$ of a shape $S \subseteq \mathbb{R}^2$ look like?
+\end{boxed-text}
+
+We'll set up today's discussion with the following theorem and definition.
+
+\begin{theorem}{Discrete Subgroups of $\mathbb{R}^2$}
+    Every discrete subgroup of $(\mathbb{R}^2, +)$ is either of the form $\mathbb{Z}v$ or $\mathbb{Z}v + \mathbb{Z}w$, where $v$ and $w$ are vectors in $\mathbb{R}^2$.
+\end{theorem}
+
+\begin{proof}
+    The proof is analysis-flavored, so we only provide a sketch here.
+    
+    For any discrete subgroup $H \subseteq (\mathbb{R}^2, +)$, we may take $v$ to be the vector of least magnitude in $H$, then take $w$ to be the vector of least magnitude in $H \setminus \mathbb{Z}v$.
+    
+    If there is still some $x \in H \setminus (v \mathbb{Z} + w\mathbb{Z})$, then look for the ``remainder'' when $x$ is quotiented out by $v \mathbb{Z} + w \mathbb{Z}$ to contradict the minimality of $|v|$ and $|w|$. ~ $\blacksquare$
+\end{proof}
+
+\textbf{Definition (Lattice).} A subset of $\mathbb{R}^2$ is a \textbf{lattice} if it is of the form $\mathbb{Z}v$ or $\mathbb{Z}v + \mathbb{Z}w$.
+
+\subsection{Point Groups and Lattices}
+
+\textbf{Definition (Point Group).} Consider the map $\pi: M_2 \to O_2(\mathbb{R})$ defined by $\pi: (x \mapsto Ax + b) \mapsto A$.  Intuitively, $\pi$ filters out the translations from the isometries in $M_2$. Then for any discrete subgroup $G$ of $M_2$:
+\begin{itemize}
+    \item The \textbf{point group} of $G$ is $\overline{G} := \pi(G)$.  In other words, $\overline{G}$ describes the isometries in $G$ ``up to translation''.
+    \item The \textbf{lattice} of $G$ is $L := \ker(\pi) \cap G$.
+\end{itemize}
+Why is $L := \ker(\pi) \cap G$ a lattice?  Because an isometry $f(x) = Ax + b$ is in $\ker(\pi)$ if and only if $f$ is a translation.  So $L$ is a discrete group of translations of $(\mathbb{R}^2, +)$, so it's a lattice by the ``Discrete Subgroups of $\mathbb{R}^2$'' theorem.
+
+\textbf{Example.} The tilings of $\mathbb{R}^2$ shown below are the \textit{square tiling}, the \textit{pythagorean tiling}, and the \textit{weaving tiling}. \vspace{0.15cm}
+\begin{center}
+    \frame{\includegraphics[width=0.7\textwidth]{lecture-11/tilings}}
+\end{center}
+The point groups of their symmetry groups are the following:
+\begin{itemize}
+    \item The symmetry group of the \emph{square tiling} has point group $D_4$ and lattice $\mathbb{Z}^2$.
+    \item The symmetry group of the \emph{pythagorean tiling} has point group $C_4$ and lattice shown by the dashed lines.
+    \item The symmetry group of the \emph{weaving tiling} has point group $D_4$.  Some symmetries are glide reflections!
+\end{itemize}
+
+\begin{remark}
+Importantly, the point group of a tiling is \emph{not} the same as the group of isometries that fixes a single point.  See the \emph{weaving tiling} for an example of this.
+\end{remark}
+
+\subsection{Classifying Discrete Symmetry Groups: Mathematical Reasoning}
+
+Any discrete symmetry group $G \subseteq M_2$ is described in full by its point group $\overline{G}$ and its lattice $L$.  What can we say about the relationship between $\overline{G}$ and $L$?
+
+\begin{theorem}{Point Groups are a Symmetry of the Lattice}
+    Given a discrete subgroup $G \subseteq M_2$, consider its corresponding point group $\overline{G} = \pi(g)$ and lattice $L = \ker(\pi) \cap G$.
+    
+    Then for any $A \in \overline{G}$ and any $x_0 \in L$, we have $Ax_0 \in L$.  In other words, $\overline{G}(L) = L$.
+\end{theorem}
+
+\begin{proof}
+    Since $A \in \overline{G}$ and $x_0 \in L$, we know the following about $G$:
+    \begin{itemize}
+        \item The isometry $f_1: x \mapsto Ax + b$ is in $G$ for some translation $b \in \mathbb{R}^2$.
+        \item The isometry $f_2: x \mapsto x + x_0$ is in $G$.
+    \end{itemize}
+    The key idea is to consider the conjugation of $f_2$ by $f_1$, which is in $G$.
+    \begin{align*} f_1f_2f_1^{-1}: x \ \mapsto \ & A(A^{_1}x - A^{-1}b + x_0) + b \\
+    = \ & x + Ax_0. \end{align*}
+    Thus, $x + Ax_0$ is in $G$, so $Ax_0$ is in $L$, as desired. ~ $\blacksquare$
+\end{proof}
+
+What kind of point groups $\overline{G} \in O_2(\mathbb{R})$ can preserve a lattice $L$, then?
+
+\begin{theorem}{Crystallographic Restriction}
+    Consider some point group $\overline{G} \in O_2(\mathbb{R})$, which must look like $C_n$ or $D_n$ for some $n$.  Then if $L$ is a nontrivial lattice preserved by $\overline{G}$, it must in fact be the case that $n \in \{1, 2, 3, 4, 6\}$.
+\end{theorem}
+
+\begin{proof}
+    The key idea is to consider the vector $x$ of minimal length in $L$.
+\begin{itemize}
+    \item If $n > 6$, then $\overline{G}$ contains some rotation $R$ by an angle less than $\frac{\pi}{3}$.  But then $|Rx - x| < |x|$ by geometry, contradicting the minimality of $|x|$.
+    \item Similarly, if $n = 5$, then $\overline{R}$ contains the rotation $R$ by angle $\frac{2\pi}{5}$.  But then $|R^2x + x| < |x|$ by geometry, contradicting the minimality of $|x|$.
+\end{itemize}
+    So the above implies $n \in \{1, 2, 3, 4, 6\}$, and we're done. ~ $\blacksquare$
+\end{proof}
+
+Thus, our answer to the big question for today is the following:
+
+\begin{boxed-text}[42em]
+\textbf{Answer.} If $G \subseteq M_2$ is a discrete symmetry group, then $\overline{G} = \pi(G)$ \\ must look like $C_n$ or $D_n$
+for some $n \in \{1, 2, 3, 4, 6\}$.
+\end{boxed-text}
+
+The original question asked for all the discrete symmetry groups \emph{of some shape $S \subseteq \mathbb{R}^2$}.  But our analysis so far has completely ignored the shape $S$, so what remains is just shape-inspection for each candidate point group $\pi(G)$.
+
+This shape-inspection, unfortunately, is mostly tedious.  So we'll just skip to the results.
+
+\subsection{Classifying Discrete Symmetry Groups: The Results}
+
+We categorize our results based on the rank of our lattice.
+
+\textbf{Example (Rank 0 Lattices).} If the lattice $L$ has rank zero, then $L = \{0\}$, and every single point group $C_n$ or $D_n$ works (even if $n \not \in \{1, 2, 3, 4, 6\}$).  This is uninteresting.
+
+\textbf{Example (Rank 1 Lattices: Frieze Groups).} Consider the lattice $L = \mathbb{Z}v$.    Then it turns out $\overline{G} \in \{C_1, D_1, C_2, D_2\}$, achievable in $7$ different ways up to isomorphism.  These are called \textbf{Frieze Groups}. \vspace{0.15cm}
+
+\begin{center}
+    \frame{\includegraphics[width=0.5\textwidth]{lecture-11/frieze-groups.png}}
+\end{center}
+
+\textbf{Example (Rank 2 Lattices: Wallpaper Groups).} For $L= \mathbb{Z}v + \mathbb{Z}w$, there are $17$ different \textbf{Wallpaper Groups}.  \vspace{0.1cm}
+
+\begin{center}
+    \frame{\includegraphics[width=0.5\textwidth]{lecture-11/wallpaper-groups.png}}
+\end{center}
+
+And these are all of the discrete symmetry groups of some shape $S \in \mathbb{R}^2$.  The end. \vspace{0.1cm}
+
+\begin{center}
+    \frame{\includegraphics[width=0.5\textwidth]{lecture-11/wallpaper-pattern.jpeg}}
+\end{center}
+
+\begin{remark}
+    These are not meant to be memorized, unless you're a crystallographer or something.
+\end{remark}
+
+\subsection{Group Actions and Cayley's Theorem}
+
+Now for something completely different.
+
+\textbf{Definition (Action).} Let $G$ be a group and $S$ be a set.  Then an \textbf{action} of $G$ on $S$ is a map $G \times S \to S$ satisfying the following properties:
+\begin{itemize}
+    \item If $1$ is the identity of $G$, then $(1, s) \mapsto s$ for all $s \in S$.
+    \item For any $g, h \in G$ and any $s \in S$, both $(gh, s)$ and $(g, (h, s))$ correspond to the same element of $S$.
+\end{itemize}
+For ease of writing, we will often denote the image of $(g, s)$ by $g \cdot s$.
+
+\textbf{Example.} Some common examples of group actions are:
+\begin{itemize}
+    \item The permutation group $G = S_n$ acts on $S = \{1, 2, \dots, n\}$.
+    \item The group of linear transformations $G = GL_n(\mathbb{R})$ acts on $\mathbb{R}^n$.
+    \item Every group $G$ acts on the set of its own elements.
+\end{itemize}
+
+Importantly, the third point in the example above provides the intuition behind the following theorem.
+
+\begin{theorem}{Cayley's Theorem}
+    Every group $G$ is a subgroup of $S_n$, where $n = |G|$.
+\end{theorem}
+
+\begin{proof}
+    Think of $G$ as a group action on the set of its own elements.  Expressed more formally, there exists a map $f: G \to \mathrm{Perm}(G)$, where $f(g)$ is the map $f(g): s \mapsto gs$ for all $s \in G$.
+
+    Intuitively, $f$ is an injective homomorphism.  Here's the formal mathematical jargon that justifies this intuition.
+    \begin{itemize}
+        \item To show $f$ is a homomorphism, just write $f(gh) \cdot s = (gh) \cdot s = g \cdot (h \cdot s) = g \cdot (f(h)(s)) = (f(g) \circ f(h))(s)$.
+        \item To show $f$ is injective, note that if $f(g) = f(h)$, then $gs = hs$, meaning $g = h$.
+    \end{itemize}
+    Thus, $H = f(G) \subseteq S_n$ is a subgroup of $S_n$ for which $f: G \to H$ is an isomorphism, meaning $G \cong H$ and win. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    This isomorphism from groups $G$ to subgroups of $S_n$ is very ``space-inefficient''.  For example, the encoding of $S_8$ as a group action on its own elements would yield a representation of $S_8$ as a subgroup of $S_{40320}$.
+\end{remark}
+
+\end{document}

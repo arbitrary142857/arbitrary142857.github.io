@@ -1,0 +1,235 @@
+\lecture{15}
+\title{Sylow's Theorems}
+
+\begin{document}
+
+Recall that the order of any subgroup of $G$ is a divisor of $|G|$.  However, it is \emph{not} true that every divisor of $|G|$ must be the order of some subgroup; take $G = A_5$ from last lecture, for example.
+
+Sylow's Theorems, surprisingly, can refine the above statement so that it \emph{is} true.
+
+\subsection{Stating Sylow's Theorems}
+
+\textbf{Definition ($p$-Adic Valuation).} For primes $p$, let $\nu_p(k)$ denote the greatest positive integer $\ell$ such that $p^{\ell} \mid k$.
+
+\textbf{Definition (Sylow $p$-Subgroup).} For primes $p$, a subgroup $H$ of a group $G$ is a \textbf{Sylow $p$-subgroup} if $|H| = p^{\nu_p(|G|)}$.
+
+\begin{theorem}{Sylow's Theorems}
+    Let $G$ be a finite group and $p$ be any prime.  Then:
+    \begin{enumerate}
+        \item $G$ must have a Sylow $p$-subgroup.
+        \item All of the Sylow $p$-subgroups are conjugates of each other.
+        \item Every $p$-subgroup of $G$ is a subset of some Sylow $p$-subgroup of $G$.
+        \item The number $N$ of Sylow $p$-subgroups of $G$ satisfies $N \equiv 1 \pmod{p}$, and $N$ divides $|G|$.
+    \end{enumerate}
+\end{theorem}
+
+\begin{remark}
+    Usually ``$N$ divides $|G|$'' is written as ``$N$ divides $\frac{|G|}{p^{\nu_p(|G|)}}$''.  But ``$N$ divides $|G|$'' is good enough given $N \equiv 1 \pmod{p}$.
+\end{remark}
+
+\textbf{Example.} The group $S_4$ has order $24 = 2^3 \times 3$.  Thus,
+\begin{itemize}
+    \item Any Sylow $2$-subgroup of $S_4$ must have order $8$: they're all conjugates of $\langle (1 \ 2), (3 \ 4), (1 \ 3) (2 \ 4) \rangle$.
+    \item Any Sylow $3$-subgroup of $S_4$ must have order $3$: they're all conjugates of $\langle (1 \ 2 \ 3) \rangle$.
+\end{itemize}
+\textbf{Example.} The group $GL_2(\mathbb{F}_p)$ has order $p(p - 1)^2(p + 1)$.  Thus, any Sylow $p$-subgroup of $GL_2(\mathbb{F}_p)$ must have order $p$.  And indeed, $\left \{ \begin{bsmallmatrix} 1 & x \\ 0 & 1 \end{bsmallmatrix} : x \in \mathbb{F}_p \right \}$ is such a Sylow $p$-subgroup.
+
+\subsection{Applications of Sylow's Theorems: Group Classification}
+
+One strong application of Sylow's Theorems is group classification.
+
+\begin{problem}{Groups of Order 15}
+    Determine all groups of order $15$ up to isomorphism.
+\end{problem}
+
+\begin{solution}
+    Let $G$ be a group of order $15$.  Then by Sylow's Theorem \#4,
+    \begin{itemize}
+        \item There is exactly one Sylow $3$-subgroup $H$ of $G$, with $|H| = 3$.
+        \item There is exactly one Sylow $5$-subgroup $K$ of $G$, with $|K| = 5$.
+    \end{itemize}
+    Also observe that $H$ and $K$ are normal.  Indeed, if they were not normal, then conjugating them could yield a different Sylow $p$-subgroup, contradicting the fact that $H$ and $K$ are one-of-a-kind.
+
+    The rest is standard: do some work to show $H \times K$ bijects with $G$ via $(h, k) \mapsto hk$.  So $G \cong C_3 \times C_5$. ~ $\blacksquare$
+\end{solution}
+
+The situation is a little different when $15$ is replaced with $10$.
+
+\begin{problem}{Groups of Order 10}
+    Determine all groups of order $10$ up to isomorphism.
+\end{problem}
+
+\begin{solution}
+    Let $G$ be a group of order $15$.  Then by Sylow's Theorem \#4,
+    \begin{itemize}
+        \item There is exactly one Sylow $5$-subgroup $H = \langle x \rangle$ of $G$, with $|H| = 5$.
+        \item There is either one or five Sylow $2$-subgroup $K$, with $|K| = 2$.  Let's say $K = \langle y \rangle$.
+    \end{itemize}
+    It's now unclear whether $K$ is normal.  But at least $H$ is normal, so we can write:
+    \[ y \langle x \rangle y^{-1} = \langle x \rangle ~ \implies ~ yx = x^n y \text{ for some } n \in \{1, 2, 3, 4\}. \]
+    At this point, we might be inclined to just define $G$ via group generation:
+    \[ G_n = \{\langle x, y \rangle \mid x^5 = y^2 = \mathrm{id}, ~ yx = x^n y\}. \]
+    But in fact, not all $G_n$ are valid, consistent groups!  Observe:
+    \[ x = y^2 x = yx^n y = x^{(n^2)}y^2 = x^{(n^2)} ~ \implies ~ n^2 \equiv 1 \pmod{5}. \]
+    So only $G_1$ and $G_4$ are valid.  And one can check that $G_1 \cong C_2 \times C_5$ and $G_4 \cong D_5$, which work. ~ $\blacksquare$
+\end{solution}
+
+It turns out that the above two arguments are all we need to classify groups of order $pq$.
+
+\begin{theorem}{Groups of Semiprime Order}
+    Suppose $|G| = pq$ for primes $p$ and $q$ and $p < q$.  Then:
+    \begin{itemize}
+        \item If $q \not \equiv 1 \pmod{p}$, then $G \cong C_p \times C_q$.
+        \item If $q \equiv 1 \pmod{p}$, then either $G \cong C_p \times C_q$ or $C_q \rtimes C_p$ (the semi-direct product).
+    \end{itemize}
+\end{theorem}
+
+\begin{proof}
+    If $q \not \equiv 1 \pmod{p}$, then the argument for $pq = 15$ can be copy-pasted verbatim.
+
+    Otherwise, if $q \equiv 1 \pmod{p}$, then the argument for $pq = 10$ says $G$ must look like:
+    \[ G_n = \{ \langle x, y \rangle \mid x^q = y^p = \mathrm{id}, ~ yx = x^ny\} \text{ for some } n \in \{1,2, \dots, p - 1\}. \]
+    However, just as in the $pq = 10$ case, we can constrain what $n$ can be, like so:
+    \[ x = y^px = x^{(n^p)}y^p = x^{(n^p)} ~ \implies ~ n^p \equiv 1 \pmod{q}. \]
+    To better understand the condition $n^p \equiv 1 \pmod{q}$, recall from Problem Set \#4 that the multiplicative group $(\mathbb{F}_q^{\times}, \times)$ is cyclic.  Thus, $\{n \in \mathbb{F}_q^{\times} \mid n^p = 1\}$ is a cyclic subgroup; say it's generated by some $n_0 \in \mathbb{F}_q^{\times}$.  Then:
+    \[ n^p \equiv 1 \pmod{q} ~ \iff ~ n \in \{1, n_0, n_0^2, \dots, n_0^{p - 1}\}. \]
+    So $G$ must be $G_{(n_0^k)}$, with $k \in \{0, 1, \dots, p - 1\}$.  It turns out that almost all $k$ yield the same $G_{(n_0^k)}$:
+    \begin{quote}
+        \textbf{Claim.} For any $k \in \{1, 2, \dots, p - 1\}$, we have $G_{n_0} \cong G_{(n_0^k)}$.
+
+        \emph{Proof:} The isomorphism is just via a change of generator $y$.  Observe the following identity:
+        \[ yx = x^n y ~ \iff ~ y^kx = x^{(n^k)}y^k. \]
+        Therefore, we may write:
+        \begin{align*} G_{n_0} = \ &  \{ \langle x, y \rangle \mid x^q = y^p = \mathrm{id}, \ yx = x^{n_0}y \} \\
+        = \ & \{ \langle x, y \rangle \mid x^q = y^p = \mathrm{id}, \ y^k x = x^{(n_0^k)}y^k \} \\
+        = \ & \{ \langle x, y^k \rangle \mid x^q = (y^k)^p = \mathrm{id}, \ y^kx = x^{(n_0^k)}y^k \} \\
+        = \ & \{ \langle x, y' \rangle \mid x^q = (y')^p = \mathrm{id}, \ y'x = x^{(n_0^k)}y' \} = G_{(n_0)^k}. ~~~ \square \end{align*}
+    \end{quote}
+    So either $n = 1$ or $n \equiv n_0^k \pmod{p}$ for some $k \in \{1, 2, \dots, p - 1\}$.  The former yields $G \cong C_p \times C_q$, whereas the latter yields the semi-direct product $C_q \rtimes C_p$.  (For now, just trust that $C_q \rtimes C_p$ is correct.) ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    Regarding Problem Set \#4\dots we also showed more strongly that any the multiplicative group of any finite field is cyclic.  This implies, for example, that there is always a primitive root modulo any prime $p$.
+\end{remark}
+
+
+\subsection{Proving Sylow's Theorems}
+
+Time to justify all the work we've done so far.
+
+\begin{theorem}{Sylow \#1}
+    Let $G$ be a finite group and $p$ be any prime.  Then $G$ has a subgroup of order $p^{\nu_p(|G|)}$.
+\end{theorem}
+
+\begin{proof}
+    For ease of writing, say $\ell = \nu_p(|G|)$ and $|G| = m p^{\ell}$.  Consider the following group action:
+    \begin{quote}
+        \textbf{Group Action.} View $G$ as a group action on the set $S$ of all subsets $T \subseteq G$ such that $|T| = p^{\ell}$.
+    \end{quote}
+    We'll use this group action to help us find a subgroup of order $p^{\ell}$.
+    \begin{quote}
+        \textbf{Claim 1.} There is some subset $U \in S$ such that the orbit $GU$ has size not divisible by $p$.
+
+        \emph{Proof:} This is a counting argument.  The number of subsets in $S$ is:
+        \[ |S| = \binom{mp^{\ell}}{p^{\ell}} \equiv \binom{m}{1} \equiv m \not \equiv 0  \pmod{p} ~~~~ \text{ by \href{https://en.wikipedia.org/wiki/Lucas\%27s\_theorem}{Lucas' Theorem}}. \]
+        If the orbits are $GU_i$, then $\sum |GU_i| = |S| \not \equiv 0 \pmod{p}$, so some $U_i$ must satisfy $|GU_i| \not \equiv 0 \pmod{p}$. ~ $\square$
+    \end{quote}
+    We'll now use the subset $U$ to construct a subgroup of order $p^{\ell}$.
+    \begin{quote}
+        \textbf{Claim 2.} The stabilizer $H = \Stab_G(U)$ is a subgroup of $G$ with order $p^{\ell}$.
+
+        \emph{Proof:} Stabilizers are always subgroups, so $H$ being a subgroup of $G$ comes for free.
+
+        The Orbit-Stabilizer Theorem says that $|G| = |GU| \cdot |H|$.  Since $p^{\ell}$ divides $|G|$, yet $p$ does not divide $|GU|$, this forces $p^{\ell}$ to divide $|H|$.
+
+        Finally, $HU = U$ implies $U$ is a union of cosets of $H$, and so $|H|$ divides $|U|$.  But $U \in T$, so $|U| = p^{\ell}$ must hold.  Thus, $|H|$ divides $p^{\ell}$.
+
+        Combining ``$p^{\ell}$ divides $|H|$'' and ``$|H|$ divides $p^{\ell}$'' yields $|H| = p^{\ell}$, as desired. ~ $\square$
+    \end{quote}
+    And so we're done; our desired Sylow $p$-subgroup is $H = \Stab_G(U)$.  ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    (Reading Comprehension) Where does this proof fail when $\ell < \nu_p(|G|)$?  What goes wrong if we, say, tried to replace every instance of ``$\ell$'' in the proof with ``$\nu_p(|G|) - 1$''?
+\end{remark}
+
+\begin{theorem}{Sylow \#2 \& Sylow \#3}
+    Let $H$ be a Sylow $p$-subgroup of $G$.  Then every $p$-subgroup of $G$ must be a subset of some conjugate of $H$.
+\end{theorem}
+
+\begin{proof}
+    Let $K$ be a $p$-subgroup of $G$.  Consider the following group action:
+    \begin{quote}
+        \textbf{Group Action.} View $K$ as a group action on the set of left cosets $S := \{gH \mid g \in G\}$.
+    \end{quote}
+    It turns out we can say a lot about this group action:
+    \begin{quote}
+        \textbf{Claim 1.} This group action has an orbit of size $1$.  In other words, $K(gH) = gH$ for some coset $gH$.
+
+        \emph{Proof:} Say the orbit sizes are $n_1, n_2, \dots, n_t$.  Then we have:
+        \[ n_1 + n_2 + \dots + n_t = |S| = \dfrac{|G|}{|H|} \not \equiv 0 \pmod{p}. \]
+        Thus, there must exist some $i$ for which $n_i \not \equiv 0 \pmod{p}$.  But by the Orbit-Stabilizer Theorem, each $n_i$ is a divisor of $|K| = p^k$.  Combining $n_i \not \equiv 0 \pmod{p}$ and $n_i \mid p^k$ forces $n_i = 1$ for some $i$. ~ $\square$
+    \end{quote}
+    Well, what does $K(gH) = gH$ mean?
+    \begin{quote}
+        \textbf{Claim 2.} If $K(gH) = gH$, then $K \subseteq gHg^{-1}$ (independent of the context of $K$ and $gH$).
+
+        \emph{Proof:} Consider the following (more familiar) group action:
+        \begin{quote}
+            \textbf{Group Action.} View $G$ as a group action on itself (via left multiplication).
+        \end{quote}
+        Then we can interpret $K(gH) = gH$ as:
+        \[ K(gH) = gH ~ \iff ~ K \subseteq \Stab_G(gH) = g\Stab_G(H)g^{-1} = gHg^{-1}. ~~~ \square \]
+    \end{quote}
+    And Claim 2 says exactly what we want. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    (Reading Comprehension) Try to apply this argument more generally to prove a statement of the form:
+    \begin{center}
+        Suppose $A$ and $B$ are subgroups of $G$, with $|G| = n$, $|A| = a$, and $|B| = b$. \\ Then $B$ must be a subset of some conjugate of $A$.
+    \end{center}
+    Show this succeeds if $b = p^{\nu_p(n)}$ and $b \mid a$ (where $p$ is a prime).  Also show this for $(n, a, b) = (1050, 150, 15)$.
+\end{remark}
+
+\begin{theorem}{Sylow \#4}
+    The number $N$ of Sylow $p$-subgroups of $G$ satisfies $N \equiv 1 \pmod{p}$ and $N$ divides $|G|$.
+\end{theorem}
+
+\begin{proof}
+    Let $X$ denote the set of all Sylow $p$-subgroups.
+    \begin{quote}
+        \textbf{Claim 1.} We must have that $|X|$ divides $|G|$.
+
+        \emph{Proof:} Consider the group $G$ acting on the set $X$ via conjugation.  Sylow \#2 says this is a transitive group action.  Then the Orbit-Stabilizer Theorem says $|G| = |X| \cdot |\Stab_G(X)|$, so $|X|$ divides $|G|$. ~ $\square$
+    \end{quote}
+    Showing $|X| \equiv 1 \pmod{p}$ is trickier.  This time, pick any $H_0 \in X$, and consider this group action:
+    \begin{quote}
+        \textbf{Group Action.} View $H_0$ as a group action on the set $X$ via conjugation. \\
+        (Explicitly, an element $h_0 \in H_0$ acts on a set $H_1 \in X$ by sending it to $h_0H_1h_0^{-1} \in X$.)
+    \end{quote}
+    Consider the orbit sizes $n_1, n_2, \dots, n_k$ of this group action.  Then Orbit-Stabilizer tells us $n_i$ divides $|H_0| = p^{\nu_p(|G|)}$.  In other words, for all $i$, either $p \mid n_i$ or $n_i = 1$.
+    \begin{quote}
+        \textbf{Claim 2.} There is exactly one orbit with size $n_i = 1$.  (This orbit, of course, is $\{H_0\}$.)
+
+        \emph{Proof:} Suppose some orbit $\{H'\}$ has size $n_i = 1$.  Consider the normalizer $N(H')$, defined by:
+        \[ N(H') := \{n \in G \mid nH'n^{-1} = H'\} \]
+        Then if $\{H'\}$ is an orbit, we must have $H_0 \subseteq N(H')$.  Also, $H' \subseteq N(H')$ (obviously).
+
+        The key, now, is to think of $H_0$ and $H'$ as Sylow $p$-subgroups of $N(H')$.  By Sylow \#2, this means $H_0$ is the conjugate of $H'$ by some $n \in N(H')$; that is $H_0 = nH'n^{-1}$ for some $n \in N(H')$.
+
+        But $nH'n^{-1} = H'$ for all $n \in N(H')$ by definition.  So $H_0 = H'$, as desired. ~ $\square$
+    \end{quote}
+    Thus, we can take (WLOG) $n_1 = 1$ and $p \mid n_i$ for all $i > 1$, which yields:
+    \[ |X| = \underbrace{(n_1)}_{=1} + \underbrace{(n_2 + \dots + n_k)}_{\text{divisible by } p} \equiv 1 \pmod{p}. ~~~ \blacksquare \] \vspace{-0.4cm}
+\end{proof}
+
+\begin{remark}
+    (Reading Comprehension) The following claim is not true.  (A counterexample is $G = S_4$ and $n = 4$.)
+    \begin{center}
+        Let $G$ be a group and $n$ be a positive integer.  Consider $X$ to be the set of all \\ subgroups $H$ of $G$ such that $|H| = n$.  Then $|X|$ divides $|G|$.
+    \end{center}
+    Why doesn't the proof of Claim 1 succeed in proving the above (false) claim?  (Why was Sylow \#2 so necessary?)
+\end{remark}
+
+\end{document}

@@ -1,0 +1,152 @@
+\lecture{6}
+\title{Linear Transformations, Bases and Matrices, The Dimension Theorem}
+
+\begin{document}
+
+\subsection{Vector Space Definitions (cont.)}
+
+Previously, we defined span and linear independence using vectors.  Let's generalize these definitions to subspaces.
+
+\textbf{Definition (Span).} Consider subspaces $W_1, \dots, W_k \subseteq V$ of a vector space $V$.  Then their \textbf{span} is:
+\[ \mathrm{span}(W_1, \dots, W_k) := W_1 + \dots + W_k := \{w_1 + \dots + w_k : w_i \in W_i\}. \]
+Equivalently, the span of $\{W_1, \dots, W_k\}$ is the smallest subspace of $V$ containing $\bigcup_{i = 1}^k W_i$.
+
+\textbf{Definition (Linear Independence).} We say subspaces $W_1, \dots, W_k \subseteq V$ of a vector space $V$ are \textbf{linearly independent} if, for any choice of vectors $w_i$ in each subspace $W_i$, we have:
+\[ w_1 + \dots + w_k = 0 ~ \text{ if and only if } ~ w_1 = \dots = w_k = 0. \]
+\begin{remark}
+    Our previous notions of span and linear independence in terms of vectors are the same as those for subspaces: they're the special cases when each $W_i$ is a one-dimensional subspace $W_i := \{\lambda v_i: \lambda \in F\}$.
+\end{remark}
+
+\textbf{Definition (Direct Sum).} If subspaces $W_1, \dots, W_k \in V$ of a vector space $V$ are both spanning and linearly independent, then we say $V$ is isomorphic to the \textbf{direct sum} ($\oplus$) of these subspaces:
+\[ V = W_1 \oplus \dots \oplus W_k \cong W_1 \times \dots \times W_k. \]
+
+To be precise, here is how we formally define the isomorphism $\cong$ in the definition above.
+
+\textbf{Definition (Transformations).} Given vector spaces $V$ and $W$ and a map $T: V \to W$, we say:
+\begin{itemize}
+    \item $T$ is a \textbf{linear transformation} if $T(v_1 + v_2) = T(v_1) + T(v_2)$ and $T(\lambda v_1) = \lambda T(v_1)$ always.
+    \item $T$ is a \textbf{linear operator} if it is a linear transformation with its domain $V$ equal to its codomain $W$.
+    \item $T$ is an \textbf{isomorphism} is it is a bijective linear transformation.
+\end{itemize}
+\textbf{Example.} Each matrix $M \in F^{m \times n}$ gives a natural linear transformation $M: F^n \to F^m$.
+
+\textbf{Example.} Consider the vector space $V := \{\text{infinitely differentiable } f: \mathbb{R} \to \mathbb{R} \}$.  Then the map $T: V \to V$ defined by $T: f \mapsto f'$ is a linear operator.
+
+\subsection{Choosing a Basis}
+
+The following always (obviously!) holds.
+
+\begin{theorem}{Finite-Dimensional Vector Spaces}
+    Suppose a finite-dimensional vector space $V$ over a field $F$ has dimension $n$ and some basis $\{v_1, \dots, v_n\} \subseteq V$.  Then $V$ is isomorphic to $F^n$, with isomorphism:
+    \[ \varphi: F^n \to V ~ \text{ defined by } ~ \varphi\left(\begin{bsmallmatrix} \lambda_1 \\ \vdots \\ \lambda_n \end{bsmallmatrix}\right) = \lambda_1v_1 + \dots + \lambda_n v_n \]
+    So all vector spaces of the same dimension are isomorphic.
+\end{theorem}
+
+This yields two philosophical perspectives about vector spaces:
+
+\textbf{Physicists' Approach:} We can reduce any abstract $n$-dimensional vector space $V$ to the simpler vector space $F^n$, as long as we just pick a basis.  So the different ways we can pick a good basis should be our focus of study.
+    \begin{itemize}
+        \item \textbf{Example.} The space $\mathbb{R}^3$ can be described using $(r, \theta, \varphi)$ or $(x, y, z)$ or \dots
+    \end{itemize}
+\textbf{Mathematicians' Approach:} The same vector space $V$ looks very different under different choices of basis.  So our focus of study should be the qualities of vector spaces that are well-defined invariant of choice of basis.
+    \begin{itemize}
+        \item \textbf{Example.} It turns out that the determinant and trace of a matrix do not depend on the choice of basis.
+    \end{itemize}
+
+\subsection{Linear Transformation $\implies$ Matrix (Only if You Choose a Basis!)}
+
+Recall the following remark from the previous lecture:
+
+\begin{remark}
+    It does not make sense to describe linear maps between \emph{arbitrary} vector spaces $M: V \to W$ using a matrix.  Matrices only makes sense if the vector spaces $V$ and $W$ are both of the form $F^m$ and $F^n$.
+\end{remark}
+
+To fix this, let's take the physicists' approach: if we choose a basis for vector spaces $V$ and $W$, then we can reduce $V$ and $W$ to the isomorphic vector spaces $F^m$ and $F^n$, at which point matrix representations make sense.
+
+\begin{theorem}{Matrix Representation of Linear Maps}
+    Consider vector spaces $V$ and $W$ over a field $F$.  Select a basis $\{v_1, \dots, v_n\} \subseteq V$ for $V$ and a basis $\{w_1, \dots, w_n\} \subseteq W$ for $W$.  Then any linear transformation $T: V \to W$ is determined entirely by just the images of $T(v_1), \dots, T(v_n)$.  To be explicit,
+    \begin{itemize}
+        \item Express each $T(v_i) \in W$ as a linear combination of the basis $\{w_i\} \subseteq W$ with coefficients $(M_T)_{ji}$; that is, \vspace{-0.2cm}
+        \[ \text{Define } M_{ji} \text{ to be the coefficients required to make } T(v_i) = \sum_{j = 1}^m (M_T)_{ji} w_i \text{ true.} \] \vspace{-0.7cm}
+        \item Given these entries $\{M_{ji}\}$, alone, we can compute the image of \emph{any} vector $v = \sum_{i = 1}^n \lambda_i v_i \in V$ under $T$ to be: \vspace{-0.2cm}
+        \[ T\left(\sum_{i = 1}^n \lambda_i v_i \right) = \sum_{j = 1}^m \left(\sum_{i = 1}^n (M_T)_{ji} \lambda_i\right)w_j. \]
+        (The right-hand side of the above is just a messy-looking way to write matrix-vector multiplication.)
+    \end{itemize}
+\end{theorem}
+
+Unfortunately, abstract vector spaces $V$ and $W$ aren't usually born with an inherent choice choice of basis.  How do the entries of our matrix $\{M_{ji}\} \in F^{m \times n}$ change when we change our choices of basis?
+
+\begin{theorem}{Change of Basis}
+    Suppose a linear transformation $T: V \to W$ has corresponding matrix representation $M_T$ when we choose bases $\{v_1, \dots, v_n\} \subseteq V$ and $\{w_1, \dots, w_n\} \subseteq W$.
+    
+    Suppose we instead adopt new bases $\{Av_1, \dots, Av_n\} \subseteq V$ and $\{Bw_1, \dots, Bw_n\} \subseteq W$, where $A$ and $B$ are bijective linear operators $A: V \to V$ and $B: W \to W$ that encode our change of basis.
+    
+    Then the matrix $M_T'$ represented by these new choices of bases looks like $M_T' = M_{B}^{-1}M_T M_A$.
+\end{theorem}
+
+\begin{proof}
+    By definition, the entries of our new matrix $M_T'$ must satisfy the property:
+    \[ T(Av_i) = \sum_{j = 1}^m (M_T')_{ji} (Bw_j) \text{ for all } i. \]
+    Note that we can perform left-multiplication by $B^{-1}$ on both sides of this equation to achieve:
+    \[ (B^{-1}TA)v_i = \sum_{j = 1}^m (M'_T)_{ji}w_j. \]
+    Forget about what $M_T'$ meant to us to begin with: looking only at the equation above, we can read off that the coefficients $(M_T')_{ji}$ encode the image of each $v_i$ under the map $B^{-1}TA$ as a linear combination of $w_i$.
+    
+    Thus, $M_T' = M_{B^{-1}TA}$, so $M_T' = M_B^{-1} M_TM_A$, as promised. ~ $\blacksquare$
+\end{proof}
+
+Something interesting happens when we consider change of basis for linear maps $T: V \to V$.
+\begin{itemize}
+    \item Suppose $V$ is an $n$-dimensional vector space over $F$.
+    \item If we pick basis $\{v_1, \dots, v_n\} \subseteq V$ for $V$, then we can express $T$ using a matrix $T \in F^{n \times n}$.
+    \item Now, pick a different choice of basis $\{Av_1, \dots, Av_n\}$, where $A$ is a bijective linear operator $A: V \to V$.
+    \item Then $T: V \to V$ under this new basis looks like $M_T' = M_A^{-1}M_TM_A$.
+\end{itemize}
+The key observation is that $M_T' = M_A^{-1}M_TM_A$ just looks like the result of conjugating $M_T$ by $M_A$.  Thus,
+
+\begin{theorem}{Matrix Conjugation}
+    Changing the basis used in deriving the matrix form $M_T$ of a linear map $T: V \to V$ is the same as conjugating the matrix $M_T$ by another matrix $M_A$ in the group $GL_n(F)$.
+\end{theorem}
+
+\begin{remark}
+    Recall that a subgroup is normal if remains invariant under conjugation.  Equivalently, a subgroup $H$ of $GL_n(F)$ is normal if changing the basis of a matrix in $H$ yields another matrix in $H$.
+\end{remark}
+
+
+\subsection{Rank, Nullity, and the Dimension Theorem}
+
+\textbf{Definition (Rank and Nullity).} Given a linear transformation $T: V \to W$ (for finite-dimensional vector spaces $V$ and $W$), the \textbf{kernel} and \textbf{image} of $T$ are $\ker T := \{ v \in V: Tv = 0\} \subseteq V$ and $\im T := \{Tv : v \in V\} \subseteq W$.
+
+Then the \textbf{rank} and \textbf{nullity} of $T$ are $\mathrm{rank} \ T := \dim(\im T)$ and $\mathrm{nullity} \ T := \dim(\ker T)$.
+
+Somewhat intuitively, the rank and nullity of a linear map together satisfy the following nice property:
+
+\begin{theorem}{Dimension Theorem}
+    Consider a linear transformation $T: V \to W$ between finite-dimensional vector spaces $V$ and $W$, we have $\dim \im T + \dim \ker T = \dim V$.
+\end{theorem}
+
+\begin{remark}
+    The Dimension Theorem is just the ``logarithm'' version of the fact that for any group homomorphism $f: G \to H$, we have $| \ker f | \cdot | \im f | = |G|$: just take $G$ and $H$ to be vector spaces over $F = \mathbb{Z} / p \mathbb{Z}$.
+
+    In fact, the Dimension Theorem is \emph{stronger} than $| \ker f | \cdot | \im f | = |G|$, since dimension is a stronger notion of cardinality: $\mathbb{R}^2$ and $\mathbb{R}^3$ have the same cardinality, but as vector spaces over $\mathbb{R}$, they have different dimensions!
+\end{remark}
+
+We'll finish class by proving the Dimension Theorem.
+
+\begin{proof}
+    Choose bases $\{v_1, \dots, v_n\} \subseteq V$ and $\{w_1, \dots, w_m \} \subseteq W$ so we may represent $T: V \to W$ with a matrix $M_T$.  We begin by investigating a very special case: suppose $T = T_0$ for which the matrix $M_{T_0}$ looks like the following:
+    \[ M_{T_0} = \begin{bmatrix}
+        1 & \cdots & 0 & 0 & \cdots & 0 \\ \vdots & \ddots & \vdots & \vdots & \vdots & \vdots \\ 0 & \cdots & 1 & 0 & \cdots & 0  \\ 0 & \cdots & 0 & 0 & \cdots & 0 \\ \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\ 0 & \cdots & 0 & 0 & \cdots & 0 \end{bmatrix} \text{ with a } k\text{-dimensional } I_n \text{ in the top-left corner.} \]
+    In other words, $T$ sends each of $(v_1, \dots, v_k)$ to $(w_1, \dots, w_k)$, respectively, and $T$ sends each of $(v_{k + 1}, \dots, v_n)$ to zero.  Then the image of $T$ is $\mathrm{span}(w_1, \dots, w_k)$, and the kernel of $T$ is $\mathrm{span}(v_{k + 1}, \dots, v_n)$.  Thus, the rank of $T$ is $k$ and the nullity of $T$ is $n - k$, so the Dimension Theorem holds because $k + (n - k) = n$.
+
+    Now the key idea is the following: consider, more generally, a linear transformation $T: V \to W$ whose matrix representation $M_T$ is not as nice as $M_{T_0}$.  We claim that, under a suitable change of basis, the matrix $M_T$ can be become $M_T' = M_{T_0}$, in which case we'd be done!
+
+    Why must there exist a change of basis that transforms $M_T$ into $M_T' = M_{T_0}$?  Because performing change of basis on a matrix looks like performing row and column operations on $M_T$.  So we can procedurally perform row and column operations (changes of basis) to eventually reform $M_T$ into reduced-row echelon form $M_{T_0}$. ~ $\blacksquare$
+\end{proof}
+
+The moral of the story?  Picking the right basis can yield very nice results.
+
+\begin{remark}
+    The above argument also implies that the rank of a matrix $M_T$ is the same as that of its transpose $M^{\top}$.
+\end{remark}
+
+\end{document}

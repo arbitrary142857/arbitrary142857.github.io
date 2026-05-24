@@ -10,6 +10,7 @@ export interface Environment {
   params: number;
   begin: string;
   end: string;
+  color?: string;
 }
 
 export interface Context {
@@ -234,9 +235,36 @@ function parseNewEnvironment(
 
   return {
     name: nameArg.content,
-    env: { params, begin: begin.content, end: end.content },
+    env: {
+      params,
+      begin: begin.content,
+      end: end.content,
+      color: extractEnvColor(begin.content),
+    },
     end: end.end,
   };
+}
+
+const XCOLOR_NAMES: Record<string, string> = {
+  purple: "#bf0140",
+  "red!75": "#ff403f",
+  "black!60": "#666666",
+  "black!40": "#909090",
+  cyan: "#01adef",
+};
+
+function extractEnvColor(begin: string): string | undefined {
+  const html = begin.match(/\\color\[HTML\]\{([^}]+)\}/);
+  if (html) return `#${html[1]}`;
+
+  const named = begin.match(/\\color\{([^}]+)\}/);
+  if (named) return XCOLOR_NAMES[named[1].trim()] ?? undefined;
+
+  return undefined;
+}
+
+export function resolveXcolorName(name: string): string | undefined {
+  return XCOLOR_NAMES[name.trim()];
 }
 
 function looksLikeMath(body: string): boolean {

@@ -50,7 +50,7 @@ Let's black-box a solution to FFT for now.  How might it be useful?
     \end{quote}
     Thus, we select $\omega = e^{\frac{2\pi i}{T}}$ for some power-of-two $T > m + n$, then compute $\{p(\omega^k) \cdot q(\omega^k)\}_{k = 1}^{T}$ in $O((m + n) \log (m + n))$ time.  It remains to invert the DFT process above to extract $p(x) \cdot q(x)$ from here.
     \begin{quote}
-        \textbf{Claim (Inverse Discrete Fourier Transform).} Given the values $\{p(\omega^k)\}_{k = 1}^n$ for some degree $(n - 1)$ polynomial $p$, we can compute $p(x)$ in $O(n \log n)$ time.
+        \textbf{Claim (Inverse Discrete Fourier Transform).} Given the values $\{p(\omega^k)\}_{k = 1}^n$ for some polynomial $p$ with degree $(n - 1)$ or lower, we can compute $p(x)$ in $O(n \log n)$ time.
 
         \emph{Proof:} The point is that the Inverse DFT is no harder than the DFT.
 

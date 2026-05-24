@@ -1,0 +1,144 @@
+\lecture{13}
+\title{Conjugacy Classes, Centralizer, Center, Class Equation, Extensions, Simple Groups}
+
+\begin{document}
+
+There are two ways that a group $G$ can act on itself:
+\begin{itemize}
+    \item Let $G$ act on itself via group multiplication: $g \cdot x = x$ for all actions $g \in G$ acting on $x \in G$.
+    \item Let $G$ act on itself via conjugation: $g \cdot x = gxg^{-1}$ for all actions $g$ acting on $x \in G$.
+\end{itemize}
+We've explored the former already in the proof of Cayley's Theorem.  But conjugation is also worth exploring!
+\begin{itemize}
+    \item In $GL_n(\mathbb{R})$, conjugation is the same as change of basis.
+    \item The identity $\Stab_G(gx) = g\Stab_G(x)g^{-1}$ holds.
+    \item Conjugation measures commutativity: $gx = yg$ for $y = gxg^{-1}$.
+\end{itemize}
+
+\subsection{Group Actions by Conjugation}
+
+\textbf{Definition (Conjugacy Classes and Centralizers).} Let $G$ act on itself via conjugation.  Then:
+\begin{itemize}
+    \item The \textbf{conjugacy class} of $x \in G$ is the \emph{orbit} of $x$; that is, the set $C(x) := \{g x g^{-1} : g \in G\}$.
+    \item The \textbf{centralizer} of $x \in G$ is the \emph{stabilizer} of $x$; that is, the set $Z(x) := \{g \in G: g xg^{-1} = x\} = \{g \in G: gx = xg\}$.
+    \item The \textbf{center} of $G$ is $Z(G) := \bigcap_{x \in G} Z(x) = \{g \in G \mid C(g) = \{g\}\} = \{g \in G \mid Z(g) = G\}$.
+\end{itemize}
+Some useful facts about conjugacy classes and centralizers:
+\begin{itemize}
+    \item \textbf{Fact 1.} Any group $G$ can be partitioned into disjoint conjugacy classes (i.e. disjoint orbits).
+    \item \textbf{Fact 2.} The Orbit-Stabilizer Theorem says that for all $x \in G$, we have $|G| = |C(x)| \cdot |Z(x)|$.
+    \item \textbf{Fact 3.} The center $Z(G)$ is a normal subgroup of $G$, since $Z(G)$ commutes with everything.
+\end{itemize}
+
+\textbf{Example.} The conjugacy classes of $S_3$ are $\{1\}$, $\{(1 \ 2), (1 \ 3), (2 \ 3)\}$, and $\{(1 \ 2 \ 3), (1 \ 3 \ 2)\}$.
+
+\textbf{Example.} The conjugacy classes of $D_5$ are $\{1\}$, $\{r, r^{-1}\}$, $\{r^2, r^{-2}\}$, and $\{\text{all five reflections}\}$.
+
+\textbf{Example.} The conjugacy classes of $D_4$ are $\{1\}$, $\{r, r^{-1}\}$, $\{r^2\}$, $\{\text{diagonal reflections}\}$, and $\{\text{midline reflections}\}$.
+
+\begin{remark}
+    The conjugacy classes capture the \emph{geometric} distinctions between $D_4$ and $D_5$.  In particular, all reflections in $D_5$ look the same, whereas reflections in $D_4$ come in two different forms.
+\end{remark} \vspace{0.1cm}
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-13/symmetries}}
+\end{center}
+
+\subsection{The Class Equation: Classifying Groups of $p^2$ Order}
+
+\textbf{Definition (Class Equation).} If finite $G$ has conjugacy classes $C_1, \dots, C_k$, the \textbf{class equation} says $|G| = \sum_{i = 1}^k |C_i|$.
+
+\textbf{Example.} The class equations of $D_4$ and $D_5$ read $8 = 1 + 2 + 1 + 2 + 2$ and $10 = 1 + 2 + 2 + 5$, respectively.
+
+\textbf{Definition ($p$-group).} A group $G$ is a \textbf{$p$-group} if $|G| = p^k$ for some $k \in \{0, 1, 2, \dots\}$.
+
+\textbf{Example.} All of the following are $p$-groups:
+\[ \{1\} ~~ \text{ or } ~~ C_p ~~ \text{ or } ~~ C_p \times C_p ~~ \text{ or }~~ C_{p^2} ~~ \text{ or } ~~ \left \{ \begin{bsmallmatrix} 1 & x & y \\ 0 & 1 & z \\ 0 & 0 & 1 \end{bsmallmatrix}:  x, y, z \in \mathbb{F}_p\right \} \]
+The big goal of today's lecture will be to use the Class Equation to prove the following: \vspace{0.1cm}
+
+\begin{boxed-text}[42em]
+\textbf{Theorem.} If group $G$ has order $p^2$ for some prime $p$, then either $G \cong C_p \times C_p$ or $G \cong C_{p^2}$.
+\end{boxed-text}
+
+The proof of this theorem will come in three steps.
+
+\begin{theorem}{Claim \#1: Nontrivial Center}
+    Every nontrivial group of order $p^k$ has a nontrivial center.
+\end{theorem}
+
+\begin{proof}
+    Suppose the center has size $n$.  Then the Class Equation reads:
+    \[ \underbrace{1 + \dots + 1}_{n \text{ times}} ~ + ~ |C_{n + 1}| + \dots + |C_\ell| = p^k. \]
+    The key observation is that, for all $C_i \in \{C_{n + 1}, \dots, C_{\ell}\}$, we have $p \mid C_i$ by Orbit-Stabilizer.  So the above equation modulo $p$ reads $n \equiv 0 \pmod{p}$.  But $n \neq 0$ since $\mathrm{id} \in Z(G)$, so $n \geq p$, done. ~ $\blacksquare$
+\end{proof}
+
+Note that the above claim holds for \emph{any} group $G$ of prime-power order!  But when $|G| = p^2$, specifically\dots
+
+\begin{theorem}{Claim \#2: Abelian}
+    Since $|G| = p^2$, it must be that $G$ is abelian.
+\end{theorem}
+
+\begin{proof}
+    Equivalently, we wish to show $|Z(G)| = p^2$.  Since $Z(g)$ is a subgroup of $G$, by Lagrange's Theorem, $|Z(G)|$ divides $p^2$.  Claim \#1 then says either $|Z(G)| = p$ or $|Z(G)| = p^2$.  Argue by contradiction: suppose $|Z(G)| = p$.
+
+    Recall that $Z(G)$ is normal.  Thus, if $|Z(G)| = p$, then $|G / Z(G)| = p$, meaning $G / Z(G) \cong C_p$.  In particular, if we pick any $x \not \in Z(G)$, then $G$ must be generated by $x$ and $Z(G)$.  Therefore,
+    \[ G \cong \{x^k z \mid k \in \{0, 1, \dots, p - 1\} \text{ and } z \in Z(G)\}. \]
+    Since $Z(G)$ commutes with $x$, the above means $G$ is abelian, and in particular $|Z(G)| = p^2$ (contradiction).  ~ $\blacksquare$
+\end{proof}
+
+We're now ready to finish the proof.
+
+\begin{theorem}{Claim \#3: Classification}
+    If $|G| = p^2$ and $G$ is abelian, then $G \cong C_p \times C_p$ or $G \cong C_{p^2}$.
+\end{theorem}
+
+\begin{proof}
+If $G$ has an element of order $p^2$, then $G \cong C_{p^2}$.  The only other case is that every $x \in G$ has order $p$.
+
+In this latter case, we claim $G$ may be viewed as an $\mathbb{F}_p$ vector space.  To confirm this is legal, we must check:
+\begin{itemize}
+    \item Does $G$ have abelian vector addition?  Well, yes---this follows from Claim \#2. \vspace{-0.3cm}
+    \item Does $G$ have well-defined scalar multiplication?  Well, yes---just define $\lambda x = \overbrace{x + \dots + x}^{\lambda \text{ times}}$. \vspace{-0.15cm}
+    
+    (To check this is well-defined, we require that $px = 0$ for all $x \in G$.  But this is true because $x$ has order $p$.)
+\end{itemize}
+Recall that all $\mathbb{F}_p$ vector spaces are isomorphic to $\mathbb{F}_p^k$ (i.e. pick a basis).  Thus, $G \cong \mathbb{F}_p^2$, so $G \cong C_p \times C_p$. ~ $\blacksquare$
+\end{proof}
+
+\subsection{Definitions: Group Extensions}
+
+\textbf{Definition (Extensions).} For group $G$ and normal subgroup $N \unlhd G$, say $G$ is an \textbf{extension} of $G/N$ by $N$.
+
+Suppose $G$ is an extension of $A$ by $B$.  Some warnings:
+\begin{itemize}
+    \item The extension $G$ need not be unique.  For example, $C_6$ and $S_3$ are both extensions of $C_2$ by $C_3$.
+    \item $G$ need not be an extension of $B$ by $A$.  For example, $S_3$ is an extension of $C_2$ by $C_3$, but not of $C_3$ by $C_2$.
+    \item $A$ need not be a subgroup of $G$.  For example, $\mathbb{Z}$ is an extension of $C_2$ by $\mathbb{Z}$.
+\end{itemize}
+
+\textbf{Definition (Split Extension).} Say $G$ is a \textbf{split extension} of $G/N$ by $N$, with $\pi: G \to G/N$, if there exists a subgroup $H \subseteq G$ such that $\pi |_H: H \to G/N$ is an isomorphism.
+
+In other words, $G$ is a \emph{split} extension of $A$ by $B$ if the quotient $G / B \cong A$ is visibly embedded within $G$.
+
+\textbf{Example.} For any groups $G$ and $H$, $G \times H$ is a split extension of $G$ by $H$.
+
+\textbf{Example.} For any $n$, the isometry group $M_n$ is a split extension of $O_n(\mathbb{R})$ by $\mathbb{R}^n$.  In other words, the quotient $O_n(\mathbb{R}) \cong M_n / \mathbb{R}^n$ is visibly embedded within $M_n$.
+
+
+
+\subsection{Definitions: We're a Finite Simple Group\dots}
+
+\textbf{Definition (Simple Groups).} A nontrivial group $G$ is \textbf{simple} if it has no normal subgroups besides $\{1\}$ and $G$.
+
+\textbf{Example.} For any prime $p$, the group $C_p$ is simple.  For any $n \geq 5$, the group $A_n$ is simple---this is nonobvious!
+
+The classification of all finite simple groups looks like:
+    \begin{itemize}
+        \item Groups of prime order $C_p$.
+        \item Groups of the form $A_n$ for some $n \geq 5$.
+        \item Groups of \emph{Lie Type}, constructed from matrix multiplication.
+        \item \dots and exactly $26$ others, called \emph{sporadic groups}.
+    \end{itemize}
+For further details, see here: \href{https://en.wikipedia.org/wiki/Classification_of_finite_simple_groups}{https://en.wikipedia.org/wiki/Classification\_of\_finite\_simple\_groups}.
+
+\end{document}

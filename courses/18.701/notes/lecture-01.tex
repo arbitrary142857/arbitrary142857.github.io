@@ -1,0 +1,88 @@
+\lecture{1}
+\title{Matrix and Group Definitions}
+
+\begin{document}
+
+Class is taught by Henry Cohn (\texttt{cohn@mit.edu}).
+
+\textbf{Grading.} Grading is defined as below.  Indicate collaboration when used, don't use AI.
+\[ (\text{psets}, \text{quizzes}, \text{exams}) = (40\%, 20\%, 40\%) = (8/10 \text{ graded}, 4/5 \text{ graded}, 2/2 \text{ graded}) \]
+\textbf{Class Philosophy.} Join the Discord community.  Class is an interactive experience---more than just a plain video.
+
+\textbf{Deadlines.} Problem Set \#1 is due on September 12th.  Also, read Chapter 1 of Artin (Second Edition).
+
+\subsection{Matrix Definition}
+
+Controversially, we say that $0 \in \mathbb{N}$.  Uncontroversially, an $m \times n$ matrix has $m$ rows and $n$ columns.
+
+\begin{remark}
+Why two-dimensional arrays, specifically?  Because tensors (e.g. $m \times n \times p$ arrays) are\dots \ not tractable.  For example, computing the rank of a tensor is NP hard.
+\end{remark}
+
+A matrix $A \in \mathbb{R}^{m \times n}$ transforms vectors in $\mathbb{R}^n$ into vectors in $\mathbb{R}^m$.  How?
+\[ A = \begin{pmatrix} A_{11} & A_{12} & \cdots & A_{1n} \\ A_{21} & A_{22} & \cdots & A_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ A_{m1} & A_{m2} & \cdots & A_{mn} \end{pmatrix} \implies A\begin{pmatrix} x_1 \\ \vdots \\ x_n \end{pmatrix} = \begin{pmatrix} A_{11}x_1 + \cdots + A_{1n} x_n \\ A_{21}x_1 + \cdots + A_{2n}x_n \\ \vdots \\ A_{m1}x_1 + \cdots + A_{mn}x_n \end{pmatrix}. \]
+In other words, matrices encode $m$ different linear functions in $n$ variables.
+
+\begin{remark}
+    To \emph{Oh My Darling, Clementine:} ``Row by column, row by column, row by column, multiply!''
+\end{remark}
+
+% \textbf{Example.} The matrix $I = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}$ is the identity matrix; it satisfies $A\begin{pmatrix} x \\ y \end{pmatrix} = \begin{pmatrix} x \\ y \end{pmatrix}$.
+
+\textbf{Example.} Rotations in $\mathbb{R}^3$ are just $2$-dimensional rotations about a single axis.  But this isn't true in $\mathbb{R}^4$; in fact, rotations in $\mathbb{R}^n$ are determined by $\lfloor \tfrac{n}{2} \rfloor$ axes.
+
+\begin{remark}
+See \href{https://en.wikipedia.org/wiki/Alicia_Boole_Stott}{\underline{Alicia Boole Stott's story}} that the human brain can (rarely) understand $\mathbb{R}^4$.
+\end{remark}
+
+\subsection{Matrix Multiplication and Inverses}
+
+\textbf{Definition (Matrix Multiplication).} Consider $A \in \mathbb{R}^{m \times n}$ and $B \in \mathbb{R}^{n \times p}$.  The matrix product $P = AB \in \mathbb{R}^{m \times p}$ is the unique matrix such that $A(Bx) \in \mathbb{R}^m$ always equals $Px \in \mathbb{R}^m$.  Explicitly, this means $\displaystyle P_{i, k} = \sum_{j = 1}^n A_{i, j} B_{j, k}$.
+
+In particular, matrices are functions, and matrix multiplication is function composition.
+\begin{itemize}
+    \item Matrix multiplication is associative; the statement $f \circ g(h(x)) = f(g \circ h(x))$ is vacuously true.
+    \item Matrix multiplication is not commutative; if $f(x) = x + 1$ and $g(x) = 2x$, then $f \circ g(1) \neq g \circ f(1)$.
+\end{itemize}
+Just as $f(x) = x$ is the unique \textbf{identity function,} there is also a unique \textbf{identity matrix} in $\mathbb{R}^{n \times n}$:
+\[ I_n := \underbrace{\begin{pmatrix} 1 & 0 & \cdots & 0 \\ 0 & 1 & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & 1 \end{pmatrix}}_{n \text{ columns}} ~ \implies ~ I_n(x) = x \text{ for all } x \in \mathbb{R}^n. \]
+Thus, given any $A \in \mathbb{R}^{n \times n}$, we say $A$ is \textbf{invertible} if there exists another $B \in \mathbb{R}^{n \times n}$ (its \textbf{inverse}) such that $AB = I_n$.
+
+\begin{theorem}{Uniqueness of Inverse}
+    Any invertible $A \in \mathbb{R}^{n \times n}$ has a unique inverse $B$.
+\end{theorem}
+
+\begin{proof}
+    Suppose $A$ had two inverses $B_1$ and $B_2$.  Then:
+    \[ AB_1 = I_n ~ \stackrel{\times B_2}\implies ~ B_2AB_1 = B_2I_n ~ \stackrel{B_2A = I_n}\implies ~  I_nB_1 = B_2I_n ~ \stackrel{\text{defn. of } I_n}\implies ~ B_1 = B_2 \]
+    So the two inverses $B_1$ and $B_2$ of $A$ are in fact the same, contradiction. $\blacksquare$
+\end{proof}
+
+\begin{theorem}{Invertibility Condition}
+    Any $A \in \mathbb{R}^{n \times n}$ is invertible if and only if $\det A \neq 0$.
+\end{theorem}
+
+\begin{proof}
+    \emph{(Vibes)} You can't divide by $0$, so you can't divide by a matrix $A$ whose determinant is $0$. $\blacksquare$
+\end{proof}
+
+\subsection{Group Theory Definitions}
+
+\textbf{Definition (Group).} A \textbf{group} is a set $G$ with binary operation $\bigstar \! : G \times G \to G$ (implied $g \bigstar h = gh$) satisfying\dots
+\begin{itemize}
+    \item \textbf{Associativity.} For any $g, h, k \in G$, we have $(gh)k = g(hk)$.
+    \item \textbf{Identity.} There exists an identity $1 \in G$ such that $1g = g1 = g$ for all $g \in G$.
+    \item \textbf{Inverses.} For all $g \in G$, there exists an inverse $h \in G$ such that $gh = hg = 1$.
+\end{itemize}
+Note that \textbf{commutativity} is not a requirement for groups.
+
+\textbf{Example.} The set $\mathbb{Z}$ together with operation ``addition'' is a group.  The set $\mathbb{Q}^+$ together with operation ``multiplication'' is also a group.
+
+\textbf{Example.} The set $\emptyset$ together with operation ``whatever'' is not a group because it lacks an identity.  Meanwhile, the set $\{1\}$ together with operation ``whatever'' is a group: the \textbf{trivial group.}
+
+\textbf{Example.} The set $\mathbb{R}^{n \times n}$ together with operation ``matrix multiplication'' is not a group; it lacks inverses!  However, the set $GL_n(\mathbb{R}) := \{ A \in \mathbb{R}^{n \times n} \mid \det A \neq 0 \}$ together with operation ``matrix multiplication'' is a group: the \textbf{general linear group} of order $n$.
+
+\textbf{Example.} The set $S_n := \{ \text{perms of } \{1, 2, \dots, n\} \}$ together with operation ``permutation composition'' is a group.  For example, elements of $S_6$ may be written as:
+\[ \pi := \begin{cases} \pi(1) = 3 \\ \pi(2) = 4 \\ \pi(3) = 5 \\ \pi(4) = 2 \\ \pi(5) = 1 \\ \pi(6) = 6 \end{cases} \ \iff \ \pi := \begin{pmatrix} 1 & 2 & 3 & 4 & 5 & 6 \\ 3 & 4 & 5 & 2 & 1 & 6 \end{pmatrix} \ \iff \ \pi := (135)(24)(6) \]
+
+\end{document}

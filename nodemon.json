@@ -1,0 +1,6 @@
+{
+  "watch": ["courses", "template.html", "src"],
+  "ext": "tex,html,ts,png,jpg,jpeg,webp,gif,svg",
+  "ignore": ["**/notes-html/**", "courses/*/index.html", "courses/*/all.html"],
+  "exec": "tsx src/build.ts"
+}

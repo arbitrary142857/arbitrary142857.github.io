@@ -1,0 +1,130 @@
+\lecture{20}
+\title{$SU_n$ and the Quaternions}
+
+\begin{document}
+
+\subsection{Spheres and Balls}
+
+\textbf{Definition ($n$-Sphere).} The $n$-dimensional surface of a sphere is $S^n := \{x \in \mathbb{R}^{n + 1} : |x| = 1 \}$.
+
+\textbf{Definition ($n$-Ball).} The $n$-dimensional interior of a sphere is $B^n := \{x \in \mathbb{R}^n : |x| \leq 1\}$.
+
+\textbf{Example.} The \textbf{stereographic projection} is a continuous, bijective map \textit{(homeomorphism)} from $S^n \setminus\{N\}$ to $\mathbb{R}^n$. \vspace{-0.3cm}
+\begin{center}
+    \frame{\includegraphics[width=0.3\textwidth]{lecture-20/stereographic-projection}}
+\end{center}
+Analogously, reversing the stereographic projection yields a sense in which $\mathbb{R}^n \cup \{\infty\} \cong S^n$.
+
+\textbf{Example.} Volumes behave very weirdly in higher dimensions!
+\begin{itemize}
+    \item The ratio of the volumes of $B_2$ and $0.99 \cdot B_2$ is $0.9801$.
+    \item The ratio of the volumes of $B_{1000}$ and $0.99 \cdot B_{1000}$ is roughly $4 \times 10^{-5}$.
+\end{itemize}
+For all $n$, almost all of the volume of $B_n$ comes from its outermost ``shell''.
+
+\subsection{The Special Unitary Group $SU_2$}
+
+\textbf{Definition (Special Unitary Group).} The \textbf{special unitary group} in $\mathbb{C}^n$ is:
+\[ SU_n := SL_n(\mathbb{C}) \cap U_n = \{A \in \mathbb{C}^{n \times n} \mid AA^{\dagger} = I_n, \  \det A = 1\}. \]
+\begin{theorem}{$SU_2 \cong S^3$}
+    Matrices in $SU_2$ naturally map to points on $S^3$.
+\end{theorem}
+
+\begin{proof}
+    If $A = \begin{bsmallmatrix} \alpha & \beta \\ \gamma & \delta \end{bsmallmatrix}$ is in $SU_2$, then:
+    \[ AA^{\dagger} = \begin{bmatrix} |\alpha|^2 + |\beta|^2 & \alpha \overline{\gamma} + \beta \overline{\gamma} \\ \overline{\alpha}\gamma + \overline{\beta}\delta & |\gamma|^2 + |\delta|^2 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} ~ \iff ~ \delta = \overline{\alpha} \text{ and } \gamma = - \overline{\beta} \text{ and } |\alpha|^2 + |\beta|^2 = 1 \]
+    Thus, every $A$ in $SU_2$ is parametrized by $(\alpha, \beta) \in \mathbb{C}^2$ with $|\alpha|^2 + |\beta|^2 = 1$.
+    
+    If $\alpha = w + ix$ and $\beta = y + iz$, we see $SU_2$ is in fact $\{(w, x, y, z) \in \mathbb{R}^4 \mid w^2 + x^2 + y^2 + z^2 = 1\}$, which is $S^3$. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    Unfortunately, this is the nicest things will get.
+    \begin{itemize}
+        \item There is no nice spherical geometry to $SU_n$ for $n > 2$.
+        \item The only spheres that could possibly be topological groups are $S^0$, $S^1$, and $S^3$.
+    \end{itemize}
+\end{remark}
+
+\subsection{The Quaternions $\mathbb{H}$}
+
+We can rephrase our parametrization of $SU_2$ as follows.
+
+\begin{theorem}{$SU_2$ is a Span}
+    Every matrix $M$ in $SU_2$ is a linear combination in $\mathbb{C}^{2 \times 2}$ of the form:
+    \[ M = w \begin{bsmallmatrix} 1 & 0 \\ 0 & 1 \end{bsmallmatrix} + x\begin{bsmallmatrix} i & 0 \\ 0 & -i \end{bsmallmatrix} + y\begin{bsmallmatrix} 0 & 1 \\ -1 & 0 \end{bsmallmatrix} + z\begin{bsmallmatrix} 0 & i \\ i & 0 \end{bsmallmatrix}, ~ \text{ given that } w^2 + x^2 + y^2 + z^2 = 1. \]
+\end{theorem}
+And here's the definition of the quaternions.
+
+\textbf{Definition (Quaternion).} The \textbf{quaternion} group is the set $\mathbb{H} = \mathbb{R} + \mathbb{R}i + \mathbb{R}j + \mathbb{R}k$, constrained on:
+\[ i^2 = j^2 = k^2 = -1 ~ \text{ and } ~ ij = k = -ji ~ \text{ and } ~ jk = i = -kj ~ \text{ and } ~ ki = j = -ik \]
+(Those last three equations are analogous to cross products in $\mathbb{R}^3$.)
+
+\textbf{Definition (Length.)} The length of any $\alpha = w + xi + yj + zk \in \mathbb{H}$ is $|\alpha| := \sqrt{w^2 + x^2 + y^2 + z^2}$.
+
+\begin{theorem}{$SU_2$ are Unit Length $\mathbb{H}$}
+    Matrices in $SU_2$ map bijectively with the elements $w + xi + yj + zk \in \mathbb{H}$ with coefficients satisfying $w^2 + x^2 + y^2 + z^2 = 1$.
+\end{theorem}
+
+\begin{proof}
+    The bijection $f: \{h \in \mathbb{H} : |h| = 1\} \to SU_2$ is via $f: (i, j, k) \mapsto \left(\begin{bsmallmatrix} i & 0 \\ 0 & -i \end{bsmallmatrix}, \begin{bsmallmatrix} 0 & 1 \\ -1 & 0 \end{bsmallmatrix}, \begin{bsmallmatrix} 0 & i \\ i & 0 \end{bsmallmatrix} \right)$, which works. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    To really spell things out\dots
+    \[ \{r \in \mathbb{R}: |r| = 1 \} \leftrightarrow S^0 ~ \text{ and } ~ \{z \in \mathbb{C} : |z| = 1 \} \leftrightarrow S^1 ~ \text{ and } ~ \{h \in \mathbb{H} : |h| = 1 \} \leftrightarrow S^3 \]
+\end{remark}
+\textbf{Definition (Conjugation).} Given an $\alpha = w + xi + yj + zk \in \mathbb{H}$, its conjugate is $\overline{\alpha} := w - xi - yj - zk$.
+
+\begin{theorem}{Conjugation Properties}
+    For any $\alpha, \beta \in \mathbb{H}$, we have:
+    \[ \overline{\alpha + \beta} = \overline{\alpha} + \overline{\beta} ~~ \text{ and } ~~ \overline{\alpha \cdot \beta} = \overline{\beta} \cdot \overline{\alpha} ~~ \text{ and } ~~ \alpha \cdot \overline{\alpha} = |\alpha|^2 ~~ \text{ and } ~~ |\alpha \cdot \beta| = |\alpha|  \cdot |\beta| \] \vspace{-0.85cm}
+\end{theorem}
+
+\begin{proof}
+    Just plain computation.  It's worth seeing how the fourth identity follows from the second and third! ~ $\blacksquare$
+\end{proof}
+
+\subsection{Sidenote: Linear Algebra Over $\mathbb{H}$}
+
+\textbf{Definition (Skew Field).} A \textbf{skew field} (also called a \textbf{division algebra}, or a \emph{corps non commutatif} in French) is a field with not-necessarily-commutative multiplication.
+
+\begin{theorem}{Skew Fields Over $\mathbb{R}$}
+    The only skew fields with finite dimension as $\mathbb{R}$-vector spaces are $\mathbb{R}$, $\mathbb{C}$, and $\mathbb{H}$.
+\end{theorem}
+
+It also turns out that you can do almost all of linear algebra over skew fields!
+
+\textbf{Definition (Vector Space Over Skew Fields).} Let $F$ be a skew field. Then $V$ is a vector space over $F$ if it has commutative addition, \emph{right} scalar multiplication, and \emph{left} matrix multiplication.
+
+Under this definition, things like $GL_n(\mathbb{H})$ still make sense!  Indeed, $GL_n(\mathbb{H})$ is just a subgroup of $GL_{4n}(\mathbb{R})$.
+
+\begin{theorem}{Classification of Compact Connected Lie Groups}
+    Suppose $G$ is a connected, bounded, and closed (under limits) subgroup of $GL_n(\mathbb{R})$.  Then it must be that $G \cong (\prod_i H_i) / K$, where:
+    \begin{itemize}
+        \item Each $H_i$ is either $S^1$, $\mathrm{Spin}_k$ (i.e. a double-cover of $SO_n$), $SU_k$, or $U_k(\mathbb{H})$.
+        \item The group $K$ is a finite subgroup of the center of $\prod_i H_i$.
+    \end{itemize}
+\end{theorem}
+
+\subsection{Sidenote: A Number Theoretic Application}
+
+Recall that the identity $|u \cdot v|^2 = |u|^2 \cdot |v|^2$ for $u, v \in \mathbb{C}$, upon taking $u = a + bi$ and $v = c + di$, yields:
+\[ (a^2 + b^2) \cdot (c^2 + d)^2 = (ac - bd)^2 + (ad + bc)^2. \]
+This gives you the following theorem:
+
+\begin{theorem}{Sums of Two Squares}
+    Let $S \subseteq \mathbb{Z}^+$ be the set of all positive integers that are the sums of two squares.  Then $S$ is multiplicatively closed.
+\end{theorem}
+
+The quaternionic version of this analogously gives another theorem:
+
+\begin{theorem}{Sums of Four Squares}
+    Let $S \subseteq \mathbb{Z}^+$ be the set of all positive integers that are the sums of four squares.  Then $S$ is multiplicatively closed.
+\end{theorem}
+
+(In fact, in the above theorem, it turns out that $S = \mathbb{Z}$.)
+
+However, if we replace ``four squares'' with ``three squares'', it turns out this theorem is NOT true!  For example, $3 = 1^2 + 1^2 + 1^2$ and $5 = 2^2 + 1^2 + 0^2$, but $15$ is not the sum of three squares.
+
+\end{document}

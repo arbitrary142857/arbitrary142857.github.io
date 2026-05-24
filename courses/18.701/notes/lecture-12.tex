@@ -1,0 +1,195 @@
+\lecture{12}
+\title{Orbit-Stabilizer, Symmetries of $SO_3(\mathbb{R})$}
+
+\begin{document}
+
+\subsection{Orbit and Stabilizer Definitions}
+
+\textbf{Definition (Orbit and Stabilizer).} Let $G$ be a group acting on a set $S$.  Then for any $s \in S$:
+\begin{itemize}
+    \item The \textbf{orbit} of $s$ is $Gs := \{gs : g \in G\} \subseteq S$.  \emph{(the set of reachable destinations)}
+    \item The \textbf{stabilizer} of $s$ is $\mathrm{Stab}_G(s) := \{g \in G: gs = s\} \subseteq G$.  \emph{(the subgroup of do-nothing actions)}
+\end{itemize}
+
+\textbf{Example.} Consider the group $D_4$ acting on the set $\mathbb{R}^2$.
+\begin{itemize}
+    \item Considering the point $(0, 0)$, we have $D_4(0, 0) = \{(0, 0)\}$ and $\Stab_{D_4}((0, 0)) = D_4$.
+    \item Considering the point $(1, 2)$, we have $D_4(1, 2) = \{(\pm 1, \pm 2), (\pm 2, \pm 1)\}$ and $\Stab_{D_4}((1, 2)) = \{\mathrm{id}\}$.
+    \item Considering the point $(1, 1)$, we have $D_4(1, 1) = \{(\pm 1, \pm 1)\}$ and $\Stab_{D_4}((1, 1)) = \{\mathrm{id}, \text{reflect about $y = x$}\}$.
+\end{itemize}
+
+Intuitively, any group action $G$ on a set $S$ yields a partitioning of $S$ into orbits.
+
+\textbf{Definition (Transitive).} A group $G$ acting on $S$ is \textbf{transitive} if $Gs = S$ for all $s \in S$; that is, there is only one orbit.
+
+\begin{remark}
+    Any group action $G$ on a set $S$ is the disjoint union of \emph{transitive} group actions $G$ on each of its orbits.
+\end{remark}
+
+\subsection{Same Orbit $\implies$ Conjugate Stabilizers}
+
+\begin{theorem}{Same Orbit $\implies$ Conjugate Stabilizers}
+    Let $G$ be a group acting on a set $S$.  Then for any $s_1$ and $s_2$ in the same orbit, the subgroups $\Stab_G(s_1)$ and $\Stab_G(s_2)$ are conjugates of each other.
+    
+    In particular, for every $s \in S$ and $g \in G$, we have $\Stab_G(gs) = g \Stab_G(s) g^{-1}$.
+\end{theorem}
+
+\begin{proof}
+Notice $g' \in \Stab_G(gs)$ iff $g'(gs) = gs$, meaning $g^{-1}g'g \in \Stab_G(s)$, which says $g' \in g\Stab_G(s)g^{-1}$. ~ $\blacksquare$
+\end{proof}
+
+The above theorem is very powerful!  Some implications:
+\begin{itemize}
+    \item \textbf{Fact 1.} Any two elements of $S$ in the same orbit have stabilizers of the same size.
+    \begin{itemize}
+    \item In particular, if $G$ acts transitively on $S$, then the stabilizer of every $s \in S$ has the same size.
+    \end{itemize}
+    \item \textbf{Fact 2.} If the stabilizer $\Stab_G(s) = H$ satisfies $H \unlhd G$, then $\Stab_G(t) = H$ for all $t \in Gs$.
+\end{itemize}
+
+\subsection{Group Actions are Coset Actions}
+
+Here's a natural question:
+\begin{quote}
+    \textbf{Question:} For any group $G$ and subgroup $H \subseteq G$, how can we designate $G$ as a transitive group action on some set $S$ such that $H = \Stab_G(s)$ for some $s \in S$?
+\end{quote}
+Here's a natural answer:
+\begin{quote}
+    \textbf{Answer:} Designate $G$ as a group action on $G / H$ by left multiplication, where $G / H$ is the set of left cosets of $H$ in $G$.  Then $G$ acts transitively on $G / H$.
+    
+    Note that $|\Stab_G(gH)| = |H|$ for all $g \in G$.  If $H \unlhd G$, then in fact $\Stab_G(gH) = H$.
+\end{quote}
+It turns out that the above is the \emph{only} right answer!
+
+\begin{theorem}{Transitive Actions are Coset Actions}
+    Suppose $G$ is a transitive group action on $S$, and for some $s \in S$, we have $\Stab_G(s) = H$.  Then the group action of $G$ on $S$ is isomorphic to the group action of $G$ on $G / H$.
+\end{theorem}
+
+\begin{proof}
+    Equivalently, we seek a bijection $f: S \to G/H$ such that $f(g \cdot s') = g \cdot f(s')$ for all $g \in G$ and $s' \in S$.
+
+    Since $G$ is transitive, we can write every $s' \in S$ as $s' = g' s$ for some $g' \in G$.  So equivalently, we seek an $f: S \to G / H$ such that $f(g \cdot g's) = g \cdot f(g's)$ for all $g, g' \in G$.
+
+    Turns out picking $f$ is really easy: choosing $f(gs) = gH$ for all $g \in G$ just works.  But we still need to make sure this choice of $f$ is well-defined; that is, we must check:
+    \begin{quote}
+        \textbf{Claim.} If we have $g_1s = g_2s$ for some $g_1, g_2 \in G$, then we must also have $g_1 H = g_2 H$.
+
+        \emph{Proof:} Since $g_1s = g_2s$, we have $s = g_1^{-1}g_2s$, meaning $g_1^{-1}g_2 \in \Stab_G(s) = H$.  This means $g_2 \in g_1H$, so $g_1$ and $g_2$ correspond to the same left coset of $H$, done. ~ $\blacksquare$
+    \end{quote}
+\end{proof}
+
+The above theorem is very strong! It has the following corollary:
+
+\begin{theorem}{Group Actions are Coset Actions}
+If $G$ is a group action on $S$, and $\Stab_G(s) = H$, then the group action of $G$ on the orbit $Gs$ of $s$ is isomorphic to the group action of $G$ on $G/H$.
+\end{theorem}
+
+\subsection{The Orbit-Stabilizer Theorem}
+
+The previous theorem can be interpreted combinatorially, too.
+
+\begin{theorem}{Orbit-Stabilizer}
+    For any group $G$ acting on a set $S$, and any $s \in S$, we have $|G| = |Gs| \cdot |\Stab_G(s)|$.
+\end{theorem}
+
+\begin{proof}
+    Recall that actions of $G$ on $Gs$ are isomorphic to actions of $G$ on $G / \Stab_G(s)$.  Thus, $Gs \cong G/\Stab_G(s)$.
+    
+    Therefore, $|Gs| = [G : \Stab_G(s)] = |G| / |\Stab_G(s)|$, which implies $|G| = |Gs| \cdot |\Stab_G(s)|$,
+    as desired. ~ $\blacksquare$
+\end{proof}
+
+\textbf{Example (Cube Symmetries).} Let $G \subseteq SO_3(\mathbb{R})$ be the symmetry group of the cube.
+\begin{itemize}
+    \item Since $G$ acts transitively on $V = \{\text{all $8$ vertices}\}$, and $|\Stab_G(V)| = 3$, we have $|G| = 8 \times 3 = 24$.
+    \item Since $G$ acts transitively on $E = \{\text{all $12$ edges}\}$, and $|\Stab_G(E)| = 2$, we have $|G| = 12 \times 2 = 24$.
+    \item Since $G$ acts transitively on $F = \{\text{all $6$ faces}\}$, and $|\Stab_G(F)| = 4$, we have $|G| = 6 \times 4 = 24$.
+\end{itemize}
+Of course, all three choices of orbit $Gs$ yield the same result $|Gs| \times |\Stab_G(s)| = 24$.
+
+\subsection{Classifying Symmetries of $SO_3(\mathbb{R})$}
+
+We've been classifying geometric groups in $\mathbb{R}^2$ so far.  Now it's time to handle $\mathbb{R}^3$. \vspace{0.1cm}
+
+\begin{boxed-text}[36em]
+\textbf{Question.} What do all of the finite subgroups of $SO_3(\mathbb{R})$ look like?
+\end{boxed-text}
+
+Let $G \subseteq SO_3(\mathbb{R})$ be a finite subgroup of $SO_3(\mathbb{R})$ with size $N = |G|$.  The nice thing about $SO_3(\mathbb{R})$ is that---as shown at the end of Lecture 9---it consists entirely of pure rotations about an axis through the origin.
+
+\textbf{Definition (Pole).} Let $S^2 := \{x \in \mathbb{R}^3: |x| = 1\}$ be the unit sphere.  Then every $g \in G \setminus \{\mathrm{id}\}$ has two \textbf{poles}, those being the two points $S^2$ fixed by $g$.  Furthermore, we define:
+\[ P := \{(g, p) \mid g \in G \setminus \{\mathrm{id}\} \text{ and } p \text{ is a pole of } g\}. \]
+Here comes the clever observation; the proof of the following theorem is plain computation.
+
+\begin{theorem}{Subgroup Acts on Its Poles}
+    We can view $G$ as a group action on $P$ defined by:
+    \[ (g_1, p_1) \in P ~ \xrightarrow{\text{multiplication by }  g_2 \in G} ~ (g_2g_1g_2^{-1}, g_2p_1) \in P. \]
+\end{theorem} \vspace{-1cm}
+
+\begin{remark}
+    Where does this group action come from?  Well, to construct a group action of $G$ on $P$, we would first like to show that if $p_1$ is a pole of $g_1$, then $g_2p_1$ is a pole of some element of $G$ as well.
+
+    To prove this, the key is to notice that $p$ is a pole if and only if $\Stab_G(p)$ is nontrivial.  But recall that $\Stab_G(g_2p_1)$ is the conjugation of $\Stab_G(p_1)$ by $g_2$, so $\Stab_G(g_2p_1)$ is nontrivial if and only if $\Stab_G(p_1)$ is nontrivial.
+
+    Thus, $g_2p_1$ is a pole if and only if $p_1$ is a pole!  It then remains to answer the question: which element of $G$ is $g_2p_1$ a pole of?  The answer is $g_2g_1g_2^{-1}$, again because $\Stab_G(g_2p_1)$ is the conjugation of $\Stab_G(p_1)$ by $g_2$.
+\end{remark}
+
+Say this group action partitions $P$ into $k$ orbits of sizes $n_1, \dots, n_k$.  We now count $|P|$ in two ways:
+\begin{itemize}
+    \item For each of the $n_i$ ordered pairs $(g, p)$ in the $i^{\text{th}}$ orbit, there are $\frac{N}{n_i} - 1$ nontrivial group actions that fix that ordered pair; this is because of the Orbit-Stabilizer theorem.
+    
+    Thus, the $i^{\text{th}}$ orbit contributes $n_i \cdot \left(\frac{N}{n_i} - 1\right)$ ordered pairs $(g, p)$ to $P$.  Therefore, $|P| = \sum_{i = 1}^{k} n_i\left(\frac{N}{n_i} - 1\right)$.
+    \item For each of the $N - 1$ group actions $g \in G$, there are $2$ poles $p$ that it fixes.  Therefore, $|P| = 2(N - 1)$.
+\end{itemize}
+Setting these two quantities equal to each other yields the following Diophantine Equation:
+\[ 2(N - 1) = \sum_{i = 1}^k n_i\left(\dfrac{N}{n_i} - 1\right) ~ \implies ~ 2 - \dfrac{2}{N} = \sum_{i = 1}^k \left(1 - \dfrac{1}{r_i}\right) \text{ for integers } r_i := \dfrac{N}{n_i}. \]
+The rest of the argument is solely number-theoretic; the first step is bounding.
+\begin{itemize}
+    \item \textbf{Claim.} If $k = 1$, then $N = 1$, meaning $G$ is trivial.
+
+    \emph{Proof:} This is because if $k = 1$, then the RHS is less than $1$, whereas the LHS is at least $1$ for $N > 1$.
+    \item \textbf{Claim.} It is impossible to have $k \geq 4$.
+
+    \emph{Proof:} Recall that there are $\frac{N}{n_i} - 1 = r_i - 1$ nontrivial group actions that fix any pole in the $i^{\text{th}}$ orbit.  But every pole---by nature of being a pole---is fixed by at least $1$ group action.  Thus, $r_i \geq 2$ for all $i$.
+
+    This means that for $k \geq 4$, the RHS is at least $4 - \frac{4}{2} = 2$, whereas the LHS is less than $2$, contradiction.
+\end{itemize}
+Thus, either $k = 2$ or $k = 3$.  Now this is just a pure number theory problem; it turns out the solutions are:
+\begin{itemize}
+    \item For $k = 2$, we have $\frac{1}{r_1} + \frac{1}{r_2} = \frac{2}{N}$, which forces $(r_1, r_2) = (N, N)$.
+    \item For $k = 3$, we have $\frac{1}{r_1} + \frac{1}{r_2} + \frac{1}{r_3} = 1 + \frac{2}{N}$.  It turns out this has solutions:
+    \[ (r_1, r_2, r_3, N) \in \left \{ \left(2, 2, \frac{N}{2}, N\right), \ (2, 3, 3, 12), \ (2, 3, 4, 24), \ (2, 3, 5, 60) \right \}. \]
+\end{itemize}
+That's just five cases in total!  It still remains to consider what each of these five cases means geometrically for the entire group, though---but the details are messy, so we omit them here.
+
+It turns out that these five solutions correspond to the following five symmetry groups.
+
+\begin{quote}
+    \textbf{Symmetry Groups in $\mathbb{R}^3$.}
+    \begin{itemize}
+        \item $(N, N, N)$: the symmetry group $G \cong C_n$ of a pyramid with a regular $n$-gon as a base.
+        \item $(2, 2, \tfrac{N}{2}, N)$: the symmetry group $G \cong D_n$ of a prism with a regular $n$-gon as a base.
+        \item $(2, 3, 3, 12)$: the symmetry group $G$ of the tetrahedron.
+        \item $(2, 3, 4, 24)$: the symmetry group $G$ of the cube (or its dual, the octahedron).
+        \item $(2, 3, 5, 60)$: the symmetry group $G$ of the icosahedron (or its dual, the dodecahedron).
+    \end{itemize}
+\end{quote}
+
+And that's all the finite symmetry groups in $\mathbb{R}^3$.
+
+\begin{remark}
+    Recall the following step in the above argument.
+    \begin{quote}
+        Say this group action partitions $P$ into $k$ orbits of sizes $n_1, \dots, n_k$.  We now count $|P|$ in two ways:
+        \begin{itemize}
+        \item For each of the $n_i$ ordered pairs $(g, p)$ in the $i^{\text{th}}$ orbit, there are $\frac{N}{n_i} - 1$ nontrivial group actions that fix that ordered pair; this is because of the Orbit-Stabilizer theorem.
+        
+        Thus, the $i^{\text{th}}$ orbit contributes $n_i \cdot \left(\frac{N}{n_i} - 1\right)$ ordered pairs $(g, p)$ to $P$, so $|P| = \sum_{i = 1}^{k} n_i\left(\frac{N}{n_i} - 1\right)$.
+        
+        \item For each of the $N - 1$ group actions $g \in G$, there are $2$ poles $p$ that it fixes, so $|P| = 2(N - 1)$.
+        \end{itemize}
+    \end{quote}
+    Is the truth of these statements unique to the setting of $SO_3(\mathbb{R})$?
+\end{remark}
+
+\end{document}

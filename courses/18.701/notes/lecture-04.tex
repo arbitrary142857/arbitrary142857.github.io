@@ -1,0 +1,175 @@
+\lecture{4}
+\title{The Correspondence Theorem, Quotient Groups, The Isomorphism Theorems, Conjugation in $S_n$}
+
+\begin{document}
+
+\subsection{Proof of the Correspondence Theorem}
+
+We'll start by giving a proof of the Correspondence Theorem.
+
+\begin{theorem}{Correspondence Theorem}
+    Let $f: G \to G'$ be a \emph{surjective} homomorphism, and let $K = \ker(f)$ be its kernel.  Consider the following collections of subgroups:
+    \[ A := \{\text{subgroups of } G \text{ containing } K\} ~ \text{ and } ~ B := \{\text{subgroups of } G'\}. \]
+    Then there is a bijection from $A$ to $B$ that sends subgroups $H \in A$ to subgroups $f(H) := \{f(h): h \in H\} \in B$.
+\end{theorem}
+
+\begin{proof}
+    The proof is ``largely self-proving''---the statement of the theorem itself is the deep part.
+    \begin{quote}
+        \textbf{Step 1.} For any $H \in A$ and $H' \in B$, we have $f(H) \in B$ and $f^{-1}(H') \in A$.
+
+        \emph{Proof:} One needs to check the following:
+        \begin{enumerate}
+            \item The set $f(H)$ contains the identity and is closed under multiplication and inverses.
+            \item The set $f^{-1}(H')$ contains the identity and is closed under multiplication and inverses.
+            \item The set $f^{-1}(H')$ contains $K$.
+        \end{enumerate}
+        The first two follow from $f$ being a homomorphism, and the third follows from the definition of $K$. ~ $\square$
+    \end{quote}
+    Great!  Now it remains to show $f: A \to B$ is in fact a bijection.  This comes in two steps.
+    \begin{quote}
+        \textbf{Step 2.} For any $H \in A$, we have $f^{-1}(f(H)) = H$.
+
+        \emph{Proof:} The fact $H \subseteq f^{-1}(f(H))$ is clear---this is true for \emph{any} function $f$ and any set $H$, in fact!  So it remains to show $f^{-1}(f(H)) \subseteq H$.  The key tool for this step is the assumption that $K \subseteq H$.
+        \begin{itemize}
+            \item Equivalently, it remains to show that if $h \in f^{-1}(f(H))$, then $h \in H$.
+            \item The condition $h \in f^{-1}(f(H))$ is equivalent to the claim that $f(h) = f(h')$ for some $h' \in H$.
+            \item What does $f(h) = f(h')$ mean?  It means $h = h'k$ for some $k \in K$, of course!
+            \item But both $h'$ and $k$ are elements of $H$, so $h = h'k$ must also be an element of $H$, as desired. ~ $\square$
+        \end{itemize}
+    \end{quote}
+    And here's the final step.
+    \begin{quote}
+        \textbf{Step 3.} For any $H' \in B$, we have $f(f^{-1}(H')) = H'$.
+
+        \emph{Proof:} Again, $f(f^{-1}(H')) \subseteq H'$ is clear, independent of the context of $f$ and $H$.  So it remains to show $H' \subseteq f(f^{-1}(H'))$.  The key tool for this step is the assumption that $f$ is surjective.
+        \begin{itemize}
+            \item Equivalently, it remains to show that if $h' \in H'$, then $h' \in f(f^{-1}(H'))$.
+            \item Because $f$ is surjective, there exists some $h \in G$ such that $f(h) = h'$.
+            \item Well, then for this $h$, we have $h \in f^{-1}(H')$.  So $f(h) $
+        \end{itemize}
+        Note that this step works completely independent of the context of $f$ and $H$. ~ $\square$
+    \end{quote}
+\end{proof}
+
+Some ``reading comprehension'' questions:
+
+\begin{problem}{Kernel}
+    What goes wrong if subgroups in $A$ need not contain the kernel?
+\end{problem}
+
+\begin{solution}
+    Consider a subgroup $H\subseteq G$ that does not contain $K$.  Then the subgroup $H' = f(H)$ of $G'$ contains the identity of $G'$, but $H$ does not contain the identity of $G$.  So $f^{-1}(f(H)) = f^{-1}(H') \neq H$, which is bad. ~ $\square$
+\end{solution}
+
+\begin{problem}{Surjectivity}
+    What goes wrong if $f$ need not be surjective?
+\end{problem}
+
+\begin{solution}
+    Then the set $B$ could be whatever it wanted to be, so $f: A \to B$ would not be surjective. ~ $\square$
+\end{solution}
+
+\subsection{Quotient Groups}
+
+Recall that $H$ is a normal subgroup of $G$ (denoted $H \unlhd G$) if and only if $gHg^{-1} = H$ for all $g \in G$.
+
+\begin{remark}
+    Equivalently, $H \unlhd G$ if and only if $gHg^{-1} \subseteq H$ (i.e. we only need to check one direction of inclusion).  The reason is that subgroup conjugation is a bijection; $gHg^{-1}$ and $H$ always have the same size.
+\end{remark}
+
+Also recall that every kernel $K$ of a homomorphism $f: G \to G'$ is a normal subgroup.  But does the other direction hold?  Must every normal subgroup $K \unlhd G$ be the kernel of some homomorphism $f: G \to G'$?
+
+\begin{theorem}{Normal Subgroups Are Kernels}
+    For every normal subgroup $K \unlhd G$, there exists a homomorphism $f: G \to G'$ such that $K$ is the kernel of $f$.
+\end{theorem}
+
+\begin{proof}
+    Here's the key observation.
+    \begin{quote}
+        \textbf{Claim.} The cosets of $K$ in $G$ are closed under multiplication, where multiplication of cosets $C_1$ and $C_2$ is defined by $C_1C_2 = \{c_1c_2: c_1 \in C_1, c_2 \in C_2\}$.
+
+        \emph{Proof:} The product of $C_1 = g_1K$ and $C_2 = g_2K$ is equal to:
+        \[ (g_1K)(g_2K) = g_1(Kg_2)K = g_1(g_2K)K = (g_1g_2)K, \]
+        which itself is a coset, as desired! ~ $\square$
+    \end{quote}
+    Thus, we may take $G'$ to be the group of all cosets of $H$ under the operation of coset multiplication!  Then the homomorphism $f: G \to G'$ defined by $f(g) = gK$ is exactly what we need.  ~ $\blacksquare$
+\end{proof}
+
+The group of cosets $G'$ in the proof above has a special name.
+
+\textbf{Definition (Quotient Group).} Given $K \unlhd G$, the group of cosets of $K$ is the \textbf{quotient group} and is denoted $G/K$.
+
+\begin{remark}
+    Suppose we try to define the product of cosets $C_1$ and $C_2$ of $H \subset G$ as follows:
+    \begin{quote}
+        \textbf{``Definition''.} The product of $C_1 = g_1H$ and $C_2 = g_2H$ is $C_1C_2 = (g_1g_2)H$.
+    \end{quote}
+    This definition is flawed!  There are \emph{many} different possible $g_1 \in G$ we could choose for which ``$C_1 = g_1H$'' holds.  So depending on which $g_1$ we choose as a representative of $C_1$, we might get a different product $(g_1g_2)H$.
+
+    The crux of the above proof is the observation that $H \unlhd G$ implies that no matter which representatives $(g_1, g_2)$ we choose, the resulting product $(g_1g_2)H$ will be consistent!
+\end{remark}
+
+\textbf{Example.} Take $G = \mathbb{Z}$ and $K \unlhd G$ to be $K = n \mathbb{Z}$.  Then the quotient group $G/K = \mathbb{Z} / n \mathbb{Z}$ is isomorphic to $C_n$.
+
+\begin{remark}
+    The claim that ``cosets of $K$ are closed under multiplication'' is false if $K$ is not a normal subgroup.  Take $G = S_3$ and $H = \{e, (1 \ 2)\}$ for a counterexample.
+\end{remark}
+
+\textbf{Example.} The group $G = GL_n(\mathbb{R})$ and $K \unlhd G$ to be $K = SL_n(\mathbb{R})$.  Then the quotient group $G/K = GL_n(\mathbb{R})/SL_n(\mathbb{R})$ is isomorphic to $(\mathbb{R}^{\times}, \times)$.
+
+\subsection{The Isomorphism Theorems}
+
+There are many isomorphism theorems, whose names are largely inconsistent across sources.
+
+\begin{theorem}{First Isomorphism Theorem}
+    Let $f: G \to G'$ be a surjective homomorphism, and take $K = \ker(f)$.  Then $G/K$ is isomorphic to $G'$ under some isomorphism $\bar{f}: G/K \to G'$.
+    
+    More strongly, if we denote $\pi: G \to G/K$, then there is \emph{unique} choice of $\bar{f}$ for which $f = \bar{f} \circ \pi$.
+\end{theorem}
+
+\begin{proof}
+    The proof is similar to that of the Correspondence Theorem: it's not that deep.  The constraint $f = \bar{f} \circ \pi$ implies that for any $g \in G$, we must have:
+    \[ f(g) = \bar{f} \circ \pi (g) ~ \implies ~ f(g) = \bar{f}(gK). \]
+    So there is a unique way to define $\bar{f}: G/K \to G'$ by sending $gK \in G/K$ to $f(g) \in G'$.  Some things to check:
+    \begin{quote}
+        \textbf{Check \#1.} Is $\bar{f}$ well defined?
+
+        \emph{Proof:} Yes!  Suppose $g_1K$ and $g_2K$ refer to the same coset in $G/K$; then it suffices to show show $f(g_1K) = f(g_2K)$.  Note that there exist $k_1, k_2 \in K$ such that $g_1k_1 = g_2k_2$, so we may write:
+        \[ f(g_1K) = f(g_1) = f(g_2k_1k_2^{-1}) = f(g_2) = f(g_2K), \]
+        as desired.  (The key simplifying step $f(g_2k_1k_2^{-1}) = f(g_2)$ follows from $K = \ker(f)$.) ~ $\square$
+
+        \textbf{Check \#2.} Is $\bar{f}$ an isomorphism?
+
+        \emph{Proof:} Yes!  The fact that $\bar{f}$ preserves multiplication can be seen as follows:
+        \[ \bar{f}(g_1K) \bar{f}(g_2K) = f(g_1)f(g_2) = f(g_1g_2) = \bar{f}(g_1g_2K) = \bar{f}((g_1K)(g_2K)). \]
+        The fact that $\bar{f}$ is surjective follows from the surjectivity of $f$.
+        
+        And finally, the injectivity of $\bar{f}$ follows from the fact that the equation $\bar{f}(gK) = 1$ has a unique solution:
+        \[ \bar{f}(gK) = 1 ~ \iff ~ f(g) = 1 ~ \iff ~ g \in K ~ \iff ~ gK = K. ~ \square \]
+    \end{quote}
+    These two checks suffice to show that our constructed $\bar{f}$ works and is unique. ~ $\blacksquare$
+\end{proof}
+
+Now given any homomorphism $f: G \to G'$, we may factor it as follows:
+\begin{itemize}
+    \item Note that $f$ may not be surjective, so consider the inclusion map $\mathrm{i}: \im(G) \to G'$.
+    \item The map $f: G \to \im(f)$ is a surjective map, so we can apply the First Isomorphism Theorem on it!  If $K = \ker(f)$, then this gives us the maps $\pi: f \to G/K$ and $\bar{f}: G/K \to \im(f)$.
+    \item Therefore, the map $f: G \to G'$ can be factored as $f = \mathrm{i} \circ \bar{f} \circ \pi$.
+\end{itemize}
+See the ``category theory'' diagram below for a visualization of this factorization.
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-04/first-isomorphism}}
+\end{center}
+
+\subsection{Conjugation and Normality in $S_n$}
+
+\textbf{Example.} Consider a permutation $\pi \in S_n$ and a cyclic permutation $\sigma = (a_1 \ a_2 \ \cdots \ a_k)$.  
+
+What does $[ \pi \sigma \pi^{-1} ]$ look like?  Well, it sends $\pi(a_i)$ to:
+\[ [ \pi \sigma \pi^{-1} ] \pi(a_i) = [ \pi \sigma ] (a_i) = \pi(a_{i + 1}) \]
+Therefore, the permutation $\pi \sigma \pi^{-1}$ can be written in cycle notation as $\pi \sigma \pi^{-1} = (\pi(a_1) \ \pi(a_2) \ \cdots \ \pi(a_n))$.  In other words, conjugating a permutation is equivalent to ``relabeling'' its entries.
+
+In general, this means $H = \langle ( 1 \ 2 \ \cdots \ n ) \rangle \cong C_n \subseteq S_n$ cannot be a normal subgroup of $S_n$ for $n > 3$.  This is because $\pi H \pi^{-1}$ can equal \emph{any} $n$-cycle of $S_n$, so $H$ does not remain invariant under conjugation.
+
+\end{document}

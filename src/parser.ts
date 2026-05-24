@@ -2,16 +2,21 @@ import katex from "katex";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import {
-  applyBuiltinDefinitions,
   createContext,
   parsePreamble,
+  applyBuiltinDefinitions,
+  resolveXcolorName,
   type Context,
 } from "./preamble.js";
 import {
   findEnvironmentEnd,
+  findInlineMathEnd,
   findUnescaped,
+  extractBracedCommand,
+  isInsideInlineMath,
   readBraced,
   readOptionalBracket,
+  readSquareBracket,
 } from "./tex-read.js";
 
 export interface ParseResult {
@@ -44,6 +49,9 @@ const HEADING_COMMANDS: Record<string, string> = {
   subsubsection: "h4",
 };
 
+/** Character shown before each \\subsection{...} title. Customize here. */
+const SUBSECTION_MARKER = "§";
+
 const ENV_COLORS: Record<string, string> = {
   problem: "#C96600",
   solution: "#295A25",
@@ -60,6 +68,12 @@ const XCOLOR_NAMES: Record<string, string> = {
   "teal!100": "#008080",
   teal: "#008080",
   black: "#000000",
+  Orchid: "#DA70D6",
+  "Orchid!80": "#E8B4E8",
+  "Orchid!125": "#F5D4F5",
+  Violet: "#EE82EE",
+  "Violet!70": "#D8A8D8",
+  "Violet!111": "#F8D0F8",
 };
 
 const KNOWN_ESCAPES: Record<string, string> = {
@@ -77,6 +91,7 @@ export function parseTex(
   bodySource: string,
   preambleSource = "",
   projectRoot = "",
+  imagesDir = "",
 ): ParseResult {
   const { preamble: docPreamble, body, title, lectures } = extractDocument(bodySource);
   const preamble = [preambleSource.trim(), docPreamble.trim()]
@@ -85,9 +100,32 @@ export function parseTex(
   const ctx = createContext();
   ctx.projectRoot = projectRoot;
   parsePreamble(preamble, ctx);
+  if (imagesDir) {
+    ctx.imagePaths = [imagesDir.endsWith("/") ? imagesDir : `${imagesDir}/`];
+  }
   applyBuiltinDefinitions(ctx);
   const html = renderBody(stripComments(body), ctx);
   return { title, lectures, html };
+}
+
+export function renderInlineFragment(
+  fragment: string,
+  preambleSource = "",
+  projectRoot = "",
+): string {
+  const ctx = createContext();
+  ctx.projectRoot = projectRoot;
+  parsePreamble(preambleSource, ctx);
+  applyBuiltinDefinitions(ctx);
+  return parseInline(fragment.trim(), ctx);
+}
+
+export function titlePlainText(titleTex: string): string {
+  let plain = titleTex.trim();
+  while (/\\[a-zA-Z@*]+\{/.test(plain)) {
+    plain = plain.replace(/\\[a-zA-Z@*]+\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g, "$1");
+  }
+  return plain.replace(/\$([^$]*)\$/g, "$1").replace(/[{}\\]/g, "").trim();
 }
 
 function stripComments(source: string): string {
@@ -131,8 +169,7 @@ function extractDocument(source: string): {
         : source.slice(bodyStart).trim();
   }
 
-  const titleMatch = preamble.match(/\\title\{([^}]*)\}/);
-  const title = titleMatch ? titleMatch[1] : "Page";
+  const title = extractBracedCommand(preamble, "title") ?? "Page";
 
   const lecturesMatch = preamble.match(/\\lectures\{([^}]*)\}/);
   if (lecturesMatch) {
@@ -157,7 +194,7 @@ function renderBody(body: string, ctx: Context): string {
     i = skipSpace(body, i);
     if (i >= body.length) break;
 
-    if (body.startsWith("\\begin{", i)) {
+    if (body.startsWith("\\begin{", i) && !isInsideInlineMath(body, i)) {
       const parsed = parseEnvironmentBlock(body, i, ctx);
       if (parsed) {
         parts.push(parsed.html);
@@ -202,9 +239,20 @@ function findNextBlockStart(body: string, from: number): number {
     "\\[",
     ...Object.keys(HEADING_COMMANDS).map((name) => `\\${name}{`),
   ];
-  const candidates = patterns
-    .map((pattern) => body.indexOf(pattern, from))
-    .filter((n) => n !== -1);
+  const candidates: number[] = [];
+  for (const pattern of patterns) {
+    let idx = from;
+    while (true) {
+      idx = body.indexOf(pattern, idx);
+      if (idx === -1) break;
+      if (pattern === "\\begin{" && isInsideInlineMath(body, idx)) {
+        idx++;
+        continue;
+      }
+      candidates.push(idx);
+      break;
+    }
+  }
   if (candidates.length === 0) return -1;
   return Math.min(...candidates);
 }
@@ -226,8 +274,13 @@ function parseHeadingCommand(
   const arg = readBraced(body, i);
   if (!arg) return null;
 
+  const titleHtml =
+    name === "subsection"
+      ? `<span class="subsection-marker">${SUBSECTION_MARKER}</span> ${parseInline(arg.content, ctx)}`
+      : parseInline(arg.content, ctx);
+
   return {
-    html: `<${tag} class="heading-${name}">${parseInline(arg.content, ctx)}</${tag}>`,
+    html: `<${tag} class="heading-${name}">${titleHtml}</${tag}>`,
     end: arg.end,
   };
 }
@@ -270,7 +323,7 @@ function parseEnvironmentBlock(
   const end = innerEnd + `\\end{${env}}`.length;
 
   if (env === "center") {
-    return { html: `<p class="center">${parseInline(inner, ctx)}</p>`, end };
+    return { html: renderParagraphBlock(inner, ctx, "center"), end };
   }
 
   if (env === "itemize") {
@@ -307,7 +360,7 @@ function parseEnvironmentBlock(
     const open = stripColorDirectives(substituteArgs(envDef.begin, args));
     const labelHtml = parseInline(open, ctx);
     const innerHtml = renderBody(inner, ctx);
-    const color = ENV_COLORS[env];
+    const color = envDef.color ?? ENV_COLORS[env];
     const style = color ? ` style="color:${color}"` : "";
     const html = `<section class="env env-${envClassName(env)}"${style}>${mergeEnvPrefix(labelHtml, innerHtml)}</section>`;
     return { html, end };
@@ -323,6 +376,48 @@ function sanitizeCssLength(value: string): string {
   const trimmed = value.trim();
   if (/^[\d.]+(em|ex|px|pt|rem|%)$/.test(trimmed)) return trimmed;
   return "36em";
+}
+
+function sanitizeSkipLength(value: string): string {
+  const trimmed = value.trim();
+  if (/^-?[\d.]+(em|ex|px|pt|rem|cm|mm|%)$/.test(trimmed)) return trimmed;
+  return "0.5em";
+}
+
+function renderVskip(length: string): string {
+  const css = sanitizeSkipLength(length);
+  if (css.startsWith("-")) {
+    return `<div class="vskip vskip-pull" style="margin-top:${css}"></div>`;
+  }
+  return `<div class="vskip" style="height:${css}"></div>`;
+}
+
+function splitOnVskip(
+  block: string,
+): ({ kind: "text"; content: string } | { kind: "skip"; length: string })[] {
+  const parts: ({ kind: "text"; content: string } | { kind: "skip"; length: string })[] = [];
+  let i = 0;
+
+  while (i < block.length) {
+    const idx = block.indexOf("\\vskip", i);
+    if (idx === -1) {
+      parts.push({ kind: "text", content: block.slice(i) });
+      break;
+    }
+    if (idx > i) parts.push({ kind: "text", content: block.slice(i, idx) });
+    let pos = idx + "\\vskip".length;
+    while (pos < block.length && /\s/.test(block[pos])) pos++;
+    const arg = readBraced(block, pos);
+    if (!arg) {
+      parts.push({ kind: "text", content: block.slice(idx, idx + "\\vskip".length) });
+      i = idx + "\\vskip".length;
+      continue;
+    }
+    parts.push({ kind: "skip", length: arg.content.trim() });
+    i = arg.end;
+  }
+
+  return parts.filter((part) => part.kind === "skip" || part.content.trim());
 }
 
 function stripColorDirectives(tex: string): string {
@@ -348,21 +443,22 @@ function mergeEnvPrefix(prefix: string, bodyHtml: string): string {
   return `<p>${label}${trimmed}</p>`;
 }
 
-function splitListItems(inner: string): string[] {
-  const items: string[] = [];
+function splitListItems(inner: string): { label: string | null; content: string }[] {
+  const items: { label: string | null; content: string }[] = [];
   let itemStart = -1;
+  let itemLabel: string | null = null;
   let i = 0;
   let envDepth = 0;
 
   while (i < inner.length) {
-    if (inner.startsWith("\\begin{", i)) {
+    if (inner.startsWith("\\begin{", i) && !isInsideInlineMath(inner, i)) {
       envDepth++;
       i += 7;
       const close = inner.indexOf("}", i);
       i = close === -1 ? inner.length : close + 1;
       continue;
     }
-    if (inner.startsWith("\\end{", i)) {
+    if (inner.startsWith("\\end{", i) && !isInsideInlineMath(inner, i)) {
       envDepth--;
       i += 5;
       const close = inner.indexOf("}", i);
@@ -371,15 +467,20 @@ function splitListItems(inner: string): string[] {
     }
     if (envDepth === 0 && inner.startsWith("\\item", i)) {
       let after = i + 5;
+      let label: string | null = null;
       if (inner[after] === "[") {
-        const bracketEnd = inner.indexOf("]", after);
-        if (bracketEnd !== -1) after = bracketEnd + 1;
+        const bracket = readSquareBracket(inner, after);
+        if (bracket) {
+          label = bracket.content.trim();
+          after = bracket.end;
+        }
       }
       while (after < inner.length && /\s/.test(inner[after])) after++;
 
       if (itemStart !== -1) {
-        items.push(inner.slice(itemStart, i).trim());
+        items.push({ label: itemLabel, content: inner.slice(itemStart, i).trim() });
       }
+      itemLabel = label;
       itemStart = after;
       i = after;
       continue;
@@ -388,7 +489,7 @@ function splitListItems(inner: string): string[] {
   }
 
   if (itemStart !== -1) {
-    items.push(inner.slice(itemStart).trim());
+    items.push({ label: itemLabel, content: inner.slice(itemStart).trim() });
   }
 
   return items;
@@ -396,21 +497,50 @@ function splitListItems(inner: string): string[] {
 
 function renderList(inner: string, ctx: Context, tag: "ul" | "ol"): string {
   const items = splitListItems(inner);
+  const hasLabels = items.some((item) => item.label !== null);
   const lis = items
-    .map((item) => `<li>${renderBody(item, ctx)}</li>`)
+    .map(({ label, content }) => {
+      const body = renderBody(content, ctx);
+      if (!label) return `<li>${body}</li>`;
+      const labelHtml = parseInline(label, ctx);
+      return `<li class="item-labeled"><span class="item-label">${labelHtml}</span><div class="item-body">${body}</div></li>`;
+    })
     .join("");
-  return `<${tag}>${lis}</${tag}>`;
+  const classAttr = hasLabels ? ` class="${tag === "ul" ? "itemize" : "enumerate"}-labeled"` : "";
+  return `<${tag}${classAttr}>${lis}</${tag}>`;
 }
 
-function renderParagraphBlock(block: string, ctx: Context): string {
-  const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
-  return lines
-    .map((line) => {
-      const heading = parseHeadingCommand(line, 0, ctx);
-      if (heading && heading.end === line.length) return heading.html;
-      return `<p>${parseInline(line, ctx)}</p>`;
+function renderParagraphBlock(block: string, ctx: Context, paragraphClass = ""): string {
+  const classAttr = paragraphClass ? ` class="${paragraphClass}"` : "";
+  return splitOnVskip(block)
+    .flatMap((part) => {
+      if (part.kind === "skip") return renderVskip(part.length);
+      return splitParagraphs(part.content)
+        .map((para) => {
+          const text = collapseParagraphLines(para);
+          if (!text) return "";
+          const heading = parseHeadingCommand(text, 0, ctx);
+          if (heading && heading.end === text.length) return heading.html;
+          return `<p${classAttr}>${parseInline(text, ctx)}</p>`;
+        })
+        .filter(Boolean);
     })
     .join("\n");
+}
+
+function splitParagraphs(block: string): string[] {
+  return block
+    .split(/\n\s*\n+/)
+    .map((para) => para.trim())
+    .filter(Boolean);
+}
+
+function collapseParagraphLines(paragraph: string): string {
+  return paragraph
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .join(" ");
 }
 
 function parseInline(input: string, ctx: Context): string {
@@ -427,7 +557,7 @@ function parseInline(input: string, ctx: Context): string {
     }
 
     if (ch === "$" && input[i + 1] !== "$") {
-      const end = findUnescaped(input, "$", i + 1);
+      const end = findInlineMathEnd(input, i + 1);
       if (end === -1) {
         out += escapeText(ch);
         i++;
@@ -462,10 +592,24 @@ function parseInline(input: string, ctx: Context): string {
       continue;
     }
 
+    if (ch === "\n" || ch === "\r") {
+      if (out.length > 0 && out[out.length - 1] !== " ") out += " ";
+      i++;
+      if (ch === "\r" && input[i] === "\n") i++;
+      continue;
+    }
+
     if (ch === "\\") {
       if (input[i + 1] === "\\") {
         out += "<br>";
         i += 2;
+        continue;
+      }
+
+      if (input[i + 1] === " " || input[i + 1] === "\t") {
+        out += "\u2009";
+        i += 2;
+        while (i < input.length && (input[i] === " " || input[i] === "\t")) i++;
         continue;
       }
 
@@ -513,6 +657,12 @@ function parseCommand(
       const arg = readBraced(input, i);
       if (arg) return { html: "", end: arg.end };
     }
+    return { html: "", end: i };
+  }
+
+  if (name === "vskip") {
+    const arg = readBraced(input, i);
+    if (arg) return { html: renderVskip(arg.content), end: arg.end };
     return { html: "", end: i };
   }
 
@@ -598,6 +748,31 @@ function parseCommand(
     return { html: renderMath(tex, false, ctx), end: args.end };
   }
 
+  if (name === "href") {
+    const urlArg = readBraced(input, i);
+    if (!urlArg) return { html: escapeText(`\\${name}`), end: i };
+    const textArg = readBraced(input, urlArg.end);
+    if (!textArg) return { html: escapeText(`\\${name}`), end: i };
+    return {
+      html: `<a href="${escapeAttr(urlArg.content.trim())}">${parseInline(textArg.content, ctx)}</a>`,
+      end: textArg.end,
+    };
+  }
+
+  if (name === "textcolor") {
+    const colorArg = readBraced(input, i);
+    if (!colorArg) return { html: escapeText(`\\${name}`), end: i };
+    const textArg = readBraced(input, colorArg.end);
+    if (!textArg) return { html: escapeText(`\\${name}`), end: i };
+    const color =
+      resolveXcolorName(colorArg.content.trim()) ?? colorArg.content.trim();
+    const cssColor = color.startsWith("#") ? color : color;
+    return {
+      html: `<span style="color:${escapeAttr(cssColor)}">${parseInline(textArg.content, ctx)}</span>`,
+      end: textArg.end,
+    };
+  }
+
   if (name === "textsc") {
     const arg = readBraced(input, i);
     if (!arg) return { html: escapeText(`\\${name}`), end: i };
@@ -662,7 +837,7 @@ function mixedInlineToMathTex(input: string): string {
   while (i < input.length) {
     if (input[i] === "$" && input[i + 1] !== "$") {
       flushText();
-      const end = findUnescaped(input, "$", i + 1);
+      const end = findInlineMathEnd(input, i + 1);
       if (end === -1) {
         textBuf += input[i];
         i++;
@@ -717,7 +892,7 @@ function parseIncludeGraphicsCommand(
   const styleAttr = style ? ` style="${escapeAttr(style)}"` : "";
 
   return {
-    html: `<img src="{{ASSET_PREFIX}}${escapeAttr(src)}" alt="" class="${classes}"${styleAttr}>`,
+    html: `<img src="{{COURSE_PREFIX}}${escapeAttr(src)}" alt="" class="${classes}"${styleAttr}>`,
     end: arg.end,
   };
 }
@@ -772,8 +947,9 @@ function substituteArgs(template: string, args: string[]): string {
 }
 
 function renderMath(tex: string, display: boolean, ctx: Context): string {
+  const normalized = normalizeColorCommands(normalizeMathTex(tex));
   try {
-    return katex.renderToString(tex, {
+    return katex.renderToString(normalized, {
       displayMode: display,
       throwOnError: false,
       strict: "ignore",
@@ -794,12 +970,32 @@ function isLikelyMathCommand(name: string): boolean {
   );
 }
 
+function normalizeMathTex(tex: string): string {
+  // KaTeX supports smallmatrix (since v0.10) but not mathtools' *smallmatrix variants.
+  const smallMatrixEnvs: Record<string, { left: string; right: string }> = {
+    psmallmatrix: { left: "\\left(", right: "\\right)" },
+    bsmallmatrix: { left: "\\left[", right: "\\right]" },
+    Bsmallmatrix: { left: "\\left\\{", right: "\\right\\}" },
+    vsmallmatrix: { left: "\\left|", right: "\\right|" },
+    Vsmallmatrix: { left: "\\left\\|", right: "\\right\\|" },
+  };
+
+  let out = tex;
+  for (const [env, delim] of Object.entries(smallMatrixEnvs)) {
+    out = out
+      .replaceAll(`\\begin{${env}}`, `${delim.left}\\begin{smallmatrix}`)
+      .replaceAll(`\\end{${env}}`, `\\end{smallmatrix}${delim.right}`);
+  }
+  return out;
+}
+
 function normalizeColorCommands(tex: string): string {
-  return tex.replace(/\\color\{([^}]+)\}/g, (_match, name: string) => {
+  return tex.replace(/\\(?:text)?color\{([^}]+)\}/g, (match, name: string) => {
     const key = name.trim();
-    const hex = XCOLOR_NAMES[key];
-    if (!hex) return `\\color{${key}}`;
-    return `\\color[HTML]{${hex.slice(1)}}`;
+    const hex = resolveXcolorName(key) ?? XCOLOR_NAMES[key];
+    if (!hex) return match;
+    const cmd = match.startsWith("\\textcolor") ? "\\textcolor" : "\\color";
+    return `${cmd}{${hex}}`;
   });
 }
 
