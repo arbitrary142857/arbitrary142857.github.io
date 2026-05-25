@@ -41,3 +41,16 @@ Pushes to `main` deploy via GitHub Actions. In repo settings, set **Pages → So
 3. Run `npm run build`.
 
 Use `\lecture{N}` or `\lectures{N,M}` in note file headers, as before.
+
+## Course table of contents (parts)
+
+For a multi-part TOC (e.g. 18.701’s six units), edit `courses/<course-id>/toc-sections.ts`:
+
+```ts
+export const TOC_PARTS = [
+  { title: "Groups", from: 1, to: 4 },
+  // ...
+];
+```
+
+Register the file in `src/toc-sections.ts` (`TOC_PARTS_BY_COURSE`). Courses without an entry keep a flat lecture list.

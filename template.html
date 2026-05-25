@@ -215,6 +215,7 @@ h3.heading-subsection {
   font-size: 1.3em;
   font-weight: 700;
   margin: 1.75em 0 0.6em;
+  scroll-margin-top: 1.5em;
 }
 .subsection-marker {
   font-weight: 700;
@@ -249,20 +250,70 @@ ul.note-list {
 ul.note-list li {
   margin: 0.4em 0;
 }
-ul.lecture-list {
-  text-align: left;
-  border-left: 2px solid #ddd;
+nav.toc-outline {
+  display: block;
+  margin: 0 0 1.5em;
   padding-left: 1em;
+  border-left: 2px solid #ddd;
+  text-align: left;
 }
-ul.lecture-list li {
+section.toc-part {
   margin: 0;
-  padding: 0.35em 0;
+  padding: 0;
 }
-ul.lecture-list li + li {
-  border-top: 1px solid #e8e4df;
+section.toc-part + section.toc-part {
+  margin-top: 1.15em;
+}
+h2.toc-part-title {
+  font-size: 1.3em;
+  font-weight: 700;
+  margin: 0 0 0.45em;
+  padding: 0;
+  border: none;
+  letter-spacing: 0.015em;
+}
+h2.toc-part-title .toc-part-marker {
+  margin-right: 0.15em;
+  opacity: 0.8;
+}
+section.toc-part:first-child h2.toc-part-title {
+  margin-top: 0;
+}
+ul.toc-lectures {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+ul.toc-lectures > li.lecture-toc-entry {
+  margin: 0;
+  padding: 0.45em 0;
+  list-style: none;
+}
+a.lecture-toc-link {
+  font-weight: 600;
+}
+ul.subsection-toc {
+  list-style: none;
+  margin: 0.3em 0 0;
+  padding: 0 0 0 1.1em;
+}
+ul.subsection-toc li {
+  margin: 0.2em 0;
+  padding: 0;
+  list-style: none;
+}
+a.toc-subsection-link {
+  font-size: 0.93em;
+}
+a.toc-subsection-link .katex {
+  font-size: 0.95em;
+}
+.toc-subsection-marker {
+  opacity: 0.65;
 }
 p.all-link {
-  text-align: center;
+  margin: 0 0 1.25em;
+  text-align: left;
 }
 </style>
 </head>

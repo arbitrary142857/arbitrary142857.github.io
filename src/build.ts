@@ -17,7 +17,8 @@ import {
   loadNotes,
   type Note,
 } from "./notes.js";
-import { parseTex, renderInlineFragment, titlePlainText } from "./parser.js";
+import { parseTex, renderInlineFragment, titlePlainText, extractSubsections } from "./parser.js";
+import { getTocParts, groupNotesByTocParts, type TocPart } from "./toc-sections.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const templatePath = join(root, "template.html");
@@ -81,7 +82,7 @@ for (const course of COURSES) {
     join(siteDir, "index.html"),
     coursePageTitle(course.title, course.subtitle),
     { assetPrefix, coursePrefix: "" },
-    renderCourseHome(course, parsed, assetPrefix),
+    renderCourseHome(course, parsed, assetPrefix, preamble, courseRoot),
   );
 
   writePage(
@@ -138,20 +139,90 @@ function renderCourseHome(
   course: (typeof COURSES)[number],
   parsed: ParsedNote[],
   assetPrefix: string,
+  preamble: string,
+  courseRoot: string,
 ): string {
   const nav = `<nav class="site-nav"><a href="${assetPrefix}index.html">Home</a></nav>`;
-  const items = parsed
-    .map(
-      ({ note, titleHtml }) =>
-        `<li><a href="notes-html/${lectureSlug(note.lectures)}.html">${escapeHtml(formatLectureLabel(note.lectures))}: ${titleHtml}</a></li>`,
-    )
-    .join("\n");
+  const allLink = `<p class="all-link"><a href="all.html">Read all lectures</a></p>`;
+  const tocParts = getTocParts(course.id);
+  const tocHtml = tocParts
+    ? renderCourseTocWithParts(parsed, tocParts, preamble, courseRoot)
+    : renderCourseTocFlat(parsed, preamble, courseRoot);
 
   return `${nav}<header class="lecture-header"><h1>${escapeHtml(course.title)}</h1><p class="lecture-title">${escapeHtml(course.subtitle)}</p></header>
-<ul class="note-list lecture-list">
-${items}
+${allLink}
+${tocHtml}`;
+}
+
+function renderLectureTocEntry(
+  note: Note,
+  titleHtml: string,
+  preamble: string,
+  courseRoot: string,
+): string {
+  const pageUrl = `notes-html/${lectureSlug(note.lectures)}.html`;
+  const lectureLink = `<a href="${pageUrl}" class="lecture-toc-link">${escapeHtml(formatLectureLabel(note.lectures))}: ${titleHtml}</a>`;
+  const subsections = extractSubsections(note.source);
+  if (subsections.length === 0) {
+    return `<li class="lecture-toc-entry">${lectureLink}</li>`;
+  }
+  const subItems = subsections
+    .map(({ slug, titleTex }) => {
+      const subTitleHtml = renderInlineFragment(titleTex, preamble, courseRoot);
+      return `<li><a href="${pageUrl}#${escapeHtml(slug)}" class="toc-subsection-link"><span class="toc-subsection-marker">§</span> ${subTitleHtml}</a></li>`;
+    })
+    .join("\n");
+  return `<li class="lecture-toc-entry">${lectureLink}\n<ul class="subsection-toc">\n${subItems}\n</ul></li>`;
+}
+
+function renderCourseTocFlat(
+  parsed: ParsedNote[],
+  preamble: string,
+  courseRoot: string,
+): string {
+  const items = parsed
+    .map(({ note, titleHtml }) => renderLectureTocEntry(note, titleHtml, preamble, courseRoot))
+    .join("\n");
+  return `<nav class="toc-outline" aria-label="Lectures">\n<ul class="toc-lectures">\n${items}\n</ul>\n</nav>`;
+}
+
+function renderCourseTocWithParts(
+  parsed: ParsedNote[],
+  tocParts: TocPart[],
+  preamble: string,
+  courseRoot: string,
+): string {
+  const notes = parsed.map((p) => p.note);
+  const grouped = groupNotesByTocParts(notes, tocParts);
+  const parsedBySlug = new Map(
+    parsed.map((p) => [lectureSlug(p.note.lectures), p] as const),
+  );
+
+  const partsHtml = grouped
+    .map(({ part, notes: partNotes }, index) => {
+      const lectureItems = partNotes
+        .map((note) => {
+          const entry = parsedBySlug.get(lectureSlug(note.lectures));
+          if (!entry) return "";
+          return renderLectureTocEntry(
+            entry.note,
+            entry.titleHtml,
+            preamble,
+            courseRoot,
+          );
+        })
+        .filter(Boolean)
+        .join("\n");
+      return `<section class="toc-part">
+<h2 class="toc-part-title"><span class="toc-part-marker">§</span> Section ${index + 1}: ${escapeHtml(part.title)}</h2>
+<ul class="toc-lectures">
+${lectureItems}
 </ul>
-<p class="all-link"><a href="all.html">Read all lectures</a></p>`;
+</section>`;
+    })
+    .join("\n");
+
+  return `<nav class="toc-outline" aria-label="Lectures">\n${partsHtml}\n</nav>`;
 }
 
 function renderCourseAll(

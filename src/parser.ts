@@ -19,6 +19,12 @@ import {
   readSquareBracket,
 } from "./tex-read.js";
 
+export interface SubsectionEntry {
+  slug: string;
+  titlePlain: string;
+  titleTex: string;
+}
+
 export interface ParseResult {
   title: string;
   lectures: number[];
@@ -126,6 +132,58 @@ export function titlePlainText(titleTex: string): string {
     plain = plain.replace(/\\[a-zA-Z@*]+\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g, "$1");
   }
   return plain.replace(/\$([^$]*)\$/g, "$1").replace(/[{}\\]/g, "").trim();
+}
+
+export function extractSubsections(source: string): SubsectionEntry[] {
+  const docStart = source.indexOf("\\begin{document}");
+  const bodyStart =
+    docStart === -1 ? 0 : docStart + "\\begin{document}".length;
+  const body = source.slice(bodyStart);
+  const used = new Set<string>();
+  const entries: SubsectionEntry[] = [];
+  let i = 0;
+
+  while (i < body.length) {
+    const at = body.indexOf("\\subsection{", i);
+    if (at === -1) break;
+    const arg = readBraced(body, at + "\\subsection".length);
+    if (!arg) {
+      i = at + 1;
+      continue;
+    }
+    const titlePlain = titlePlainText(arg.content);
+    entries.push({
+      slug: uniqueSubsectionSlug(titlePlain, used),
+      titlePlain,
+      titleTex: arg.content.trim(),
+    });
+    i = arg.end;
+  }
+
+  return entries;
+}
+
+export function uniqueSubsectionSlug(titlePlain: string, used: Set<string>): string {
+  let base = slugifyHeading(titlePlain);
+  if (!base) base = "subsection";
+  let slug = base;
+  let n = 2;
+  while (used.has(slug)) {
+    slug = `${base}-${n}`;
+    n++;
+  }
+  used.add(slug);
+  return slug;
+}
+
+function slugifyHeading(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
 }
 
 function stripComments(source: string): string {
@@ -279,8 +337,13 @@ function parseHeadingCommand(
       ? `<span class="subsection-marker">${SUBSECTION_MARKER}</span> ${parseInline(arg.content, ctx)}`
       : parseInline(arg.content, ctx);
 
+  const idAttr =
+    name === "subsection"
+      ? ` id="${escapeAttr(uniqueSubsectionSlug(titlePlainText(arg.content), ctx.usedSubsectionSlugs))}"`
+      : "";
+
   return {
-    html: `<${tag} class="heading-${name}">${titleHtml}</${tag}>`,
+    html: `<${tag} class="heading-${name}"${idAttr}>${titleHtml}</${tag}>`,
     end: arg.end,
   };
 }

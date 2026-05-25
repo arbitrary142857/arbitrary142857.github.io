@@ -19,6 +19,7 @@ export interface Context {
   environments: Map<string, Environment>;
   imagePaths: string[];
   projectRoot: string;
+  usedSubsectionSlugs: Set<string>;
 }
 
 export function createContext(): Context {
@@ -28,6 +29,7 @@ export function createContext(): Context {
     environments: new Map(),
     imagePaths: ["images/"],
     projectRoot: "",
+    usedSubsectionSlugs: new Set(),
   };
 }
 
