@@ -1,0 +1,126 @@
+\lecture{3}
+\title{Complex Numbers}
+
+\begin{document}
+
+\subsection{Lecture: Complex Numbers}
+
+Annoyingly, we denote $j := \sqrt{-1}$.  Fourier Series look a lot simpler now.
+\[ f(t) = \sum_{k = 0}^{\infty} \left( c_k \cos(k \omega_0 t) + d_k \sin(k \omega_0 t) \right)
+= \sum_{k = -\infty}^{\infty} a_k e^{j k \omega_0t}. \]
+The relationship between the two looks like this:
+\[ c_k = a_k + a_{(-k)} ~ \text{ and } ~ d_k = j\left(a_k - a_{(-k)}\right) ~~~ \parallel ~~~
+a_k = \begin{cases}
+\frac{1}{2}(c_k - jd_k) & \text{ for } k > 0. \\
+\frac{1}{2}(c_{(-k)} + jd_{(-k)}) & \text{ for } k < 0.
+\end{cases}
+\]
+And more directly, the coefficients $\{a_k\}_{k = -\infty}^{\infty}$ are generated like so.
+
+\begin{theorem}{Complex Fourier Coefficients}
+    Given a signal $f(t)$ with period $T$ and frequency $\omega_0 = 2\pi / T$, we have:
+    \[ a_{\ell} = \dfrac{1}{T} \int_T f(t) e^{-j \omega_0 \ell t} \, \mathrm{d}t. \] 
+    Note that this holds even for $\ell = 0$.
+\end{theorem}
+
+\begin{proof}
+    It's even simpler than last time.
+    \[ \int_T e^{j k \omega_0 t} \cdot e^{-j\omega_0 \ell t} \, \mathrm{d}t
+    = \int_T e^{j \omega_0 (k - \ell) t} \, \mathrm{d}t = \begin{cases}
+    T & \text{ if } k = \ell. \\
+    0 & \text{ otherwise.}
+    \end{cases} \]
+\end{proof}
+
+We can do the same ``Transforming Fourier Series'' analysis as before using complex numbers, too.
+
+\begin{problem}
+    Given the Fourier coefficients $\{a_k\}_{k = -\infty}^{\infty}$ for $f(t)$, determine
+    the Fourier coefficients for $f(2t)$ and $f(t - T/2)$.
+\end{problem}
+
+\begin{solution}
+    For $f(2t)$, the coefficients remain the same.
+    Meanwhile, for $f(t - T/2)$, we notice (recalling $\omega_0 = 2\pi / T$) that:
+    \[ e^{j k \omega_0 (t - T/2)} = e^{-j k \omega_0 T/2} \cdot e^{j k \omega_0 t}
+    = (-1)^k \cdot e^{j k \omega_0 t}. \]
+    So for $f(t - T/2)$, the odd-indexed coefficients are negated, and all others remain the same.
+\end{solution}
+
+The usefulness of complex numbers reveals itself when considering more complicated transformations.
+
+\begin{problem}
+    Determine how the Fourier coefficients for $f(t)$ relate to those of $f(t - T/8)$.
+\end{problem}
+
+\begin{solution}
+    Sparing some of the computational details, you can verify:
+    \[
+    c_k' = \begin{cases}
+    c_k & k \equiv 0 \pmod{8}. \\
+    \frac{\sqrt{2}}{2}(c_k + d_k) & k \equiv 1 \pmod{8}. \\
+    d_k & k \equiv 2 \pmod{8}. \\
+    \frac{\sqrt{2}}{2}(-c_k + d_k) & k \equiv 3 \pmod{8}. \\
+    -c_k & k \equiv 4 \pmod{8}. \\
+    \frac{\sqrt{2}}{2}(-c_k - d_k) & k \equiv 5 \pmod{8}. \\
+    -d_k & k \equiv 6 \pmod{8}. \\
+    \frac{\sqrt{2}}{2}(c_k - d_k) & k \equiv 7 \pmod{8}.
+    \end{cases}
+    \]
+    The expression for $d_k'$ is equally messy.  In comparison, $a_k' = e^{-j k(2\pi / 8)} a_k$;
+    the $k^{\text{th}}$ coefficient rotates clockwise by $(45k)^{\circ}$.
+\end{solution}
+
+\subsection{Recitation: Complex Fourier Series}
+
+In some cases, finding the complex Fourier Series can be really easy.
+
+\begin{problem}
+    Determine the Fourier series coefficients for $f(t) = \cos^{100}(t)$, taking $T = 2\pi$.
+\end{problem}
+
+\begin{solution}
+    This is just $\left(\frac{1}{2} e^{jt} + \frac{1}{2}e^{-jt}\right)^{100}$,
+    so $a_k = 2^{-100} \binom{100}{50 - k / 2}$ for all $k \in \{-100, -98, \dots, 98, 100\}$,
+    and $a_k = 0$ otherwise.
+\end{solution}
+
+\begin{problem}
+    Determine the Fourier series coefficients for
+    $f(t) = \dfrac{-1}{\left(\sin\left(\frac{3\pi}{2}t\right) + j\cos\left(\frac{3\pi}{2}t\right)\right)^2}$,
+    taking $T = 4$.
+\end{problem}
+
+\begin{solution}
+    It's just $a_6 = 1$ and everything else is zero.
+\end{solution}
+
+As we saw in lecture, shifting complex Fourier Series just multiplies all of the coefficients.
+
+\begin{theorem}{Delay Property}
+    If $f(t)$ has Fourier coefficients $\{a_k\}_{k = -\infty}^{\infty}$, then
+    $f(t - \tau)$ has Fourier coefficients $a_k' = a_k \cdot e^{-jk\omega_0 \tau}$.
+\end{theorem}
+
+We can also say things about symmetry and anti-symmetry.
+\begin{itemize}
+    \item Iff $f(t)$ is real, then $\{a_k\}$ is Hermitian symmetric: $a_{-k} = \overline{a_k}$.
+    \begin{itemize}
+        \item Iff $f(t)$ is symmetric and real, then $a_k$ is purely real.
+        \item Iff $f(t)$ is antisymmetric and real, then $a_k$ is purely imaginary.
+    \end{itemize}
+\end{itemize}
+
+Might as well share a fun fact as well.
+
+\begin{theorem}{Parseval's Theorem}
+    For a signal with Fourier coefficients $\{a_k\}_{k = -\infty}^{\infty}$,
+    we have $\int_T |f(t)|^2 \, \mathrm{d}t = \sum_{k = -\infty}^{\infty} |a_k|^2$.
+\end{theorem}
+
+\begin{proof}
+    It's not that hard; just use $z \overline{z} = |z|^2$ and the fact that
+    $\{e^{jk \omega_0 t}\}_{k = -\infty}^{\infty}$ forms an orthonormal basis. ~ $\blacksquare$
+\end{proof}
+
+\end{document}
