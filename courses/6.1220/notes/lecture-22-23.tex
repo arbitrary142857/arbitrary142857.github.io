@@ -25,6 +25,8 @@ Let's black-box a solution to FFT for now.  How might it be useful?
     Switch to a $\pm 1$ encoding, reverse $p$, and compute $s \ast p$.  This is $O(n \log n)$. ~ $\blacksquare$
 \end{solution}
 
+Now let's un-black-box the solution to FFT.  How is FFT implemented in $O((m + n) \log (m + n))$ time?
+
 \begin{solution}{FFT}
     It's equivalent to compute $p(x) \cdot q(x)$ for polynomials satisfying $\deg (p) = m$ and $\deg(q) = n$.
 
