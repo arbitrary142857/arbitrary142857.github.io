@@ -1,5 +1,5 @@
 \lectures{1,2,3}
-\title{Random Variables}
+\title{Random Variables and Convergence}
 
 \begin{document}
 
@@ -19,14 +19,14 @@ First, getting some jargon and preliminary facts out of the way.
     \end{itemize}
     \item Given a random variable $X$\dots
     \begin{itemize}
-        \item The sample mean is $\bar{X}$, whereas
+        \item The sample mean is $\bar{X}_n$, whereas
         the true (population) mean is $\mu = \mathbb{E}[X]$.
         \begin{itemize}
             \item The sample mean $\bar{X}_n := \frac{1}{n}\sum_{i = 1}^n X_i$
             (assuming i.i.d. $X_1, X_2, \dots, X_n \sim \mathbb{P}$)
             is itself a random variable!
         \end{itemize}
-        \item The sample variance is $s^2$, whereas
+        \item The sample variance is $s_n^2$, whereas
         the true (population) variance is $\sigma^2 = \mathbb{V}[X]$.
     \end{itemize}
     \item Some discrete distributions to know\dots
@@ -240,8 +240,8 @@ $\bar{X}_n \rightsquigarrow \mathcal{N}(120, 0.3^2/100)$
 anyway, even though we don't know the exact value of $\sigma$.
 
 \begin{theorem}{Sample Variance is Unbiased}
-    We have $\mathbb{E}[s^2] = \sigma^2$, where
-    $s^2 := \frac{1}{n - 1} \sum_{i = 1}^n (X_i - \bar{X}_n)^2$
+    We have $\mathbb{E}[s_n^2] = \sigma^2$, where
+    $s_n^2 := \frac{1}{n - 1} \sum_{i = 1}^n (X_i - \bar{X}_n)^2$
     is the sample variance.
 \end{theorem}
 
@@ -262,8 +262,8 @@ anyway, even though we don't know the exact value of $\sigma$.
 
 With the above, we can justify $\bar{X}_n \rightsquigarrow \mathcal{N}(120, 0.3^2/100)$ as follows:
 \begin{enumerate}
-    \item By the Law of Large Numbers, $\mathbb{E}[s^2] = \sigma^2$
-    gives us $s^2 \convprob \sigma^2$.  (Notational issues aside\dots)
+    \item By the Law of Large Numbers, $\mathbb{E}[s_n^2] = \sigma^2$
+    gives us $s_n^2 \convprob \sigma^2$.
     \item Then the Continuous Mapping Theorem (with $g(x) = \sqrt{x}$)
     gives $\hat{\sigma} \convprob \sigma$.  In other words,
     $\frac{\sigma}{\hat{\sigma}} \convprob 1$.

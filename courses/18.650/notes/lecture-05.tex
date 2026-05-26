@@ -1,0 +1,102 @@
+\lecture{5}
+\title{Multivariate Distributions}
+
+\begin{document}
+
+\textbf{Definition.} A \textbf{random vector} $X \in \mathbb{R}^k$
+is just a vector of random variables $X = (X_1, X_2, \dots, X_k)$.
+
+\textbf{Definition.} The \textbf{expectation} of $X$ is what you'd expect:
+$\mathbb{E}[X] := (\mathbb{E}[X_1], \mathbb{E}[X_2], \dots, \mathbb{E}[X_n])$.
+
+To define the variance of $X$, however, it is not enough to take the
+variances of each individual $X_i$.  That doesn't capture
+the pairwise covariances between the $X_i$.
+
+\textbf{Definition.} The \textbf{covariance} between $X_i$ and $X_j$
+is $\Cov(X_i, X_j) := \mathbb{E}[(X_i - \mu_i)(X_j - \mu_j)]
+= \mathbb{E}[X_iX_j] - \mu_i \mu_j$.
+
+\begin{remark}
+    Here's how covariance relates to dependence / independence.
+    \begin{itemize}
+        \item If $X_i$ and $X_j$ are independent, then $\Cov(X_i, X_j) = 0$.
+        Meanwhile, $\Cov(X, X) = \Var(X)$.
+        \item Suppose $X_i$ and $X_j$ are positively correlated:
+        when $X_i - \mu_i > 0$, it tends to be that $X_j - \mu_j > 0$ too.
+        Then $\Cov(X_i, X_j) > 0$.
+        \item Analogously, when $X_i$ and $X_j$ are negatively correlated,
+        it tends that $\Cov(X_i, X_j) < 0$.
+    \end{itemize}
+    And here are some algebraic properties of covariance.
+    \begin{itemize}
+        \item $\Cov(X, Y) = \Cov(Y, X)$.
+        \item $\Cov(aX + b, cY + d) = ac \Cov(X, Y)$.
+        \item $\Var(X + Y) = \Var(X) + \Var(Y) + 2\Cov(X, Y)$.
+    \end{itemize}
+    That last bullet-point is particularly interesting; here's the derivation:
+    \begin{align*}
+        \Var(X + Y) & = \mathbb{E}[(X + Y)^2] - \mathbb{E}[X + Y]^2 \\
+        & = \left(\mathbb{E}[X^2] + \mathbb{E}[Y^2] + \mathbb{E}[2XY]\right) -
+            \left(\mu_X^2 + \mu_Y^2 + 2\mu_X\mu_Y\right) \\
+        & = \left(\mathbb{E}[X^2] - \mu_X^2\right) + \left(\mathbb{E}[Y^2] - \mu_Y^2\right) +
+            2 \left(\mathbb{E}[XY] - \mu_X\mu_Y\right) = \Var(X) + \Var(Y) + 2\Cov(X, Y).
+    \end{align*}
+\end{remark}
+
+\textbf{Definition.} The \textbf{covariance} of a random vector $X \in \mathbb{R}^k$
+is the $k \times k$ matrix of pairwise covariances.
+\[ \Sigma = \mathbb{E}[(X - \mu)(X - \mu)^{\top}] = \mathbb{E}[XX^{\top}] - \mu\mu^{\top}. \]
+Note that, equivalently, $\Sigma_{i, j} = \Cov(X_i, X_j)$ for all entries $(i, j)$.
+
+\begin{theorem}{Transforming Random Vectors}
+    Consider $X \in \mathbb{R}^k$ with $\mathbb{E}[X] = \mu$ and $\mathbb{V}[X] = \Sigma$.
+    \begin{itemize}
+        \item For any constant $a \in \mathbb{R}^k$, we have $a^{\top}X \in \mathbb{R}$ 
+        is a random variable satisfying $\mathbb{E}[a^{\top}X] = a^{\top}\mu$
+        and $\mathbb{V}[a^{\top}X] = a^{\top}\Sigma a$.
+        \item For any constants $A \in \mathbb{R}^{k \times \ell}$ and $b \in \mathbb{R}^{\ell}$,
+        we have $\mathbb{E}[A^{\top}X + b] = A^{\top}\mu + b$ and
+        $\mathbb{V}[A^{\top}X + b] = A^{\top}\Sigma A$.
+    \end{itemize}
+\end{theorem}
+
+\begin{proof}
+    It's all just algebra.
+    \begin{itemize}
+        \item $\mathbb{E}[a^{\top}X] = a^{\top}\mu$ is true by Linearity of Expectation.
+        \item $\mathbb{V}[a^{\top}X] = a^{\top}\Sigma a$ follows easily from the definitions.
+        \begin{align*}
+            \mathbb{V}[a^{\top}X] & = \mathbb{E}[(a^{\top}X)(X^{\top}a)] -
+            (a^{\top}\mu)(\mu^{\top}a) \\
+            & = a^{\top}\mathbb{E}[XX^{\top}]a - a^{\top}(\mu\mu^{\top})a \\
+            & = a^{\top}\Sigma a.
+        \end{align*}  
+        \item $\mathbb{E}[A^{\top}X + b] = A^{\top}\mu + b$ is true by Linearity of Expectation.
+        \item $\mathbb{E}[A^{\top}X] = A^{\top}\Sigma A$ is\dots the exact same derivation as earlier.
+    \end{itemize}
+    Really, the first and second bullet points of this theorem are the same.
+    Think of $a \in \mathbb{R}^k$ as a $k \times 1$ matrix. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    This isn't part of 18.650, but it's worth knowing.
+
+    Notice that the covariance matrix $\Sigma$ is always symmetric.
+    Therefore, we may apply the Spectral theorem, which says $\Sigma = Q \Lambda Q^{\top}$, where
+    $\Lambda = \mathrm{diag}(\lambda_1, \dots, \lambda_n)$ (eigenvalues) and $Q$ is the eigenbasis.
+
+    Furthermore, $\Sigma$ is positive semi-definite: for any eigen-pair $(q_i, \lambda_i)$, we have:
+    \[ \mathbb{V}[q_i^{\top}X] = q_i^{\top} \Sigma q_i
+    = q_i^{\top} (q_i \cdot \lambda_i) = \lambda_i \cdot \| q_i \|^2. \]
+    Therefore, since variance is nonnegative, every eigenvalue $\lambda_i$ is nonnegative!
+
+    (It turns out that a matrix $M$ can be a covariance matrix
+    \emph{if and only if} $M$ is symmetric positive semi-definite.)
+
+    Furthermore, $\frac{1}{c^{\top}c}\Var(c^{\top}X)$ is maximized when $c$ is the eigenvector
+    with greatest eigenvalue.  See 18.701 notes; this gives way to Principal Component
+    Analysis (PCA), where the eigenbasis points in the direction of the principal components of $X$.
+\end{remark}
+
+\end{document}

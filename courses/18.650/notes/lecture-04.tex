@@ -1,0 +1,31 @@
+\lecture{4}
+\title{The Normal Distribution}
+
+\begin{document}
+
+\textbf{Definition.} The normal distribution $X \sim \mathcal{N}(\mu, \sigma^2)$
+has PDF given by $f(x) = \dfrac{1}{\sigma \sqrt{2\pi}} \exp\left(-\frac{(x - \mu)^2}{2 \sigma^2}\right)$.
+
+Note that if $X \sim \mathcal{N}(\mu, \sigma^2)$, then
+$aX + b \sim \mathcal{N}(a \mu + b, a^2 \sigma^2)$, expectedly.  Therefore,
+
+\begin{theorem}{Z-Score}
+    The random variable $Z \sim \mathcal{N}(0, 1)$ has PDF given by $f(x) = \frac{1}{\sqrt{2\pi}}e^{-x^2/2}$
+    and CDF $\Phi(x) := \int_{\infty}^x f(x) \, \mathrm{d}x$.
+\end{theorem}
+
+\textbf{Definition.} For any $X \sim \mathcal{N}(\mu, \sigma^2)$,
+we say $Z = \frac{X - \mu}{\sigma}$ is the \textbf{z-score} of $X$.
+
+\begin{problem}
+    Given that $X \sim \mathcal{N}(4, 2)$,
+    compute $\Pr(0 \leq X \leq 10)$.
+\end{problem}
+
+\begin{solution}
+    Considering the z-score $Z = \frac{X - 4}{2}$,
+    this is just $\Pr(-2 \leq Z \leq 3)$, or $\Phi(3) - \Phi(-2)$.
+\end{solution}
+
+
+\end{document}
