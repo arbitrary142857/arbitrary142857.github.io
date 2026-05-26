@@ -56,7 +56,7 @@ The phrase ``coset'' (without further specification) should be assumed to mean `
 \begin{proof}
     To prove the first fact, simply note that the size of any coset $gH$ is equal to $|H|$.  This is because the natural map $T: H \to gH$ defined by $T(h) = gh$ is a bijection. ~ $\blacksquare$
 
-    To prove the second fact, consider two distinct cosets $C_1 = g_1H$ and $C_2 = g_2H$.  Suppose, for the sake of contradiction, that these two cosets are not distinct.  Then there exists $h_1, h_2 \in H$ such that $g_1h_1 \in C_1$ and $g_2h_2 \in C_2$ are the same; that is, $g_1h_1 = g_2h_2$.  Equivalently, $g_1 = g_2h_2h_1^{-1}$.  However, this implies
+    To prove the second fact, consider two distinct cosets $C_1 = g_1H$ and $C_2 = g_2H$.  Suppose, for the sake of contradiction, that these two cosets are not disjoint.  Then there exists $h_1, h_2 \in H$ such that $g_1h_1 \in C_1$ and $g_2h_2 \in C_2$ are the same; that is, $g_1h_1 = g_2h_2$.  Equivalently, $g_1 = g_2h_2h_1^{-1}$.  However, this implies
     \[ C_ 1 = g_1H = (g_2h_2h_1^{-1})H = g_2(h_2h_1^{-1}H) = g_2H = C_2. \]
     So in fact, we have shown that if there is just a \emph{single} pair of elements $g_1h_1$ and $g_2h_2$ in $C_1$ and $C_2$ that match, then we can show the \emph{entirety} of $C_1$ and $C_2$ must match completely!  ~ $\blacksquare$
 \end{proof}

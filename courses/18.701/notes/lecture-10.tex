@@ -109,9 +109,9 @@ What does it take to do this?  Well, we need to pick $x_0$ so that $b = x_0 - Ax
 This is doable as long as $I_2 - A$ is invertible.  Well, $I_2 - A$ is noninvertible if and only if $A$ has an eigenvalue of $1$.  But rotations $A = \begin{bsmallmatrix} \cos \theta & \sin \theta \\ \sin \theta & - \cos \theta \end{bsmallmatrix}$ have non-real eigenvalues as long as $A \neq I_2$. \vspace{0.1cm}
 
 \begin{boxed-text}[42em]
-\textbf{--- Summary of Case X ---}
+\textbf{--- Summary of Case X ---} \vskip{0.5em}
 
-If $A \neq I_2$, then $f(x) = Ax + b$ looks like $f(x) = A(x - x_0) + x_0$, which is a \textbf{\textcolor{cyan}{rotation}} about $x_0$ by $\theta$. \vspace{0.25cm}
+If $A \neq I_2$, then $f(x) = Ax + b$ looks like $f(x) = A(x - x_0) + x_0$, which is a \textbf{\textcolor{cyan}{rotation}} about $x_0$ by $\theta$. \vskip{0.5em}
  
 If $A = I_2$, then $f(x) = Ax + b$ looks like $f(x) = x + b$, which is a \textbf{\textcolor{cyan}{translation}} in the direction of $b$.
 \end{boxed-text}
@@ -129,13 +129,9 @@ Then $f'(x) = Ax + \frac{b - Ab}{2}$ \emph{can} be written in $f'(x) = A(x - x_0
 Furthermore, we claim the translation $T: x \mapsto x + \frac{Ab + b}{2}$ is along the direction of $\frac{\theta}{2}$.  The reason why is by geometry; the midpoint of any vector $b$ and its reflection $Ab$ about a line $\ell$ must lie on $\ell$. \vspace{0.1cm}
 
 \begin{boxed-text}[42em]
-\textbf{--- Summary of Case Y ---}
+\textbf{--- Summary of Case Y ---} \vskip{0.5em}
 
-$ $
-
-If $f(x) = Ax + b$ satisfies $Ab = -b$, then we may write $f(x) = A(x - x_0) + x_0$, which is a \textbf{\textcolor{cyan}{reflection}}: \\ specifically, a reflection about a line with angle $\frac{\theta}{2}$ through $x_0$.
-
-$ $
+If $f(x) = Ax + b$ satisfies $Ab = -b$, then we may write $f(x) = A(x - x_0) + x_0$, which is a \textbf{\textcolor{cyan}{reflection}}: \\ specifically, a reflection about a line with angle $\frac{\theta}{2}$ through $x_0$. \vskip{0.5em}
  
 Otherwise, we write $f(x) = \left(Ax + \frac{b - Ab}{2}\right) + \left(\frac{Ab + b}{2}\right)$, which is a \textbf{\textcolor{cyan}{glide reflection}}: \\ a reflection about a line $\ell$ with angle $\frac{\theta}{2}$ through $x_0$ and a translation along $\ell$ with magnitude $\frac{Ab + b}{2}$.
 \end{boxed-text}

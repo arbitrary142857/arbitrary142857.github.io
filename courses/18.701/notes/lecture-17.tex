@@ -16,9 +16,9 @@ In other words, we showed that all linear transformations---with an appropriate 
 
 \begin{theorem}{Hermitian Form Classification}
     Let $\langle \bullet, \bullet \rangle : \mathbb{C} \times \mathbb{C} \to \mathbb{C}$ be a Hermitian form with signature $(n_1, n_0, n_{-1})$.  Then with an appropriate choice of basis, $\langle \bullet, \bullet \rangle$ can be made to look like:
-    \[ \langle x, y \rangle = x^{\dagger}My ~~ \text{ where } ~~ M = \begin{bsmallmatrix}
-        J_{n_1}(1) & 0 & 0 \\ 0 & J_{n_{\!-1}}(-1) & 0 \\ 0 & 0 & J_{n_0}(0)
-    \end{bsmallmatrix}. \]
+    \[ \langle x, y \rangle = x^{\dagger}My ~~ \text{ where } ~~ M = \begin{bmatrix}
+        I_{n_1} & 0 & 0 \\ 0 & -I_{n_{-1}} & 0 \\ 0 & 0 & 0_{n_0}
+    \end{bmatrix} ~ \text{ (where $0_{n_0}$ is the $n_0 \times n_0$ zero matrix.)} \]
 \end{theorem} \vspace{-0.45cm}
 
 In other words, we'll show that all Hermitian forms---with an appropriate choice of basis---can be made to look like a diagonal matrix with only $1$s, $-1$s, and $0$s.  (We'll define ``signature'' later.)
@@ -97,7 +97,7 @@ Assuming this theorem to be true, we propose the following proof of Hermitian fo
     
     Because \textcolor{teal}{the ``Orthogonal Decomposition'' theorem holds,} the $M$ in $\langle x, y \rangle = x^{\dagger}My$ must now look like:
     \[ M = \begin{bmatrix} M_1 & 0 \\ 0 & M_2 \end{bmatrix} ~~ \text{ where } ~ ~\langle x, y \rangle = x^{\dagger}M_1y ~ \text{ in } W, ~ \text{ and } \langle x, y \rangle = x^{\dagger}M_2y ~ \text{ in } W^{\perp}. \]
-    The zero-entries are guaranteed because $\langle e_1, e_2 \rangle = 0$ for any basis vectors $e_1 \in M$ and $e_2 \in W^{\perp}$. \vspace{0.2cm}
+    The zero-entries are guaranteed because $\langle e_1, e_2 \rangle = 0$ for any basis vectors $e_1 \in W$ and $e_2 \in W^{\perp}$. \vspace{0.2cm}
     
     Apply the inductive hypothesis on $W$ and $W^{\perp}$ so $M_1$ and $M_2$ are diagonal with only $-1$s, $0$s, and $1$s.  Rearrange the diagonal entries to finish. ~ $\blacksquare$
 \end{quote}
