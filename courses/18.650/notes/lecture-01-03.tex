@@ -1,0 +1,300 @@
+\lectures{1,2,3}
+\title{Random Variables}
+
+\begin{document}
+
+\subsection{Preliminaries}
+
+First, getting some jargon and preliminary facts out of the way.
+\begin{itemize}
+    \item When we write $A \sim B$, we mean $A$ is a random variable
+    distributed as some probability measure $B$.
+    \begin{itemize}
+        \item So we can write $X_1, X_2, \dots, X_n \sim \mathcal{N}(0, 1)$,
+        but not $X \sim Y$ where $Y$ is a random variable.
+        \item We often say samples $X_1, X_2, \dots, X_n \sim \mathbb{P}$ are
+        independent, identically distributed, or i.i.d. for short.
+        \item As shorthand for ``$A$ and $B$ are independent'',
+        we may also write ``$A \perp B$''.
+    \end{itemize}
+    \item Given a random variable $X$\dots
+    \begin{itemize}
+        \item The sample mean is $\bar{X}$, whereas
+        the true (population) mean is $\mu = \mathbb{E}[X]$.
+        \begin{itemize}
+            \item The sample mean $\bar{X}_n := \frac{1}{n}\sum_{i = 1}^n X_i$
+            (assuming i.i.d. $X_1, X_2, \dots, X_n \sim \mathbb{P}$)
+            is itself a random variable!
+        \end{itemize}
+        \item The sample variance is $s^2$, whereas
+        the true (population) variance is $\sigma^2 = \mathbb{V}[X]$.
+    \end{itemize}
+    \item Some discrete distributions to know\dots
+    \begin{itemize}
+        \item $X \sim \text{Ber}(p)$ is a weighted coin flip,
+        with $\Pr(X = 1) = p$ and $\Pr(X = 0) = 1 - p$.
+        \item $X \sim \text{Bin}(n, p)$ is the sum of $n$ independent
+        trials of $\text{Ber}(p)$.
+        \item $X \sim \text{Pois}(\lambda)$ is given by
+        $\Pr(X = k) = \frac{\lambda^k e^{-\lambda}}{k!}$.
+    \end{itemize}
+    \item Some continuous distributions to know\dots
+    \begin{itemize}
+        \item $X \sim \mathcal{U}(a, b)$ is the uniform distribution:
+        all values in $[a, b]$ are equally likely.
+        \item $X \sim \text{Exp}(\lambda)$ is the exponential distribution, with PDF
+        $f(x) = \lambda e^{- \lambda x}$.
+        \item $X \sim \mathcal{N}(\mu, \sigma^2)$ is the normal distribution, with PDF
+        $f(x) = \frac{1}{\sigma \sqrt{2\pi}} \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right)$.
+    \end{itemize}
+\end{itemize}
+
+\begin{theorem}{Linearity}
+    For any random variables $A$ and $B$, we have
+    $\mathbb{E}[A + B] = \mathbb{E}[A] + \mathbb{E}[B]$.
+    Furthermore, if $A$ and $B$ are independent, then
+    $\mathbb{V}[A + B] = \mathbb{V}[A] + \mathbb{V}[B]$.
+\end{theorem}
+
+\begin{remark}
+    If $A$ and $B$ are not independent, a counterexample to the latter
+    of the two statements is $A = B$, say.
+\end{remark}
+
+An immediate corollary of the above fact is the following.
+
+\begin{theorem}{Sample Mean Stats}
+    Suppose $X_1, X_2, \dots, X_n \sim X$ are sampled i.i.d.,
+    yielding a sample mean $\bar{X}_n$.  Suppose further
+    that $\mathbb{E}[X_i] = \mu$ and $\mathbb{V}[X_i] = \sigma^2$.  Then
+    $\mathbb{E}[\bar{X}_n] = \mu$ and
+    $\mathbb{V}[\bar{X}_n] = \sigma^2 / n$.
+\end{theorem}
+
+\subsection{Convergence of Random Variables}
+
+\textbf{Definition (Convergence in Probability).}
+Given random variables $\{X_n\}_{n = 1}^{\infty}$
+and a random variable $X$, we say ``$X_n$ converges to $X$ in probability''
+(denoted $X_n \convprob X$) if:
+\begin{quote}
+    For every $\epsilon > 0$, we have $\Pr(|X_n - X| > \epsilon) \to 0$ as $n \to \infty$.
+\end{quote}
+
+\textbf{Definition (Convergence in Distribution).}
+Given random variables $\{X_n\}_{n = 1}^{\infty}$ and a random variable $X$,
+we say ``$X_n$ converges to $X$ in distribution'' (denoted $X_n \rightsquigarrow X$) if:
+\begin{quote}
+    For all $x$ where $x \mapsto \Pr(X \leq x)$ is continuous,
+    we have $\Pr(X_n \leq x) \to \Pr(X \leq x)$ as $n \to \infty$.
+\end{quote}
+
+\begin{remark}
+    Think of ``convergence in distribution'' as saying that the CDFs of $X_n$ and $X$
+    get sufficiently close together.
+\end{remark}
+
+\textbf{Example.} Consider $X_n \sim \text{Ber}(\frac{1}{2})$
+and $X \sim \text{Ber}(\frac{1}{2})$.  Then $X_n \rightsquigarrow X$ is true,
+but $X_n \convprob X$ is not.
+
+Expectedly, the latter of these is much less strict than the former.
+Here's a not-completely-obvious theorem.
+
+\begin{theorem}{Relationship Between Convergence}
+    If $X_n \convprob X$, then $X_n \rightsquigarrow X$.
+\end{theorem}
+
+\begin{remark}
+    Convergence in probability is \emph{possible}\dots
+    but it's really uncommon.
+    \begin{itemize}
+        \item \textbf{Example.} Consider
+        $X_1, X_2, \dots \overset{\text{i.i.d}}{\sim} \mathcal{U}(0, 1)$,
+        and define $M_n = \max(X_1, \dots, X_n)$.
+        Then $M_n \convprob 1$.
+        \item \textbf{Example.} Consider $U \sim \mathcal{U}(0, 1)$,
+        and define $X_n = U + \frac{1}{n}$.  Then $X_n \convprob U$.
+    \end{itemize}
+    These examples feel kind of hacky, though---and it turns out, they have to be!
+    \begin{quote}
+        \textbf{Fact.} If $X_n \perp X$ for all $n$ and $X_n \convprob X$,
+        then $\Pr(X = c) = 1$ for some constant $c$.
+    \end{quote}
+    This isn't explicitly in the 18.650 curriculum, but we'll prove it later anyway,
+    once we learn what we need to do so.
+\end{remark}
+
+Here's a completely-obvious theorem.
+
+\begin{theorem}{Convergence to Constant}
+    We have $X_n \convprob c$ if and only if $X_n \rightsquigarrow c$.
+\end{theorem}
+
+\subsection{LLN and CLT}
+
+\begin{theorem}{Weak Law of Large Numbers}
+    Consider i.i.d. random variables $X_1, X_2, \dots$ satisfying
+    $\mathbb{E}[X_i] = \mu$.  Then their sample mean $\bar{X}_n$ converges
+    in probability to $\mu$; that is, $\bar{X}_n \convprob \mu$.
+\end{theorem}
+
+\begin{proof}
+    Chebyshev's; the point is that $\mathbb{V}[\bar{X}_n] \to 0$
+    as $n \to \infty$. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    The ``Strong Law of Large Numbers'' roughly says, more strongly,
+    that $\Pr(\lim_{n \to \infty} \bar{X}_n = \mu) = 1$.
+\end{remark}
+
+\begin{theorem}{Central Limit Theorem}
+    Given $\{X_i\}_{i = 1}^n$ i.i.d. with mean $\mu$ and variance $\sigma^2$, we have:
+    \[ \dfrac{\sqrt{n}}{\sigma}(\bar{X}_n - \mu) \rightsquigarrow \mathcal{N}(0, 1), ~
+    \text{ or equivalently (hand-waving), } ~
+     \bar{X}_n \approx \mathcal{N}\left(\mu, \dfrac{\sigma^2}{n}\right). \]
+\end{theorem}
+
+\begin{remark}
+    We use some shorthand here: $X \rightsquigarrow \mathbb{P}$ is short
+    for $X \rightsquigarrow Y \sim \mathbb{P}$.
+\end{remark}
+
+You can at least sanity-check CLT; the $\mathbb{E}$ and $\mathbb{V}$ clearly match.
+But the proof is very nontrivial.
+
+\subsection{Properties of Convergence}
+
+The former of these two bullets is not hard to prove; the latter is pretty hard.
+
+\begin{theorem}{Convergence of Sums and Products}
+    Consider $\{X_n\}_{n = 1}^{\infty}$, $\{Y_n\}_{n = 1}^{\infty}$,
+    $X$, and $Y$ random variables.
+    \begin{itemize}
+        \item If $X_n \convprob X$ and
+        $Y_n \convprob Y$, then $X_n + Y_n \convprob X + Y$
+        and $X_nY_n \convprob XY$.
+        \item \emph{(Slutsky's Theorem)} If $X_n \rightsquigarrow X$ and
+        $Y_n \convprob c$, then $X_n + Y_n \rightsquigarrow X + c$,
+        and $X_n Y_n \rightsquigarrow Xc$.
+    \end{itemize}
+\end{theorem}
+
+\begin{remark}
+    Consider the following false statement.
+    \begin{quote}
+        If $X_n \rightsquigarrow X$ and $Y_n \rightsquigarrow Y$,
+        then $X_n + Y_n \rightsquigarrow X + Y$.
+    \end{quote}
+    A counterexample is $X_n, X, Y \sim \mathcal{N}(0, 1)$ and $Y_n = -X_n$.
+\end{remark}
+
+To prove things about convergence, it helps to know the following fact.
+
+\begin{theorem}{Continuous Mapping Theorem}
+    If $X_n \convprob X$, then $g(X_n) \convprob g(X)$ for any continuous function $g$.
+    Similarly, if $X_n \rightsquigarrow X$, then $g(X_n) \rightsquigarrow X$.
+\end{theorem}
+
+This lets us justify the so-called ``Delta method''.
+
+\begin{theorem}{Delta Method}
+    Consider a sequence of random variables $Y_n$ such that
+    $\frac{\sqrt{n}}{\sigma}(Y_n - \mu) \rightsquigarrow Y \sim \mathcal{N}(0, 1)$.
+    Then for any differentiable $g$ such that $g'(\mu) \neq 0$, we have:
+    \[ \dfrac{\sqrt{n}}{\sigma} \left(g(Y_n) - g(\mu)\right) \rightsquigarrow \mathcal{N}(0, g'(\mu)^2). \]
+    (Naturally, you should think to use the Delta method for $Y_n = \bar{X}_n$.)
+\end{theorem}
+
+More intuitively, the Delta method is just the CLT with a $g$ attached;
+when $g(x) = x$, the Delta method is the CLT verbatim.
+
+\begin{proof}
+    Just Taylor expand $g$ around $\mu$.
+    \[ \dfrac{\sqrt{n}}{\sigma} \left(g(Y_n) - g(\mu)\right)
+    = g'(\mu)\left[\dfrac{\sqrt{n}}{\sigma}(Y_n - \mu)\right] +
+    \dfrac{\sqrt{n}}{\sigma}R_n. \]
+    The first term, by CLT, converges ($\rightsquigarrow$) to $\mathcal{N}(0, g'(\mu)^2)$.
+    The second term converges ($\convprob$) to $0$. ~ $\blacksquare$
+\end{proof}
+
+\subsection{Applying Slutsky's Theorem}
+
+Here's the set-up.
+
+\begin{quote}
+    \textbf{Set-Up.} Someone claims Harvard grades have a mean salary of below $120$K.
+    To test this, you collect $X_1, X_2, \dots, X_{100}$ salaries (i.i.d.)
+    and find that $\bar{X}_n = 121$K and $\hat{\sigma} = 0.3$K (in thousands).
+
+    You'd like to say $\bar{X}_n \rightsquigarrow \mathcal{N}(120, 0.3^2/100)$;
+    this would let you compute $\Pr(\bar{X}_n \geq 121)$ using the normal distribution.
+
+    But the CLT doesn't immediately apply here---the \emph{true} standard
+    deviation isn't known to be $\hat{\sigma}$.  What now?
+\end{quote}
+
+The point is that Slutsky's Theorem lets us say
+$\bar{X}_n \rightsquigarrow \mathcal{N}(120, 0.3^2/100)$
+anyway, even though we don't know the exact value of $\sigma$.
+
+\begin{theorem}{Sample Variance is Unbiased}
+    We have $\mathbb{E}[s^2] = \sigma^2$, where
+    $s^2 := \frac{1}{n - 1} \sum_{i = 1}^n (X_i - \bar{X}_n)^2$
+    is the sample variance.
+\end{theorem}
+
+\begin{proof}
+    Just expand everything and apply linearity.  The details look like this:
+    \begin{align*}
+        \mathbb{E}\left[\sum_{i = 1}^n (X_i - \bar{X}_n)^2\right]
+        & = \mathbb{E}\left[ \sum_{i = 1}^n (X_i - \mu)^2 \right]
+        - \mathbb{E}\left[2(\bar{X}_n - \mu)\sum_{i = 1}^n (X_i - \mu)
+        + n(\bar{X}_n - \mu)^2\right] \\
+        & = \underbrace{\mathbb{E}\left[ \sum_{i = 1}^n (X_i - \mu)^2 \right]}_{n \sigma^2}
+        - \underbrace{\mathbb{E}\left[n(\bar{X}_n - \mu)^2\right]}_{n\left(\frac{\sigma^2}{n}\right)}
+        = (n - 1)\sigma^2.
+    \end{align*}
+    And that's why the sample variance has a $\frac{1}{n - 1}$ factor;
+    if it were $\frac{1}{n}$, it would no longer be unbiased! ~ $\blacksquare$
+\end{proof}
+
+With the above, we can justify $\bar{X}_n \rightsquigarrow \mathcal{N}(120, 0.3^2/100)$ as follows:
+\begin{enumerate}
+    \item By the Law of Large Numbers, $\mathbb{E}[s^2] = \sigma^2$
+    gives us $s^2 \convprob \sigma^2$.  (Notational issues aside\dots)
+    \item Then the Continuous Mapping Theorem (with $g(x) = \sqrt{x}$)
+    gives $\hat{\sigma} \convprob \sigma$.  In other words,
+    $\frac{\sigma}{\hat{\sigma}} \convprob 1$.
+    \item Also, the Central Limit Theorem tells us
+    $\frac{\sqrt{n}}{\sigma} (\bar{X}_n - \mu) \rightsquigarrow \mathcal{N}(0, 1)$.
+    \item Applying Slutsky's Theorem on points 2 and 3 yields
+    $\frac{\sqrt{n}}{\hat{\sigma}} (\bar{X}_n - \mu) \rightsquigarrow \mathcal{N}(0, 1)$, done!
+\end{enumerate}
+
+\subsection{Convergence in Probability is Hard}
+
+To close things off, let's prove that not-in-18.650-curriculum fact from earlier.
+
+\begin{theorem}{Convergence in Probability is Hard}
+    If $X_n \perp X$ for all $n$ and $X_n \convprob X$,
+    then $\Pr(X = c) = 1$ for some constant $c$.
+\end{theorem}
+
+\begin{proof}
+    We may assume $X_n$ and $X$ are bounded; if they're not,
+    just replace them with $\tan^{-1}(X_n)$ and $\tan^{-1}(X)$,
+    legal by the Continuous Mapping Theorem.  Then the independence yields:
+    \[ \mathbb{E}[X^2] \leftarrow \mathbb{E}[X_n \cdot X] =
+    \mathbb{E}[X_n] \cdot \mathbb{E}[X] \rightarrow \mathbb{E}[X]^2. \]
+    Letting $n \to \infty$, we get $\mathbb{E}[X^2] = \mathbb{E}[X]^2$,
+    or $\mathbb{V}[X] = 0$, which implies $X$ is almost surely constant. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    The convergence in probability---not true in convergence
+    in distribution---comes from the step $X_n \cdot X \convprob X^2$.
+\end{remark}
+
+\end{document}

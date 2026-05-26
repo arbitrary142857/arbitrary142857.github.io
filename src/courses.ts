@@ -8,20 +8,25 @@ export interface Course {
 
 export const COURSES: Course[] = [
   {
-    id: "6.1220",
-    title: "6.1220",
-    subtitle: "Design and Analysis of Algorithms",
-  },
-  {
     id: "18.701",
     title: "18.701",
     subtitle: "Algebra I",
+  },
+  {
+    id: "6.1220",
+    title: "6.1220",
+    subtitle: "Design and Analysis of Algorithms",
   },
   {
     id: "6.300",
     title: "6.300",
     subtitle: "Signal Processing",
   },
+  {
+    id: "18.650",
+    title: "18.650",
+    subtitle: "Fundamentals of Statistics"
+  }
 ];
 
 export function courseDir(root: string, courseId: string): string {
