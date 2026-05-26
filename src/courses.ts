@@ -17,6 +17,11 @@ export const COURSES: Course[] = [
     title: "18.701",
     subtitle: "Algebra I",
   },
+  {
+    id: "6.300",
+    title: "6.300",
+    subtitle: "Signal Processing",
+  },
 ];
 
 export function courseDir(root: string, courseId: string): string {

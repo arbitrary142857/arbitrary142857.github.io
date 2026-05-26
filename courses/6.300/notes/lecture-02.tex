@@ -1,0 +1,80 @@
+\lecture{2}
+\title{Sinusoids and Series}
+
+\begin{document}
+
+\subsection{Lecture: Convergence}
+
+\begin{theorem}{Gibb's Phenomenon}
+    Suppose a signal $f(t)$ has a ``step discontinuity'' at $t = t_0$; that is,
+    \[ L = \lim_{t \to t_0^-} f(t) \neq \lim_{t \to t_0^+} f(t) = R. \]
+    Furthermore, let $f_K(t)$ denote the partial sum of the first $K$ terms of the Fourier series for $f(t)$.
+    Then the following hold:
+    \begin{itemize}
+    \item The Fourier series for $f(t_0)$ converges to $\frac{1}{2}(L + R)$ at $t = t_0$.
+    \item The maximum difference between $f(t)$ and $f_K(t)$ around $t_0$
+    converges to $\approx 9\% \cdot |L - R|$ as $K \to \infty$.
+    \item For any $\epsilon > 0$, the length of the interval over which $|f(t) - f_K(t)| > \epsilon$
+    shrinks zero as $K \to \infty$.
+    \end{itemize}
+    In particular, the Fourier series of a discontinuous function converges, but not uniformly.
+\end{theorem}
+
+You can see the $9\%$ phenomenon in the diagram below, for the Fourier series of a square wave.
+\begin{center}
+    \frame{\includegraphics[width=0.45\textwidth]{lecture-02/gibbs-phenomenon.png}}
+\end{center}
+
+\begin{remark}
+The exact value of the $9\%$ constant is
+$\dfrac{1}{\pi} \displaystyle \int_0^\pi \dfrac{\sin(t)}{t} \, \mathrm{d}t - \dfrac{1}{2} \approx 0.08949$.
+\end{remark}
+
+\subsection{Lecture: Transforming Fourier Series}
+
+\begin{problem}
+    Given the Fourier coefficients $(c_0, c_k, d_k)$ for $f(t)$, determine the Fourier coefficients of $f(2t)$.
+\end{problem}
+
+\begin{solution}
+    The only difference between $f(2t)$ and $f(t)$ is in their fundamental frequencies.
+    The Fourier coefficients do not change.
+\end{solution}
+
+\begin{remark}
+    Think of the Fourier coefficients as describing the \emph{quality} of a signal.
+    A piano and a trumpet playing 440 Hz will have different qualities,
+    but a piano playing 440 Hz and a piano playing 660 Hz will not.
+\end{remark}
+
+\begin{problem}
+    Given the Fourier coefficients $(c_0, c_k, d_k)$ of $f(t)$, determine the Fourier coefficients of $f(t - T/2)$.
+\end{problem}
+
+\begin{solution}
+    Just note the following (recalling that $\omega_0 = \frac{2\pi}{T}$ always):
+    \[
+    \cos\left(k \omega_0 \left(t - T/2\right)\right) = (-1)^k \cos(k \omega_0 t) ~~~ \parallel ~~~
+    \sin\left(k \omega_0 \left(t - T/2\right)\right) = (-1)^k \sin(k \omega_0 t).
+    \]
+    Thus, odd-indexed coefficients are negated, and all other coefficients remain unchanged.
+\end{solution}
+
+\subsection{Recitation: Symmetry in Fourier Series}
+
+\begin{theorem}{Everything is Even/Odd}
+    Every function $f(t)$ can be expressed as the sum of an even and odd function.
+    \[ f(t) =
+    \underbrace{\left(\dfrac{f(t) + f(-t)}{2}\right)}_{\text{even}} +
+    \underbrace{\left(\dfrac{f(t) - f(-t)}{2}\right)}_{\text{odd}} \]
+\end{theorem}
+
+In 6.300, ``symmetric'' and ``antisymmetric'' mean ``even'' and ``odd'', respectively---and
+``asymmetric'' means neither.
+
+Expectedly, if an asymmetric signal can be easily expressed as the sum of a symmetric and
+antisymmetric signal, then computing its Fourier series may be easier done in two steps\dots
+
+
+
+\end{document}
