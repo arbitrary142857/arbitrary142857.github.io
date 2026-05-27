@@ -1,0 +1,125 @@
+\lecture{6}
+\title{Multivariate Limit Theorems}
+
+\begin{document}
+
+\subsection{Multivariate PDFs}
+
+Random vectors $X \in \mathbb{R}^{k}$ can have PDF's $f(x)$ too,
+where $\Pr(X \in R) = \int_R f(x) \, \mathrm{d}x$ for any (measurable) region $R \subseteq \mathbb{R}$.
+
+The PDF $f: \mathbb{R}^k \to \mathbb{R}$ of a random vector $X = (X_1, \dots, X_k)$ is called
+the \textbf{joint density} of $(X_1, \dots, X_k)$.
+
+\textbf{Example.} If $\{X_i\}_{i = 1}^k$ are independent, and the PDF (or \textbf{marginal density})
+of $X_i$ is given by $f_i(x)$, then their joint density is given by 
+$f(x_1, \dots, x_k) = \prod_{i = 1}^k f_i(x_i)$.
+
+\textbf{Definition (Conditional PDF).} Given $X_1, \dots, X_k$ with joint density $f(x_1, \dots, x_k)$,
+the conditional density of $X_k$ given the values $\{X_1 = x_1, \dots, X_{k - 1} = x_{k - 1}\}$ is:
+\[ f(x_k \mid \{X_1 = x_1, \dots, X_k = x_k\}) =
+\dfrac{f(x_1, \dots, x_k)}{\int_{\mathbb{R}} f(x_1, \dots, x_k) \, \mathrm{d}x_k}. \]
+Note that the conditional PDF $f$ can be viewed as either:
+\begin{itemize}
+    \item A map $(x_1, \dots, x_k) \mapsto \# \in \mathbb{R}$.
+    \item A family of maps $(x_k) \mapsto \# \in \mathbb{R}$, indexed by $(x_1, \dots, x_{k - 1})$.
+\end{itemize}
+
+\subsection{Multivariate Gaussian}
+
+The 18.650 states the Multivariate Gaussian PDF without proof.
+For completeness, we give a derivation here.
+
+\begin{theorem}{Multivariate Gaussian}
+    The $k$-dimensional Gaussian random vector
+    $X \sim \mathcal{N}_k(\mu, \Sigma)$ satisfies $\mu = \mathbb{E}[X]$,
+    $\Sigma = \mathbb{V}[X]$, and has multivariate PDF given by:
+    \[ f(x) = \dfrac{1}{\sqrt{(2\pi)^k \det(\Sigma)}}
+    \exp\left(-\dfrac{1}{2}(x - \mu)^{\top}\Sigma^{-1}(x - \mu)\right). \]
+\end{theorem}
+
+\begin{proof}
+    Start with the case of $\Sigma = I_k$ and $\mu = 0$; that is,
+    consider $Z \sim \mathcal{N}_k(0, I_k)$.
+    
+    Since $\Sigma = I_k$, the $\{Z_i\}_{i = 1}^k$
+    are independent, so the multivariate PDF is just the product of all the single-variable PDFs:
+    \[ f_Z(z) = \prod_{i = 1}^k \dfrac{1}{\sqrt{2\pi}} e^{-z_i^2/2} =
+    \dfrac{1}{\sqrt{(2\pi)^k}} \exp\left(-\dfrac{1}{2}z^{\top}z\right). \]
+    The question now is: for what $A \in \mathbb{R}^{k \times k}$ and $b \in \mathbb{R}^k$
+    does $X := AZ + b$ satisfy $\mathbb{E}[X] = \mu$ and $\mathbb{V}[X] = \Sigma$?  Well,
+    \[ \mu = \mathbb{E}[AZ + b] = A\mathbb{E}[Z] + b = b. ~~~ \parallel ~~~
+    \Sigma = \mathbb{V}[AZ + b] = A^{\top}\mathbb{V}[Z]A = A^{\top}A. \]
+    Thus, we seek $X = \Sigma^{1/2}Z + \mu$, where $\Sigma^{1/2}$ is the \emph{unique} matrix
+    such that $\Sigma = \Sigma^{1/2}\Sigma$.
+    \begin{quote}
+        Why does $\Sigma^{1/2}$ always exists?  Well, by the Spectral Theorem,
+        $\Sigma = Q \Lambda Q^{\top}$, where $\Lambda = \mathrm{Diag}(\lambda_1, \dots, \lambda_k)$.
+        But $\Sigma$ is positive semidefinite, so the $\lambda_i$ are all nonnegative,
+        meaning $\Sigma^{1/2} := Q \Lambda^{1/2} Q^{\top}$ works.
+    \end{quote}
+    Returning to the PDF $f_Z(z)$, we therefore must substitute $z = \Sigma^{-1/2}(x - \mu)$.
+    Careful, though---$f_Z(z)$ is a \emph{density}, and the linear map
+    $T(z) = \Sigma^{1/2}z + \mu$ will stretch space by a factor of $\det T = \det(\Sigma)^{1/2}$.
+    Thus, the final PDF is:
+    \[ p_X(x) = p_Z(z) \cdot \dfrac{1}{\det(\Sigma)^{1/2}}
+    = \dfrac{1}{\sqrt{(2\pi)^k}} \exp\left(-\dfrac{1}{2}(\Sigma^{-1/2}(x - \mu))^{\top}
+    (\Sigma^{-1/2}(x - \mu))\right) \cdot \dfrac{1}{\det(\Sigma)^{1/2}}. \]
+    And the above simplifies to the multivariate PDF promised at the beginning. ~ $\blacksquare$
+\end{proof}
+
+It helps to know a few useful properties of $\mathcal{N}_k(\mu, \Sigma)$.
+
+\begin{theorem}{Multivariate Gaussian Properties}
+    Say $X \sim \mathcal{N}_k(\mu, \Sigma)$.  Then:
+    \begin{itemize}
+        \item If $A \in \mathbb{R}^{k \times \ell}$ and $b \in \mathbb{R}^{\ell}$,
+        then $A^{\top}X + b \sim \mathcal{N}_{\ell}(A^{\top}\mu + b, A^{\top}\Sigma A)$.
+        \item As seen in the proof above, the z-score of $X$ is
+        given by $Z = \Sigma^{-1/2}(X - \mu) \sim \mathcal{N}_k(0, I_k)$.
+    \end{itemize}
+\end{theorem}
+
+\begin{proof}
+    For the first bullet, just note that $A^{\top}X + b$ is clearly also a multivariate Gaussian,
+    and so it suffices to compute $\mathbb{E}[A^{\top}X + b]$ and $\mathbb{V}[A^{\top}X + b]$,
+    which is not hard. ~ $\blacksquare$
+\end{proof}
+
+And of course, multivariate CLT holds too.
+
+\begin{theorem}{Multivariate CLT}
+    Given (i.i.d) random vectors $X_1, \dots, X_n \in \mathbb{R}^k$,
+    with $\mathbb{E}[X_i] = \mu$ and $\mathbb{V}[X_i] = \Sigma$, we have:
+    \[ \sqrt{n}(\bar{X}_n - \mu) \rightsquigarrow \mathcal{N}_k(0, \Sigma). \]
+\end{theorem}
+
+And so does the multivariate delta method.
+
+\begin{theorem}{Multivariate Delta Method}
+    Given (i.i.d.) random vectors $X_1, \dots, X_n \in \mathbb{R}^k$ with
+    $\mathbb{E}[X_i] = \mu$ and $\mathbb{V}[X_i] = \Sigma$, along with
+    a differentiable $g: \mathbb{R}^k \to \mathbb{R}$ satisfying $\nabla g(\mu) \neq 0)$, we have:
+    \[ \sqrt{n}\left(g(\bar{X}_n) - g(\mu)\right) \rightsquigarrow
+    \mathcal{N}\left(0, \nabla g(\mu)^{\top} \Sigma \nabla g(\mu)\right). \]
+    Note, in this case, that the RHS is a single-variable Gaussian,
+    and that $\nabla g(\mu)$ is a column vector, not a matrix.
+\end{theorem}
+
+\begin{problem}
+    Consider i.i.d. random vectors $X_1, \dots, X_n \sim \mathcal{N}((2, \dots, 2), I_k)$,
+    and define $g: \mathbb{R}^k \to \mathbb{R}$ via $g(x_1, \dots, x_k) = x_1\dots x_k$.
+    Determine the limiting distribution of $g(\bar{X}_n)$.
+\end{problem}
+
+\begin{solution}
+    Just note that $g(\mu) = 2^k$ and $\nabla g(\mu) = (2^{k - 1}, \dots, 2^{k - 1})$,
+    so the Delta Method yields:
+    \[ \sqrt{n}\left(g(\bar{X}_n) - 2^k\right) \rightsquigarrow
+    \mathcal{N}(0, k \cdot 2^{2k - 2}). \]
+    And so $g(\bar{X}_n) \rightsquigarrow
+    \mathcal{N}\left(2^k, \frac{1}{n}(k \cdot 2^{2k - 2}) \right)$ in the limit $n \to \infty$.
+\end{solution}
+
+
+\end{document}

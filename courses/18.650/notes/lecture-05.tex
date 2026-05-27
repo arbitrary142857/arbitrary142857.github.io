@@ -1,5 +1,5 @@
 \lecture{5}
-\title{Multivariate Distributions}
+\title{Multivariate Random Vectors}
 
 \begin{document}
 
@@ -31,7 +31,9 @@ is $\Cov(X_i, X_j) := \mathbb{E}[(X_i - \mu_i)(X_j - \mu_j)]
     And here are some algebraic properties of covariance.
     \begin{itemize}
         \item $\Cov(X, Y) = \Cov(Y, X)$.
-        \item $\Cov(aX + b, cY + d) = ac \Cov(X, Y)$.
+        \item $\Cov(aX + b, cY + d) = ac \Cov(X, Y)$
+        \item $\Cov(A + B, C) = \Cov(A, C) + \Cov(B, C)$.
+        (However, $\Cov(AB, C) \neq \Cov(A, C) \cdot \Cov(B, C)$.)
         \item $\Var(X + Y) = \Var(X) + \Var(Y) + 2\Cov(X, Y)$.
     \end{itemize}
     That last bullet-point is particularly interesting; here's the derivation:
