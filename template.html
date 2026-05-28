@@ -2,7 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{TITLE}}</title>
+<meta name="description" content="{{META_DESCRIPTION}}">
+{{CANONICAL}}
+{{ROBOTS}}
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{META_DESCRIPTION}}">
+<meta property="og:url" content="{{OG_URL}}">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{{TITLE}}">
+<meta name="twitter:description" content="{{META_DESCRIPTION}}">
 <link rel="stylesheet" href="{{ASSET_PREFIX}}katex/katex.min.css">
 <style>
 @font-face {
@@ -187,6 +198,10 @@ hr {
   border-top: 1px solid #333;
   margin: 1.5em 0;
   width: min(100%, 24em);
+}
+hr.all-lectures-divider {
+  display: block;
+  margin: 0 auto 2.5em;
 }
 header.lecture-header {
   margin-bottom: 2.5em;

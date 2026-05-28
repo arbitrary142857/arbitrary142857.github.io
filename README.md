@@ -34,6 +34,8 @@ Open `index.html` in a browser, or serve the repo root with any static file serv
 
 Pushes to `main` deploy via GitHub Actions. In repo settings, set **Pages → Source** to **GitHub Actions**.
 
+The build also writes `sitemap.xml` and `robots.txt` at the site root (canonical URLs use `SITE_ORIGIN` in `src/site.ts`). Submit the sitemap in [Google Search Console](https://search.google.com/search-console) under **Sitemaps** → `https://arbitrary142857.github.io/sitemap.xml`.
+
 ## Adding a course
 
 1. Create `courses/<course-id>/` with `preamble.tex`, `notes/`, and `images/`.

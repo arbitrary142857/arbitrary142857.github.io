@@ -102,16 +102,28 @@ export function formatLectureLabel(lectures: number[]): string {
   return `Lectures ${rest}, and ${last}`;
 }
 
-export function lecturePageTitle(note: NoteMeta, titlePlain = note.title): string {
-  return `${formatLectureLabel(note.lectures)}: ${titlePlain}`;
+export function mitCourseNumber(courseNumber: string): string {
+  return `MIT ${courseNumber}`;
 }
 
-export function coursePageTitle(courseTitle: string, courseSubtitle: string): string {
-  return `${courseTitle} — ${courseSubtitle}`;
+export function coursePageTitle(courseNumber: string, courseSubtitle: string): string {
+  return `${mitCourseNumber(courseNumber)} — ${courseSubtitle}`;
 }
 
-export function lectureHeaderHtml(note: NoteMeta, titleHtml: string): string {
-  return `<header class="lecture-header"><h1>${escapeHtml(formatLectureLabel(note.lectures))}</h1><p class="lecture-title">${titleHtml}</p></header>`;
+export function lecturePageTitle(
+  note: NoteMeta,
+  courseNumber: string,
+  titlePlain = note.title,
+): string {
+  return `${mitCourseNumber(courseNumber)} ${formatLectureLabel(note.lectures)}: ${titlePlain}`;
+}
+
+export function lectureHeaderHtml(
+  note: NoteMeta,
+  courseNumber: string,
+  titleHtml: string,
+): string {
+  return `<header class="lecture-header"><h1>${escapeHtml(mitCourseNumber(courseNumber))} — ${escapeHtml(formatLectureLabel(note.lectures))}</h1><p class="lecture-title">${titleHtml}</p></header>`;
 }
 
 function escapeHtml(text: string): string {
