@@ -1,0 +1,77 @@
+\lecture{1}
+\title{TODO}
+
+\begin{document}
+
+Here's the classic machine learning setup.
+
+\begin{quote}
+    \begin{itemize}
+        \item There is an \textbf{input space} $\mathcal{X}$ and
+        an \textbf{output space} $\mathcal{Y}$.
+        \begin{itemize}
+            \item The input space is often $\mathbb{R}^D$,
+            where $D$ is the \textbf{feature dimension}.
+            \item The output space can be, say, $\{0, 1\}$ for a classification problem,
+            or $\mathbb{R}$ for a regression problem.
+        \end{itemize}
+        \item There is a \textbf{training set} $\{(x^{(n)}, y^{(n)})\}_{n = 1}^N$,
+        where $x^{(n)} \in \mathcal{X}$ is the $n^{\text{th}}$ input, and $y^{(n)}$ is its output.
+        \item There is a \textbf{decision rule} or \textbf{hypothesis}
+        $h: \mathcal{X} \to \mathcal{Y}$ inferred from the training set.
+        \item There is a \textbf{loss function} $L: \mathcal{Y} \times \mathcal{Y} \to \mathbb{R}$,
+        where $L(a, g)$ is the penalty for guessing $g$ when the answer is $a$.
+    \end{itemize}
+\end{quote}
+
+\begin{remark}
+    The loss function may be asymmetric; consider, say, email spam detection.
+\end{remark}
+
+\textbf{Definition (Risk).} A decision rule $h$ has \textbf{risk} defined by
+$\mathrm{risk}(h) := \mathbb{E}[L(Y, h(X))]$
+
+Assume that all data $(x^{(i)}, y^{(i)})$ (training or not) is drawn i.i.d. from the same distribution.
+Unsurprisingly, if we know this distribution $p(x, y)$ exactly, finding the best $h$ is not hard.
+
+\begin{theorem}{Optimal Hypothesis}
+    Suppose $\mathcal{X}$ is discrete and $\mathcal{Y} = \{1, \dots, K\}$.
+    Then the following minimizes risk:
+    \[ h(x) = \argmin_k \sum_{j = 1}^K 
+    \underbrace{L(j, k)}_{\text{cost}} \cdot 
+    \underbrace{p(y = j \mid x)}_{\text{probability}}. \]
+\end{theorem}
+
+\begin{proof}
+    Immediate from the definition of risk. 
+    You can generalize this to the continuous case if you'd like, too. ~ $\blacksquare$
+\end{proof}
+
+The optimal $h$ takes a pretty nice form when we consider regression problems
+with a particular choice of loss.
+
+\begin{theorem}{Optimal Regression Hypothesis}
+    Assume $\mathcal{X} = \mathbb{R}^D$, $\mathcal{Y} = \mathbb{R}$, and $L(a, g) = (a - g)^2$.
+    Then an optimal decision rule is $h(x) = \mathbb{E}[Y \mid X = x]$.
+\end{theorem}
+
+\begin{proof}
+    For a particular $x$, we seek to find the $k \in \mathbb{R}$
+    that minimizes the following ``expected cost'':
+    \[ C(k) := \int_{y \in \mathbb{R}} (y - k)^2 \cdot p(y \mid x) \, \mathrm{d}y. \]
+    Any minimizing $k$ must satisfy $C'(k) = 0$, or:
+    \[
+    C'(k) = \int_{y \in \mathbb{R}} -2(y - k) \cdot p(y \mid x) \, \mathrm{d}y = 0
+    ~ \implies ~
+    \underbrace{\left(\int_{y \in \mathbb{R}} y \cdot p(y \mid x) \, \mathrm{d}y\right)}_{\mathbb{E}[Y \mid X = x]} =
+    \underbrace{\left(\int_{y \in \mathbb{R}} k \cdot p(y \mid x) \, \mathrm{d}y\right)}_{k}
+    \]
+    Thus $k = \mathbb{E}[Y \mid X = x]$ is a critical point.
+    Furthermore, $C''(k) > 0$ for all $k \in \mathbb{R}$, as shown below.
+    \[ C''(k) = \int_{y \in \mathbb{R}} 2 \cdot p(y \mid x) \, \mathrm{d}y = 2 \]
+    Thus $k = \mathbb{E}[Y \mid X = x]$ must be the unique minimizing value. ~ $\blacksquare$
+\end{proof}
+
+Of course, the challenge of ML is that we don't know what $p$ is\dots
+
+\end{document}

@@ -26,6 +26,11 @@ export const COURSES: Course[] = [
     id: "18.650",
     title: "18.650",
     subtitle: "Fundamentals of Statistics"
+  },
+  {
+    id: "6.790",
+    title: "6.790",
+    subtitle: "Grad ML"
   }
 ];
 
