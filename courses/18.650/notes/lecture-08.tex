@@ -1,0 +1,114 @@
+\lecture{8}
+\title{Confidence Intervals}
+
+\begin{document}
+
+\subsection{Asymptotic Normality}
+
+\textbf{Definition.} An estimator $\hat{\theta}_n$ of $\theta$ is \textbf{asymptotically normal}
+if there is some \textbf{asymptotic variance} $\sigma^2 > 0$ such that:
+\[ \sqrt{n}(\hat{\theta}_n - \theta) \rightsquigarrow \mathcal{N}(0, \sigma^2). \]
+Informally, this is roughly equivalent to
+$\hat{\theta}_n \approx \theta + \frac{\sigma}{\sqrt{n}}Z$, where $Z \sim \mathcal{N}(0, 1)$.
+
+\begin{problem}
+    Given model $\{\mathrm{Ber}(p) \mid p \in (0, 1)\}$
+    and estimator $\hat{\theta}_n := \bar{X}_n$ of $\theta := p$,
+    determine its asymptotic variance.
+\end{problem}
+
+\begin{solution}
+    Since $\mathbb{E}_p[X_i] = p = \theta$ and
+    $\mathbb{V}_p[X_i] = p(1 - p)$, the CLT says that
+    the asymptotic variance is $p(1 - p)$.
+\end{solution}
+
+\begin{problem}
+    Given model $\{\mathrm{Ber}(p) \mid p \in (0, 1)\}$
+    and estimator $\hat{\theta}_n := (\bar{X}_n)^2$ of $\theta := p^2$,
+    determine its asymptotic variance.
+\end{problem}
+
+\begin{solution}
+    Invoke the delta method with $g(x) = x^2$;
+    the asymptotic variance gets scaled by
+    $g'(p)^2 = 4p^2$, so it's $4p^3(1 - p)$.
+\end{solution}
+
+Asymptotic normality implies $\hat{\theta} \approx \mathcal{N}(\theta, \sigma^2 / n)$.
+But wait---the variance of $\hat{\theta}$ is also just $\mathrm{se}^2(\hat{\theta})$, right?
+
+\begin{remark}
+    The following claim is not true.
+    \begin{quote}
+        \textbf{False Claim.} If $\hat{\theta}_n$ is asymptotically normal with
+        asymptotic variance $\sigma^2$, then
+        $\frac{\mathrm{se}(\hat{\theta}_n)}{\sigma / \sqrt{n}} \to 1$ as $n \to \infty$.
+    \end{quote}
+    To construct a counterexample, consider:
+    \[ Z \sim \mathcal{N}(0, \sigma^2) ~~~ \parallel ~~~
+    Y_n := \begin{cases}
+    Z & \text{ with probability } 1 - \frac{1}{n}. \\
+    n & \text{ with probability } \frac{1}{n}.
+    \end{cases} \]
+    The point is that $Y_n \rightsquigarrow \mathcal{N}(0, \sigma^2)$,
+    but $\mathbb{V}[Y_n] \approx n$.
+    
+    Thus, the estimator $\hat{\theta}_n := \theta + \frac{Y_n}{\sqrt{n}}$
+    is asymptotically normal with asymptotic variance $\sigma^2$,
+    but $\mathrm{se}(\hat{\theta}_n) \approx 1$.
+\end{remark}
+
+\subsection{Confidence Intervals}
+
+\textbf{Definition.} We say a $(1 - \alpha)$ \textbf{confidence interval (CI)}
+for a parameter $\theta$ is a \emph{random} interval of the form
+$C_n = (A_n, B_n)$ such that, for any fixed value of $\theta$,
+we have $\Pr_{\theta}(\theta \in (A_n, B_n)) \geq 1 - \alpha$.
+We say $1 - \alpha$ is the \textbf{coverage} of the CI.
+
+\begin{remark}
+    For any fixed $\theta$, the endpoints $A_n$ and $B_n$ are themselves
+    random variables whose distributions (usually) depend on $\theta$.
+
+    If it turns out $(6, 7)$ is a $95\%$ confidence interval for $\theta$,
+    that does not mean $\Pr_{\theta}(\theta \in (6, 7)) \geq 0.95$.
+    That statement doesn't even make sense---either $\theta \in (6, 7)$
+    or $\theta \not \in (6, 7)$, and there (usually) is no distribution on
+    the possible values of $\theta$.
+\end{remark}
+
+\textbf{Definition.} A sequence of confidence intervals
+$\{C_n\}_{n = 1}^{\infty}$ has \textbf{asymptotic coverage} $1 - \alpha$
+if $\liminf_{n \to \infty} \Pr_{\theta}(\theta \in C_n) \geq 1 - \alpha$.
+
+\begin{theorem}{Constructing CIs}
+    Suppose $\hat{\theta}_n$ is an asymptotically normal estimator of $\theta$
+    with asymptotic variance $\sigma^2$.  Then:
+    \[ C_n := \left( \hat{\theta}_n - z_{\alpha / 2} \frac{\sigma}{\sqrt{n}},
+    \hat{\theta}_n + z_{\alpha / 2} \frac{\sigma}{\sqrt{n}} \right) \]
+    has asymptotic coverage $(1 - \alpha)$, where $z_{\alpha / 2}$
+    is such that $\Phi(z_{\alpha / 2}) - \Phi(-z_{\alpha / 2}) = 1 - \alpha$.
+\end{theorem}
+
+\begin{proof}
+    Just note that $\theta \in C_n$ is equivalent to
+    $|\hat{\theta}_n - \theta| < z_{\alpha / 2} \frac{\sigma}{\sqrt{n}}$,
+    but also $\hat{\theta}_n - \theta \approx \mathcal{N}(0, \frac{\sigma^2}{n})$.
+    ~ $\blacksquare$
+\end{proof}
+
+\begin{problem}
+    Given (i.i.d.) samples $X_1, \dots, X_n \sim \mathrm{Ber}(p)$,
+    construct confidence intervals for $p$ with asymptotic coverage $1 - \alpha$.
+\end{problem}
+
+\begin{solution}
+    The challenge is that $\sigma = \sqrt{p(1 - p)}$ depends on $p$,
+    but we don't know $p$.
+    
+    The fix is to conservatively bound $\sigma \leq \frac{1}{2}$, which yields
+    $C_n = \bar{X}_n \pm \frac{z_{\alpha / 2}}{2\sqrt{n}}$.
+\end{solution}
+
+\end{document}
