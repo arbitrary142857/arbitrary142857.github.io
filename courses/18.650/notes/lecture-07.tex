@@ -1,0 +1,123 @@
+\lecture{7}
+\title{Models and Estimators}
+
+\begin{document}
+
+\subsection{Models}
+
+One of the biggest goals of statistics is the following.
+
+\begin{quote}
+    \textbf{Goal.} Given some (i.i.d.) data $X_i \sim \mathbb{P}$,
+    derive an estimate $\hat{\mathbb{P}}$ for the distribution $\mathbb{P}$.
+\end{quote}
+
+This is an unreasonable goal without a \textbf{model}---a set of probability distributions
+that are candidates for $\mathbb{P}$.
+
+\textbf{Definition.} A model $\{\mathbb{P}_{\theta} \mid \theta \in \Theta\}$ is
+\textbf{parametric} if $\Theta$ is finite-dimensional, and \textbf{nonparametric} otherwise.
+
+\textbf{Example.} The model $\{\mathrm{Exp}(\lambda) \mid \lambda \in \mathbb{R}^+\}$
+is parametric, whereas $\{\text{PDF } f: [0, 1] \to \mathbb{R}^+\}$ is not.
+
+If we assume a model like, say,
+$\{\mathcal{N}(\mu, \sigma^2) \mid \mu \in \mathbb{R},\sigma \in \mathbb{R}^+\}$,
+we may also use notation like $\mathbb{E}_{\mu, \sigma^2}[X]$.
+
+\subsection{Estimators}
+
+\textbf{Definition.} Given a parameter $\theta$\dots
+\begin{itemize}
+    \item A \textbf{point estimate} $\hat{\theta}$ (or $\hat{\theta}_n$)
+    is a single guess for the value of $\theta$.
+    \item An \textbf{estimator} $\hat{\theta}$ is a random variable
+    that is a function $\hat{\theta} = g(X_1, \dots, X_n)$ of the sample data.
+    \item We'll overload the notation $\theta \rightsquigarrow \hat{\theta}$ to say
+    ``$\theta$ is estimated by $\hat{\theta}$''.
+\end{itemize}
+
+In what follows, assume the parameter $\theta$ is a real number.
+
+\textbf{Definition.} The \textbf{bias} of an estimator $\hat{\theta}$ of $\theta$
+is $\mathrm{bias}(\hat{\theta}) := \mathbb{E}_{\theta}[\hat{\theta}] - \theta$.
+\begin{itemize}
+    \item We say $\hat{\theta}$ is \textbf{unbiased} if $\mathrm{bias}(\hat{\theta}) = 0$.
+    \item We say $\hat{\theta}$ is \textbf{asymptotically unbiased} if
+    $\lim_{n \to \infty} \mathrm{bias}(\hat{\theta}_n) = 0$.
+\end{itemize}
+
+\textbf{Definition.} The \textbf{standard error} of an estimator $\hat{\theta}$ of $\theta$
+is $\mathrm{se}(\hat{\theta}) := \sqrt{\mathbb{V}[\hat{\theta}]}$, or just the
+standard deviation of $\hat{\theta}$.
+
+\textbf{Definition.} The \textbf{mean squared error (MSE)} of an estimator $\hat{\theta}$ of $\theta$
+is $\mathrm{MSE}(\hat{\theta}) := \mathbb{E}_{\theta}[(\hat{\theta} - \theta)^2]$.
+
+\begin{remark}
+    Note that, in general, the bias, standard error, and MSE are all implicitly functions of $\theta$.
+\end{remark}
+
+It turns out that the MSE is just a combination of bias and standard error.
+
+\begin{theorem}{MSE Equivalence}
+    We always have $\mathrm{MSE}(\hat{\theta}) =
+    \mathrm{bias}^2(\hat{\theta}) + \mathrm{se}^2(\hat{\theta})$.
+\end{theorem}
+
+\begin{proof}
+    Just expand the definition of the MSE.
+    \begin{align*}
+        \mathbb{E}_{\theta}[(\hat{\theta} - \theta)^2]
+        & = \mathbb{E}_{\theta}[(
+            \hat{\theta} - \mathbb{E}_{\theta}[\hat{\theta}] + \mathrm{bias}(\hat{\theta})
+        )^2] \\
+        & = \underbrace{\mathbb{E}_{\theta}[(\hat{\theta} - \mathbb{E}_{\theta}[\hat{\theta}])^2]}_{
+            \mathrm{se}^2(\hat{\theta})
+        } + \underbrace{2 \cdot \mathbb{E}_{\theta}[\hat{\theta} - \mathbb{E}_{\theta}[\hat{\theta}]]
+        \cdot \mathrm{bias}(\hat{\theta})}_{
+            0
+        } + \underbrace{\mathrm{bias}^2(\hat{\theta})}_{\mathrm{bias}^2(\hat{\theta})}.
+        ~~~ \blacksquare
+    \end{align*}
+\end{proof}
+
+\begin{remark}
+    When $\mathrm{bias}(\hat{\theta}) = 0$, the above is just
+    the proof that $\mathbb{V}[X] = \mathbb{E}[(X - \mathbb{E}[X])^2]$.
+\end{remark}
+
+\textbf{Definition.} An estimator $\hat{\theta}_n$ of $\theta$
+is \textbf{consistent} if $\hat{\theta}_n \convprob \theta$ as $n \to \infty$.
+
+\textbf{Example.} Given the model $\{\mathcal{N}(\mu, 1) \mid \mu \in \mathbb{R}\}$,
+consider these three estimators for $\mu$.
+\begin{itemize}
+    \item Take $\hat{\mu}_1 := \bar{X}_n$.  This is a consistent, unbiased estimator
+    with standard error $1/\sqrt{n}$ and MSE $1/n$.
+    \item Take $\hat{\mu}_2 := X_1$.  This is an inconsistent, unbiased estimator
+    with standard error $1$ and MSE $1$.
+    \item Take $\hat{\mu}_3 := 0$.  This is an inconsistent, biased estimator
+    with standard error $0$ and MSE $\mu^2$.
+\end{itemize}
+
+\begin{theorem}{Consistency and MSE}
+    If $\mathrm{MSE}(\hat{\theta}) \to 0$ as $n \to \infty$,
+    then $\hat{\theta}$ is consistent.
+\end{theorem}
+
+\begin{proof}
+    Recall the definition of convergence in probability; we would like the following:
+    \begin{quote}
+        \textbf{Goal.} For all $\epsilon > 0$,
+        we have $\Pr_{\theta}(|\hat{\theta}_n - \theta| > \epsilon) \to 0$
+        as $n \to \infty$. 
+    \end{quote}
+    Well, taking $X_n := (\hat{\theta}_n - \theta)^2$, we are given that
+    $\mathbb{E}_{\theta}[X_n] \to 0$ as $n \to \infty$.  The finish is Markov's inequality:
+    \[ \Pr_{\theta}(|\hat{\theta}_n - \theta| > \epsilon)
+    = \Pr_{\theta}(X_n > \epsilon^2) \leq \frac{\mathbb{E}_{\theta}[X_n]}{\epsilon^2}
+    \to 0 ~ \text{ as } n \to \infty. ~~~ \blacksquare \]
+\end{proof}
+
+\end{document}
