@@ -7,7 +7,7 @@
 is just a vector of random variables $X = (X_1, X_2, \dots, X_k)$.
 
 \textbf{Definition.} The \textbf{expectation} of $X$ is what you'd expect:
-$\mathbb{E}[X] := (\mathbb{E}[X_1], \mathbb{E}[X_2], \dots, \mathbb{E}[X_n])$.
+$\mathbb{E}[X] := (\mathbb{E}[X_1], \mathbb{E}[X_2], \dots, \mathbb{E}[X_k])$.
 
 To define the variance of $X$, however, it is not enough to take the
 variances of each individual $X_i$.  That doesn't capture
@@ -26,14 +26,17 @@ is $\Cov(X_i, X_j) := \mathbb{E}[(X_i - \mu_i)(X_j - \mu_j)]
         when $X_i - \mu_i > 0$, it tends to be that $X_j - \mu_j > 0$ too.
         Then $\Cov(X_i, X_j) > 0$.
         \item Analogously, when $X_i$ and $X_j$ are negatively correlated,
-        it tends that $\Cov(X_i, X_j) < 0$.
+        it tends to be that $\Cov(X_i, X_j) < 0$.
     \end{itemize}
     And here are some algebraic properties of covariance.
     \begin{itemize}
         \item $\Cov(X, Y) = \Cov(Y, X)$.
-        \item $\Cov(aX + b, cY + d) = ac \Cov(X, Y)$
+        \item $\Cov(aX + b, cY + d) = ac \Cov(X, Y)$.
         \item $\Cov(A + B, C) = \Cov(A, C) + \Cov(B, C)$.
-        (However, $\Cov(AB, C) \neq \Cov(A, C) \cdot \Cov(B, C)$.)
+        \begin{itemize}
+            \item However, $\Cov(AB, C) \neq \Cov(A, C) \cdot \Cov(B, C)$.
+            This wouldn't even pass dimensional analysis!
+        \end{itemize}
         \item $\Var(X + Y) = \Var(X) + \Var(Y) + 2\Cov(X, Y)$.
     \end{itemize}
     That last bullet-point is particularly interesting; here's the derivation:
@@ -46,8 +49,8 @@ is $\Cov(X_i, X_j) := \mathbb{E}[(X_i - \mu_i)(X_j - \mu_j)]
     \end{align*}
 \end{remark}
 
-\textbf{Definition.} The \textbf{covariance} of a random vector $X \in \mathbb{R}^k$
-is the $k \times k$ matrix of pairwise covariances.
+\textbf{Definition.} The \textbf{variance (covariance matrix)}
+of a random vector $X \in \mathbb{R}^k$ is the $k \times k$ matrix of pairwise covariances.
 \[ \Sigma = \mathbb{E}[(X - \mu)(X - \mu)^{\top}] = \mathbb{E}[XX^{\top}] - \mu\mu^{\top}. \]
 Note that, equivalently, $\Sigma_{i, j} = \Cov(X_i, X_j)$ for all entries $(i, j)$.
 
@@ -66,7 +69,7 @@ Note that, equivalently, $\Sigma_{i, j} = \Cov(X_i, X_j)$ for all entries $(i, j
 \begin{proof}
     It's all just algebra.
     \begin{itemize}
-        \item $\mathbb{E}[a^{\top}X] = a^{\top}\mu$ is true by Linearity of Expectation.
+        \item $\mathbb{E}[a^{\top}X] = a^{\top}\mu$ is true by linearity of expectation.
         \item $\mathbb{V}[a^{\top}X] = a^{\top}\Sigma a$ follows easily from the definitions.
         \begin{align*}
             \mathbb{V}[a^{\top}X] & = \mathbb{E}[(a^{\top}X)(X^{\top}a)] -
@@ -74,8 +77,8 @@ Note that, equivalently, $\Sigma_{i, j} = \Cov(X_i, X_j)$ for all entries $(i, j
             & = a^{\top}\mathbb{E}[XX^{\top}]a - a^{\top}(\mu\mu^{\top})a \\
             & = a^{\top}\Sigma a.
         \end{align*}  
-        \item $\mathbb{E}[A^{\top}X + b] = A^{\top}\mu + b$ is true by Linearity of Expectation.
-        \item $\mathbb{E}[A^{\top}X] = A^{\top}\Sigma A$ is\dots the exact same derivation as earlier.
+        \item $\mathbb{E}[A^{\top}X + b] = A^{\top}\mu + b$ is true by linearity of expectation.
+        \item $\mathbb{V}[A^{\top}X + b] = A^{\top}\Sigma A$ is\dots the exact same derivation as earlier.
     \end{itemize}
     Really, the first and second bullet points of this theorem are the same.
     Think of $a \in \mathbb{R}^k$ as a $k \times 1$ matrix. ~ $\blacksquare$
@@ -86,19 +89,19 @@ Note that, equivalently, $\Sigma_{i, j} = \Cov(X_i, X_j)$ for all entries $(i, j
 
     Notice that the covariance matrix $\Sigma$ is always symmetric.
     Therefore, we may apply the Spectral theorem, which says $\Sigma = Q \Lambda Q^{\top}$, where
-    $\Lambda = \mathrm{diag}(\lambda_1, \dots, \lambda_n)$ (eigenvalues) and $Q$ is the eigenbasis.
+    $\Lambda = \mathrm{diag}(\lambda_1, \dots, \lambda_k)$ (eigenvalues) and $Q$ is the eigenbasis.
 
     Furthermore, $\Sigma$ is positive semi-definite: for any eigen-pair $(q_i, \lambda_i)$, we have:
     \[ \mathbb{V}[q_i^{\top}X] = q_i^{\top} \Sigma q_i
-    = q_i^{\top} (q_i \cdot \lambda_i) = \lambda_i \cdot \| q_i \|^2. \]
+    = q_i^{\top} (\lambda_i q_i) = \lambda_i \cdot \| q_i \|^2. \]
     Therefore, since variance is nonnegative, every eigenvalue $\lambda_i$ is nonnegative!
 
-    (It turns out that a matrix $M$ can be a covariance matrix
-    \emph{if and only if} $M$ is symmetric positive semi-definite.)
+    It turns out that a matrix $M$ can be a covariance matrix
+    \emph{if and only if} $M$ is symmetric positive semi-definite.
 
     Furthermore, $\frac{1}{c^{\top}c}\Var(c^{\top}X)$ is maximized when $c$ is the eigenvector
-    with greatest eigenvalue.  See 18.701 notes; this gives way to Principal Component
-    Analysis (PCA), where the eigenbasis points in the direction of the principal components of $X$.
+    with greatest eigenvalue.  See 18.701 notes; this gives rise to Principal Component
+    Analysis (PCA), where the eigenvectors are the principal components of $X$.
 \end{remark}
 
 \end{document}
