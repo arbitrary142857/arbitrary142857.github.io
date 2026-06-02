@@ -6,7 +6,8 @@
 \subsection{Multivariate PDFs}
 
 Random vectors $X \in \mathbb{R}^{k}$ can have PDF's $f(x)$ too,
-where $\Pr(X \in R) = \int_R f(x) \, \mathrm{d}x$ for any (measurable) region $R \subseteq \mathbb{R}$.
+where $\Pr(X \in R) = \int_R f(x) \, \mathrm{d}x$ for
+any (measurable) region $R \subseteq \mathbb{R}^k$.
 
 The PDF $f: \mathbb{R}^k \to \mathbb{R}$ of a random vector $X = (X_1, \dots, X_k)$ is called
 the \textbf{joint density} of $(X_1, \dots, X_k)$.
@@ -17,8 +18,8 @@ $f(x_1, \dots, x_k) = \prod_{i = 1}^k f_i(x_i)$.
 
 \textbf{Definition (Conditional PDF).} Given $X_1, \dots, X_k$ with joint density $f(x_1, \dots, x_k)$,
 the conditional density of $X_k$ given the values $\{X_1 = x_1, \dots, X_{k - 1} = x_{k - 1}\}$ is:
-\[ f(x_k \mid \{X_1 = x_1, \dots, X_k = x_k\}) =
-\dfrac{f(x_1, \dots, x_k)}{\int_{\mathbb{R}} f(x_1, \dots, x_k) \, \mathrm{d}x_k}. \]
+\[ f(x_k \mid \{X_1 = x_1, \dots, X_{k - 1} = x_{k - 1}\}) =
+\frac{f(x_1, \dots, x_k)}{\int_{\mathbb{R}} f(x_1, \dots, x_{k - 1}, t) \, \mathrm{d}t}. \]
 Note that the conditional PDF $f$ can be viewed as either:
 \begin{itemize}
     \item A map $(x_1, \dots, x_k) \mapsto \# \in \mathbb{R}$.
@@ -27,15 +28,15 @@ Note that the conditional PDF $f$ can be viewed as either:
 
 \subsection{Multivariate Gaussian}
 
-The 18.650 states the Multivariate Gaussian PDF without proof.
+18.650 states the Multivariate Gaussian PDF without proof.
 For completeness, we give a derivation here.
 
 \begin{theorem}{Multivariate Gaussian}
     The $k$-dimensional Gaussian random vector
     $X \sim \mathcal{N}_k(\mu, \Sigma)$ satisfies $\mu = \mathbb{E}[X]$,
     $\Sigma = \mathbb{V}[X]$, and has multivariate PDF given by:
-    \[ f(x) = \dfrac{1}{\sqrt{(2\pi)^k \det(\Sigma)}}
-    \exp\left(-\dfrac{1}{2}(x - \mu)^{\top}\Sigma^{-1}(x - \mu)\right). \]
+    \[ f(x) = \frac{1}{\sqrt{(2\pi)^k \det(\Sigma)}}
+    \exp\left(-\frac{1}{2}(x - \mu)^{\top}\Sigma^{-1}(x - \mu)\right). \]
 \end{theorem}
 
 \begin{proof}
@@ -44,29 +45,37 @@ For completeness, we give a derivation here.
     
     Since $\Sigma = I_k$, the $\{Z_i\}_{i = 1}^k$
     are independent, so the multivariate PDF is just the product of all the single-variable PDFs:
-    \[ f_Z(z) = \prod_{i = 1}^k \dfrac{1}{\sqrt{2\pi}} e^{-z_i^2/2} =
-    \dfrac{1}{\sqrt{(2\pi)^k}} \exp\left(-\dfrac{1}{2}z^{\top}z\right). \]
+    \[ f_Z(z) = \prod_{i = 1}^k \frac{1}{\sqrt{2\pi}} e^{-z_i^2/2} =
+    \frac{1}{\sqrt{(2\pi)^k}} \exp\left(-\frac{1}{2}z^{\top}z\right). \]
     The question now is: for what $A \in \mathbb{R}^{k \times k}$ and $b \in \mathbb{R}^k$
     does $X := AZ + b$ satisfy $\mathbb{E}[X] = \mu$ and $\mathbb{V}[X] = \Sigma$?  Well,
     \[ \mu = \mathbb{E}[AZ + b] = A\mathbb{E}[Z] + b = b. ~~~ \parallel ~~~
-    \Sigma = \mathbb{V}[AZ + b] = A^{\top}\mathbb{V}[Z]A = A^{\top}A. \]
-    Thus, we seek $X = \Sigma^{1/2}Z + \mu$, where $\Sigma^{1/2}$ is the \emph{unique} matrix
-    such that $\Sigma = \Sigma^{1/2}\Sigma$.
+    \Sigma = \mathbb{V}[AZ + b] = A\mathbb{V}[Z]A^{\top} = AA^{\top}. \]
+    Thus, we seek $X = \Sigma^{1/2}Z + \mu$, where $\Sigma^{1/2}$ is the
+    \emph{unique} symmetric, positive definite matrix
+    such that $\Sigma = \Sigma^{1/2}\Sigma^{1/2}$.
     \begin{quote}
-        Why does $\Sigma^{1/2}$ always exists?  Well, by the Spectral Theorem,
-        $\Sigma = Q \Lambda Q^{\top}$, where $\Lambda = \mathrm{Diag}(\lambda_1, \dots, \lambda_k)$.
-        But $\Sigma$ is positive semidefinite, so the $\lambda_i$ are all nonnegative,
+        Why does $\Sigma^{1/2}$ always exist?  Well, by the Spectral Theorem,
+        $\Sigma = Q \Lambda Q^{\top}$, where $\Lambda = \mathrm{diag}(\lambda_1, \dots, \lambda_k)$
+        and $Q \in O_k(\mathbb{R})$.  But $\Sigma$ is positive semidefinite,
+        so the $\lambda_i$ are all nonnegative,
         meaning $\Sigma^{1/2} := Q \Lambda^{1/2} Q^{\top}$ works.
     \end{quote}
     Returning to the PDF $f_Z(z)$, we therefore must substitute $z = \Sigma^{-1/2}(x - \mu)$.
     Careful, though---$f_Z(z)$ is a \emph{density}, and the linear map
     $T(z) = \Sigma^{1/2}z + \mu$ will stretch space by a factor of $\det T = \det(\Sigma)^{1/2}$.
     Thus, the final PDF is:
-    \[ p_X(x) = p_Z(z) \cdot \dfrac{1}{\det(\Sigma)^{1/2}}
-    = \dfrac{1}{\sqrt{(2\pi)^k}} \exp\left(-\dfrac{1}{2}(\Sigma^{-1/2}(x - \mu))^{\top}
-    (\Sigma^{-1/2}(x - \mu))\right) \cdot \dfrac{1}{\det(\Sigma)^{1/2}}. \]
+    \[ f_X(x) = f_Z(z) \cdot \frac{1}{\det(\Sigma)^{1/2}}
+    = \frac{1}{\sqrt{(2\pi)^k}} \exp\left(-\frac{1}{2}(\Sigma^{-1/2}(x - \mu))^{\top}
+    (\Sigma^{-1/2}(x - \mu))\right) \cdot \frac{1}{\det(\Sigma)^{1/2}}. \]
     And the above simplifies to the multivariate PDF promised at the beginning. ~ $\blacksquare$
 \end{proof}
+
+Note that the above theorem only produces a valid PDF when $\Sigma$
+is symmetric and positive definite, because all covariance matrices
+are symmetric and positive definite.
+
+\subsection{Multivariate Gaussian Properties and Theorems}
 
 It helps to know a few useful properties of $\mathcal{N}_k(\mu, \Sigma)$.
 
@@ -89,7 +98,7 @@ It helps to know a few useful properties of $\mathcal{N}_k(\mu, \Sigma)$.
 And of course, multivariate CLT holds too.
 
 \begin{theorem}{Multivariate CLT}
-    Given (i.i.d) random vectors $X_1, \dots, X_n \in \mathbb{R}^k$,
+    Given (i.i.d.) random vectors $X_1, \dots, X_n \in \mathbb{R}^k$,
     with $\mathbb{E}[X_i] = \mu$ and $\mathbb{V}[X_i] = \Sigma$, we have:
     \[ \sqrt{n}(\bar{X}_n - \mu) \rightsquigarrow \mathcal{N}_k(0, \Sigma). \]
 \end{theorem}
@@ -99,7 +108,7 @@ And so does the multivariate delta method.
 \begin{theorem}{Multivariate Delta Method}
     Given (i.i.d.) random vectors $X_1, \dots, X_n \in \mathbb{R}^k$ with
     $\mathbb{E}[X_i] = \mu$ and $\mathbb{V}[X_i] = \Sigma$, along with
-    a differentiable $g: \mathbb{R}^k \to \mathbb{R}$ satisfying $\nabla g(\mu) \neq 0)$, we have:
+    a differentiable $g: \mathbb{R}^k \to \mathbb{R}$ satisfying $\nabla g(\mu) \neq 0$, we have:
     \[ \sqrt{n}\left(g(\bar{X}_n) - g(\mu)\right) \rightsquigarrow
     \mathcal{N}\left(0, \nabla g(\mu)^{\top} \Sigma \nabla g(\mu)\right). \]
     Note, in this case, that the RHS is a single-variable Gaussian,
@@ -117,9 +126,117 @@ And so does the multivariate delta method.
     so the Delta Method yields:
     \[ \sqrt{n}\left(g(\bar{X}_n) - 2^k\right) \rightsquigarrow
     \mathcal{N}(0, k \cdot 2^{2k - 2}). \]
-    And so $g(\bar{X}_n) \rightsquigarrow
+    And so $g(\bar{X}_n) \approx
     \mathcal{N}\left(2^k, \frac{1}{n}(k \cdot 2^{2k - 2}) \right)$ in the limit $n \to \infty$.
 \end{solution}
 
+\subsection{Computational Examples}
+
+\begin{problem}
+    Consider a random vector distributed as
+    $\begin{pmatrix} X \\ Y \end{pmatrix} \sim
+    \mathcal{N}\left(\begin{pmatrix} 3 \\ 2 \end{pmatrix},
+    \begin{pmatrix} 4 & 1 \\ 1 & 6 \end{pmatrix}\right)$.
+    Compute $\mathbb{V}[X + 3Y]$.
+\end{problem}
+
+\begin{solution}
+    Compute $\mathbb{V}[X + 3Y]$ doesn't even depend on
+    our random vector being jointly Gaussian; just note:
+    \[
+    \mathbb{V}[X + 3Y] =
+    \mathbb{V}\left[\begin{pmatrix} 1 \\ 3 \end{pmatrix}^{\top}
+    \begin{pmatrix} X \\ Y \end{pmatrix}\right] =
+    \begin{pmatrix} 1 \\ 3 \end{pmatrix}^{\top}
+    \begin{pmatrix} 4 & 1 \\ 1 & 6 \end{pmatrix}
+    \begin{pmatrix} 1 \\ 3 \end{pmatrix} = 64.
+    \]
+    Here's an alternative solution.
+    \begin{align*}
+        \mathbb{V}[X + 3Y]
+        & = \mathbb{V}[X] + \mathbb{V}[3Y] + 2 \Cov(X, 3Y) \\
+        & = \mathbb{V}[X] + 9 \mathbb{V}[Y] + 6 \Cov(X, Y)
+        = 4 + (9 \times 6) + (6 \times 1) = 64.
+    \end{align*}
+\end{solution}
+
+More generally, given a $k$-dimensional Gaussian random vector
+$X \sim \mathcal{N}(\mu, \Sigma)$, you can think of each entry $X_i$ of $X$ as:
+\[ X_i = \mu_i + \sum_{j = 1}^k \lambda_j Z_j, ~ \text{ where } 
+Z_j \sim \mathcal{N}(0, 1) ~ \text{ for all } j = 1, \dots, k. \]
+Importantly, the $Z_j$ are all independent,
+so computing something like $\mathbb{V}[X_1^3X_2^4 + X_5X_7X_8]$ cannot be hard:
+substitute each $X_i$ with the appropriate linear combination of the independent $Z_j$,
+and the rest must be trivial.
+
+\begin{problem}
+    Consider a random vector distributed as
+    $\begin{pmatrix} X \\ Y \end{pmatrix} \sim
+    \mathcal{N}\left(\begin{pmatrix} 3 \\ 2 \end{pmatrix},
+    \begin{pmatrix} 4 & 1 \\ 1 & 6 \end{pmatrix}\right)$.
+    Compute $\mathbb{E}[X \mid X + Y = 6]$.
+\end{problem}
+
+\begin{solution}
+    This one requires us to use the Gaussian-ness of the distribution.
+    Here's how.
+    \begin{quote}
+        \textbf{Lemma.} Suppose $X$ and $Y$ are jointly Gaussian random variables.
+        Then $\Cov(X, Y) = 0$ implies $X \perp Y$.
+
+        \emph{Proof:} If $\Cov(X, Y) = 0$, then $\begin{pmatrix} X \\ Y \end{pmatrix}
+        \sim \mathcal{N}\left(\begin{pmatrix} \mu_X \\ \mu_Y \end{pmatrix},
+        \begin{pmatrix} \sigma_X^2 & 0 \\ 0 & \sigma_Y^2 \end{pmatrix}\right)$,
+        so the joint density of $X$ and $Y$ looks like:
+        \begin{align*} f(x, y) & = \frac{1}{2\pi \sigma_X \sigma_Y}
+        \exp\left(-\frac{(x - \mu_X)^2}{2\sigma_X^2} - \frac{(y - \mu_Y)^2}{2\sigma_Y^2}\right) \\
+        & = \underbrace{\left(\frac{1}{\sigma_X \sqrt{2\pi}}
+        \exp\left(-\frac{(x - \mu_X)^2}{2\sigma_X^2}\right)\right)}_{f_X(x)} \cdot
+        \underbrace{\left(\frac{1}{\sigma_Y \sqrt{2\pi}}
+        \exp\left(-\frac{(y - \mu_Y)^2}{2\sigma_Y^2}\right)\right)}_{f_Y(y)}
+        = f_X(x) \cdot f_Y(y) \end{align*}
+        The point is that jointly Gaussian PDFs factor nicely when $\Cov(X, Y) = 0$,
+        which implies $X \perp Y$. ~ $\blacksquare$
+    \end{quote}
+    (When $X$ and $Y$ are not jointly Gaussian, 
+    a counterexample is $X \sim \mathcal{N}(0, 1)$
+    and $Y = ZX$ where $Z \sim \mathrm{Unif}\{\pm 1\}$.)
+
+    Back to the original problem.  First, a simplification:
+    take $S := X + Y$, so $\begin{pmatrix} X \\ S \end{pmatrix} =
+    \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix} \begin{pmatrix} X \\ Y \end{pmatrix}$,
+    which implies:
+    \[ \begin{pmatrix} X \\ S \end{pmatrix} \sim
+    \mathcal{N}\left( \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}
+    \begin{pmatrix} 3 \\ 2 \end{pmatrix},
+    \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}
+    \begin{pmatrix} 4 & 1 \\ 1 & 6 \end{pmatrix}
+    \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}^{\top}\right) =
+    \mathcal{N}\left(
+    \begin{pmatrix} 3 \\ 5 \end{pmatrix},
+    \begin{pmatrix} 4 & 5 \\ 5 & 12 \end{pmatrix}
+    \right). \]
+    (Perhaps a quicker way to find the new covariance matrix
+    is just to compute $\Var(X)$, $\Cov(X, S)$, and $\Var(S)$.)
+
+    We now seek $\mathbb{E}[X \mid S = 6]$.  We now apply the lemma in a clever way
+    to get rid of the conditional:
+    \[ \Cov\left(X - \frac{\Cov(X, S)}{\Var(S)}\cdot S, S\right) = 0 ~ \implies
+    \left(X - \frac{\Cov(X, S)}{\Var(S)} \cdot S\right) \perp S. \]
+    Reading off $\Cov(X, S) = 5$ and $\Var(S) = 12$, we can now finish the job:
+    \begin{align*}
+    \mathbb{E}[X \mid S = 6] =
+    \underbrace{\mathbb{E}\left[ X - \frac{5}{12}S \mid S = 6 \right]}_{
+        \mathbb{E}\left[ X - \frac{5}{12}S \right]
+    }
+    + \underbrace{\mathbb{E}\left[ \frac{5}{12}S \mid S = 6 \right]}_{
+        \frac{5}{12}(6)
+    } =
+    3 - \frac{5}{12} \times 5 + \frac{5}{2} = \frac{41}{12}.
+    \end{align*}
+\end{solution}
+
+In the more general case, computing something like $\mathbb{E}[X \mid XY = 7]$
+is not reasonable, even for jointly Gaussian distributions.
 
 \end{document}
