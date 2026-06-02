@@ -1,0 +1,121 @@
+\lecture{4}
+\title{Sampling, Aliasing, and Quantization}
+
+\begin{document}
+
+\subsection{Lecture: Sampling and Aliasing}
+
+In practice, we might have to settle with discretized samples of data,
+rather than the full continuous signal.
+
+\textbf{Definition.} Let $\Delta$ be our \textbf{sampling interval}
+and $f_s = \frac{1}{\Delta}$ be our \textbf{sampling frequency}.
+Our data is then the \textbf{discrete-time (DT) signal} $x[n] = f(\Delta n)$,
+as opposed to the \textbf{continuous-time (CT) signal} $f(t)$.
+
+\begin{remark}
+    Just as CT signals have a fundamental period, so too do DT signals---but their
+    fundamental periods must be integers!
+\end{remark}
+
+But an insufficiently fine sampling might yield misleading results!
+\begin{center}
+    \frame{\includegraphics[width=0.45\textwidth]{lecture-04/misleading-sampling}}
+\end{center}
+
+\textbf{Definition.} If signals $f_1(t) = \cos(\omega_1t)$ and $f_2(t) = \cos(\omega_2t)$
+generate the same discrete samples, we say $\omega_1$ and $\omega_2$ are \textbf{aliases}.
+
+So in the picture above, the frequencies of the red and green curves are aliases.
+
+\begin{theorem}{Aliasing Classification}
+    Frequencies $\omega_1$ and $\omega_2$ are aliases
+    if and only if $\omega_2 \Delta = 2\pi k \pm \omega_1 \Delta$ for some $k \in \mathbb{Z}$.
+\end{theorem}
+
+\begin{proof}
+    Aliasing occurs if and only if we have
+    $\cos(\omega_1 \Delta n) = \cos(\omega_2 \Delta n)$
+    for all $n \in \mathbb{Z}$.  Note the following:
+    \[ \cos(\omega_1 \Delta n) - \cos (\omega_2 \Delta n) =
+    2 \sin\left(\frac{\omega_1 \Delta + \omega_2 \Delta}{2} \cdot n\right)
+    \sin\left(\frac{\omega_1 \Delta - \omega_2 \Delta}{2} \cdot n\right). \]
+    The above is always zero if and only if either $\omega_1 \Delta + \omega_2 \Delta$
+    or $\omega_1 \Delta - \omega_2 \Delta$ is an integer multiple of $2\pi$. ~ $\blacksquare$
+\end{proof}
+
+One \textbf{anti-aliasing} tactic is to assume that all frequencies
+are below the \textbf{Nyquist} frequency $\omega_m := \frac{\pi}{\Delta} = \frac{1}{2}f_s$.
+This way, as long as $\omega_1$ and $\omega_2$ are assumed to be below $\omega_m$,
+it is impossible for them to be aliases unless they are equal.
+
+Equivalently, every frequency $\omega$ has a \emph{unique} \textbf{baseband} frequency $\omega' < \omega_m$
+such that $\omega$ and $\omega'$ are aliases.
+
+\begin{problem}
+    Determine the baseband frequency of $f(t) = \cos(4000 t)$ when $\Delta = 0.001$.
+\end{problem}
+
+\begin{solution}
+    The frequency is $\omega = 4000$, which gives $\omega \Delta = 4$.
+    In order to be a valid baseband frequency $\omega'$, we require $\omega' \Delta < \pi$.
+    Thus, we take the alias $\omega'$ such that $\omega' \Delta = 2\pi - \omega \Delta = 2\pi - 4$,
+    yielding a baseband frequency of $\omega' = 2000\pi - 4000$.
+\end{solution}
+
+\begin{remark}
+    Check your intuition: when $\Delta$ is smaller,
+    the baseband frequency is closer to the original frequency.
+\end{remark}
+
+\subsection{Lecture: Quantization}
+
+Another way we can discretize data is by restricting
+the number of bits used to represent each individual sample.
+\begin{center}
+    \frame{\includegraphics[width=0.45\textwidth]{lecture-04/quantized-flower}}
+\end{center}
+
+\subsection{Recitation: The Sampling Theorem}
+
+Here's what it looks like to sample
+more than 2, exactly 2, and fewer than 2 samples per cycle.
+\begin{center}
+    \frame{\includegraphics[width=0.45\textwidth]{lecture-04/more-than-two}}
+    \frame{\includegraphics[width=0.45\textwidth]{lecture-04/exactly-two}}
+    \frame{\includegraphics[width=0.45\textwidth]{lecture-04/less-than-two}}
+\end{center}
+We can observe the following:
+\begin{itemize}
+    \item When we sample more than 2 times,
+    the samples represent the frequency pretty well.
+    \item When we sample exactly 2 times,
+    the samples still capture the frequency---but
+    practically nothing else.
+    \item When we sample fewer than 2 times,
+    the samples capture the wrong frequency---it
+    appears $\frac{2}{3}$ times the original.
+\end{itemize}
+In a sense, it takes at least 2 samples per cycle
+to preserve the information in a sinusoid.
+
+\begin{theorem}{Sampling Theorem}
+    If $f_{\text{max}}$ is the highest nonzero frequency
+    in a CT signal, then a sampling rate $f_s \geq 2 f_{\text{max}}$
+    is enough to prevent all aliasing.
+\end{theorem}
+
+\begin{remark}
+    Here's a trick question.
+    \begin{quote}
+        \textbf{Question.} Humans cannot hear frequencies above 20 kHz.
+        Does this mean a sampling rate of 40 kHz suffices?
+    \end{quote}
+    The answer is no.  None of the frequencies we can hear
+    will alias, but frequencies above 20 kHz that we can't hear
+    will alias into frequncies that we can hear, thus
+    distorting the recording.
+\end{remark}
+
+
+\end{document}
