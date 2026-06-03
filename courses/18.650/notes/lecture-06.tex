@@ -1,5 +1,5 @@
 \lecture{6}
-\title{Multivariate Limit Theorems}
+\title{The Multivariate Gaussian}
 
 \begin{document}
 
@@ -219,8 +219,8 @@ and the rest must be trivial.
     (Perhaps a quicker way to find the new covariance matrix
     is just to compute $\Var(X)$, $\Cov(X, S)$, and $\Var(S)$.)
 
-    We now seek $\mathbb{E}[X \mid S = 6]$.  We now apply the lemma in a clever way
-    to get rid of the conditional:
+    We now seek $\mathbb{E}[X \mid S = 6]$.  The trick is to apply the lemma
+    so as to get rid of the conditional:
     \[ \Cov\left(X - \frac{\Cov(X, S)}{\Var(S)}\cdot S, S\right) = 0 ~ \implies
     \left(X - \frac{\Cov(X, S)}{\Var(S)} \cdot S\right) \perp S. \]
     Reading off $\Cov(X, S) = 5$ and $\Var(S) = 12$, we can now finish the job:
