@@ -43,14 +43,14 @@ So in the picture above, the frequencies of the red and green curves are aliases
     $\cos(\omega_1 \Delta n) = \cos(\omega_2 \Delta n)$
     for all $n \in \mathbb{Z}$.  Note the following:
     \[ \cos(\omega_1 \Delta n) - \cos (\omega_2 \Delta n) =
-    2 \sin\left(\frac{\omega_1 \Delta + \omega_2 \Delta}{2} \cdot n\right)
+    -2 \sin\left(\frac{\omega_1 \Delta + \omega_2 \Delta}{2} \cdot n\right)
     \sin\left(\frac{\omega_1 \Delta - \omega_2 \Delta}{2} \cdot n\right). \]
     The above is always zero if and only if either $\omega_1 \Delta + \omega_2 \Delta$
     or $\omega_1 \Delta - \omega_2 \Delta$ is an integer multiple of $2\pi$. ~ $\blacksquare$
 \end{proof}
 
 One \textbf{anti-aliasing} tactic is to assume that all frequencies
-are below the \textbf{Nyquist} frequency $\omega_m := \frac{\pi}{\Delta} = \frac{1}{2}f_s$.
+are below the \textbf{Nyquist} frequency $\omega_m := \frac{\pi}{\Delta}$.
 This way, as long as $\omega_1$ and $\omega_2$ are assumed to be below $\omega_m$,
 it is impossible for them to be aliases unless they are equal.
 
@@ -70,7 +70,7 @@ such that $\omega$ and $\omega'$ are aliases.
 
 \begin{remark}
     Check your intuition: when $\Delta$ is smaller,
-    the baseband frequency is closer to the original frequency.
+    the baseband frequency is more likely to match the original frequency.
 \end{remark}
 
 \subsection{Lecture: Quantization}
@@ -105,7 +105,7 @@ In a sense, it takes at least 2 samples per cycle
 to preserve the information in a sinusoid.
 
 \begin{theorem}{Sampling Theorem}
-    If $f_{\text{max}}$ is the highest nonzero frequency
+    If $f_{\text{max}}$ is the highest nonzero (cyclical) frequency
     in a CT signal, then a sampling rate $f_s \geq 2 f_{\text{max}}$
     is enough to prevent all aliasing.
 \end{theorem}
@@ -136,54 +136,108 @@ But the introduction of $\Delta$ and $f_s$ complicates things.
 
     \textbf{Definition.}
     The DT signal $f[n] = \sin(K n)$ has an \textbf{angular frequency}
-    of $\Omega_0 := K$ and a \textbf{cyclical frequency} of $F_0 := \frac{K}{2\pi}$.
+    of $K$ and a \textbf{cyclical frequency} of $\frac{K}{2\pi}$.
     Angular frequency has units \emph{radians per sample} (dimensionless!),
     and cyclical frequency \emph{cycles per sample} (dimensionless!).
 \end{quote}
+
+\begin{remark}
+    The cyclical frequency of a CT signal is measured in Hz,
+    but the cyclical frequency of a DT signal is technically not!
+\end{remark}
 
 Cyclical frequency has become relevant with the introduction of $f_s = \frac{1}{\Delta}$,
 the sampling frequency (in \emph{samples per second}).
 
 \begin{problem}
-    A $5\pi$ Hz CT signal is sampled at an interval of $\Delta = \pi^2$.
-    Determine the angular frequency of the resulting DT signal.
+    A pure-sine $5\pi$ Hz CT signal is sampled at an interval of $\Delta = \pi^2$.
+    Determine the resulting DT signal.
 \end{problem}
 
 \begin{solution}
-    A $5\pi$ Hz CT signal looks like $f(t) = \sin(10\pi^2 t)$ (e.g.).
-    The DT signal then looks like $f[n] = \sin(10 \pi^4 n)$,
-    from which we can read off an angular frequency of $\Omega_0 = 10\pi^4$.
+    A pure-sine $5\pi$ Hz CT signal looks like $f(t) = \sin(10\pi^2 t)$.
+    The DT signal then looks like $f[n] = \sin(10 \pi^4 n)$.
+
+    We can then read off the following.
+    \begin{itemize}
+        \item The angular frequency is $10\pi^4$ radians per sample.
+        \begin{itemize}
+            \item But radians are a measurement taken modulo $2\pi$.
+            We could also say the angular frequency is
+            $10\pi^4 \pmod{2\pi} \approx 0.19718$.
+        \end{itemize}
+        \item The cyclical frequency is $\frac{10\pi^4}{2\pi} = 5\pi^3$ cycles per sample.
+        \begin{itemize}
+            \item But cycles are a measurement taken modulo $1$.
+            We could also say the cyclical frequency is
+            $5\pi^3 - \lfloor 5\pi^3 \rfloor \approx 0.031383$.
+        \end{itemize}
+    \end{itemize}
+    Note, importantly, that it does not make sense to call the \emph{fundamental} angular frequency
+    $\Omega_0 \approx 0.19718$, say.  This is because this DT signal isn't periodic!  It doesn't have
+    a ``fundamental frequency'' that we can use to (say) write a Fourier series.
 \end{solution}
 
 \begin{remark}
-    Even though the cyclical frequency of a CT signal is measured in Hz,
-    the cyclical frequency of a DT signal is not!
+    We just say that if a DT signal has an angular frequency of $K$,
+    then $K' = K \pm 2k \pi$ is \emph{also} is also a valid angular frequency
+    for all $k \in \mathbb{Z}$.  However, this does \emph{not} hold for CT signals:
+    samples are a discrete measurement, but time is not.
+
+    (A more mathematical reason why this does not apply for CT signals
+    is that $e^{2\pi i n} \neq 1$ for $n \not \in \mathbb{Z}$.)
 \end{remark}
 
 \subsection{Recitation: Periods of DT Signals}
 
-Furthermore, sinusoidal CT signals always have a fundamental period, but DT signals might not!
+As we just saw, sinusoidal CT signals always have a fundamental period,
+but DT signals might not\dots
 
 \begin{quote}
     \textbf{Definition.}
-    The CT signal $f(t) = \sin(\omega_0t)$ has a \textbf{fundamental period} $T$,
-    with the relationship $T = \frac{2\pi}{\omega_0}$.
+    The CT signal $f(t) = \sin(Kt)$ has a \textbf{fundamental period} $T$,
+    with the relationship $T = \frac{2\pi}{K}$.
 
     \textbf{Definition.}
-    The DT signal $f[n] = \sin(\Omega_0n)$ has a \textbf{fundamental period} $N$
-    only if $\frac{2\pi}{\Omega_0}$ is rational,
-    in which case $N$ is the numerator of $\frac{2\pi}{\Omega_0}$ in simplest form.
+    The DT signal $f[n] = \sin(Kn)$ has a \textbf{fundamental period} $N$
+    only if $\frac{2\pi}{K}$ is rational,
+    in which case $N$ is the numerator of $\frac{2\pi}{K}$ in simplest form.
+
+    \textbf{Definition.}
+    If a DT signal has fundamental period $N$,
+    then its \textbf{fundamental angular frequency} is $\Omega_0 := \frac{2\pi}{N}$,
+    and its \textbf{fundmaental cyclical frequency} is $F_0 := \frac{1}{N}$.
+    (Aperiodic DT signals do not have fundamental angular / cyclical frequencies.)
 \end{quote}
 
 \textcolor{red!75}{\emph{Warning!}} ~
-For CT signals, the relationship
-$T = \frac{2\pi}{\omega_0}$ is true,
-but for DT signals, the relationship
-$N = \frac{2\pi}{\Omega_0}$ is false!
+For DT signals $f[n] = \sin(Kn)$, the relationships $\Omega_0 = K$ and
+$N = \frac{2\pi}{K}$ are not guaranteed!
+
+\begin{remark}
+    Of course, nothing is special about $\sin$ here—all of this
+    applies equally well toward $\cos$ too.
+\end{remark}
+
+\begin{problem}
+    The DT signals $f[n] = \cos(1.2\pi n)$ and $g[n] = \cos(2.8\pi n)$ are the same,
+    and they both have fundamental periods.
+    What do $\Omega_0$, $F_0$, $N$, $\frac{2\pi}{\Omega_0}$, and $\frac{1}{F_0}$
+    equal for each of them?
+\end{problem}
+
+\begin{solution}
+    Both signals are the same, with $N = 5$, so they have the same results:
+    $(\Omega_0, F_0, N, \frac{2\pi}{\Omega_0}, \frac{1}{F_0}) =
+    (0.4\pi, 0.2, 5, 5, 5)$.
+\end{solution}
+
+Checking whether a DT signal even has a fundamental period
+cannot be easily overlooked!
 
 \begin{problem}
     Suppose an $f_0$ Hz CT signal is sampled at a sampling rate of $f_s = 44 \, 100$ Hz.
-    What must be true about $f_0$ for the resulting DT signal to be periodic?
+    What must be true about $f_0$ for the resulting DT signal to have a fundamental period?
 \end{problem}
 
 \begin{solution}
@@ -195,51 +249,34 @@ $N = \frac{2\pi}{\Omega_0}$ is false!
     and is fairly large for $f_0 \in \{199, 420.01, 0.0042\}$.
 \end{solution}
 
-If a DT signal \emph{does} have a fundamental period,
-its angular frequency must look like $\Omega_0 = q\pi$ for some $q \in \mathbb{Q}$.
-In that case, notice that $\Omega_0' = q\pi \pm 2k\pi$ is \emph{also}
-a valid angular frequency!  (And for cosines, we have $\Omega_0' = -q\pi \pm 2k\pi$ too\dots)
-
-(This does not hold for CT signals because $e^{2\pi i n} = 1$
-only holds for $n \in \mathbb{Z}$.)
+Let's put this together with the sampling / aliasing discussion from earlier.
 
 \begin{problem}
-    The DT signals $f[n] = \sin(1.2\pi n)$ and $g[n] = \sin(3.2\pi n)$ are the same,
-    and they both have fundamental periods.
-    What do $\Omega_0$, $F_0$, $N$, $\frac{2\pi}{\Omega_0}$, and $\frac{1}{F_0}$
-    equal for each of them?
+    A $220$ Hz CT signal is sampled at a sampling interval of $\Delta = 0.0025$ seconds per sample.
+    Determine $N$, $\Omega_0$, and $F_0$ for the resulting DT signal.
+    Is there aliasing?  How would the DT signal sound if played back at the same sampling rate?
 \end{problem}
 
 \begin{solution}
-    Plain computation---but of course, the results are different.
-    \begin{itemize}
-        \item The ``reduced'' signal $f[n]$ has
-        $(\Omega_0, F_0, N, \frac{2\pi}{\Omega_0}, \frac{1}{F_0}) =
-        (1.2\pi, 0.6, 5, \frac{5}{3}, \frac{5}{3})$.
-        \item The ``unreduced'' signal $g[n]$ has
-        $(\Omega_0, F_0, N, \frac{2\pi}{\Omega_0}, \frac{1}{F_0}) =
-        (3.2\pi, 1.6, 5, \frac{5}{8}, \frac{5}{8})$.
-    \end{itemize}
-    Note that $\frac{2\pi}{\Omega_0} = \frac{1}{F_0}$ is always true, by definition.
-    Same goes for $\frac{2\pi}{\omega_0} = \frac{1}{\omega_0}$ for CT signals, too.
+    Note that we are sampling at a sampling rate of $f_s = 400$ Hz, which is smaller than $2f_0 = 440$.
+    So the Sampling Theorem suggests there might be some aliasing.
+    
+    The CT signal is $f(t) = \cos(440\pi t)$, so the DT signal is
+    $f[n] = \cos\left(\frac{11}{10}\pi n\right)$.  Thus $N = 20$,
+    so $\Omega_0 = \frac{\pi}{10}$ and $F_0 = \frac{1}{20}$.
+    If we were to perform a Fourier analysis of this signal (see Lecture 5),
+    the only nonzero coefficients would be the $9^{\text{th}}$ and $11^{\text{th}}$ harmonic.
+
+    Of course there is aliasing—there is \emph{always} aliasing—but here,
+    the original frequency of $\omega_0 = 440\pi$ was above the Nyquist frequency
+    of $\omega_m = 400\pi$.  The baseband frequency is $360\pi$;
+    indeed, sampling a $180$ Hz signal yields $f'[n] = \cos\left(\frac{9}{10}\pi n\right) = f[n]$.
+
+    If someone were given only the DT signal, they would have no way of knowing
+    the original signal was $220$ Hz.  Assuming the baseband frequency were the original frequency,
+    it would seem like the original signal was $180$ Hz.
+    And that's how it turns out in practice: this poorly-sampled
+    DT signal would sound like $180$ Hz when played back at the original rate!
 \end{solution}
-
-Of course, it's a little silly to say that $g[n] = \sin(3.2 \pi n)$
-has an ``angular frequency'' of $\Omega_0 = 3.2\pi$ when
-we could more cleanly ``alias'' the frequency to $\Omega_0' = 1.2\pi$
-without losing any information.  This inspires the following:
-
-\begin{quote}
-    \textbf{Definition.} If a DT signal is periodic and has an angular frequency of $\Omega_0$,
-    then its \textbf{fundamental angular frequency} is the result of
-    reducing $\Omega_0$ modulo $2\pi$.
-\end{quote}
-
-(Technically you could alias $\cos(1.6\pi n)$ to $\cos(0.4\pi n)$,
-but for ``fundamental angular frequency'', we don't worry about that.)
-
-\textcolor{red!75}{\emph{Warning!}} ~
-Even if $\Omega_0$ is the \emph{fundamental} angular frequency,
-it is \emph{still} not guaranteed that $N = \frac{2\pi}{\Omega_0}$.
 
 \end{document}

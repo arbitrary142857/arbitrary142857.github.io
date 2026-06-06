@@ -16,8 +16,9 @@ And when $N$ is an integer, something special happens.
 \begin{align*}
     \frac{1}{a_{k + N}}\left((k + N)^{\text{th}} \text{ term}\right) =
     e^{j (k + N) \Omega_0 n} & = e^{j k \Omega_0 n} \cdot e^{j N \Omega_0 n} \\
-    & = e^{j k \Omega_0 n} \cdot e^{j N (2\pi / N) n} \\
-    & = e^{j k \Omega_0 n} \cdot e^{2 \pi j n}  = e^{j k \Omega_0 n}
+    & = e^{j k \Omega_0 n} \cdot e^{j N (2\pi \ell/ N) n} 
+    ~~~ \text{ (where } \Omega_0 = \frac{2 \pi \ell}{N} \text{ for some } \ell \in \mathbb{Z}) \\
+    & = e^{j k \Omega_0 n} \cdot e^{2 \pi j n\ell}  = e^{j k \Omega_0 n}
     = \frac{1}{a_k}\left(k^{\text{th}} \text{ term}\right).
 \end{align*}
 
@@ -26,16 +27,16 @@ collapses down to a \emph{finite} series!
 
 \begin{remark}
     The above logic is unique to DT signals
-    because of the final step $e^{2\pi j n} = 1$, which only holds
-    assuming $n \in \mathbb{Z}$.
+    because of the final step $e^{2\pi j n \ell} = 1$, which only holds
+    assuming $n \ell \in \mathbb{Z}$.
 \end{remark}
 
 \begin{theorem}{DT Fourier Series}
-    Given any DT signal $f: \mathbb{Z} \to \mathbb{R}$ with period $N$
-    and frequency $\Omega_0 = \frac{2\pi}{N}$, its Fourier series is:
+    Given any DT signal $f: \mathbb{N} \to \mathbb{R}$ with period $N$
+    and frequency $\Omega_0$, its Fourier series is:
     \[ f[n] = \sum_{k = 0}^{N - 1} a_k e^{j k \Omega_0 n} ~~~~~ \text{ where } ~~~~~
     a_k = \frac{1}{N} \sum_{n = 0}^{N - 1} f[n] e^{-j k \Omega_0 n} ~ \text{ for all }
-    k = 0, 1, \dots, N - 1. \]
+    k = 0, 1, \dots, N - 1. \]  
 \end{theorem}
 
 \begin{proof}
@@ -60,6 +61,7 @@ the logic is the exact same as before.
         \item \textbf{Conjugate Symmetry:} If $f[n]$ is real-valued,
         then $F[k]$ and $F[-k]$ are conjugates.
     \end{itemize}
+    Note that $F[-k]$ is shorthand for $F[N - k]$ (just like with Python arrays).
 \end{theorem}
 
 \subsection{Lecture: Pitch Perception}
@@ -109,17 +111,20 @@ thereby removing the fundamental frequency and leaving behind only the harmonics
 
 \subsection{Recitation: Computing DT Fourier Series}
 
-As before, there are sometimes tricks for computing DT Fourier series.
-
 \begin{problem}
     Determine the Fourier coefficients for
-    $x_3[n] := \cos\left(\frac{2\pi}{32}n\right) + \sin\left(\frac{2\pi}{32}n\right)$.
+    $x[n] := \sin(1.6\pi n)$.
 \end{problem}
 
 \begin{solution}
-    The trick is to use Euler's formula: rewrite
-    $\cos\left(\frac{2\pi}{32}n\right)$ and $\sin\left(\frac{2\pi}{32}n\right)$
-    as complex exponentials.  It's not hard.
+    The only novelty is that we must first compute the period $N = 5$,
+    and from there determine that $\Omega = 0.4\pi$.  Then:
+    \[ \sin(1.6\pi n)
+    = \frac{1}{2j}\left(\cos(1.6\pi n) + j \sin(1.6\pi n)\right)
+    - \frac{1}{2j}\left(\cos(1.6\pi n) - j \sin(1.6\pi n)\right)
+    = \frac{1}{2j}e^{1.6\pi n} - \frac{1}{2j}e^{-1.6\pi n}. \]
+    So the coefficients are $a_4 = \frac{1}{2j}$, $a_1 = -\frac{1}{2j}$,
+    and all other coefficients are zero.
 \end{solution}
 
 \end{document}
