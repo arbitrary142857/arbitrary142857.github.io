@@ -1,0 +1,272 @@
+\lecture{6}
+\title{CT Fourier Transform}
+
+\begin{document}
+
+\subsection{Lecture: Motivating the Fourier Transform}
+
+Our goal is to write Fourier series for \emph{aperiodic} signals.
+Here's our prototypical example.
+\[ f(t) := \begin{cases}
+1 & \text{ if }  t \in (-1, 1). \\
+0 & \text{ otherwise.}
+\end{cases} \]
+The guiding intuition is that all signals are technically periodic—it's just that
+the period of an aperiodic signal is $T \to \infty$.
+Instead of a \emph{finite sum} $\sum_{k = -\infty}^{\infty} F[k] e^{jkt \omega_0}$,
+we'll write $f$ as an \emph{infinite integral}
+$\int_{-\infty}^{\infty} F(\omega) e^{jt \omega} \, \mathrm{d}\omega$.
+
+But let's take things slow.
+To build up to being able to say that $f(t)$ has period $T \to \infty$,
+let's start by considering what happens when we force $f(t)$
+to have some \emph{finite} period $T$ by constructing an alternative $f_T(t)$.
+\[ f_T(t) := \begin{cases}
+1 & \text{ if } (t \% T) \in (-1, 1). \\
+0 & \text{ otherwise.}
+\end{cases} \]
+As a function of $T$, we now determine the length-$T$ array of Fourier coefficients $F_T$
+for the periodic signal $f_T(t)$.
+\[ F_T[k] = \frac{1}{T} \int_{-1}^1 e^{-jt(\textcolor{purple}{2\pi k/T})} \, \mathrm{d}t
+= \frac{1}{T} \left[
+    \frac{e^{-jt(\textcolor{purple}{2\pi k/T})}}{-j(\textcolor{purple}{2\pi k/T})}
+\right]_{-1}^{1}
+= \frac{1}{T} \cdot \frac{2\sin\left(\textcolor{purple}{2\pi k/T}\right)}{(\textcolor{purple}{2\pi k/T})}. \]
+And here's a plot of $T \cdot F_T[k] =
+\frac{2\sin\left(\textcolor{purple}{2\pi k/T}\right)}{(\textcolor{purple}{2\pi k/T})}$
+for $T = 16$ and $T = 8$.
+(Note that $k$ can be \emph{any} integer, not just those pictured below.)
+\begin{center}
+    \frame{\includegraphics[width=0.45\textwidth]{lecture-06/coefficients}}
+\end{center}
+
+\begin{remark}
+    Convince yourself that doubling $T$ has the effect of
+    halving the ``height'' and doubling the ``width''.
+    If we want to ``normalize'' the graphs for $T = 16$ and $T = 8$ so they look similar,
+    we'd instead have to graph, say, $T \cdot F_T[k / T]$\dots
+\end{remark}
+
+And so our Fourier series for $f_T(t)$ looks like the following:
+\[ f_T(t) = \frac{1}{T} \sum_{k = -\infty}^{\infty}
+\frac{2\sin(\textcolor{purple}{2\pi k/T})}{\textcolor{purple}{2\pi k/T}}
+e^{jt(\textcolor{purple}{2\pi k/T})}. \]
+There's a reparametrization begging to be made here:
+$\textcolor{purple}{\{\omega_k\}_{-\infty}^{\infty} := 2\pi k/T}$.
+Note that $\Delta \omega := \omega_{k + 1} - \omega_k = 2\pi/T$.
+Now we can send $T \to \infty$ and see what happens to the Fourier series.
+\begin{align*}
+f(t) = \lim_{T \to \infty} f_T(t) & = \lim_{T \to \infty} \frac{1}{T} \sum_{k = -\infty}^{\infty}
+\frac{2\sin(\textcolor{purple}{2\pi k/T})}{\textcolor{purple}{2\pi k/T}}
+e^{jt(\textcolor{purple}{2\pi k/T})} \\
+& = \lim_{T \to \infty} \frac{1}{2\pi} \sum_{k = -\infty}^{\infty}
+\frac{2\sin(\textcolor{purple}{\omega_k})}{\textcolor{purple}{\omega_k}}
+e^{jt \textcolor{purple}{\omega_k}} \Delta \omega
+= \frac{1}{2\pi}\int_{-\infty}^{\infty}
+\frac{2\sin(\omega)}{\omega}
+e^{jt \omega} \, \mathrm{d}\omega.
+\end{align*}
+And so our Fourier series now becomes a Fourier integral!
+\begin{center}
+    \frame{\includegraphics[width=0.45\textwidth]{lecture-06/sum-to-integral}}
+\end{center}
+
+\subsection{Lecture: The Fourier Transform}
+
+Naturally, we'd like to generalize:
+what's the relationship between $f(t)$ and $F(\omega) = \frac{2\sin(\omega)}{\omega}$,
+and vice versa?
+
+\begin{theorem}{Fourier Transform}
+    Given a CT signal $f(t)$, define its Fourier transform to be
+    $F(\omega) := \int_{-\infty}^{\infty} f(t) e^{-j\omega t} \, \mathrm{d}t$.
+    It then follows that
+    $f(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} F(w) e^{jt \omega} \, \mathrm{d}\omega$.
+\end{theorem}
+
+\begin{proof}
+    Follow the same recipe as before.
+    Let $f_T(t)$ denote the extension of $f(t)$ to have period $T$.
+    Then its Fourier series is:
+    \[ F_T[k] = \frac{1}{T} \int_T f(t) e^{-jt(\textcolor{purple}{2\pi k/T})} \, \mathrm{d}t \]
+    In our prototypical example,
+    we picked $F(\omega) = \frac{2\sin(\omega)}{\omega}$ so that
+    $F(\omega) := \lim_{T \to \infty} T \cdot F_T[k]$, where
+    $\textcolor{purple}{\omega = 2\pi k/T}$.
+    Let's follow the recipe and see what happens.
+    \[ F(\omega) = \lim_{T \to \infty} T \cdot
+    \left(\frac{1}{T} \int_T f(t) e^{-jt(\textcolor{purple}{2\pi k/T})} \, \mathrm{d}t\right)
+    = \lim_{T \to \infty} \int_T f(t) e^{-jt\textcolor{purple}{\omega}} \, \mathrm{d}t
+    = \int_{-\infty}^{\infty} f(t) e^{-jt\textcolor{purple}{\omega}} \, \mathrm{d}t. \]
+    Just as promised.  With $F(\omega)$ defined this way,
+    watch what happens when we take the Fourier series of $f(t)$ and send $T \to \infty$.
+    \begin{align*}
+        f(t) = \lim_{T \to \infty} f_T(t) & =
+        \lim_{T \to \infty}
+        \sum_{k = -\infty}^{\infty} F_T[k] e^{jt(\textcolor{purple}{2\pi k/T})} \\
+        & = \frac{1}{2\pi} \lim_{T \to \infty} \sum_{k = -\infty}^{\infty} F(\omega_k)
+        e^{jt(\textcolor{purple}{\omega_k})} \Delta \omega
+        = \frac{1}{2\pi}\int_{-\infty}^{\infty} F(\omega) e^{jt\omega} \, \mathrm{d}\omega.
+    \end{align*}
+    Just as promised. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    Comparing and contrasting periodic and aperiodic signals\dots
+    \begin{itemize}
+        \item All the frequencies in a periodic signal
+        are captured in one period $\left(\int_T\right)$,
+        whereas aperiodic signals need all of $\mathbb{R}$
+        $\left(\int_{-\infty}^{\infty}\right)$.
+        \item Periodic signals have a discrete set of frequencies
+        $\left(\sum_{k = -\infty}^{\infty}\right)$, whereas
+        aperiodic signals have a continuous set
+        $\left(\int_{-\infty}^{\infty} \, \mathrm{d}\omega\right)$.
+    \end{itemize}
+\end{remark}
+
+Importantly, there is now a more clear \emph{dual} relationship
+between $f(t)$ and $F(\omega)$.  If the equation
+$F(\omega) := \int_{-\infty}^{\infty} f(t) e^{-j\omega t} \, \mathrm{d}t$
+represents a Fourier transform, then the equation
+$f(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} F(w) e^{jt \omega} \, \mathrm{d}\omega$
+represents an inverse Fourier transform.
+
+\subsection{Lecture and Recitation: Properties of the Fourier Transform}
+
+\begin{theorem}{Time Delay}
+    The FT of $f(t - \tau)$ is $e^{-j \omega \tau} F(\omega)$,
+    and the inverse FT of $F(\omega - \omega_0)$ is $e^{jt \omega_0}f(t)$.
+\end{theorem}
+
+\begin{proof}
+    True by inspecting the relationship
+    $F(\omega) := \int_{-\infty}^{\infty} f(t) e^{-j\omega t} \, \mathrm{d}t$. ~ $\blacksquare$
+\end{proof}
+
+Note that this suggests that our prototypical example
+was unique in having a real-valued Fourier transform.  Here's why.
+
+\begin{theorem}{Even / Odd}
+    If $f(t)$ is real and even, then $F(\omega)$ is real and even.
+    If $f(t)$ is real and odd, then $F(\omega)$ is real and odd.
+\end{theorem}
+
+\begin{proof}
+    Again, true by inspecting the relationship
+    $F(\omega) := \int_{-\infty}^{\infty} f(t) e^{-j\omega t} \, \mathrm{d}t$.
+    Another reason to see why is to apply the same argument as used for periodic signals;
+    even signals are sums of pure cosines, and odd signals are sums of pure sines.
+    ~ $\blacksquare$
+\end{proof}
+
+\begin{theorem}{Time Scaling}
+    The FT of $f(at)$ is $\frac{1}{|a|}F\left(\frac{\omega}{a}\right)$,
+    and the inverse FT of $F(a\omega)$ is $\frac{1}{|a|}f\left(\frac{1}{a}t\right)$.
+\end{theorem}
+
+\begin{proof}
+    Again, just inspect the relationship
+    $F(\omega) := \int_{-\infty}^{\infty} f(t) e^{-j\omega t} \, \mathrm{d}t$.
+    The absolute value signs $|a|$ are necessary because
+    when $a$ is negative, the $u$-substitution $u = at$ causes the bounds of the integral to flip.
+
+    Alternatively, we can argue heuristically.
+    This relationship says that, say,
+    doubling the width of $f(t)$ causes its FT to
+    shrink in width and double in height.
+    \begin{center}
+        \frame{\includegraphics[width=0.45\textwidth]{lecture-06/time-scaling}}
+    \end{center}
+    This should make sense; the signal $f(t/2)$ can be thought of as
+    ``playing back the signal $f(t)$ at $\times 0.5$ speed'',
+    so the frequencies prominent in $f(t/2)$ should be half of those prominent in $f(t)$.
+    (And to balance it out, all frequency strengths are doubled.) ~ $\blacksquare$
+\end{proof}
+
+Here's some intuition as to why ``balancing it out'' is necessary.
+
+\begin{theorem}{FT Areas}
+    The area under the curve of $f(t)$ is $F(0)$,
+    and the area under the curve of $F(\omega)$ is $2\pi f(0)$.
+\end{theorem}
+
+\begin{proof}
+    Immediate from plugging in $t = 0$ or $\omega = 0$ as needed. ~ $\blacksquare$
+\end{proof}
+
+Finally, here's a property that \emph{doesn't}
+have an analogue for Fourier series.
+
+\begin{theorem}{Derivative FTs}
+    The FT of $\frac{d}{dt} f(t)$ is $j\omega F(\omega)$,
+    and the inverse FT of $\frac{d}{d\omega} F(\omega)$ is $-jt f(t)$.
+\end{theorem}
+
+\begin{proof}
+    This one is trickier.  To show the FT of $\frac{d}{dt} f(t)$ is $j\omega F(\omega)$,
+    differentiate the synthesis equation.
+    \[ \frac{d}{dt} f(t)
+    = \frac{d}{dt} \frac{1}{2\pi} \int_{-\infty}^{\infty} F(\omega) e^{jt\omega} \, \mathrm{d}\omega
+    = \frac{1}{2\pi} \int_{-\infty}^{\infty} j\omega F(\omega) e^{jt\omega} \, \mathrm{d}\omega. \]
+    To show inverse FT of $\frac{d}{d\omega} F(\omega)$ is $-jt f(t)$,
+    differentiate the analysis equation.
+    \[ \frac{d}{d\omega} F(\omega)
+    = \frac{d}{d\omega} \int_{-\infty}^{\infty} f(t) e^{-jt \omega} \, \mathrm{d}t
+    = \int_{-\infty}^{\infty} -jt f(t) e^{-jt \omega} \, \mathrm{d}t. ~~~ \blacksquare \]
+\end{proof}
+
+\subsection{Lecture: The Dirac Delta Function}
+
+Consider our prototypical function $f(t)$ from earlier.
+Imagine compressing $f(t)$ inward by a factor of $A$, producing functions like:
+\[ f_A(t) := \begin{cases}
+    A & \text{ if } t \in \left(-\frac{1}{A}, \frac{1}{A}\right) \\
+    0 & \text{ otherwise.}
+\end{cases} \]
+Then the area under the curve of $f_A(t)$ is constantly $2$,
+so $F_A(0)$ must be constantly $2$.
+According to ``Time Scaling'', in fact,
+the effect is that $F_A(\omega)$ ``stretches outward''
+as $A$ tends to infinity, while still maintaining a $y$-intercept of $2$.
+
+At the limit of $A \to \infty$, we find the following.
+
+\begin{theorem}{Dirac Delta FT}
+    Let the \textbf{Dirac delta function} $\delta(t)$
+    be defined so that $\delta(t) = 0$ for all $t \neq 0$
+    and $\int_{-\infty}^{\infty} \delta(t) \, \mathrm{d}t = 1$.
+    Then the FT of $\delta(t)$ is the constant function $F(\omega) = 1$.
+
+    The dual also holds: the FT of the constant function $f(t) = 1$
+    is $F(\omega) = 2\pi \delta(\omega)$.
+\end{theorem}
+
+\begin{proof}
+    This follows from the heuristic argument from earlier.
+    You can also formally verify this using the FT equations. ~ $\blacksquare$
+\end{proof}
+
+The Dirac delta function also appears
+when taking the Fourier transform of a periodic signal.
+
+\begin{theorem}{Periodic FT}
+    Suppose $f(t)$ is a periodic signal with Fourier coefficients $F[k]$,
+    so that $f(t) = \sum_{k = -\infty}^{\infty} F[k] e^{jt(2\pi k/T)}$.
+    Then the Fourier transform of $f(t)$ is
+    $F(\omega) := \sum_{k = -\infty}^{\infty} 2\pi F[k] \delta\left(\omega - \frac{2\pi k}{T}\right)$.
+\end{theorem}
+
+\begin{proof}
+    Nicely, the FT is linear, so it suffices to find the FT of $F[k] e^{jt(2\pi k/T)}$.
+    This can be done nicely via ``Time Delay''.
+    \begin{center}
+        \frame{\includegraphics[width=0.45\textwidth]{lecture-06/periodic-FT}}
+    \end{center}
+    This should also just heuristically make sense:
+    integrating over a discrete set of Dirac deltas
+    is the same as summing over a discrete set of complex exponentials.
+    ~ $\blacksquare$
+\end{proof}
+
+\end{document}
