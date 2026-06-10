@@ -3,7 +3,7 @@
 
 \begin{document}
 
-\subsection{Lecture: Motivating the Fourier Transform}
+\subsection{Lecture: Motivating the CT Fourier Transform}
 
 Our goal is to write Fourier series for \emph{aperiodic} signals.
 Here's our prototypical example.
@@ -71,7 +71,7 @@ And so our Fourier series now becomes a Fourier integral!
     \frame{\includegraphics[width=0.45\textwidth]{lecture-06/sum-to-integral}}
 \end{center}
 
-\subsection{Lecture: The Fourier Transform}
+\subsection{Lecture: The CT Fourier Transform}
 
 Naturally, we'd like to generalize:
 what's the relationship between $f(t)$ and $F(\omega) = \frac{2\sin(\omega)}{\omega}$,
@@ -132,7 +132,7 @@ represents a Fourier transform, then the equation
 $f(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} F(w) e^{jt \omega} \, \mathrm{d}\omega$
 represents an inverse Fourier transform.
 
-\subsection{Lecture and Recitation: Properties of the Fourier Transform}
+\subsection{Lecture and Recitation: Properties of the CT Fourier Transform}
 
 \begin{theorem}{Time Delay}
     The FT of $f(t - \tau)$ is $e^{-j \omega \tau} F(\omega)$,
@@ -148,8 +148,8 @@ Note that this suggests that our prototypical example
 was unique in having a real-valued Fourier transform.  Here's why.
 
 \begin{theorem}{Even / Odd}
-    If $f(t)$ is real and even, then $F(\omega)$ is real and even.
-    If $f(t)$ is real and odd, then $F(\omega)$ is real and odd.
+    If $f(t)$ is real and even, $F(\omega)$ is real and even.
+    If $f(t)$ is real and odd, $F(\omega)$ is imaginary and odd.
 \end{theorem}
 
 \begin{proof}
