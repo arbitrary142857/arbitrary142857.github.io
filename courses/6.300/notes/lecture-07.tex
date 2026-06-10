@@ -1,0 +1,165 @@
+\lecture{7}
+\title{DT Fourier Transform}
+
+\begin{document}
+
+\subsection{Lecture: The DT Fourier Transform}
+
+Let's do it all again for DT.
+You might take the following as a prototypical example.
+\[ f[n] := \begin{cases}
+1 & \text{ if } n \in \{-2, -1, 0, 1, 2\}. \\
+0 & \text{ otherwise.}
+\end{cases} \]
+The goal, as before, is to express $f[n]$ as a sum (or rather, integral) of complex exponentials,
+even though $f[n]$ is aperiodic.
+
+We'll just cut straight to the punchline this time.
+
+\begin{theorem}{DT Fourier Transform}
+    Given a DT signal $f[n]$, define its Fourier transform to be
+    $F(\Omega) := \sum_{n = -\infty}^{\infty} f[n] e^{-j \Omega n}$.
+    It then follows that
+    $f[n] = \frac{1}{2\pi} \int_{0}^{2\pi} F(\Omega) e^{j \Omega n} \, \mathrm{d}\Omega$.
+\end{theorem}
+
+\begin{remark}
+    Even though the signal $f[n]$ may be discrete and aperiodic,
+    the Fourier transform $F(\Omega)$ is continuous and periodic!
+\end{remark}
+
+\begin{proof}
+    Our strategy is the same as last time:
+    consider signals $f_N[n]$ that are extensions of $f[n]$ to have period $N$,
+    take the DT Fourier series of $f_N[n]$, and investigate the series for $N \to \infty$.
+
+    The DT Fourier series for $f_N[n]$ looks like:
+    \[ f_N[n] = \sum_{k \in \langle N \rangle} F_N[k] e^{jn \textcolor{purple}{(2\pi k / N)}}
+    ~ \text{ where } ~
+    F_N[k] = \frac{1}{N} \sum_{n \in \langle N \rangle} f_N[n] e^{-jn \textcolor{purple}{(2\pi k / N)}}. \]
+    Here, $\langle N \rangle$ denotes any set of $N$ consecutive integers centered at zero.
+    Remember that for DT Fourier series, $F_N[k]$ is a finite array of length $N$,
+    or equivalently, an infinite array with period $N$.
+
+    Let's follow the recipe from last time: take $F(\Omega) := \lim_{N \to \infty} N \cdot F_N[k]$
+    where $\textcolor{purple}{\Omega := 2\pi k / N}$.  Then:
+    \[ F(\Omega) = \lim_{N \to \infty} N \cdot \left(
+        \frac{1}{N} \sum_{n \in \langle N \rangle} f_N[n] e^{-jn \textcolor{purple}{(2\pi k / N)}}
+    \right)
+    = \lim_{N \to \infty} \sum_{n \in \langle N \rangle} f_N[n] e^{-jn \textcolor{purple}{\Omega}}
+    = \sum_{n = -\infty}^{\infty} f[n] e^{-jn \textcolor{purple}{\Omega}}. \]
+    Just as promised.
+    Now make the parametrization $\{\Omega_k\}_{k \in \langle N \rangle}$ where
+    $\textcolor{purple}{\Omega_k := 2\pi k / N}$.
+    Noting that $\Delta \Omega_k = 2\pi / N$ and sending $N \to \infty$, the Fourier series becomes:
+    \begin{align*} f[n] = \lim_{N \to \infty} f_N[n]
+    & = \lim_{N \to \infty} \sum_{k \in \langle N \rangle}
+    F_N[k] e^{jn \textcolor{purple}{(2\pi k / N)}} \\
+    & = \lim_{N \to \infty} \frac{1}{2\pi} \sum_{k \in \langle N \rangle}
+    F(\Omega_k) e^{jn\textcolor{purple}{\Omega_k}} \Delta \Omega_k
+    = \frac{1}{2\pi} \int_{\langle 2\pi \rangle}
+    F(\Omega) e^{jn \textcolor{purple}{\Omega}} \, \mathrm{d}\Omega. \end{align*}
+    Just as promised.  Here, $\langle 2\pi \rangle$ refers to
+    any interval of length $2\pi$; it appears because the set of frequencies
+    $\{\Omega_k\}_{k \in \langle N \rangle}$ covers an interval of length $2\pi$
+    in the limit $N \to \infty$.  ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    You might think the DT Fourier transform is the same as the CT Fourier transform.
+    Here's why.
+
+    Given a DT signal $f[n]$, you might consider the CT signal $g(t) := f[\lfloor t \rfloor]$.
+    Then you might claim the following:
+    \begin{quote}
+        \textbf{Claim (?).} The CT Fourier transform of $g(t)$ is the same as
+        the DT Fourier transform of $f[n]$.
+    \end{quote}
+    But the CT synthesis equation
+    $g(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} G(\omega) e^{j\omega t} \, \mathrm{d}\omega$
+    differs from the DT synthesis equation
+    $f[n] = \frac{1}{2\pi} \int_{0}^{2\pi} F(\Omega) e^{j\Omega n} \, \mathrm{d}\Omega$,
+    so this claim cannot possibly be true.
+
+    The issue is that the CT Fourier transform of $g(t)$ is \emph{not} the same
+    as the DT Fourier transform of $f[n]$:
+    there is a huge difference between $\int_{n}^{n + 1} g(t) e^{-j \omega t} \, \mathrm{d}t$
+    and $f[n] e^{-j\Omega n}$.  This difference is one reason why
+    the synthesis equations look so different.
+\end{remark}
+
+\begin{problem}
+    Compute the DT Fourier transform of the following DT signal, where $S$ is a positive integer.
+    \[ f[n] := \begin{cases}
+    1 & \text{ if } |n| \leq S. \\
+    0 & \text{ otherwise.}
+    \end{cases}\]
+\end{problem}
+
+\begin{solution}
+    The analysis equation gives us:
+    \[ F(\Omega) = \sum_{n = -S}^{S} \left(e^{-j\Omega}\right)^n
+    = e^{jS\Omega} \left(\frac{1 - e^{- (2S + 1)j\Omega}}{1 - e^{-j \Omega}}\right)
+    = \frac{
+        e^{(S + \frac{1}{2})j \Omega} - e^{-(S + \frac{1}{2})j \Omega}
+    }{
+        e^{\frac{1}{2}j \Omega} - e^{-\frac{1}{2}j \Omega}
+    } = \frac{\sin\left(\left(S + \frac{1}{2}\right)\Omega\right)}{\sin\left(\frac{1}{2}\Omega\right)}. \]
+    Here, we have to simplify a finite geometric series,
+    then have to do some clever algebraic manipulation. ~ $\blacksquare$
+\end{solution}
+
+\subsection{Lecture and Recitation: Properties of the DT Fourier Transform}
+
+Here's what the Fourier Transforms of the $f[n]$ signal from the previous example
+look like for different values of $S$.
+
+\begin{center}
+    \frame{\includegraphics[width=0.45\textwidth]{lecture-07/time-scaling-DT}}
+\end{center}
+
+Because we're working with DT signals, it's hard to formally put into words
+the time-scaling property.
+
+Other than time-scaling, all of the other CT Fourier transform properties
+can be ported over to DT easily.
+(Proofs are obvious.)
+
+\begin{theorem}{Even / Odd}
+    If $f[n]$ is real and even, $F(\Omega)$ is real and even.
+    If $f[n]$ is real and odd, $F(\Omega)$ is imaginary and odd.
+\end{theorem}
+
+\begin{theorem}{DT Areas}
+    The value of $f[0]$ is $\frac{1}{2\pi} \int_0^{2\pi} F(\Omega) \, \mathrm{d}\Omega$,
+    and the value of $F(0)$ is $\sum_{n = -\infty}^{\infty} f[n]$.
+\end{theorem}
+
+\begin{theorem}{Time Delay}
+    The FT of $f[n - N]$ is $e^{-j \Omega N} F(\Omega)$.
+\end{theorem}
+
+\begin{theorem}{Derivative FT}
+    If the FT of $f[n]$ is $F(\Omega)$,
+    then the FT of $g[n] := n f[n]$ is $G(\Omega) = j F'(\Omega)$.
+\end{theorem}
+
+\begin{theorem}{Dirac Delta FT}
+    Suppose $\delta[0] = 1$ and $\delta[n] = 0$ for all $n \neq 0$.
+    Then the FT of $\delta[n]$ is the constant function $F(\Omega) = 1$.
+\end{theorem}
+
+\begin{theorem}{Periodic DT}
+    Suppose $f[n]$ is a periodic signal with Fourier coefficients $F[k]$,
+    so that $f[n] = \sum_{k = 0}^{N - 1} F[k] e^{jn(2\pi k/N)}$.
+    Then the Fourier transform of $f[n]$ is
+    $F(\Omega) := \sum_{k = 0}^{N - 1} 2\pi F[k] \delta\left(\Omega - \frac{2\pi k}{N}\right)$.
+\end{theorem}
+
+Here's what that last theorem looks like visually.
+
+\begin{center}
+    \frame{\includegraphics[width=0.3\textwidth]{lecture-07/delta-DT}}
+\end{center}
+
+\end{document}
