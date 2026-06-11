@@ -55,7 +55,14 @@ standard deviation of $\hat{\theta}$.
 is $\mathrm{MSE}(\hat{\theta}) := \mathbb{E}_{\theta}[(\hat{\theta} - \theta)^2]$.
 
 \begin{remark}
-    Note that, in general, the bias, standard error, and MSE are all implicitly functions of $\theta$.
+    Note that, in general, the bias, standard error, and MSE are all implicitly functions of
+    the true, population value of $\theta$.
+
+    For example, the equation $\mathrm{bias}(\hat{\theta}) := \mathbb{E}_{\theta}[\hat{\theta}] - \theta$
+    uses the notation $\mathbb{E}_{\theta}$ to reflect that in the definition
+    $\hat{\theta} := g(X_1, \dots, X_n)$ of $\hat{\theta}$,
+    the random variables $\{X_i\}_{i = 1}^n$ are sampled (i.i.d.) from $\mathbb{P}_{\theta}$.
+    So there's implicit dependencies on the value of $\theta$ everywhere.
 \end{remark}
 
 It turns out that the MSE is just a combination of bias and standard error.
