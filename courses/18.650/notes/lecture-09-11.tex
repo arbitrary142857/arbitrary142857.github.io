@@ -1,0 +1,362 @@
+\lectures{9,10,11}
+\title{The Maximum Likelihood Estimator}
+
+\begin{document}
+
+\subsection{Types of Parameters, Identifiability}
+
+\textbf{Definition.} In a statistical model,
+the parameters we care about are called \textbf{parameters of interest},
+and those we don't are called \textbf{nuisance parameters}.
+A parameter $\theta$ is \textbf{identifiable} if
+distinct values of $\theta$ necessarily yield distinct probability distributions.
+
+\textbf{Example.} In the model
+$\{\mathcal{N}(\mu, \sigma^2) \mid \mu \in \mathbb{R}, \sigma \in \mathbb{R}^+\}$,
+we might say $\mu$ is a parameter of interest and $\sigma$ is a nuisance parameter.
+
+\textbf{Example.} The response to a drug dosage is modeled by
+$\mathcal{N}\left(E_0 + \frac{D \times E_{\text{max}}}{D + ED_{50}},\ \sigma^2\right)$,
+for some parameter $\theta = (\sigma^2, E_0, E_{\text{max}}, ED_{50})$.
+In this case, $\theta$ is not identifiable.
+
+\subsection{Defining the Maximum Likelihood Estimator (MLE)}
+
+Consider some (i.i.d.) random variable samples $X_1, \dots, X_n \sim \mathbb{P}$
+and a parameter $\theta$.  Furthermore, some new notation:
+
+\textbf{Notation.} Given a parameter $\theta$,
+let its true, population value be denoted by $\theta^*$.
+
+If the parameter $\theta$ can be expressed using $\mathbb{E}[\dots]$ only,
+it's not hard to define an okay estimator.
+
+\[ \text{(ex:)} ~~~~~~ \theta := \frac{\mu}{\sigma} =
+\frac{\mathbb{E}[X_i]}{(\mathbb{E}[X_i^2] - \mathbb{E}[X_i]^2)^{1/2}} ~ \implies ~ \hat{\theta}_n :=
+\frac{\frac{1}{n}\sum_{i = 1}^n X_i}{\left(
+\frac{1}{n}\sum_{i = 1}^n X_i^2 - \left(\frac{1}{n}\sum_{i = 1}^n X_i\right)^2
+\right)^{1/2}}. \]
+
+More smartly, though, we should think to use the \textbf{maximum likelihood estimator (MLE)}.
+
+\textbf{Definition.} Let $f_{\theta}(x)$ denote the PDF corresponding to
+the distribution $\mathbb{P}_{\theta}$, and
+consider some samples $X_1, \dots, X_n \sim \mathbb{P}_{\theta^*}$.
+\begin{itemize}
+    \item The \textbf{likelihood} function is defined by
+    $L_n(\theta) := \prod_{i = 1}^n f_{\theta}(X_i)$.
+    \item The \textbf{log likelihood} function is just $\ell_n(\theta) := \log L_n(\theta)
+    = \sum_{i = 1}^n \log f_{\theta}(X_i)$.
+    \item The \textbf{maximum likelihood estimator (MLE)} $\hat{\theta}_n$ is the value
+    of $\theta$ for which $L_n(\theta)$ (or $\ell_n(\theta)$) is maximized.
+\end{itemize}
+In other words, the MLE $\hat{\theta}_n$
+is the value for the parameter $\theta$ whose distribution $\mathbb{P}_{\hat{\theta}_n}$
+is most ``compatible'' with the samples taken from $\mathbb{P}_{\theta^*}$,
+which would suggest that $\mathbb{P}_{\hat{\theta}_n}$
+might be a good representation of $\mathbb{P}_{\theta^*}$.
+
+\begin{remark}
+    Reason through the following and check that they make sense.
+    \begin{itemize}
+        \item For the model $\{\mathrm{Ber}(\theta) \mid \theta \in [0, 1]\}$,
+        the MLE is $\hat{\theta} := \frac{1}{n} \sum_{i = 1}^n X_i$.
+        \item For the model $\{\mathcal{N}(\theta, 1) \mid \theta \in \mathbb{R}\}$,
+        the MLE is $\hat{\theta} := \frac{1}{n} \sum_{i = 1}^n X_i$.
+        \item For the model $\{\mathrm{Unif}([0, \theta]) \mid \theta \geq 0\}$,
+        the MLE is $\hat{\theta} := \max X_i$.
+    \end{itemize}
+\end{remark}
+
+Note that $L_n(\theta)$ and $\ell_n(\theta)$ are
+\emph{deterministic} functions whose behaviors are determined by \emph{random} samples
+from $\mathbb{P}_{\theta^*}$.
+If one seeks a likelihood function that is instead determined by $\theta^*$ itself,
+one may opt for\dots
+
+\textbf{Definition.} The \textbf{population log likelihood} function is 
+ $\ell(\theta) := \mathbb{E}_{\theta^*}[\log f_{\theta}(X)]$.
+(The $\mathbb{E}_{\theta^*}$ notation
+indicates that $X \sim \mathbb{P}_{\theta^*}$.)
+
+\subsection{Kullback-Leibler (KL) Divergence and MLE Consistency}
+
+Rather than maximizing the likelihood, the MLE can also be defined
+as the $\theta$ that minimizes the ``distance'' between
+$\mathbb{P}_{\theta^*}$ and $\mathbb{P}_{\hat{\theta}}$.
+Here's how we formalize that notion of ``distance''.
+
+\textbf{Definition.} Given distributions $\mathbb{P}_1$ and $\mathbb{P}_2$
+with PDFs $f_1(x)$ and $f_2(x)$, their \textbf{Kullback-Leibler (KL) divergence} is:
+\begin{align*} D_{\mathrm{KL}}(\mathbb{P}_1 \parallel \mathbb{P}_2) :=
+\mathbb{E}_{f_1}\left[ \log\left(\frac{f_1(X)}{f_2(X)}\right)\right] & =
+\int_{\mathcal{R}} f_1(x) \log \left(\frac{f_1(x)}{f_2(x)}\right) \, \mathrm{d}x \\ & =
+\left( \int_{\mathcal{R}} f_1(x) \log f_1(x) \, \mathrm{d}x \right) - 
+\left( \int_{\mathcal{R}} f_1(x) \log f_2(x) \, \mathrm{d}x \right). \end{align*}
+Here, $\mathcal{R}$ is the entire support of $\mathbb{P}_1$,
+which is also the entire support of $\mathbb{P}_2$.
+Also, as usual, the $\mathbb{E}_{f_1}$ notation
+indicates that the random variable $X$ is to be sampled using the PDF $f_1$.
+
+Note that $D_{\mathrm{KL}}$ is not a metric; it is not symmetric, nor does it
+satisfy the triangle inequality.  But Jensen's inequality implies it is at least nonnegative,
+with $D_{\mathrm{KL}}(\mathbb{P}_1 \parallel \mathbb{P}_2) = 0$ if and only if
+$\mathbb{P}_1 = \mathbb{P}_2$.
+
+\begin{remark}
+    Jensen's inequality states that
+    for any concave function $\varphi$ and any random variable $Z$,
+    we have $\mathbb{E}[\varphi(Z)] \leq \varphi(\mathbb{E}[Z])$.
+    Equality is precisely when $Z$ is almost-surely constant,
+    assuming $\varphi$ is \emph{strictly} concave.
+\end{remark}
+
+Importantly, this implies the following.
+
+\begin{theorem}{KL Divergence Minimization}
+    The map $\theta \mapsto
+    D_{\mathrm{KL}}(\mathbb{P}_{\theta^*} \parallel \mathbb{P}_{\theta})$
+    is minimized when $\theta = \theta^*$.
+    Also, the population log likelihood
+    $\ell(\theta) := \mathbb{E}_{\theta^*}[\log f_{\theta}(X)]$
+    is maximized at $\theta = \theta^*$.
+\end{theorem}
+
+\begin{proof}
+    The first sentence is true by Jensen's; the point is that $\log$ is concave, so:
+    \[ D_{\mathrm{KL}}(\mathbb{P}_{\theta^*} \parallel \mathbb{P}_{\theta})
+    = -\mathbb{E}_{\theta^*} \left[ \log \left(\frac{f_{\theta}(X)}{f_{\theta^*}(X)}\right) \right]
+    \geq -\log \left( \mathbb{E}_{\theta^*} \left[ \frac{f_{\theta}(X)}{f_{\theta^*}(X)} \right] \right)
+    = -\log(1) = 0. \]
+    Equality occurs precisely when $\frac{f_{\theta}(X)}{f_{\theta^*}(X)}$
+    (with $X \sim \mathbb{P}_{\theta^*}$) is almost-surely constant,
+    or when $f_{\theta} \cong f_{\theta^*}$, as desired.
+
+    The second sentence follows because minimizing
+    $D_{\mathrm{KL}}(\mathbb{P}_{\theta^*} \parallel \mathbb{P}_{\theta})$
+    is equivalent to maximizing
+    $\int_{\mathbb{R}} f_{\theta^*}(x) \log f_{\theta}(x) \, \mathrm{d}x$;
+    see the far-RHS of the definition of $D_{\mathrm{KL}}$.
+    But $\int_{\mathbb{R}} f_{\theta^*}(x) \log f_{\theta}(x) \, \mathrm{d}x = \ell(\theta)$
+    identically. ~ $\blacksquare$
+\end{proof}
+
+The upshot of introducing KL Divergence is the second sentence of the
+``KL Divergence Minimization'' theorem.
+We will leverage this fact to prove that the MLE is always a consistent estimator.
+
+\begin{theorem}{MLE Consistency}
+    The MLE is consistent; that is, if $\hat{\theta}_n$ is the MLE of the parameter $\theta$,
+    then $\hat{\theta}_n \convprob \theta^*$ always.
+\end{theorem}
+
+\begin{proof}
+    Recall the following.
+    \begin{itemize}
+        \item The MLE $\hat{\theta}_n$ is
+        the maximizer of the log likelihood $\ell_n(\theta)$ by definition.
+        \item The true parameter value $\theta^*$ is
+        the maximizer of the population log likelihood $\ell(\theta)$
+        by the previous theorem.
+        \item For \emph{any} value $\theta'$,
+        by the LLN, the sequence $\{\frac{1}{n}\ell_n(\theta')\}_{n = 1}^{\infty}$
+        converges in probability to the constant $\ell(\theta')$.
+    \end{itemize}
+    These three points together imply $\hat{\theta}_n \convprob \theta^*$.
+    Roughly speaking, the third bullet point says $\ell_n \convprob \ell$,
+    so the maximizer of $\ell_n$ should also converge in probability
+    to the maximizer of $\ell$.
+    (Yes, this needs to be justified---handwaving a little here.) ~ $\blacksquare$
+\end{proof}
+
+\subsection{Fisher Information}
+
+We claim the MLE also achieves asymptotic normality.  In fact,
+we claim we even know its asymptotic variance.
+It turns out, however, that we'll need a little more setup before we get to asymptotic variance.
+
+\textbf{Definition.} Consider a \underline{statistical model} with a parameter $\theta$
+and varying PDFs given by $f_{\theta}(x)$, dependent on $\theta$.
+Given an observation $x$ and a proposed value $\theta$ of the parameter,
+the \textbf{score} is:
+\[ s(x; \theta) := \frac{\partial}{\partial\theta} \log f_{\theta}(x)
+= \frac{\frac{\partial}{\partial\theta} f_{\theta}(x)}{f_{\theta}(x)}. \]
+The RHS comes from a single application of the chain rule.
+When $s(x; \theta)$ is positive, it means that
+$x$ would be better explained if the proposed $\theta$ were increased, and vice versa.
+
+\begin{remark}
+    The notation is slightly confusing;
+    as a simpler example, consider defining $g(x) := \frac{d}{dx} x^2$ and concluding $g(5) = 10$.
+\end{remark}
+
+\begin{theorem}{Zero Mean Score}
+    We have $\mathbb{E}_{\theta^*}[s(X; \theta^*)] = 0$,
+    where the $\mathbb{E}_{\theta^*}$ notation indicates that
+    $X$ is sampled from the distribution $\mathbb{P}_{\theta^*}$;
+    in other words, the proposed value $\theta^*$ is correct.
+
+    In this case, the score has some positives and negatives, but expectedly is overall neutral
+    in how the proposal $\theta^*$ should change.
+\end{theorem}
+
+\begin{proof}
+    Just some integral manipulation.
+    \[ \mathbb{E}_{\theta^*}[s(x; \theta^*)]
+    = \int_{\mathcal{R}} f_{\theta^*}(x) \cdot
+    \left[\frac{\frac{\partial}{\partial\theta} f_{\theta}(x)}{f_{\theta}(x)}\right]_{\theta = \theta^*}
+    \mathrm{d}x
+    = \int_{\mathcal{R}} \left[\frac{\partial}{\partial\theta} f_{\theta}(x)\right]_{\theta = \theta^*}
+    \mathrm{d}x
+    = \frac{\partial}{\partial\theta}
+    \left[\int_{\mathcal{R}} f_{\theta}(x) \, \mathrm{d}x\right]_{\theta = \theta^*}
+    = \frac{\partial}{\partial\theta} [1] = 0. ~~~ \blacksquare \]
+\end{proof}
+
+Note that the definition of score doesn't care whether $x$ is sampled
+from a distribution that uses the proposed value $\theta$ for its parameter.
+The definition of Fisher information, on the other hand, \emph{does} care.
+
+\textbf{Definition.} Consider a \underline{statistical model} with a parameter $\theta$
+and varying PDFs given by $f_{\theta}(x)$, dependent on $\theta$.
+As a function of the true value of $\theta$, the \textbf{Fisher information}
+of the resulting distribution is:
+\[ I(\theta) := \mathbb{V}_{\theta}\left[s(X; \theta)\right]
+= \mathbb{E}_{\theta}[s(X; \theta)^2]. \]
+As usual, the $\mathbb{E}_{\theta}$ and $\mathbb{V}_{\theta}$ notation
+indicates that $X \sim \mathbb{P}_{\theta}$; in other words, that $\theta$ is the ``true value''
+of the parameter.  It's because of this and the previous theorem
+that the above two expressions for $I(\theta)$ are equivalent.
+
+When $I(\theta)$ is large,
+it means a single observation $x$ will tend to suggest
+very \emph{large} changes to the proposed $\theta$.
+In other words, singular observations $x$ carry more information.
+
+\begin{problem}
+    Given the model $\{\mathcal{N}(\theta, 9) \mid \theta \in \mathbb{R}\}$,
+    determine $I(\theta)$.  Do the same for $\{\mathcal{N}(\theta, 900) \mid \theta \in \mathbb{R}\}$.
+\end{problem}
+
+\begin{solution}
+    Recall that the PDF of $X \sim \mathcal{N}(\theta, 9)$ (with $\sigma = 3$) is given by:
+    \[ f_{\theta}(x) = \frac{1}{3\sqrt{2\pi}} \exp\left(-\frac{(x - \theta)^2}{2 \times 3^2}\right)
+    ~ \implies ~ s(x; \theta) = \frac{\partial}{\partial\theta} \log f_{\theta}(x)
+    = \frac{x - \theta}{3^2}. \]
+    The Fisher information is therefore:
+    \[ I(\theta) = \mathbb{V}_{\theta}\left[ \frac{X - \theta}{3^2} \right]
+    = \left(\frac{1}{3^2}\right)^2 \mathbb{V}_{\theta}[X - \theta]
+    = \left(\frac{1}{3^2}\right)^2(3^2) = \frac{1}{9}. \]
+    It's a constant!
+    Expectedly, the Fisher information for $\{\mathcal{N}(\theta, 900) \mid \theta \in \mathbb{R}\}$
+    is constantly $\frac{1}{900}$.
+    
+    Notably, the Fisher information of the latter is smaller than the former.
+    This should make sense; a single observation from
+    $\{\mathcal{N}(\theta, 900) \mid \theta \in \mathbb{R}\}$
+    tells you a lot less about $\theta$ than a single observation from
+    $\{\mathcal{N}(\theta, 9) \mid \theta \in \mathbb{R}\}$ does.
+\end{solution}
+
+The Fisher information has one more alternative representation.
+
+\begin{theorem}{Equivalent Fisher}
+    Fisher information equals the negative expected curvature of the log-likelihood; that is,
+    \[ I(\theta) = -\mathbb{E}_{\theta}\left[
+        \frac{\partial^2}{\partial\theta^2} \log f_{\theta}(X)
+    \right]. \]
+\end{theorem}
+
+\begin{proof}
+    Just a lot of calculus.  By the quotient and chain rules, we have:
+    \[ \frac{\partial^2}{\partial\theta^2} \log f_{\theta}(X)
+    = \frac{\partial}{\partial\theta} \frac{\frac{\partial}{\partial\theta} f_{\theta}(X)}{f_{\theta}(X)} 
+    = \frac{f_{\theta}(X) \frac{\partial^2}{\partial\theta^2} f_{\theta}(X)
+    - \left(\frac{\partial}{\partial\theta} f_{\theta}(X)\right)^2}{
+        \left(f_{\theta}(X)\right)^2
+    }
+    = \frac{\frac{\partial^2}{\partial\theta^2} f_{\theta}(X)}{f_{\theta}(X)}
+    - s(X; \theta)^2. \]
+    The expectation of the second term of the RHS is $-I(\theta)$,
+    so it suffices to show the expectation of the first term is zero.
+    \[ \mathbb{E}_{\theta}\left[\frac{\frac{\partial^2}{\partial\theta^2} f_{\theta}(X)}{f_{\theta}(X)}\right]
+    = \int_{\mathcal{R}} f_{\theta}(x) \cdot \left[
+        \frac{\frac{\partial^2}{\partial\theta^2} f_{\theta}(x)}{f_{\theta}(x)}
+    \right] \, \mathrm{d}x
+    = \int_{\mathcal{R}} \left[\frac{\partial^2}{\partial\theta^2} f_{\theta}(x)\right] \, \mathrm{d}x
+    = \frac{\partial^2}{\partial\theta^2} \left[\int_{\mathcal{R}} f_{\theta}(x) \, \mathrm{d}x\right]
+    = \frac{\partial^2}{\partial\theta^2} [1] = 0. \]
+    A very similar argument as before, actually\dots ~ $\blacksquare$
+\end{proof}
+
+Finally, when we have multiple samples,
+we can talk about ``total Fisher information''.
+
+\textbf{Definition.} Given $n$ samples $\{X_i\}_{i = 1}^n$,
+recall $\ell_n(\theta) := \sum_{i = 1}^n \log f_{\theta}(X_i)$
+is the log likelihood.
+Then the \textbf{total Fisher information} gained from these samples is:
+\[ I_n(\theta) :=
+-\mathbb{E}_{\theta}\left[\frac{\partial^2}{\partial\theta^2}\ell_n(\theta)\right]
+= n I(\theta). \]
+These two expressions are equal because all the $X_i$ are sampled from
+the same distribution $\mathbb{P}_{\theta}$, so applying linearity of expectation
+yields $n$ copies of $I(\theta)$ summed together.
+
+\subsection{MLE Asymptotic Normality}
+
+Now we can finally get to asymptotic normality of the MLE.
+
+\begin{theorem}{MLE Asymptotic Normality}
+    The MLE $\hat{\theta}_n$ has asymptotic variance $\frac{1}{I(\theta^*)}$; that is,
+    \[ \sqrt{n}(\hat{\theta}_n - \theta^*) \rightsquigarrow
+    \mathcal{N}\left(0, \frac{1}{I(\theta^*)}\right). \]
+\end{theorem}
+
+\begin{proof}
+    Recall the log likelihood
+    $\ell_n(\theta) := \sum_{i = 1}^n \log f_{\theta}(X_i)$.
+    The definition of the MLE $\hat{\theta}_n$ is that it maximizes $\ell_n(\theta)$, meaning:
+    \[ \frac{\partial}{\partial\theta} \ell_n(\hat{\theta}_n)
+    = \sum_{i = 1}^n s(X_i; \hat{\theta}_n) = 0. \]
+    Recall that we proved the consistency of $\hat{\theta}_n$ earlier,
+    meaning $\hat{\theta}_n \convprob \theta^*$.
+    Thus, it makes sense to take the Taylor approximation:
+    \[ 0 = \sum_{i = 1}^n s(X_i; \hat{\theta}_n)
+    \approx \sum_{i = 1}^n s(X_i; \theta^*) +
+    (\hat{\theta}_n - \theta^*) \left[
+        \frac{\partial}{\partial\theta} \sum_{i = 1}^n s(X_i; \theta)
+    \right]_{\theta = \theta^*}. \]
+    Moving terms around yields the approximation:
+    \[ \sqrt{n}(\hat{\theta}_n - \theta^*)
+    \approx - \left(\frac{\frac{1}{\sqrt{n}}\cdot \sum_{i = 1}^n s(X_i; \theta^*)}{
+        \frac{1}{n} \cdot \sum_{i = 1}^n \left[\frac{\partial^2}{\partial\theta^2} \log f_{\theta}(X_i)
+        \right]_{\theta = \theta^*}
+    }\right). \]
+    All that setup pays off here;
+    it turns out the numerator and denominator of this fraction
+    can be expressed very nicely.
+    \begin{itemize}
+        \item By ``Zero Mean Score'', the definition of Fisher information, and CLT,
+        the numerator converges ($\rightsquigarrow$) to $\mathcal{N}(0, I(\theta^*))$.
+        \item By ``Equivalent Fisher'' and LLN,
+        the denominator converges ($\convprob$) to $-I(\theta^*)$.
+    \end{itemize}
+    Thus, by Slutsky's lemma, we have:
+    \[ \sqrt{n}(\hat{\theta}_n - \theta^*) \rightsquigarrow
+    -\left(\frac{\mathcal{N}(0, I(\theta^*))}{-I(\theta^*)}\right)
+    = \mathcal{N}\left(0, \frac{1}{I(\theta^*)}\right). \]
+    And that's it. ~ $\blacksquare$
+\end{proof}
+
+Knowing that the asymptotic variance is $\frac{1}{I(\theta^*)}$
+is useful for constructing confidence intervals using the MLE $\hat{\theta}_n$,
+especially when the variance of $\hat{\theta}$ would not otherwise be easy to compute directly.
+
+\begin{remark}
+    For the model $\{\mathrm{Ber}(p) \mid p \in (0, 1)\}$,
+    the Fisher information is $I(p) = \frac{1}{p(1 - p)}$.
+    CYU: Why is this expected?
+\end{remark}
+
+\end{document}
