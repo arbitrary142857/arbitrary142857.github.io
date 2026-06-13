@@ -1,0 +1,88 @@
+\lecture{14}
+\title{Bootstrap Properties and Constructing CIs}
+
+\begin{document}
+
+\subsection{Bootstrap Properties}
+
+You can verify that all of the following are true.
+
+\begin{theorem}{Bootstrap Properties}
+    Suppose we have (i.i.d.) samples $\{X_i\}_{i = 1}^n$
+    with $\mu = \mathbb{E}[X_i]$ and $\sigma^2 = \mathbb{V}[X_i]$,
+    and suppose $\{X_i^*\}_{i = 1}^m$ is some bootstrap sample of $\{X_i\}_{i = 1}^n$.
+    \begin{enumerate}
+        \item We have $\mathbb{E}[X_i^* \mid \{X_i\}_{i = 1}^n] = \bar{X}_n$.
+        \item We have $\mathbb{E}[X_i^*] = \mu$.
+        \item We have $\mathbb{V}[X_i^* \mid \{X_i\}_{i = 1}^n] =
+        \frac{1}{n} \sum_{i = 1}^n X_i^2 - (\bar{X}_n)^2 = \hat{\sigma}_n^2$.
+        \item We have $\mathbb{V}[X_i^*] = \sigma^2$.
+    \end{enumerate}
+\end{theorem}
+Not very surprising, and not hard to prove.
+
+\subsection{Constructing CIs}
+
+For \emph{any} estimator $\hat{\theta}_n$,
+we can now compute an estimate $v_{\mathrm{boot}}$ of its variance.
+\[ v_{\mathrm{boot}} \approx \mathbb{V}_{\hat{\mathbb{P}}_n}[\hat{\theta}_n]
+\approx \mathbb{V}_{\theta^*}[\hat{\theta}_n]. \]
+Let's say $\hat{\theta}_0 := \hat{\theta}_n(X_1, \dots, X_n)$
+is the observed point estimate we retrieved after considering all $n$ samples.
+Then if $\hat{\theta}_n$ is asymptotically normal,
+we can write, say, $\hat{\theta}_0 \pm 1.96\sqrt{v_{\mathrm{boot}}}$
+as a $95\%$ confidence interval.
+
+But what if $\hat{\theta}_n$ isn't approximately normal?
+Here's what we do instead.
+
+\begin{quote}
+    \textbf{Approach (Pivotal CI).}
+    Suppose we have the following:
+    \begin{itemize}
+        \item We have $n$ samples $\{X_i\}_{i = 1}^n \sim \mathbb{P}_{\theta^*}$,
+        producing an observed value $\hat{\theta}_0$ of $\hat{\theta}_n$.
+        \item This lets us produce $B$ point estimates $\{\hat{\theta}_b\}_{b = 1}^{B}$.
+        \begin{itemize}
+            \item Think of the $\{\hat{\theta}_b\}_{b = 1}^B$ as approximating
+            the sampling distribution of $\hat{\theta}_n$ under $\mathbb{P}_{\theta^*}$.
+        \end{itemize}
+        \item Our goal is to construct a $(1 - \alpha)$ CI for $\theta^*$.
+    \end{itemize}
+    Recall that CIs should be inherently \emph{random}.
+    We'd like to fix constants $(r_1, r_2)$
+    and take our CI to be $(\hat{\theta}_n - r_1, \hat{\theta}_n + r_2)$ so that:
+    \[ 1 - \alpha = \mathbb{P}_{\theta^*}(\hat{\theta}_n - r_1 \leq \theta^* \leq \hat{\theta}_n + r_2)
+    = \mathbb{P}_{\theta^*}(\theta^* - r_2 \leq \hat{\theta}_n \leq \theta^* + r_1). \]
+    Note that the randomness in our CI and in the above
+    comes from the randomness of $\hat{\theta}_n$.
+
+    If we knew the exact value of $\theta^*$ and
+    the exact sampling distribution of $\hat{\theta}_n$ under $\mathbb{P}_{\theta^*}$,
+    here's how we would pick $(r_1, r_2)$.
+    \begin{enumerate}
+        \item Find $q_{\alpha/2}$ such that
+        $\mathbb{P}_{\theta^*}(\hat{\theta}_n < q_{\alpha/2}) = \frac{\alpha}{2}$,
+        and find $q_{1 - \alpha/2}$ such that
+        $\mathbb{P}_{\theta^*}(\hat{\theta}_n > q_{1 - \alpha/2}) = \frac{\alpha}{2}$.
+        \item Set $r_2 = \theta^* - q_{\alpha/2}$ and $r_1 = q_{1 - \alpha/2} - \theta^*$.
+    \end{enumerate}
+    The problem, of course, is that we don't know
+    $(q_{\alpha/2}, q_{1 - \alpha/2}, \theta^*)$.
+    But we can estimate them using our bootstrap samples and $\hat{\theta}_0$.
+    \begin{enumerate}
+        \item Find $\hat{q}_{\alpha/2}$ such that
+        $\frac{\alpha}{2}$ of the $\{\hat{\theta}_b\}_{b = 1}^B$ are less than $\hat{q}_{\alpha/2}$,
+        and find $\hat{q}_{1 - \alpha/2}$ such that
+        $\frac{\alpha}{2}$ of the $\{\hat{\theta}_b\}_{b = 1}^B$ are greater than $\hat{q}_{1 - \alpha/2}$.
+        \item Set $\hat{r}_2 = \hat{\theta}_0 - \hat{q}_{\alpha/2}$ and
+        $\hat{r}_1 = \hat{q}_{1 - \alpha/2} - \hat{\theta}_0$.
+    \end{enumerate}
+    After retrieving $\hat{r}_1$ and $\hat{r}_2$ as above,
+    we set our CI to be $(\hat{\theta}_0 - \hat{r}_1, \hat{\theta}_0 + \hat{r}_2)$.
+\end{quote}
+
+If you want to be stupid, you can also use the \textbf{percentile CI},
+which just returns $(\hat{q}_{\alpha/2}, \hat{q}_{1 - \alpha/2})$.
+
+\end{document}
