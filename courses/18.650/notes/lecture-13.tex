@@ -22,8 +22,8 @@ This lets us define the \textbf{Method of Moments Estimator}.
         \item First, estimate the first $k$ moments of $X$ via
         $\hat{\alpha}_j = \frac{1}{n} \sum_{i = 1}^n X_i^j$.
         \item This gives us $k$ equations $\{\hat{\alpha}_j = \alpha_j\}$,
-        where the LHS of each equation is a known constant,
-        and the RHS of each equation is a known function of
+        where the LHS of each equation is a sample moment,
+        and the RHS is the corresponding population moment as a function of
         $(\theta_1, \theta_2, \dots, \theta_k)$.
         \item Since we have $k$ equations and $k$ unknowns,
         we can solve for $(\theta_1, \theta_2, \dots, \theta_k)$.
@@ -45,9 +45,9 @@ with a computable asymptotic variance $\Sigma^{\mathrm{MoM}}$;
 roughly speaking, the asymptotic variance found by applying the delta method
 to the inverse of the moment map.
 Note that the MoM estimator, unlike the MLE,
-does not meet the Cramér-Rao Lower Bound.
+need not attain the Cramér-Rao lower bound with equality.
 
-\subsection{Motiviating Bootstrapping}
+\subsection{Motivating Bootstrapping}
 
 We care about asymptotic variance of estimators
 because it's needed to write confidence intervals.
@@ -88,7 +88,7 @@ We need another way to compute standard errors---that way is called \textbf{boot
 \subsection{Bootstrapping}
 
 The idea is to suppose we had $B$ batches of $n$ samples each.
-Then each of the $B$ batches gives its own value for the estimator $\hat{\theta}$.
+Then each of the $B$ batches gives its own value $\hat{\theta}_b$ for the estimator.
 \[ \{X_{1, 1}, X_{1, 2}, \dots, X_{1, n}\} \mapsto \hat{\theta}_1 ~~~ \parallel ~~~
 \{X_{2, 1}, X_{2, 2}, \dots, X_{2, n}\} \mapsto \hat{\theta}_2 ~~~ \parallel ~~~
 \dots ~~~ \parallel ~~~
@@ -100,18 +100,18 @@ Then each of the $B$ batches gives its own value for the estimator $\hat{\theta}
     batch of samples.
 \end{remark}
 We could then use these $B$ values $\{\hat{\theta}_b\}_{b = 1}^B$
-to estimate the variance of $\hat{\theta}$ like so:
-\[ \hat{\mathbb{V}[\hat{\theta}]}
+to estimate the variance of $\hat{\theta}_n$ like so:
+\[ \widehat{\mathbb{V}[\hat{\theta}_n]}
 = \frac{1}{B} \sum_{b = 1}^B \left(
     \hat{\theta}_b - \frac{1}{B} \sum_{c = 1}^B \hat{\theta}_c
 \right)^2 \]
-The issue, however, is that we might not have $Bn \gg n$ samples.
+The issue, however, is that we might not have $Bn \gg n$ total samples from the population.
 The trick is to consider the following.
 
 \textbf{Definition.} Given $n$ samples $\{X_1, \dots, X_n\}$,
 the \textbf{empirical distribution} is the probability distribution:
 \[ \hat{\mathbb{P}}_n := \mathrm{Uniform}(\{X_1, \dots, X_n\}). \]
-In other words, $\hat{\mathbb{P}}_n$ just returns
+In other words, sampling from $\hat{\mathbb{P}}_n$ just returns
 one of the $n$ samples $\{X_i\}_{i = 1}^n$ uniformly at random.
 
 \begin{remark}
@@ -121,14 +121,13 @@ one of the $n$ samples $\{X_i\}_{i = 1}^n$ uniformly at random.
 
 \textbf{Definition.} Given $n$ samples $\{X_1, \dots, X_n\}$,
 a \textbf{bootstrap sample} is a collection of $m$ random variables
-$\{X_1^*, \dots, X_m^*\}$ sampled (i.i.d.) from the empirical distribution
-$\mathrm{Uniform}(\{X_1, \dots, X_n\})$.
+$\{X_1^*, \dots, X_m^*\}$ sampled (i.i.d.) from $\hat{\mathbb{P}}_n$.
 
 \textbf{Example.} Given the $n = 3$ samples $\{5.2, 7.3, 6.8\}$,
 one possible bootstrap sample of size $m = 4$
 is $\{7.3, 7.3, 6.8, 7.3\}$.
 
-Thus, we don't actually need to take all $Bn \gg n$ of those samples.
-We can instead just take $B$ bootstrap samples of size $n$.
+Thus, instead of independent real batches,
+we can just take $B$ bootstrap samples of size $n$.
 
 \end{document}
