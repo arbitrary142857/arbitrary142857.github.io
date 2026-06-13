@@ -195,4 +195,78 @@ especially when the variance of $\hat{\theta}$ would not otherwise be easy to co
     CYU: Why is this expected?
 \end{remark}
 
+\subsection{The Cramér-Rao Lower Bound}
+
+As the following theorem explains,
+the MLE is in some sense the \emph{best estimator possible},
+as long as it is unbiased.
+
+\begin{theorem}{Cramér-Rao Lower Bound}
+    Let $\hat{\theta}_n$ be any unbiased estimator of $\theta$.
+    Then $\mathbb{V}_{\theta}[\hat{\theta}_n] \geq \frac{1}{nI(\theta^*)}$.
+\end{theorem}
+
+\begin{proof}
+    The finish of the proof will use the following theorem.
+    \begin{quote}
+        \textbf{Theorem (Cauchy-Schwarz).}
+        For any random variables $U$ and $V$,
+        we have $\Cov(U, V)^2 \leq \Var(U) \cdot \Var(V)$.
+
+        \emph{Proof:} The point is that $\Var(U - \lambda V) \geq 0$
+        for all $\lambda$.  The LHS expands to a quadratic in $\lambda$,
+        so the discriminant of this quadratic must be nonpositive.
+        The nonpositivity of the discriminant simplifies to the above theorem.
+        ~ $\square$
+    \end{quote}
+    We'll invoke the above theorem on
+    $U := \hat{\theta}_n$ and $V := \sum_{i = 1}^n s(X_i, \theta^*)$.
+    \begin{quote}
+        \textbf{Lemma 1.} We have $\Var_{\theta^*}(V) = nI(\theta^*)$.
+
+        \emph{Proof:} The $X_i$ are independent, so variances add,
+        and then this follows straight from the definition of Fisher information. ~ $\square$
+    \end{quote}
+    Now for the hard part.
+    \begin{quote}
+        \textbf{Lemma 2.} We have $\Cov_{\theta^*}(U, V) = 1$.
+
+        \emph{Proof:} Note that $\mathbb{E}_{\theta^*}\left[
+            \sum_{i = 1}^n s(X_i, \theta^*)
+        \right] = 0$ by ``Zero Mean Score''.
+        Also note that we're considering
+        the joint random variable $(X_1, \dots, X_n)$,
+        so our integrals will need to use the joint PDFs $\prod_{i = 1}^n f_{\theta^*}(x_i)$.
+        That said, the rest is computation.
+        \begin{align*}
+        \Cov_{\theta^*}(U, V)
+        & = \mathbb{E}_{\theta^*}\left[\hat{\theta} \cdot \sum_{i = 1}^n s(X_i, \theta^*)\right] -
+        \mathbb{E}_{\theta^*}[\hat{\theta}] \cdot
+        \mathbb{E}_{\theta^*}\left[\sum_{i = 1}^n s(X_i, \theta^*)\right] \\
+        & = \mathbb{E}_{\theta^*}\left[\hat{\theta} \cdot \sum_{i = 1}^n s(X_i, \theta^*)\right] \\
+        & = \int \cdots \int_{\mathcal{R}} \left(\prod_{i = 1}^n f_{\theta^*}(x_i)\right) \cdot
+        \hat{\theta}(x_1, x_2, \dots, x_n) \cdot \sum_{i = 1}^n s(x_i, \theta^*)
+        \, \mathrm{d}x_1 \, \mathrm{d}x_2 \, \cdots \, \mathrm{d}x_n \\
+        & = \int \cdots \int_{\mathcal{R}} \left(\prod_{i = 1}^n f_{\theta^*}(x_i)\right) \cdot
+        \hat{\theta}(x_1, x_2, \dots, x_n) \cdot
+        \frac{
+            \left[\frac{\partial}{\partial\theta}
+            \prod_{i = 1}^n f_{\theta}(x_i)\right]_{\theta = \theta^*}
+        }{\prod_{i = 1}^n f_{\theta^*}(x_i)}
+        \, \mathrm{d}x_1 \, \mathrm{d}x_2 \, \cdots \, \mathrm{d}x_n \\
+        & = \frac{\partial}{\partial\theta} \left[
+        \int \cdots \int_{\mathcal{R}} \left(\prod_{i = 1}^n f_{\theta}(x_i)\right) \cdot
+        \hat{\theta}(x_1, x_2, \dots, x_n)
+        \, \mathrm{d}x_1 \, \mathrm{d}x_2 \, \cdots \, \mathrm{d}x_n \\
+        \right]_{\theta = \theta^*}.
+        \end{align*}
+        Here's the finish: $\hat{\theta}$ is \emph{unbiased}, so
+        the integral above evaluates to just $\theta$,
+        meaning the covariance is just
+        $\frac{\partial}{\partial\theta}[\theta]_{\theta = \theta^*} = 1$.
+        ~ $\square$
+    \end{quote}
+    Now just plug Lemma 1 and Lemma 2 into the Cauchy-Schwarz theorem and win. ~ $\blacksquare$
+\end{proof}
+
 \end{document}
