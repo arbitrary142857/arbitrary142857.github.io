@@ -1,0 +1,98 @@
+\lecture{10}
+\title{Consistency of the MLE}
+
+\begin{document}
+
+\subsection{Kullback-Leibler (KL) Divergence}
+
+Rather than maximizing the likelihood, the MLE can also be defined
+as the $\theta$ that minimizes the ``distance'' between
+$\mathbb{P}_{\theta^*}$ and $\mathbb{P}_{\hat{\theta}}$.
+Here's how we formalize that notion of ``distance''.
+
+\textbf{Definition.} Given distributions $\mathbb{P}_1$ and $\mathbb{P}_2$
+with PDFs $f_1(x)$ and $f_2(x)$, their \textbf{Kullback-Leibler (KL) divergence} is:
+\begin{align*} D_{\mathrm{KL}}(\mathbb{P}_1 \parallel \mathbb{P}_2) :=
+\mathbb{E}_{f_1}\left[ \log\left(\frac{f_1(X)}{f_2(X)}\right)\right] & =
+\int_{\mathcal{R}} f_1(x) \log \left(\frac{f_1(x)}{f_2(x)}\right) \, \mathrm{d}x \\ & =
+\left( \int_{\mathcal{R}} f_1(x) \log f_1(x) \, \mathrm{d}x \right) - 
+\left( \int_{\mathcal{R}} f_1(x) \log f_2(x) \, \mathrm{d}x \right). \end{align*}
+Here, $\mathcal{R}$ is the entire support of $\mathbb{P}_1$,
+which is also the entire support of $\mathbb{P}_2$.
+Also, as usual, the $\mathbb{E}_{f_1}$ notation
+indicates that the random variable $X$ is to be sampled using the PDF $f_1$.
+
+Note that $D_{\mathrm{KL}}$ is not a metric; it is not symmetric, nor does it
+satisfy the triangle inequality.  But Jensen's inequality implies it is at least nonnegative,
+with $D_{\mathrm{KL}}(\mathbb{P}_1 \parallel \mathbb{P}_2) = 0$ if and only if
+$\mathbb{P}_1 = \mathbb{P}_2$.
+
+\begin{remark}
+    Jensen's inequality states that
+    for any concave function $\varphi$ and any random variable $Z$,
+    we have $\mathbb{E}[\varphi(Z)] \leq \varphi(\mathbb{E}[Z])$.
+    Equality is precisely when $Z$ is almost-surely constant,
+    assuming $\varphi$ is \emph{strictly} concave.
+\end{remark}
+
+Importantly, this implies the following.
+
+\begin{theorem}{KL Divergence Minimization}
+    The map $\theta \mapsto
+    D_{\mathrm{KL}}(\mathbb{P}_{\theta^*} \parallel \mathbb{P}_{\theta})$
+    is minimized when $\theta = \theta^*$.
+    Also, the population log likelihood
+    $\ell(\theta) := \mathbb{E}_{\theta^*}[\log f_{\theta}(X)]$
+    is maximized at $\theta = \theta^*$.
+\end{theorem}
+
+\begin{proof}
+    The first sentence is true by Jensen's; the point is that $\log$ is concave, so:
+    \[ D_{\mathrm{KL}}(\mathbb{P}_{\theta^*} \parallel \mathbb{P}_{\theta})
+    = -\mathbb{E}_{\theta^*} \left[ \log \left(\frac{f_{\theta}(X)}{f_{\theta^*}(X)}\right) \right]
+    \geq -\log \left( \mathbb{E}_{\theta^*} \left[ \frac{f_{\theta}(X)}{f_{\theta^*}(X)} \right] \right)
+    = -\log(1) = 0. \]
+    Equality occurs precisely when $\frac{f_{\theta}(X)}{f_{\theta^*}(X)}$
+    (with $X \sim \mathbb{P}_{\theta^*}$) is almost-surely constant,
+    or when $f_{\theta} \cong f_{\theta^*}$, as desired.
+
+    The second sentence follows because minimizing
+    $D_{\mathrm{KL}}(\mathbb{P}_{\theta^*} \parallel \mathbb{P}_{\theta})$
+    is equivalent to maximizing
+    $\int_{\mathbb{R}} f_{\theta^*}(x) \log f_{\theta}(x) \, \mathrm{d}x$;
+    see the far-RHS of the definition of $D_{\mathrm{KL}}$.
+    But $\int_{\mathbb{R}} f_{\theta^*}(x) \log f_{\theta}(x) \, \mathrm{d}x = \ell(\theta)$
+    identically. ~ $\blacksquare$
+\end{proof}
+
+\subsection{MLE Consistency}
+
+The upshot of introducing KL Divergence is the second sentence of the
+``KL Divergence Minimization'' theorem.
+We will leverage this fact to prove that the MLE is always a consistent estimator.
+
+\begin{theorem}{MLE Consistency}
+    The MLE is consistent; that is, if $\hat{\theta}_n$ is the MLE of the parameter $\theta$,
+    then $\hat{\theta}_n \convprob \theta^*$ always.
+\end{theorem}
+
+\begin{proof}
+    Recall the following.
+    \begin{itemize}
+        \item The MLE $\hat{\theta}_n$ is
+        the maximizer of the log likelihood $\ell_n(\theta)$ by definition.
+        \item The true parameter value $\theta^*$ is
+        the maximizer of the population log likelihood $\ell(\theta)$
+        by the previous theorem.
+        \item For \emph{any} value $\theta'$,
+        by the LLN, the sequence $\{\frac{1}{n}\ell_n(\theta')\}_{n = 1}^{\infty}$
+        converges in probability to the constant $\ell(\theta')$.
+    \end{itemize}
+    These three points together imply $\hat{\theta}_n \convprob \theta^*$.
+    Roughly speaking, the third bullet point says $\ell_n \convprob \ell$,
+    so the maximizer of $\ell_n$ should also converge in probability
+    to the maximizer of $\ell$.
+    (Yes, this needs to be justified---handwaving a little here.) ~ $\blacksquare$
+\end{proof}
+
+\end{document}

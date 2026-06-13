@@ -1,0 +1,82 @@
+\lecture{9}
+\title{Introducing the MLE}
+
+\begin{document}
+
+\subsection{Types of Parameters, Identifiability}
+
+\textbf{Definition.} In a statistical model,
+the parameters we care about are called \textbf{parameters of interest},
+and those we don't are called \textbf{nuisance parameters}.
+A parameter $\theta$ is \textbf{identifiable} if
+distinct values of $\theta$ necessarily yield distinct probability distributions.
+
+\textbf{Example.} In the model
+$\{\mathcal{N}(\mu, \sigma^2) \mid \mu \in \mathbb{R}, \sigma \in \mathbb{R}^+\}$,
+we might say $\mu$ is a parameter of interest and $\sigma$ is a nuisance parameter.
+
+\textbf{Example.} The response to a drug dosage is modeled by
+$\mathcal{N}\left(E_0 + \frac{D \times E_{\text{max}}}{D + ED_{50}},\ \sigma^2\right)$,
+for some parameter $\theta = (\sigma^2, E_0, E_{\text{max}}, ED_{50})$.
+In this case, $\theta$ is not identifiable.
+
+\subsection{Defining the Maximum Likelihood Estimator (MLE)}
+
+Consider some (i.i.d.) random variable samples $X_1, \dots, X_n \sim \mathbb{P}$
+and a parameter $\theta$.  Furthermore, some new notation:
+
+\textbf{Notation.} Given a parameter $\theta$,
+let its true, population value be denoted by $\theta^*$.
+
+If the parameter $\theta$ can be expressed using $\mathbb{E}[\dots]$ only,
+it's not hard to define an okay estimator.
+
+\[ \text{(ex:)} ~~~~~~ \theta := \frac{\mu}{\sigma} =
+\frac{\mathbb{E}[X_i]}{(\mathbb{E}[X_i^2] - \mathbb{E}[X_i]^2)^{1/2}} ~ \implies ~ \hat{\theta}_n :=
+\frac{\frac{1}{n}\sum_{i = 1}^n X_i}{\left(
+\frac{1}{n}\sum_{i = 1}^n X_i^2 - \left(\frac{1}{n}\sum_{i = 1}^n X_i\right)^2
+\right)^{1/2}}. \]
+
+More smartly, though, we should think to use the \textbf{maximum likelihood estimator (MLE)}.
+
+\textbf{Definition.} Let $f_{\theta}(x)$ denote the PDF corresponding to
+the distribution $\mathbb{P}_{\theta}$, and
+consider some samples $X_1, \dots, X_n \sim \mathbb{P}_{\theta^*}$.
+\begin{itemize}
+    \item The \textbf{likelihood} function is defined by
+    $L_n(\theta) := \prod_{i = 1}^n f_{\theta}(X_i)$.
+    \item The \textbf{log likelihood} function is just $\ell_n(\theta) := \log L_n(\theta)
+    = \sum_{i = 1}^n \log f_{\theta}(X_i)$.
+    \item The \textbf{maximum likelihood estimator (MLE)} $\hat{\theta}_n$ is the value
+    of $\theta$ for which $L_n(\theta)$ (or $\ell_n(\theta)$) is maximized.
+\end{itemize}
+In other words, the MLE $\hat{\theta}_n$
+is the value for the parameter $\theta$ whose distribution $\mathbb{P}_{\hat{\theta}_n}$
+is most ``compatible'' with the samples taken from $\mathbb{P}_{\theta^*}$,
+which would suggest that $\mathbb{P}_{\hat{\theta}_n}$
+might be a good representation of $\mathbb{P}_{\theta^*}$.
+
+\begin{remark}
+    Reason through the following and check that they make sense.
+    \begin{itemize}
+        \item For the model $\{\mathrm{Ber}(\theta) \mid \theta \in [0, 1]\}$,
+        the MLE is $\hat{\theta} := \frac{1}{n} \sum_{i = 1}^n X_i$.
+        \item For the model $\{\mathcal{N}(\theta, 1) \mid \theta \in \mathbb{R}\}$,
+        the MLE is $\hat{\theta} := \frac{1}{n} \sum_{i = 1}^n X_i$.
+        \item For the model $\{\mathrm{Unif}([0, \theta]) \mid \theta \geq 0\}$,
+        the MLE is $\hat{\theta} := \max X_i$.
+    \end{itemize}
+\end{remark}
+
+Note that $L_n(\theta)$ and $\ell_n(\theta)$ are
+\emph{deterministic} functions whose behaviors are determined by \emph{random} samples
+from $\mathbb{P}_{\theta^*}$.
+If one seeks a likelihood function that is instead determined by $\theta^*$ itself,
+one may opt for\dots
+
+\textbf{Definition.} The \textbf{population log likelihood} function is 
+ $\ell(\theta) := \mathbb{E}_{\theta^*}[\log f_{\theta}(X)]$.
+(The $\mathbb{E}_{\theta^*}$ notation
+indicates that $X \sim \mathbb{P}_{\theta^*}$.)
+
+\end{document}

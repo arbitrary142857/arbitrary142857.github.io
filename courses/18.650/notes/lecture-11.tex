@@ -1,175 +1,9 @@
-\lectures{9,10,11}
-\title{The Maximum Likelihood Estimator}
+\lecture{11}
+\title{MLE Asymptotic Normality}
 
 \begin{document}
 
-\subsection{Types of Parameters, Identifiability}
-
-\textbf{Definition.} In a statistical model,
-the parameters we care about are called \textbf{parameters of interest},
-and those we don't are called \textbf{nuisance parameters}.
-A parameter $\theta$ is \textbf{identifiable} if
-distinct values of $\theta$ necessarily yield distinct probability distributions.
-
-\textbf{Example.} In the model
-$\{\mathcal{N}(\mu, \sigma^2) \mid \mu \in \mathbb{R}, \sigma \in \mathbb{R}^+\}$,
-we might say $\mu$ is a parameter of interest and $\sigma$ is a nuisance parameter.
-
-\textbf{Example.} The response to a drug dosage is modeled by
-$\mathcal{N}\left(E_0 + \frac{D \times E_{\text{max}}}{D + ED_{50}},\ \sigma^2\right)$,
-for some parameter $\theta = (\sigma^2, E_0, E_{\text{max}}, ED_{50})$.
-In this case, $\theta$ is not identifiable.
-
-\subsection{Defining the Maximum Likelihood Estimator (MLE)}
-
-Consider some (i.i.d.) random variable samples $X_1, \dots, X_n \sim \mathbb{P}$
-and a parameter $\theta$.  Furthermore, some new notation:
-
-\textbf{Notation.} Given a parameter $\theta$,
-let its true, population value be denoted by $\theta^*$.
-
-If the parameter $\theta$ can be expressed using $\mathbb{E}[\dots]$ only,
-it's not hard to define an okay estimator.
-
-\[ \text{(ex:)} ~~~~~~ \theta := \frac{\mu}{\sigma} =
-\frac{\mathbb{E}[X_i]}{(\mathbb{E}[X_i^2] - \mathbb{E}[X_i]^2)^{1/2}} ~ \implies ~ \hat{\theta}_n :=
-\frac{\frac{1}{n}\sum_{i = 1}^n X_i}{\left(
-\frac{1}{n}\sum_{i = 1}^n X_i^2 - \left(\frac{1}{n}\sum_{i = 1}^n X_i\right)^2
-\right)^{1/2}}. \]
-
-More smartly, though, we should think to use the \textbf{maximum likelihood estimator (MLE)}.
-
-\textbf{Definition.} Let $f_{\theta}(x)$ denote the PDF corresponding to
-the distribution $\mathbb{P}_{\theta}$, and
-consider some samples $X_1, \dots, X_n \sim \mathbb{P}_{\theta^*}$.
-\begin{itemize}
-    \item The \textbf{likelihood} function is defined by
-    $L_n(\theta) := \prod_{i = 1}^n f_{\theta}(X_i)$.
-    \item The \textbf{log likelihood} function is just $\ell_n(\theta) := \log L_n(\theta)
-    = \sum_{i = 1}^n \log f_{\theta}(X_i)$.
-    \item The \textbf{maximum likelihood estimator (MLE)} $\hat{\theta}_n$ is the value
-    of $\theta$ for which $L_n(\theta)$ (or $\ell_n(\theta)$) is maximized.
-\end{itemize}
-In other words, the MLE $\hat{\theta}_n$
-is the value for the parameter $\theta$ whose distribution $\mathbb{P}_{\hat{\theta}_n}$
-is most ``compatible'' with the samples taken from $\mathbb{P}_{\theta^*}$,
-which would suggest that $\mathbb{P}_{\hat{\theta}_n}$
-might be a good representation of $\mathbb{P}_{\theta^*}$.
-
-\begin{remark}
-    Reason through the following and check that they make sense.
-    \begin{itemize}
-        \item For the model $\{\mathrm{Ber}(\theta) \mid \theta \in [0, 1]\}$,
-        the MLE is $\hat{\theta} := \frac{1}{n} \sum_{i = 1}^n X_i$.
-        \item For the model $\{\mathcal{N}(\theta, 1) \mid \theta \in \mathbb{R}\}$,
-        the MLE is $\hat{\theta} := \frac{1}{n} \sum_{i = 1}^n X_i$.
-        \item For the model $\{\mathrm{Unif}([0, \theta]) \mid \theta \geq 0\}$,
-        the MLE is $\hat{\theta} := \max X_i$.
-    \end{itemize}
-\end{remark}
-
-Note that $L_n(\theta)$ and $\ell_n(\theta)$ are
-\emph{deterministic} functions whose behaviors are determined by \emph{random} samples
-from $\mathbb{P}_{\theta^*}$.
-If one seeks a likelihood function that is instead determined by $\theta^*$ itself,
-one may opt for\dots
-
-\textbf{Definition.} The \textbf{population log likelihood} function is 
- $\ell(\theta) := \mathbb{E}_{\theta^*}[\log f_{\theta}(X)]$.
-(The $\mathbb{E}_{\theta^*}$ notation
-indicates that $X \sim \mathbb{P}_{\theta^*}$.)
-
-\subsection{Kullback-Leibler (KL) Divergence and MLE Consistency}
-
-Rather than maximizing the likelihood, the MLE can also be defined
-as the $\theta$ that minimizes the ``distance'' between
-$\mathbb{P}_{\theta^*}$ and $\mathbb{P}_{\hat{\theta}}$.
-Here's how we formalize that notion of ``distance''.
-
-\textbf{Definition.} Given distributions $\mathbb{P}_1$ and $\mathbb{P}_2$
-with PDFs $f_1(x)$ and $f_2(x)$, their \textbf{Kullback-Leibler (KL) divergence} is:
-\begin{align*} D_{\mathrm{KL}}(\mathbb{P}_1 \parallel \mathbb{P}_2) :=
-\mathbb{E}_{f_1}\left[ \log\left(\frac{f_1(X)}{f_2(X)}\right)\right] & =
-\int_{\mathcal{R}} f_1(x) \log \left(\frac{f_1(x)}{f_2(x)}\right) \, \mathrm{d}x \\ & =
-\left( \int_{\mathcal{R}} f_1(x) \log f_1(x) \, \mathrm{d}x \right) - 
-\left( \int_{\mathcal{R}} f_1(x) \log f_2(x) \, \mathrm{d}x \right). \end{align*}
-Here, $\mathcal{R}$ is the entire support of $\mathbb{P}_1$,
-which is also the entire support of $\mathbb{P}_2$.
-Also, as usual, the $\mathbb{E}_{f_1}$ notation
-indicates that the random variable $X$ is to be sampled using the PDF $f_1$.
-
-Note that $D_{\mathrm{KL}}$ is not a metric; it is not symmetric, nor does it
-satisfy the triangle inequality.  But Jensen's inequality implies it is at least nonnegative,
-with $D_{\mathrm{KL}}(\mathbb{P}_1 \parallel \mathbb{P}_2) = 0$ if and only if
-$\mathbb{P}_1 = \mathbb{P}_2$.
-
-\begin{remark}
-    Jensen's inequality states that
-    for any concave function $\varphi$ and any random variable $Z$,
-    we have $\mathbb{E}[\varphi(Z)] \leq \varphi(\mathbb{E}[Z])$.
-    Equality is precisely when $Z$ is almost-surely constant,
-    assuming $\varphi$ is \emph{strictly} concave.
-\end{remark}
-
-Importantly, this implies the following.
-
-\begin{theorem}{KL Divergence Minimization}
-    The map $\theta \mapsto
-    D_{\mathrm{KL}}(\mathbb{P}_{\theta^*} \parallel \mathbb{P}_{\theta})$
-    is minimized when $\theta = \theta^*$.
-    Also, the population log likelihood
-    $\ell(\theta) := \mathbb{E}_{\theta^*}[\log f_{\theta}(X)]$
-    is maximized at $\theta = \theta^*$.
-\end{theorem}
-
-\begin{proof}
-    The first sentence is true by Jensen's; the point is that $\log$ is concave, so:
-    \[ D_{\mathrm{KL}}(\mathbb{P}_{\theta^*} \parallel \mathbb{P}_{\theta})
-    = -\mathbb{E}_{\theta^*} \left[ \log \left(\frac{f_{\theta}(X)}{f_{\theta^*}(X)}\right) \right]
-    \geq -\log \left( \mathbb{E}_{\theta^*} \left[ \frac{f_{\theta}(X)}{f_{\theta^*}(X)} \right] \right)
-    = -\log(1) = 0. \]
-    Equality occurs precisely when $\frac{f_{\theta}(X)}{f_{\theta^*}(X)}$
-    (with $X \sim \mathbb{P}_{\theta^*}$) is almost-surely constant,
-    or when $f_{\theta} \cong f_{\theta^*}$, as desired.
-
-    The second sentence follows because minimizing
-    $D_{\mathrm{KL}}(\mathbb{P}_{\theta^*} \parallel \mathbb{P}_{\theta})$
-    is equivalent to maximizing
-    $\int_{\mathbb{R}} f_{\theta^*}(x) \log f_{\theta}(x) \, \mathrm{d}x$;
-    see the far-RHS of the definition of $D_{\mathrm{KL}}$.
-    But $\int_{\mathbb{R}} f_{\theta^*}(x) \log f_{\theta}(x) \, \mathrm{d}x = \ell(\theta)$
-    identically. ~ $\blacksquare$
-\end{proof}
-
-The upshot of introducing KL Divergence is the second sentence of the
-``KL Divergence Minimization'' theorem.
-We will leverage this fact to prove that the MLE is always a consistent estimator.
-
-\begin{theorem}{MLE Consistency}
-    The MLE is consistent; that is, if $\hat{\theta}_n$ is the MLE of the parameter $\theta$,
-    then $\hat{\theta}_n \convprob \theta^*$ always.
-\end{theorem}
-
-\begin{proof}
-    Recall the following.
-    \begin{itemize}
-        \item The MLE $\hat{\theta}_n$ is
-        the maximizer of the log likelihood $\ell_n(\theta)$ by definition.
-        \item The true parameter value $\theta^*$ is
-        the maximizer of the population log likelihood $\ell(\theta)$
-        by the previous theorem.
-        \item For \emph{any} value $\theta'$,
-        by the LLN, the sequence $\{\frac{1}{n}\ell_n(\theta')\}_{n = 1}^{\infty}$
-        converges in probability to the constant $\ell(\theta')$.
-    \end{itemize}
-    These three points together imply $\hat{\theta}_n \convprob \theta^*$.
-    Roughly speaking, the third bullet point says $\ell_n \convprob \ell$,
-    so the maximizer of $\ell_n$ should also converge in probability
-    to the maximizer of $\ell$.
-    (Yes, this needs to be justified---handwaving a little here.) ~ $\blacksquare$
-\end{proof}
-
-\subsection{Fisher Information}
+\subsection{Defining Score}
 
 We claim the MLE also achieves asymptotic normality.  In fact,
 we claim we even know its asymptotic variance.
@@ -212,6 +46,8 @@ $x$ would be better explained if the proposed $\theta$ were increased, and vice 
     \left[\int_{\mathcal{R}} f_{\theta}(x) \, \mathrm{d}x\right]_{\theta = \theta^*}
     = \frac{\partial}{\partial\theta} [1] = 0. ~~~ \blacksquare \]
 \end{proof}
+
+\subsection{Defining Fisher Information}
 
 Note that the definition of score doesn't care whether $x$ is sampled
 from a distribution that uses the proposed value $\theta$ for its parameter.
