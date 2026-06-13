@@ -1,0 +1,142 @@
+\lecture{2}
+\title{ERM and MLE}
+
+\begin{document}
+
+Let's still assume all data is drawn (i.i.d.) from some fixed distribution $p$,
+but say we don't know what $p$ is.
+
+\begin{remark}
+    This isn't entirely realistic---sensor data, say, might have temporal correlations.
+\end{remark}
+
+\subsection{Empirical Risk Minimization \dots}
+
+Let's start simple: what's the \emph{stupidest} thing we can do?
+
+Well, one idea is to use our training data $\{(x^{(n)}, y^{(n)})\}_{n = 1}^N$ to
+derive an \textbf{empirical distribution} like so:
+\[ \widehat{p}(x, y) := \frac{1}{N} \sum_{n = 1}^N \delta_{(x^{(n)}, y^{(n)})}(x, y). \]
+Here, $\delta_k(x)$ is the Dirac delta function, defined so that
+$\int_{\mathbb{R}^D} \delta_k(x) \, \mathrm{d}x = 1$ and $\delta_k(x) = 0$ for all $x \neq k$.
+
+Using the empirical distribution also gives us an \textbf{empirical risk} that looks like:
+\[ \widehat{\text{risk}}(h) = \frac{1}{N} \sum_{n = 1}^N L(y^{(n)}, h(x^{(n)})). \]
+And so we might choose $h$ according to \textbf{Empirical Risk Minimization (ERM)}, like so:
+\[ h_{\textsc{Erm}} = \argmin_{h \in \mathcal{H}} \widehat{\text{risk}}(h), \]
+where $\mathcal{H}$ is some class of candidate decision rules.
+
+\subsection{\dots Fails Miserably}
+
+Of course, this stupid solution fails in stupid ways.
+
+\begin{quote}
+    \textbf{Example.} Given a training set of spam / not-spam emails,
+    decide whether future emails are spam.
+
+    \textbf{ERM Solution.} An email is declared spam if its timestamp
+    matches that of a spam email in the training set.
+\end{quote}
+
+This is an example of \textbf{overfitting}.  Here are two approaches by which we might fix it:
+\begin{enumerate}
+    \item Restrict the hypothesis class $\mathcal{H}$.
+    \item Approximate $p(x, y)$ differently.
+\end{enumerate}
+Let's take the latter of the two approaches for now: how can we better estimate $p(x, y)$?
+
+\subsection{Maximum Likelihood Estimation}
+
+\begin{remark}
+    This section is written with the assumption of knowledge from
+    18.650 up to Lecture 12.
+\end{remark}
+
+Rather than naively approximating $p(x, y)$ using the empirical distribution $\hat{p}(x, y)$,
+let's suppose $p$ belongs to a \emph{parametric model}
+and estimate the parameter of $p$ via the \emph{MLE}.
+
+\begin{problem}{MLE Example}
+    Suppose, for simplicity, that we only care about
+    approximating the distribution of labels $\{y^{(n)}\}_{n = 1}^N$
+    and ignore the features $\{x^{(n)}\}_{n = 1}^N$.
+    Also assume that the $y^{(n)} \in \{0, 1\}$
+    are sampled from $\mathrm{Ber}(\theta)$ for some $\theta \in [0, 1]$.
+
+    As a function of the samples $\{y^{(n)}\}_{n = 1}^N$,
+    determine the MLE $\hat{\theta}$.
+\end{problem}
+
+\begin{solution}
+    Because the labels $\{y^{(n)}\}_{n = 1}^N$ are independent, the likelihood is:
+    \[ p(\mathcal{D} \mid \theta)
+    = \prod_{n = 1}^N p(y^{(n)} \mid \theta)
+    = \prod_{n = 1}^N \theta^{y^{(n)}} (1 - \theta)^{1 - y^{(n)}}. \]
+    We'd like to maximize the above,
+    so it is natural to differentiate the above with respect to $\theta$\dots
+    but the result seems very messy.
+    The trick, of course, is to consider the log-likelihood:
+    \[ \ell(\theta) = \log p(\mathcal{D} \mid \theta)
+    = \sum_{n = 1}^N \left[
+        y^{(n)} \log \theta + (1 - y^{(n)}) \log (1 - \theta)
+    \right]. \]
+    Technically we should treat $\theta \in \{0, 1\}$ separately.
+    That aside, we can now differentiate $\ell(\theta)$ easily.
+    \[ \frac{d}{d\theta} \ell(\theta)
+    = \frac{1}{\theta}\left[\sum_{n = 1}^N y^{(n)}\right]
+    - \frac{1}{1 - \theta}\left[\sum_{n = 1}^N (1 - y^{(n)})\right]. \]
+    The above equals $0$ exactly at $\hat{\theta} = \frac{1}{N}\sum_{n = 1}^N y^{(n)}$.
+    It now remains to check that this critical point is a maximum:
+    \[ \frac{d^2}{d\theta^2} \ell(\theta)
+    = -\frac{1}{\theta^2}\left[\sum_{n = 1}^N y^{(n)}\right]
+    - \frac{1}{(1 - \theta)^2}\left[\sum_{n = 1}^N (1 - y^{(n)})\right] < 0. \]
+    So the MLE must be $\hat{\theta} = \frac{1}{N}\sum_{n = 1}^N y^{(n)}$. ~ $\blacksquare$
+\end{solution}
+
+\subsection{MLE Advantages and Disadvantages}
+
+The MLE has some advantages!
+\begin{itemize}
+    \item \textbf{Computation.}
+    As long as the likelihood is differentiable,
+    it is very easy and fast to computationally find the MLE.
+    \item \textbf{Reparametrization.}
+    The MLE is invariant to reparametrization
+    by a bijective function $\eta = f(\theta)$.
+    (So nothing unexpected changes if we use, say,
+    $\sigma^2$ as a parameter instead of $\sigma$.)
+\end{itemize}
+
+But it also has some disadvantages.
+\begin{itemize}
+    \item \textbf{No Indication of Certainty.}
+    An MLE computed using ten datapoints
+    looks the same as an MLE computed using ten million.
+    \item \textbf{Poor Performance for Small $N$.}
+    If we sample from $\mathrm{Ber}(0.2)$,
+    it's likely the MLE will be stuck at $\hat{\theta} = 0$ for a while\dots
+    \item \textbf{Likelihood Inflation}.
+    Consider a \emph{mixture model} of two Gaussians
+    $\mathcal{N}(\mu_0, \sigma_0^2)$ and $\mathcal{N}(\mu_1, \sigma_1^2)$
+    with mixture weight $\lambda$.
+    The MLE has the freedom to decide the values of $(\mu_0, \sigma_0^2, \mu_1, \sigma_1^2)$
+    however it wants\dots so what if it does this?
+    \begin{quote}
+        \textbf{MLE Proposal.} Estimate $\hat{\mu}_0 = y^{(1)}$ and $\hat{\sigma}_0^2 \ll 1$.
+        Don't even bother with $\hat{\mu}_1$ and $\hat{\sigma}_1^2$.
+    \end{quote}
+    With this proposal, the likelihood looks like this:
+    \[ p(\mathcal{D} \mid \mu_0, \sigma_0^2, \mu_1, \sigma_1^2)
+    \geq \left[(1 - \lambda) \cdot \frac{1}{\sqrt{2\pi \sigma_0^2}}\right]
+    \cdot \prod_{n = 2}^N \left[
+        \lambda \cdot \frac{1}{\sqrt{2\pi \sigma_1^2}} \cdot
+        \exp\left(-\frac{(y^{(n)} - \mu_1)^2}{2\sigma_1^2}\right)
+    \right]. \]
+    For choices of $\sigma_0^2$ sufficiently small,
+    the MLE can have as big a likelihood as it wants!
+    But even though it's maximizing the likelihood,
+    picking an estimator by only looking at a single sample $y^{(1)}$
+    does not seem very helpful\dots
+\end{itemize}
+
+\end{document}
