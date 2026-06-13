@@ -1,0 +1,134 @@
+\lecture{13}
+\title{Method of Moments and Bootstrap}
+
+\begin{document}
+
+\subsection{Method of Moments Estimator}
+
+Let's briefly discuss one last method of defining an estimator;
+we won't go into too much detail.
+
+\textbf{Definition.} Given a random variable $X$,
+its \textbf{$j^{\text{th}}$ moment} is $\alpha_j := \mathbb{E}[X^j]$.
+
+This lets us define the \textbf{Method of Moments Estimator}.
+
+\begin{quote}
+    \textbf{MoM Estimator.}
+    We have (i.i.d.) samples $\{X_i\}_{i = 1}^n \sim f_{\theta}$,
+    where $\theta = (\theta_1, \theta_2, \dots, \theta_k)$
+    is a vector of all $k$ parameters of interest.
+    \begin{enumerate}
+        \item First, estimate the first $k$ moments of $X$ via
+        $\hat{\alpha}_j = \frac{1}{n} \sum_{i = 1}^n X_i^j$.
+        \item This gives us $k$ equations $\{\hat{\alpha}_j = \alpha_j\}$,
+        where the LHS of each equation is a known constant,
+        and the RHS of each equation is a known function of
+        $(\theta_1, \theta_2, \dots, \theta_k)$.
+        \item Since we have $k$ equations and $k$ unknowns,
+        we can solve for $(\theta_1, \theta_2, \dots, \theta_k)$.
+        This solution is our estimate.
+    \end{enumerate}
+\end{quote}
+
+\begin{remark}
+    The typical estimator $\hat{\theta}_n := \bar{X}_n$ for the mean of a distribution
+    is an example of the $k = 1$ case of an MoM estimator.
+\end{remark}
+
+When solving the system of equations in closed form is not possible,
+we might resort to the Newton-Raphson method (e.g.),
+just as we did for computing the MLE.
+
+It also turns out that the MoM estimator is consistent and asymptotically normal,
+with a computable asymptotic variance $\Sigma^{\mathrm{MoM}}$;
+roughly speaking, the asymptotic variance found by applying the delta method
+to the inverse of the moment map.
+Note that the MoM estimator, unlike the MLE,
+does not meet the Cramér-Rao Lower Bound.
+
+\subsection{Motiviating Bootstrapping}
+
+We care about asymptotic variance of estimators
+because it's needed to write confidence intervals.
+Recall from Lecture 8:
+
+\begin{theorem}{Constructing CIs}
+    Suppose $\hat{\theta}_n$ is an asymptotically normal estimator of $\theta$
+    with asymptotic variance $\sigma^2$.  Then:
+    \[ C_n := \left( \hat{\theta}_n - z_{\alpha / 2} \frac{\sigma}{\sqrt{n}},
+    \hat{\theta}_n + z_{\alpha / 2} \frac{\sigma}{\sqrt{n}} \right) \]
+    has asymptotic coverage $(1 - \alpha)$, where $z_{\alpha / 2}$
+    is such that $\Phi(z_{\alpha / 2}) - \Phi(-z_{\alpha / 2}) = 1 - \alpha$.
+\end{theorem}
+
+There are three specific kinds of estimators
+we've discussed so far, and we know the asymptotic variance of all of them.
+\begin{itemize}
+    \item Given the estimator $\hat{\theta}_n = \bar{X}_n$\dots
+    its asymptotic variance is found by the CLT.
+    \item Given the estimator $\hat{\theta}_n = g(\bar{X}_n)$\dots
+    its asymptotic variance is found by the Delta method.
+    \item Given the estimator $\hat{\theta}_n = \theta^{\mathrm{MLE}}$\dots
+    its asymptotic variance is found by the Fisher information.
+\end{itemize}
+In general, though, it might not be so easy to find the asymptotic variance.
+\begin{quote}
+    \textbf{Example.} Let $\theta$ be the median of the distribution $\mathrm{Poisson}(\lambda)$;
+    formally, the unique integer $\theta$ such that:
+    \[ \sum_{k = 0}^{\theta - 1} e^{-\lambda} \frac{\lambda^k}{k!} < 0.5
+    ~~~ \text{ and } ~~~
+    \sum_{k = 0}^{\theta} e^{-\lambda} \frac{\lambda^k}{k!} \geq 0.5. \]
+    We might naturally consider the estimator $\hat{\theta}_n :=
+    \mathrm{Median}(X_1, X_2, \dots, X_n)$.
+    But what is its asymptotic variance\dots?
+\end{quote}
+We need another way to compute standard errors---that way is called \textbf{bootstrapping}.
+
+\subsection{Bootstrapping}
+
+The idea is to suppose we had $B$ batches of $n$ samples each.
+Then each of the $B$ batches gives its own value for the estimator $\hat{\theta}$.
+\[ \{X_{1, 1}, X_{1, 2}, \dots, X_{1, n}\} \mapsto \hat{\theta}_1 ~~~ \parallel ~~~
+\{X_{2, 1}, X_{2, 2}, \dots, X_{2, n}\} \mapsto \hat{\theta}_2 ~~~ \parallel ~~~
+\dots ~~~ \parallel ~~~
+\{X_{B, 1}, X_{B, 2}, \dots, X_{B, n}\} \mapsto \hat{\theta}_B  \]
+\begin{remark}
+    Previously, $\hat{\theta}_n$ denoted
+    the value of the estimator that results from taking $n$ samples.
+    Now, $\hat{\theta}_b$ denotes the value of the estimator from the $b^{\text{th}}$
+    batch of samples.
+\end{remark}
+We could then use these $B$ values $\{\hat{\theta}_b\}_{b = 1}^B$
+to estimate the variance of $\hat{\theta}$ like so:
+\[ \hat{\mathbb{V}[\hat{\theta}]}
+= \frac{1}{B} \sum_{b = 1}^B \left(
+    \hat{\theta}_b - \frac{1}{B} \sum_{c = 1}^B \hat{\theta}_c
+\right)^2 \]
+The issue, however, is that we might not have $Bn \gg n$ samples.
+The trick is to consider the following.
+
+\textbf{Definition.} Given $n$ samples $\{X_1, \dots, X_n\}$,
+the \textbf{empirical distribution} is the probability distribution:
+\[ \hat{\mathbb{P}}_n := \mathrm{Uniform}(\{X_1, \dots, X_n\}). \]
+In other words, $\hat{\mathbb{P}}_n$ just returns
+one of the $n$ samples $\{X_i\}_{i = 1}^n$ uniformly at random.
+
+\begin{remark}
+    Note that the distribution $\hat{\mathbb{P}}_n$, itself, is random,
+    because it depends on the values of random variables.
+\end{remark}
+
+\textbf{Definition.} Given $n$ samples $\{X_1, \dots, X_n\}$,
+a \textbf{bootstrap sample} is a collection of $m$ random variables
+$\{X_1^*, \dots, X_m^*\}$ sampled (i.i.d.) from the empirical distribution
+$\mathrm{Uniform}(\{X_1, \dots, X_n\})$.
+
+\textbf{Example.} Given the $n = 3$ samples $\{5.2, 7.3, 6.8\}$,
+one possible bootstrap sample of size $m = 4$
+is $\{7.3, 7.3, 6.8, 7.3\}$.
+
+Thus, we don't actually need to take all $Bn \gg n$ of those samples.
+We can instead just take $B$ bootstrap samples of size $n$.
+
+\end{document}
