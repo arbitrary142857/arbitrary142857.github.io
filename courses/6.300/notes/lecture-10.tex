@@ -1,0 +1,329 @@
+\lecture{10}
+\title{Frequency Response and Filtering}
+
+\begin{document}
+
+\subsection{Lecture: Frequency Response}
+
+\begin{theorem}{Complex Exponential Convolution}
+    Consider an LTI system given by $x[n] \mapsto (x * h)[n]$.
+    Suppose the Fourier transform of $h[n]$ is $H(\Omega)$.
+    Then the system sends $e^{j\Omega n} \mapsto H(\Omega) e^{j\Omega n}$.
+
+    The same goes for CT signals:
+    if the Fourier transform of $h(t)$ is $H(\omega)$,
+    then the system sends $e^{j\omega t} \mapsto H(\omega) e^{j\omega t}$.
+\end{theorem}
+
+\begin{proof}
+    Just follow what the convolution does.
+    \[ e^{j\Omega n} ~~~\mapsto ~~~ \sum_{m = -\infty}^{\infty} e^{j\Omega (n - m)} h[m]
+    = e^{j\Omega n} \left[ \sum_{m = -\infty}^{\infty} h[m] e^{-j\Omega m} \right]
+    = e^{j\Omega n} \left[ H(\Omega) \right]. \]
+    That last step is just the definition of the Fourier transform.
+    The argument looks identical for CT signals. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    Complex exponentials are eigenfunctions of LTI systems,
+    and the frequency response $H(\Omega)$ is the eigenvalue.
+\end{remark}
+
+\begin{problem}
+    Determine the response of an LTI system to the input $x[n] = \cos(\Omega n)$,
+    based on the unit-sample response $h[n]$ and its Fourier transform $H(\Omega)$.
+    Assume all signals are real-valued.
+\end{problem}
+
+\begin{solution}
+    The point is that $x[n] = \frac{1}{2}\left(e^{j \Omega n} + e^{-j \Omega n}\right)$,
+    and that LTI systems are linear.  Notice:
+    \[ e^{-j \Omega n} ~~~ \mapsto ~~~
+    \sum_{m = -\infty}^{\infty} e^{-j\Omega(n - m)} h[m]
+    = e^{-j \Omega n} \left[\sum_{m = -\infty}^{\infty} h[-m] e^{-j\Omega m}\right]
+    = e^{-j \Omega n} \left[H^*(\Omega)\right], \]
+    where $H^*(\Omega)$ is the complex conjugate of $H(\Omega)$.
+    Thus, the response is:
+    \[ \cos(\Omega n) ~~~ \mapsto ~~~
+    \frac{1}{2}\left(H(\Omega) e^{j \Omega n} + H^*(\Omega) e^{-j \Omega n}\right)
+    = \mathrm{Re}\left(H(\Omega) e^{j \Omega n}\right)
+    = |H(\Omega)| \cos\left(\Omega n + \angle H(\Omega)\right). \]
+    In the above, $\angle H(\Omega)$ denotes the phase of $H(\Omega)$.
+\end{solution}
+
+\textbf{Definition.} The Fourier transform $H(\Omega)$ / $H(\omega)$
+of the unit-sample / impulse response is called the \textbf{frequency response}.
+
+\subsection{Lecture: LTIs by Frequency Response}
+
+Last lecture, we saw that every LTI system could be defined
+by a single unit-sample / impulse response.
+This lecture, we see that another natural way to define LTI systems
+is by their frequency response.
+
+\begin{theorem}{LTI = Frequency Multiplication}
+    Consider an LTI system $x[n] \mapsto (x * h)[n]$.
+    Then if $x[n]$ has response $y[n]$,
+    we have $Y(\Omega) = H(\Omega) \cdot X(\Omega)$.
+    In other words,
+    the Fourier transform of a convolution
+    is the product of Fourier transforms.
+\end{theorem}
+
+\begin{proof}
+    Just some summation manipulation.
+    \begin{align*}
+        Y(\Omega) & = \sum_{n = -\infty}^{\infty} y[n] \cdot e^{-j\Omega n} \\
+        & = \sum_{n = -\infty}^{\infty} \left(
+            \sum_{m = -\infty}^{\infty} x[m] \cdot h[n - m]
+        \right) \cdot e^{-j\Omega n}  ~~~ \text{ because } y = x * h \\
+        & = \sum_{m = -\infty}^{\infty} x[m] \cdot \left(
+            \sum_{n = -\infty}^{\infty} h[n - m] \cdot e^{-j \Omega n}
+        \right) ~~~ \text{ by swapping the sum} \\
+        & = \sum_{m = -\infty}^{\infty} x[m] \cdot \left(
+            \sum_{n' = -\infty}^{\infty} h[n'] e^{-j\Omega(n' + m)}
+        \right) ~~~ \text{ by reparametrizing } n' = n - m \\
+        & = \left(\sum_{m = -\infty}^{\infty} x[m] e^{-j \Omega m}\right) \cdot
+        \left(\sum_{n' = -\infty}^{\infty} h[n'] e^{-j\Omega n'}\right)
+        = X(\Omega) H(\Omega). ~ \blacksquare
+    \end{align*}
+\end{proof}
+
+\begin{problem}
+    An LTI system $x[n] \mapsto y[n]$
+    satisfies $y[n] - \alpha y[n - 1] = x[n]$ and $y[n] = 0$ when $n < 0$.
+    Find the frequency response.
+\end{problem}
+
+\begin{solution}
+    We present three different approaches.
+    The first is to solve for the unit-sample response
+    and take its Fourier transform.
+    \begin{quote}
+        \textbf{Solution 1.} Taking the input $x[n]$
+        to be the unit-sample signal $\delta[n]$,
+        we find:
+        \[
+        h[n] = \begin{cases}
+            \alpha^n & \text{ for all } n \geq 0. \\
+            0 & \text{ for all } n < 0.
+        \end{cases}
+        \implies
+        H(\Omega) = \sum_{n = -\infty}^{\infty} h[n] e^{-j \Omega n}
+        = \frac{1}{1 - \alpha e^{-j \Omega}}.
+        \]
+    \end{quote}
+    Another approach is to find the response of $e^{j \Omega n}$ directly.
+    \begin{quote}
+        \textbf{Solution 2.} Taking the input $x[n]$
+        to be $e^{j \Omega n}$, we expect the output $y[n]$
+        to be $H(\Omega) e^{j \Omega n}$.  Therefore,
+        \[ H(\Omega) e^{j \Omega n} - \alpha H(\Omega) e^{j \Omega (n - 1)} = e^{j \Omega n}
+        ~~~ \implies ~~~
+        H(\Omega) - \alpha H(\Omega) e^{-j \Omega} = 1
+        ~~~ \implies ~~~
+        H(\Omega) = \frac{1}{1 - \alpha e^{-j \Omega}}. \]
+    \end{quote}
+    The third solution is to take the Fourier transform of the given relationship.
+    \begin{quote}
+        \textbf{Solution 3.} Given
+        $y[n] - \alpha y[n - 1] = x[n]$, the Fourier transform of the LHS
+        must equal that of the RHS, so:
+        \[ Y(\Omega) - \alpha e^{-j \Omega} Y(\Omega) = X(\Omega)
+        ~~~ \implies ~~~
+        Y(\Omega) = \left(\frac{1}{1 - \alpha e^{-j \Omega}}\right) X(\Omega)
+        ~~~ \implies ~~~
+        H(\Omega) = \frac{1}{1 - \alpha e^{-j \Omega}}. \]
+    \end{quote}
+    Expectedly, all three solutions give the same answer.
+\end{solution}
+
+\subsection{Lecture: Low-Pass Filters}
+
+The frequency response also lets us easily determine
+whether an LTI system is, say, a low-pass filter.
+
+\begin{problem}
+    Determine the frequency response of
+    $y[n] = \frac{1}{3}(x[n - 1] + x[n] + x[n + 1])$.
+    Is it a low-pass filter?
+\end{problem}
+
+\begin{solution}
+    Using any approach you'd like (try all three in your head!),
+    we discover that:
+    \[ H(\Omega) = \frac{1}{3} e^{j \Omega} + \frac{1}{3} + \frac{1}{3} e^{-j \Omega}
+    = \frac{1}{3}\left(1 + 2\cos(\Omega)\right). \]
+    The graph of $H(\Omega)$ is shown below.
+    \begin{center}
+        \frame{\includegraphics[width=0.35\textwidth]{lecture-10/not-low-pass}}
+    \end{center}
+    A reminder on DT signals and their Fourier transforms:
+    \begin{itemize}
+        \item Because $e^{j\Omega n} = e^{j(\Omega \pm 2\pi) n}$,
+        we can take all frequencies $\Omega$ modulo $2\pi$,
+        meaning we may assume $\Omega \in (-\pi, \pi)$.
+        \item Assuming $h[n]$ is real,
+        the behavior of $H(\Omega)$ over $(-\pi, 0)$
+        must be the conjugate of that over $(0, \pi)$.
+    \end{itemize}
+    Therefore, it suffices only to investigate the behavior of $H(\Omega)$
+    over the ``baseband'' interval $\Omega \in (0, \pi)$.
+    Low frequencies are those close to $0$,
+    and high frequencies are those close to $\pi$.
+
+    This is not a low-pass filter;
+    it does not filter out high frequencies.
+\end{solution}
+
+\begin{problem}
+    Determine the frequency response of
+    $y[n] = \frac{1}{4}(x[n - 1] + 2x[n] + x[n + 1])$.
+    Is it a low-pass filter?
+\end{problem}
+
+\begin{solution}
+    Again, using any approach you'd like, we discover that:
+    \[ H(\Omega) = \frac{1}{4}e^{j \Omega} + \frac{1}{2} + \frac{1}{4}e^{-j \Omega}
+    = \frac{1}{2}\left(1 + \cos(\Omega)\right). \]
+    The graph of $H(\Omega)$ is shown below.
+    \begin{center}
+        \frame{\includegraphics[width=0.35\textwidth]{lecture-10/low-pass}}
+    \end{center}
+    This is a low-pass filter,
+    since $H(\Omega)$ grows smaller as $\Omega$ grows towards $\pi$.
+\end{solution}
+
+\begin{remark}
+    Given the frequency response $H(\Omega) = \frac{1}{1 - \alpha e^{-j \Omega}}$,
+    argue that the following are true, assuming $\alpha \in (0, 1)$.
+    \begin{itemize}
+        \item Low baseband frequencies are amplified,
+        whereas high baseband frequencies are attenuated.
+        \item Both low and high baseband frequencies are delayed.
+    \end{itemize}
+\end{remark}
+
+\subsection{Frequency Response for CT Signals}
+
+By an identical argument as before, everything stated before
+applies just as well for CT signals.
+
+\begin{theorem}{LTI = Frequency Multiplication}
+    Consider an LTI system with frequency response $H(\omega)$.
+    If the CT signal $x(t)$ has response $y(t)$,
+    then $Y(\omega) = H(\omega) \cdot X(\omega)$.
+\end{theorem}
+
+\begin{problem}
+    An LTI system $x(t) \mapsto y(t)$ satisfies
+    $y(t) + \alpha \frac{d}{dt} y(t) = 2x(t)$.
+    Find the frequency response.
+\end{problem}
+
+\begin{solution}
+    We present two different approaches.
+    The first is to find the response of $e^{j \omega t}$ directly.
+    \begin{quote}
+        \textbf{Solution 1.}
+        Taking the input $x(t)$ to be $e^{j \omega t}$,
+        we expect the output $y(t)$ to be $H(\omega) e^{j \omega t}$.
+        Therefore,
+        \[ H(\omega) e^{j \omega t}
+        + j \omega \alpha H(\omega) e^{j \omega t}
+        = 2 e^{j \omega t}
+        ~~~ \implies ~~~
+        H(\omega) + j \omega \alpha H(\omega) = 2
+        ~~~ \implies ~~~
+        H(\omega) = \frac{2}{1 + j \omega \alpha}. \]
+    \end{quote}
+    The second approach is to take the Fourier transform of the given relationship.
+    \begin{quote}
+        \textbf{Solution 2.}
+        Given $y(t) + \alpha \frac{d}{dt} y(t) = 2x(t)$,
+        the Fourier transform of the LHS must equal that of the RHS, so:
+        \[ Y(\omega) + j \omega \alpha Y(\omega) = 2 X(\omega)
+        ~~~ \implies ~~~
+        Y(\omega) = \left(\frac{2}{1 + j \omega \alpha}\right) X(\omega)
+        ~~~ \implies ~~~
+        H(\omega) = \frac{2}{1 + j \omega \alpha}. \]
+    \end{quote}
+    Taking $x(t)$ to be $\delta(t)$ is not one of these solutions;
+    it's too clunky.
+\end{solution}
+
+\begin{remark}
+    Given the frequency response $H(\omega) = \frac{2}{1 + j \omega \alpha}$,
+    argue that the following are true, assuming $\alpha \in (0, 1)$.
+    \begin{itemize}
+        \item Low frequencies are amplified,
+        whereas high frequencies are attenuated.
+        \item Both low and high frequencies are delayed.
+    \end{itemize}
+\end{remark}
+
+\subsection{Recitation: Filter Types}
+
+Pictured below are four filter types:
+low-pass, high-pass, band-pass, and band-stop.
+\begin{center}
+    \frame{\includegraphics[width=0.45\textwidth]{lecture-10/filter-types}}
+\end{center}
+
+\begin{problem}
+    Consider a low-pass DT-signal filter
+    that only accepts frequencies below $\Omega_c$.
+    Determine $h[n]$ for this filter.
+\end{problem}
+
+\begin{solution}
+    The frequency response $H(\Omega)$ looks like this:
+    \[ H(\Omega) = \begin{cases}
+    1 & \text{ if } \Omega \in (-\Omega_c, \Omega_c) \\
+    0 & \text{ otherwise. }
+    \end{cases} \]
+    Since $H(\Omega)$ is the Fourier transform of $h[n]$, we have:
+    \[ h[n] = \frac{1}{2\pi} \int_{-\pi}^\pi H(\Omega) e^{j \Omega n} \, \mathrm{d}\Omega
+    = \frac{1}{2\pi} \int_{-\Omega_c}^{\Omega_c} e^{j \Omega n} \, \mathrm{d}\Omega
+    = \frac{\sin(\Omega_c n)}{\pi n}. \]
+\end{solution}
+
+\subsection{Recitation: Cascaded Systems}
+
+Consider the \textbf{cascaded system} below.
+It is the composition of three systems:
+one of which is a low-pass filter,
+and two of which are the maps $x[n] \mapsto (-1)^n \cdot x[n]$.
+
+\begin{center}
+    \frame{\includegraphics[width=0.45\textwidth]{lecture-10/cascaded-system}}
+\end{center}
+
+Interestingly, we may note the following:
+\begin{itemize}
+    \item The maps $x[n] \mapsto (-1)^n \cdot x[n]$
+    are linear but not time-invariant.
+    \item The low-pass filter is linear and time-invariant.
+    (It's an LTI system.)
+    \item The cascaded system, altogether,
+    is both linear and time-invariant!
+    \item The cascaded system is a high-pass filter (HPF).  Here's why.
+    \begin{quote}
+        \emph{Proof:}
+        Say the LPF has a unit-sample frequency of $h[n]$.  Then:
+        \[ y[n] = (-1)^n \cdot \sum_{m = -\infty}^{\infty} (-1)^m \cdot x[m] h[n - m]
+        = \sum_{m = -\infty}^{\infty} x[m] \underbrace{\left[ (-1)^{n - m}h[n - m] \right]}_{
+            h'[n - m]
+        }. \]
+        So the cascaded system has a unit-sample frequency
+        of $h'[n] := (-1)^n h[n] = e^{j \pi n} h[n]$.
+        Therefore, $H'(\Omega) = H(\Omega - \pi)$.
+
+        Graphically, this means that the accepted band of low frequencies in $H(\Omega)$
+        gets translated to become an accepted band of high frequencies in $H'(\Omega)$,
+        so this is an HPF.
+    \end{quote}
+    
+\end{itemize}
+
+\end{document}
