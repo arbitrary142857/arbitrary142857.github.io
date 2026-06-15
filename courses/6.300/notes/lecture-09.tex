@@ -1,0 +1,44 @@
+\lecture{9}
+\title{Unit-Sample Response and Convolution}
+
+\begin{document}
+
+\subsection{Lecture and Recitation: Unit-Sample Response and Convolution}
+
+Let's just consider LTI systems between DT signals for now.
+
+\textbf{Definition.} Given two signals $a[n]$ and $b[n]$,
+their \textbf{convolution} is $(a * b)[n] := \sum_{m = -\infty}^{\infty} a[m] \cdot b[n - m]$.
+
+\begin{theorem}{LTI = Convolution}
+    Suppose $\delta[n] \mapsto h[n]$ under an LTI system on DT signals.  Then:
+    \[ x[n] \mapsto \sum_{m = -\infty}^{\infty} x[m] \cdot h[n - m] =: (x * h)[n]. \]
+\end{theorem}
+
+\begin{proof}
+    Immediate from linearity and time-invariance
+    after writing $x[n] = \sum_{m = -\infty}^{\infty} x[m] \delta[n - m]$.
+\end{proof}
+
+\textbf{Definition.} The \textbf{unit-sample response} of a system on DT signals
+is the image $h[n]$ of the Kronecker delta signal $\delta[n]$.
+
+It's not hard to generalize this to CT signals, too.
+
+\textbf{Definition.} Given two signals $f(t)$ and $g(t)$,
+their \textbf{convolution} is $(f * g)(t) := \int_{-\infty}^{\infty}
+f(\tau) \cdot g(t - \tau) \, \mathrm{d}\tau$.
+
+\textbf{Definition.} The \textbf{impulse response} of a system on CT signals
+is the image $h(t)$ of the Dirac delta signal $\delta(t)$.
+
+\begin{theorem}{LTI = Convolution}
+    Suppose $\delta(t) \mapsto h(t)$ under an LTI system on CT signals.  Then:
+    \[ x(t) \mapsto \int_{-\infty}^{\infty} x(\tau) \cdot h(t - \tau) \, \mathrm{d}\tau
+    =: (x * h)(t). \]
+\end{theorem}
+
+The point is that every LTI system is a convolution,
+defined solely by a single unit-sample / impulse response.
+
+\end{document}
