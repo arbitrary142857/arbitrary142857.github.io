@@ -1,0 +1,49 @@
+\lecture{8}
+\title{Systems}
+
+\begin{document}
+
+\subsection{Lecture and Recitation: Systems}
+
+\textbf{Definition.} A \textbf{system} is a function
+that maps signals $x[n]$ to signals $y[n]$.
+\begin{itemize}
+    \item Such a system is \textbf{additive} if
+    $x_1[n] + x_2[n] \mapsto y_1[n] + y_2[n]$.
+    \item Such a system  is \textbf{homogeneous} if
+    $\lambda x[n] \mapsto \lambda y[n]$ for any constant $\lambda$.
+    \item Such a system  is \textbf{linear} if
+    it is both additive and homogeneous.
+    \item Such a system  is \textbf{time-invariant} if
+    $x[n - n_0] \mapsto y[n - n_0]$ for all integers $n_0$.
+\end{itemize}
+
+\begin{remark}
+    We call the output signal $y[n]$ of a system
+    the \textbf{response} to the input signal $x[n]$.
+
+    One might imagine the input signal as, say,
+    the voltage supplied to an AC circuit,
+    and the output signal as, say,
+    the voltage across a resistor.
+    The output signal, in some sense, is a \emph{response} to the input signal.
+\end{remark}
+
+\textbf{Example.} Consider the following systems.
+\begin{itemize}
+    \item The system $x[n] \mapsto x[n - 1] + x[n] + x[n + 1]$
+    is linear and time-invariant.
+    \item The system $x[n] \mapsto nx[n]$
+    is linear but not time-invariant.
+    \item The system $x[n] \mapsto x[n] + 1$
+    is not linear but time-invariant.
+    \item The system $x[n] \mapsto 0$ (the constant $0$ signal)
+    is linear and time-invariant.
+\end{itemize}
+
+\textbf{Definition.} A system is said to be \textbf{LTI}
+if it is both linear (L) and time-invariant (TI).
+
+From now on, we will restrict our attention only to LTI systems.
+
+\end{document}
