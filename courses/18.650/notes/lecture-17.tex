@@ -1,0 +1,43 @@
+\lecture{17}
+\title{$p$-Values}
+
+\begin{document}
+
+Note that the behavior of a test $\Psi: \{\mathrm{data}\} \to \{0, 1\}$
+is a function of the level $\alpha$ that is set.
+
+\textbf{Definition.}
+Given a test $\Psi$ and some inputted data $\{X_i\}_{i = 1}^n$,
+the \textbf{$p$-value} of $\Psi$ is the smallest level $\alpha$
+at which $\Psi$ rejects $H_0$.
+
+Suppose we perform a test and get a $p$-value of\dots
+\begin{itemize}
+    \item \dots less than $1\%$.
+    Then we say we have \emph{very strong} evidence against $H_0$.
+    \item \dots between $1\%$ and $5\%$.
+    Then we say we have \emph{strong} evidence against $H_0$.
+    \item \dots between $5\%$ and $10\%$.
+    Then we say we have \emph{weak} evidence against $H_0$.
+    \item \dots greater than $10\%$.
+    Then we say we have \emph{little or no} evidence against $H_0$.
+\end{itemize}
+
+\begin{remark}
+    In most settings,
+    we can simplify the definition of a $p$-value
+    to just be ``the probability of observing results as
+    or more extreme than what we did,
+    assuming that $H_0$ was true''.
+\end{remark}
+
+\textbf{Example.} Suppose we observe $\bar{X}_n = 33.4$ with $n = 164$ and $\hat{\sigma} = 12$,
+and we are doing a test on $H_0: \mu \leq 30$ and $H_1: \mu > 30$.
+Using the Wald test $\Psi$, our test statistic is:
+\[ T_n = \frac{\sqrt{n}}{\hat{\sigma}}(\bar{X}_n - 30)
+= \frac{\sqrt{164}}{12}(33.4 - 30) = 3.62. \]
+The test $\Psi$ rejects $H_0$ if $3.62 > z_{\alpha}$.
+The least $\alpha$ for which this occurs is $1 - \Phi(3.62) \approx 0.02\%$,
+so the $p$-value is $0.02\%$, and we have very strong evidence against $H_0$.
+
+\end{document}
