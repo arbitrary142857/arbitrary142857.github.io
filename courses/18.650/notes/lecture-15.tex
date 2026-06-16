@@ -1,0 +1,63 @@
+\lecture{15}
+\title{Introduction to Hypothesis Testing}
+
+\begin{document}
+
+\subsection{Hypothesis Testing}
+
+\textbf{Definition.}
+A \textbf{test} is a function $\Psi: \mathrm{data} \to \{0, 1\}$.
+Equivalently, a test is an estimator of a binary value.
+\begin{itemize}
+    \item The \textbf{rejection region} of a test $\Psi$
+    is the set $\Psi^{-1}(1)$ of all data for which $\Psi(\mathrm{data}) = 1$.
+    \item A \textbf{test statistic} is a function that summarizes the data
+    and is sufficient for computing a test $\Psi$.
+\end{itemize}
+
+In other words, a test is a process of reading in data
+and answering a question about the population based on that data.
+Given a parametric model $\{\mathbb{P}_{\theta} \mid \theta \in \Theta\}$,
+the question a test will answer must look like
+``Does $\theta \in \Theta_0$ or $\theta \in \Theta_1$?'',
+where $\Theta = \Theta_0 \sqcup \Theta_1$.
+
+\textbf{Definition.} The \textbf{null hypothesis} $H_0$ is the claim that $\theta \in \Theta_0$,
+and the \textbf{alternative} $H_1$ is the claim that $\theta \in \Theta_1$.
+
+The distinction is that the null hypothesis is the ``status quo'' (e.g.
+``the placebo outperforms the drug'').
+
+\subsection{Error Types}
+
+Of course, a test $\Psi$ only reads in sample data,
+so the answer that it gives won't always be correct.
+
+\textbf{Definition.} A \textbf{Type I} error occurs
+if $H_0$ is true but $\Psi = 1$, and
+a \textbf{Type II} error occurs
+if $H_1$ is true but $\Psi = 0$.
+
+Type I is conventionally the more serious error:
+it is worse to wrongly declare ``the drug outperforms the placebo''.
+Note that the probability of a Type I / Type II error
+depends on the true population parameter $\theta$.
+
+\textbf{Definition.} The \textbf{size} of a test $\Psi$ is
+$\mathrm{size}(\Psi) := \max_{\theta \in \Theta_0} \mathbb{P}_{\theta}(\Psi = 1)$:
+the maximum possible probability of a Type I error.
+A test $\Psi$ is said to have \textbf{level} $\alpha$
+if $\mathrm{size}(\Psi) \leq \alpha$.
+
+\textbf{Definition.} The \textbf{power} of a test $\Psi$ is the function
+$\beta(\theta) = \mathbb{P}_{\theta}(\Psi = 1)$.
+
+\begin{center}
+    \frame{\includegraphics[width=0.35\textwidth]{lecture-15/power}}
+\end{center}
+
+In the above, the size of $\Psi$ is the $y$-intercept $\alpha$.
+A perfect test would have $\beta(\theta)$ be the
+\href{https://mathworld.wolfram.com/HeavisideStepFunction.html}{Heaviside step function}.
+
+\end{document}
