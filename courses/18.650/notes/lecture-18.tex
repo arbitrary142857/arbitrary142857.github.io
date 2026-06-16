@@ -1,0 +1,96 @@
+\lecture{18}
+\title{Goodness of Fit and T Tests}
+
+\begin{document}
+
+\subsection{The Chi-Squared Distribution}
+
+\textbf{Definition.}
+A random variable $X$ is said to have \underline{``a $\chi^2$ distribution
+with $k$ degrees of freedom''}, denoted $X \sim \chi_k^2$,
+if and only if $X$ is distributed as
+$Z_1^2 + \dots + Z_k^2$, where $\{Z_i\}_{i = 1}^k$
+are i.i.d. samples from $\mathcal{N}(0, 1)$.
+
+\begin{center}
+    \frame{\includegraphics[width=0.45\textwidth]{lecture-18/chi-square}}
+\end{center}
+
+Note that $\mathbb{E}[X] = k$ and $\mathbb{V}[X] = 2k$ if $X \sim \chi_k^2$.
+
+\textbf{Definition.} The $\alpha^{\text{th}}$ quantile of the $\chi_k^2$ distribution
+is denoted $\chi^2_{k, \alpha}$, where $\mathbb{P}(X > \chi^2_{k, \alpha}) = \alpha$
+given $X \sim \chi_k^2$.
+
+\subsection{Goodness of Fit Tests}
+
+Suppose we have a random variable $X$ that takes on $k$ discrete values $\{1, 2, \dots, k\}$.
+For example, $X$ might be the color of a randomly selected jellybean,
+either red, green, blue, or black.
+
+Suppose such a random variable $X$ has a true PMF $f: \{1, 2, \dots, k\} \to [0, 1]$
+and an expected PMF $f_0$.  A \textbf{goodness of fit} test
+determines whether $H_0 : f = f_0$ or $H_1: f \neq f_0$.
+
+\begin{theorem}{Pearson's $\chi^2$ GoF Test}
+    Suppose we seek a goodness of fit test with level $\alpha$ as described above,
+    and our data consists of $n$ samples $\{X_i\}_{i = 1}^n$ taken (i.i.d.) from $X$.
+    \begin{itemize}
+    \item Using the data, compute $\{O_1, O_2, \dots, O_k\}$
+    where $O_j$ is the \# of the $\{X_i\}_{i = 1}^n$ that are equal to $j$.
+    \item Using the expected PMF $f_0$, compute $\{E_1, E_2, \dots, E_k\}$,
+    where $E_j$ is the ``expected'' count $E_j := n f_0(j)$ assuming $H_0$.
+    \end{itemize}
+    Then our test statistic is $T_n := \sum_{j = 1}^k \frac{(O_j - E_j)^2}{E_j}$,
+    we claim that $T_n \rightsquigarrow \chi_{k - 1}^2$ as $n \to \infty$,
+    and our test is $\Psi := \mathds{1}(T_n > \chi_{k - 1, \alpha}^2)$.
+\end{theorem}
+
+\begin{proof}
+    The mathematically-nontrivial part of this test is the claim that
+    $T_n \rightsquigarrow \chi_{k - 1}^2$ as $n \to \infty$.
+    The proof of this claim is fairly computationally intensive,
+    so we omit it here.  (18.650 does not cover it.) ~ $\blacksquare$
+\end{proof}
+
+\subsection{The T-Test}
+
+Recall that the Wald test for population means relies on the following two approximations:
+\begin{enumerate}
+    \item The test statistic $T_n := \frac{\bar{X}_n - \mu}{\sigma / \sqrt{n}}$
+    is approximately $\mathcal{N}(0, 1)$ by the CLT.
+    \item We can approximate $\sigma \approx \hat{\sigma} := \sqrt{s_n^2}$
+    by the LLN, CLT, and Slutsky's.
+    (See \href{1-3.html#applying-slutsky-s-theorem}{Lectures 1-3 notes}.)
+\end{enumerate}
+Suppose that our population distribution is approximately normal:
+$X \sim \mathcal{N}(\mu, \sigma^2)$.
+Then approximation \#1 holds---it's not even an approximation!
+But for small $n$, approximation \#2, which says
+$T_n \approx \frac{\bar{X}_n - \mu}{\hat{\sigma} / \sqrt{n}}$, needs refinement.
+
+\begin{theorem}{T-Test}
+    Suppose $X_1, \dots, X_n \sim \mathcal{N}(\mu, \sigma^2)$ (i.i.d.)
+    and $\hat{\sigma}^2 = \frac{1}{n - 1} \sum_{i = 1}^n (X_i - \bar{X}_n)^2$.
+    Then we have:
+    \[ \frac{\bar{X}_n - \mu}{\hat{\sigma} / \sqrt{n}} \sim t_{n - 1}
+    ~~~~~~ \text{ where } ~~~~~~
+    t_{\nu} \text{ has PDF }
+    f(x) := \frac{
+        \Gamma\left(\frac{\nu + 1}{2}\right)
+    }{
+        \sqrt{\nu\pi} \cdot \Gamma\left(\frac{\nu}{2}\right)
+    } \left(1 + \frac{x^2}{\nu}\right)^{-(\nu + 1)/2}. \]
+    We say that $t_{\nu}$ is the \textbf{Student's t-distribution}
+    (named after the pseudonym ``Student''
+    used by William Sealy Gosset).
+\end{theorem}
+
+\begin{center}
+    \frame{\includegraphics[width=0.35\textwidth]{lecture-18/t-distrib}}
+\end{center}
+
+Again, we won't give the mathematical justification
+as it gets too involved.
+
+\end{document}
