@@ -169,6 +169,23 @@ was unique in having a real-valued Fourier transform.  Here's why.
     ~ $\blacksquare$
 \end{proof}
 
+More generally, we can say the following:
+
+\begin{theorem}{Hermitian Symmetry}
+    If $f(t)$ is real,
+    then $F(-\Omega) = \overline{F(\Omega)}$ for all $\Omega$.
+\end{theorem}
+
+\begin{proof}
+    Again, just inspect the relationship
+    $F(\omega) := \int_{-\infty}^{\infty} f(t) e^{-j\omega t} \, \mathrm{d}t$.
+    ~ $\blacksquare$
+\end{proof}
+
+We can also say that
+stretching a CT signal in one direction
+will cause its Fourier transform to stretch in the other direction.
+
 \begin{theorem}{Time Scaling}
     The FT of $f(at)$ is $\frac{1}{|a|}F\left(\frac{\omega}{a}\right)$,
     and the inverse FT of $F(a\omega)$ is $\frac{1}{|a|}f\left(\frac{1}{a}t\right)$.
