@@ -31,7 +31,7 @@ jobs:
       - name: Prepare site bundle
         run: |
           mkdir site
-          cp index.html sitemap.xml robots.txt google7d30abf698d487de.html site/
+          cp index.html mobile.js sitemap.xml robots.txt google7d30abf698d487de.html site/
           cp -r courses katex fonts site/
           touch site/.nojekyll
 

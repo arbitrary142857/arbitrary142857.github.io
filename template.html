@@ -16,6 +16,10 @@
 <meta name="twitter:description" content="{{META_DESCRIPTION}}">
 <link rel="stylesheet" href="{{ASSET_PREFIX}}katex/katex.min.css">
 <style>
+:root {
+  /* Minimum rendered width for figures on narrow viewports (customize here). */
+  --note-figure-min-width: 240px;
+}
 @font-face {
   font-family: "TeX Gyre Termes";
   src: url("{{ASSET_PREFIX}}fonts/texgyretermes-regular.otf") format("opentype");
@@ -44,6 +48,12 @@ body {
 }
 .katex {
   font-size: 1em;
+}
+.katex-display {
+  max-width: 100%;
+}
+.keep-punct {
+  white-space: nowrap;
 }
 main {
   max-width: 52em;
@@ -82,6 +92,11 @@ img.note-figure {
   height: auto;
   margin: 0.75em auto;
   max-width: min(100%, 40em);
+}
+@media (max-width: 52em) {
+  img.note-figure {
+    min-width: min(var(--note-figure-min-width), 100%);
+  }
 }
 img.note-figure.framed {
   box-shadow: 0 0 0 1px #000;
@@ -330,9 +345,17 @@ p.all-link {
   margin: 0 0 1.25em;
   text-align: left;
 }
+main p,
+main li,
+section.env,
+blockquote.quote,
+.boxed-text {
+  text-wrap: pretty;
+}
 </style>
 </head>
 <body>
 <main>{{CONTENT}}</main>
+<script src="{{ASSET_PREFIX}}mobile.js" defer></script>
 </body>
 </html>
