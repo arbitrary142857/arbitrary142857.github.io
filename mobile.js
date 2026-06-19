@@ -96,7 +96,21 @@
   }
 
   function maxColsForWidth(availableWidth, cellWidth, gapPx) {
-    return Math.max(1, Math.floor((availableWidth + gapPx) / (cellWidth + gapPx)));
+    // Leave extra room for subpixel rounding, borders, and em→px conversion.
+    var safety = 4;
+    return Math.max(1, Math.floor((availableWidth - safety + gapPx) / (cellWidth + gapPx)));
+  }
+
+  function gridOverflows(container) {
+    void container.offsetWidth;
+    return container.scrollWidth > container.clientWidth + 1;
+  }
+
+  function columnsTooWide(container, cols, cellWidth, gapPx, availableWidth) {
+    return (
+      gridOverflows(container) ||
+      gridWidthForCols(cols, cellWidth, gapPx) > availableWidth - 1
+    );
   }
 
   function measureLectureNavMetrics(container, main) {
@@ -117,30 +131,33 @@
     return { cellWidth: cellWidth, gapPx: gapPx, availableWidth: availableWidth };
   }
 
+  function fitLectureNavContainer(container, main) {
+    var count = container.children.length;
+    if (count === 0) return;
+
+    var metrics = measureLectureNavMetrics(container, main);
+    var cellWidth = metrics.cellWidth;
+    var gapPx = metrics.gapPx;
+    var availableWidth = metrics.availableWidth;
+    if (availableWidth <= 0 || cellWidth <= 0) return;
+
+    var maxCols = Math.min(count, maxColsForWidth(availableWidth, cellWidth, gapPx));
+    var cols = chooseBalancedColumns(count, maxCols);
+
+    container.style.setProperty("--lecture-nav-columns", String(cols));
+
+    while (cols > 1 && columnsTooWide(container, cols, cellWidth, gapPx, availableWidth)) {
+      maxCols = cols - 1;
+      cols = chooseBalancedColumns(count, maxCols);
+      container.style.setProperty("--lecture-nav-columns", String(cols));
+    }
+  }
+
   function fitLectureNavGrid() {
     document.querySelectorAll(".lecture-nav-main").forEach(function (main) {
       var container = main.querySelector(".lecture-nav-lectures");
       if (!container) return;
-      var count = container.children.length;
-      if (count === 0) return;
-
-      var metrics = measureLectureNavMetrics(container, main);
-      var cellWidth = metrics.cellWidth;
-      var gapPx = metrics.gapPx;
-      var availableWidth = metrics.availableWidth;
-      if (availableWidth <= 0 || cellWidth <= 0) return;
-
-      var maxCols = maxColsForWidth(availableWidth, cellWidth, gapPx);
-      maxCols = Math.min(maxCols, count);
-      var cols = chooseBalancedColumns(count, maxCols);
-      while (
-        cols > 1 &&
-        gridWidthForCols(cols, cellWidth, gapPx) > availableWidth + 0.5
-      ) {
-        maxCols = cols - 1;
-        cols = chooseBalancedColumns(count, maxCols);
-      }
-      container.style.setProperty("--lecture-nav-columns", String(cols));
+      fitLectureNavContainer(container, main);
     });
   }
 
