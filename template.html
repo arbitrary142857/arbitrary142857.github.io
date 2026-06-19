@@ -43,6 +43,16 @@
   --lecture-nav-preview-font-size: 0.95em;
   --lecture-nav-disabled-opacity: 0.35;
   --lecture-nav-mobile-break: 36em;
+
+  /* Top lecture navbar (customize here). */
+  --lecture-navbar-bg: var(--lecture-nav-bg);
+  --lecture-navbar-border-color: #d5cec4;
+  --lecture-navbar-progress-color: var(--lecture-nav-accent);
+  --lecture-navbar-track-bg: #9a9084;
+  --lecture-navbar-toggle-bg: rgba(250, 248, 245, 0.92);
+  --lecture-navbar-toggle-border-color: #c8bfb3;
+  --lecture-navbar-toggle-size: 2.75em;
+  --lecture-navbar-marker-size: 0.55em;
 }
 @font-face {
   font-family: "TeX Gyre Termes";
@@ -69,6 +79,10 @@ body {
   line-height: 1.2;
   margin: 0;
   padding: 2rem 1.5rem;
+}
+body.lecture-page {
+  padding-top: calc(2rem + var(--lecture-navbar-height, 0px));
+  scroll-behavior: smooth;
 }
 .katex {
   font-size: 1em;
@@ -269,7 +283,7 @@ h3.heading-subsection {
   font-size: 1.3em;
   font-weight: 700;
   margin: 1.75em 0 0.6em;
-  scroll-margin-top: 1.5em;
+  scroll-margin-top: calc(var(--lecture-navbar-height, 1.5em) + 0.75em);
 }
 .subsection-marker {
   font-weight: 700;
@@ -368,6 +382,168 @@ a.toc-subsection-link .katex {
 p.all-link {
   margin: 0 0 1.25em;
   text-align: left;
+}
+.lecture-navbar-shell {
+  box-sizing: border-box;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 100;
+}
+.lecture-navbar-toggle {
+  align-items: center;
+  background: var(--lecture-navbar-toggle-bg);
+  border: 1px solid var(--lecture-navbar-toggle-border-color);
+  border-radius: 0.35em;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  color: rgba(0, 0, 0, 0.78);
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  line-height: 0;
+  min-height: var(--lecture-navbar-toggle-size);
+  min-width: var(--lecture-navbar-toggle-size);
+  padding: 0.55em;
+  pointer-events: auto;
+  position: fixed;
+  right: 1.5rem;
+  top: 0.75rem;
+  z-index: 101;
+}
+.lecture-navbar-toggle:hover {
+  background: var(--lecture-nav-num-hover-bg);
+  color: #000;
+}
+.lecture-navbar-toggle-icon {
+  display: block;
+}
+.lecture-navbar-shell.is-open {
+  background: var(--lecture-navbar-bg);
+  border-bottom: 1px solid var(--lecture-navbar-border-color);
+  pointer-events: auto;
+}
+.lecture-navbar-panel {
+  box-sizing: border-box;
+  display: none;
+  padding: 0 0 0.75em;
+}
+.lecture-navbar-shell.is-open .lecture-navbar-panel {
+  display: block;
+}
+.lecture-navbar-header {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  height: var(--lecture-navbar-toggle-size);
+  padding: 0.75rem calc(1.5rem + var(--lecture-navbar-toggle-size) + 0.75rem) 0 1.5rem;
+}
+.lecture-navbar-track-col {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+.lecture-navbar-timeline {
+  margin-top: 0;
+}
+.lecture-navbar-track {
+  background: var(--lecture-navbar-track-bg);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+  height: 0.35em;
+  overflow: visible;
+  position: relative;
+  width: 100%;
+}
+.lecture-navbar-progress {
+  background: var(--lecture-navbar-progress-color);
+  border-radius: 999px;
+  height: 100%;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 0;
+}
+.lecture-navbar-markers {
+  height: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 50%;
+}
+.lecture-navbar-marker {
+  background: transparent;
+  border: 0;
+  box-sizing: border-box;
+  display: block;
+  height: 1.35em;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  text-decoration: none;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1.35em;
+}
+.lecture-navbar-marker-dot {
+  background: #fff;
+  border: 1.5px solid var(--lecture-nav-num-border-color);
+  border-radius: 50%;
+  box-sizing: border-box;
+  display: block;
+  height: calc(var(--lecture-navbar-marker-size) + 0.08em);
+  margin: calc((1.35em - var(--lecture-navbar-marker-size) - 0.08em) / 2) auto 0;
+  width: calc(var(--lecture-navbar-marker-size) + 0.08em);
+}
+.lecture-navbar-marker:hover .lecture-navbar-marker-dot {
+  background: var(--lecture-nav-num-hover-bg);
+  border-color: var(--lecture-nav-btn-border-color);
+}
+.lecture-navbar-marker.is-active .lecture-navbar-marker-dot {
+  background: var(--lecture-navbar-progress-color);
+  border-color: var(--lecture-navbar-progress-color);
+}
+.lecture-navbar-sections {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em 0.5em;
+  justify-content: center;
+  list-style: none;
+  margin: 0.35em 0 0;
+  padding: 0 1.5rem;
+}
+.lecture-navbar-section {
+  background: #fff;
+  border: 1px solid var(--lecture-nav-num-border-color);
+  border-radius: 0.25em;
+  box-sizing: border-box;
+  color: #000;
+  display: inline-block;
+  font-size: 0.8em;
+  line-height: 1.25;
+  max-width: 100%;
+  padding: 0.3em 0.55em;
+  text-align: center;
+  text-decoration: none;
+}
+.lecture-navbar-section:hover {
+  background: var(--lecture-nav-num-hover-bg);
+}
+.lecture-navbar-section.is-active {
+  background: var(--lecture-navbar-progress-color);
+  border-color: var(--lecture-navbar-progress-color);
+  color: #fff;
+}
+.lecture-navbar-section .katex {
+  color: inherit;
+  font-size: 1em;
+}
+.lecture-navbar .katex {
+  font-size: 1em;
 }
 nav.lecture-nav {
   margin-top: var(--lecture-nav-margin-top);
@@ -508,6 +684,7 @@ blockquote.quote,
 </head>
 <body>
 <main>{{CONTENT}}</main>
+<script src="{{ASSET_PREFIX}}lecture-navbar.js" defer></script>
 <script src="{{ASSET_PREFIX}}mobile.js" defer></script>
 </body>
 </html>

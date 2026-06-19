@@ -21,6 +21,7 @@ import { parseTex, renderInlineFragment, titlePlainText, extractSubsections } fr
 import { SITE_PAGE_TITLE, siteUrl } from "./site.js";
 import { getTocParts, groupNotesByTocParts, type TocPart } from "./toc-sections.js";
 import { lectureNavHtml } from "./lecture-nav.js";
+import { lectureNavbarHtml } from "./lecture-navbar.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const templatePath = join(root, "template.html");
@@ -72,7 +73,17 @@ for (const course of COURSES) {
     const pageTitle = lecturePageTitle(note, course.title, titlePlain);
     const courseTitle = coursePageTitle(course.title, course.subtitle);
     const canonicalPath = `/courses/${course.id}/notes-html/${slug}.html`;
-    const nav = `<nav class="site-nav"><a href="${lectureNavHomePrefix}index.html">Home</a> · <a href="${lectureNavCoursePrefix}index.html">${escapeHtml(course.title)}</a></nav>`;
+    const subsections = extractSubsections(note.source).map(({ slug, titleTex }) => ({
+      slug,
+      titleHtml: renderInlineFragment(titleTex, preamble, courseRoot),
+    }));
+    const navbar = lectureNavbarHtml({
+      homeHref: `${lectureNavHomePrefix}index.html`,
+      courseHref: `${lectureNavCoursePrefix}index.html`,
+      courseTitle: course.title,
+      lectureLabel: formatLectureLabel(note.lectures),
+      subsections,
+    });
     const header = lectureHeaderHtml(note, course.title, titleHtml);
     const footer = lectureNavHtml(
       parsed.map(({ note, titleHtml }) => ({ note, titleHtml })),
@@ -82,7 +93,7 @@ for (const course of COURSES) {
       join(notesOutDir, `${slug}.html`),
       pageTitle,
       { assetPrefix: "../../../", coursePrefix: "../" },
-      `${nav}${header}\n${result.html}\n${footer}`,
+      `${navbar}${header}\n${result.html}\n${footer}`,
       {
         description: `${pageTitle}. MIT lecture notes for ${course.subtitle}.`,
         canonicalPath,
