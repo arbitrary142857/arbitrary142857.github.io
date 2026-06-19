@@ -1,0 +1,433 @@
+\lecture{11}
+\title{Communication Systems}
+
+\begin{document}
+
+\subsection{Lecture: Wireless Communication (is Hard)}
+
+\begin{problem}
+    We have a signal that represents human speech,
+    containing frequencies from 200 Hz to 3000 Hz.
+    We would like to communicate this signal wirelessly
+    by transmitting and receiving electromagnetic waves via antenna.
+
+    How long must such an antenna be to transmit a 200–3000 Hz signal?
+\end{problem}
+
+\begin{solution}
+    According to \emph{physics},
+    a 200 Hz signal would have the longest wavelength, that being:
+    \[ \lambda = \frac{c}{f} = \frac{3 \times 10^8 \ \text{m/s}}{200 \ \text{Hz}}
+    = 1.5 \times 10^6 \ \text{m} = 1500 \ \text{km}. \]
+    Also according to \emph{physics},
+    the optimal length of an antenna is on the order of
+    the wavelength of the signal it seeks to transmit.
+    So we would need an antenna $1500$ kilometers long\dots
+\end{solution}
+
+\begin{remark}
+    In an antenna, electrons oscillate back and forth along its length;
+    to achieve resonance, the wavelength of the signal produced by an antenna
+    must be on the order of the antenna's length.
+\end{remark}
+
+The issue, of course, is that most antennas are $10$ centimeters long,
+not $1500$ kilometers.
+
+\begin{problem}
+    What frequencies would be produced by an antenna that is $10$ centimeters long?
+\end{problem}
+
+\begin{solution}
+    Again by \emph{physics},
+    we would expect frequencies on the order of
+    $ f = \frac{c}{\lambda} \sim \frac{3 \times 10^8 \ \text{m/s}}{10 \ \text{cm}}
+    \approx 3 \ \text{GHz}$.
+\end{solution}
+
+The challenge is that most signals (not just speech!)
+have frequencies that are not at all close to $3$ GHz.
+We need to find some way to \textbf{modulate} these signals
+so that their frequency fits within the desired range.
+
+\subsection{Lecture: Amplitude Modulation}
+
+To increase the frequencies present within a CT signal,
+we might hope to just, say, shift its Fourier transform to the right, like so:
+
+\begin{center}
+    \frame{\includegraphics[width=0.3\textwidth]{lecture-11/bad-modulation}}
+\end{center}
+
+Recall from
+\href{6.html#lecture-and-recitation-properties-of-the-ct-fourier-transform}{Lecture 6}
+that the effect of this is that $y(t) = e^{j \omega_c t} x(t)$.
+This won't work, though, since the resulting signal $y(t)$ will then be complex-valued,
+and thus not physically transmittable.
+The trick is to try this instead:
+
+\begin{center}
+    \frame{\includegraphics[width=0.3\textwidth]{lecture-11/good-modulation}}
+\end{center}
+
+The effect of the above is that $y(t) = 2\cos(\omega_c t) x(t)$,
+which is real-valued.  You can even see below
+how $y(t)$ has a very high frequency for large $\omega_c$,
+yet still communicates the ``shape'' of $x(t)$.
+
+\begin{center}
+    \frame{\includegraphics[width=0.3\textwidth]{lecture-11/modulation-graph}}
+\end{center}
+
+\textbf{Definition.}
+The system $x(t) \mapsto \cos(\omega_c t) x(t)$ is called
+\textbf{amplitude modulation}.
+
+\begin{remark}
+    Note that amplitude modulation is not an LTI system:
+    it's not time-invariant.
+
+    Additionally, note that we switched from $y(t) = 2\cos(\omega_c t) x(t)$
+    to $y(t) = \cos(\omega_c t) x(t)$,
+    dropping the factor of $2$.  The effect of this
+    is that the amplitudes in $Y(\omega)$ will be half of those in $X(\omega)$.
+    (We'll account for this later.)
+\end{remark}
+
+Here's another way to see why amplitude modulation
+affects the frequency domain in the way it does.
+
+\begin{theorem}{Filtering Dual}
+    If $z(t) = x(t) \cdot y(t)$, then
+    $Z(\omega) = \frac{1}{2\pi} (X * Y)(\omega)$.
+    The same goes for DT signals.
+\end{theorem}
+
+\begin{proof}
+    This is the dual of the statement that
+    the Fourier transform of a convolution
+    equals the product of the Fourier transforms.
+
+    Here's the full computations written out for reference;
+    there's nothing new here.
+    \begin{align*}
+        Z(\omega) & = \int_{t = -\infty}^{\infty} x(t) y(t) e^{-j \omega t} \, \mathrm{d}t \\
+        & = \int_{t = -\infty}^{\infty} x(t) \left[
+            \frac{1}{2\pi} \int_{\lambda = -\infty}^{\infty}
+            Y(\lambda) e^{j \lambda t} \, \mathrm{d}\lambda
+        \right] e^{-j \omega t} \, \mathrm{d}t \\
+        & = \frac{1}{2\pi} \int_{\lambda = -\infty}^{\infty} Y(\lambda) \left[
+            \int_{t = -\infty}^{\infty} x(t) e^{-j(\omega - \lambda)t} \, \mathrm{d}t
+        \right] \, \mathrm{d}\lambda \\
+        & = \frac{1}{2\pi} \int_{\lambda = -\infty}^{\infty}
+        Y(\lambda) \left[ X(\omega - \lambda) \right] \, \mathrm{d}\lambda
+        = \frac{1}{2\pi}(X * Y)(\omega).
+    \end{align*}
+    And the same goes for DT signals, expectedly. ~ $\blacksquare$
+\end{proof}
+
+And so the point is that
+multiplying $x(t)$ by $c(t) := \cos(\omega_c t)$
+is the same as convolving $X(\omega)$
+with $C(\omega) := \pi \cdot \left(\delta(\omega_c) + \delta(-\omega_c)\right)$
+and dividing the result by $2\pi$,
+which has the effect shown below.
+
+\begin{center}
+    \frame{\includegraphics[width=0.3\textwidth]{lecture-11/mod-convolution}}
+\end{center}
+
+\subsection{Lecture: Synchronous Demodulation}
+
+After transmitting the modulated signal $y(t) = x(t) \cos(\omega_c t)$,
+what happens on the receiving end—how can we demodulate $y(t)$
+to retrieve the original signal $x(t)$?
+
+\textbf{Definition.} The system $y(t) \mapsto \cos(\omega_c t) y(t)$
+is called \textbf{synchronous demodulation}.
+
+Yes, that is the exact same system as amplitude modulation.
+Nonetheless, it works!
+
+\begin{center}
+    \frame{\includegraphics[width=0.5\textwidth]{lecture-11/demod-convolution}}
+\end{center}
+
+We can see the same effect working in the time domain, too:
+\[ z(t) = \cos(\omega_c t) y(t) = \cos^2(\omega_c t) x(t)
+= \left(\frac{1}{2} + \frac{1}{2}\cos(2\omega_c t)\right) x(t). \]
+The procedure, to be explicit,
+is to first perform synchronous demodulation,
+apply a low-pass filter,
+and then multiply by $2$.
+
+\subsection{Lecture: Multiple Transmitters}
+
+If our receiver must listen to multiple transmitters at once,
+it can do so as long as each transmitter uses a different choice of $\omega_c$.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-11/multiple-transmitters}}
+\end{center}
+
+In the above, by specifying the frequency $\omega_c$ to use for synchronous demodulation,
+the outputted signal $y(t)$ can be set to read from any of
+$x_1(t)$, $x_2(t)$, or $x_3(t)$.
+(Setting $\omega_c = \omega_2$, for example, would yield $y(t) = x_2(t)$.)
+
+To demonstrate this, here's what the summed-together signal $z(t)$
+looks like in the frequency domain.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-11/summed-frequency}}
+\end{center}
+
+And here's how setting $\omega_c = \omega_3$
+allows the output signal $y(t)$ to match $x_3(t)$,
+as shown in the frequency domain.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-11/selected-frequency}}
+\end{center}
+
+\subsection{Lecture: Amplitude Modulation with Carrier}
+
+Importantly, the carrier signal $\cos(\omega_c t)$ used in amplitude modulation
+must match the carrier signal $\cos(\omega_c t)$ used in synchronous demodulation.
+What happens if the two carrier signal used differ by a phase shift $\phi$, though?
+\[ z(t) = \cos(\omega_c t) \cos(\omega_c t + \phi) x(t)
+= \frac{1}{2} x(t) \left(\cos(\phi) + \cos(2 \omega_c t + \phi)\right)
+= \frac{1}{2} x(t) \cos(\phi) + \frac{1}{2}x(t) \cos(2 \omega_c t + \phi). \]
+The latter of the two RHS terms will get filtered out via the LPF.
+But the former of those two terms $\frac{1}{2}x(t) \cos(\phi)$
+might experience \emph{fading} for unlucky values of $\phi$
+(say, $\phi \approx \frac{\pi}{2}$).
+
+Let's consider an entirely new approach to modulation and demodulation.
+\begin{quote}
+    \textbf{Approach (AM with Carrier).}
+    Suppose we wish to transmit a signal $x(t)$
+    using an antenna.
+    \begin{enumerate}
+        \item Pick a very high frequency $\omega_c$,
+        along with a constant $C > |x(t)|$.
+        \item Use the antenna to transmit the E/M wave
+        $z(t) := \left(x(t) + C\right) \cos(\omega_c t)$.
+        \item On the receiving end,
+        apply a \emph{peak detector} to $z(t)$
+        and subtract $C$ to retrieve the original signal $x(t)$.
+    \end{enumerate}
+\end{quote}
+Notice how this approach doesn't even use synchronous demodulation;
+the demodulation is the peak detector itself.
+\begin{center}
+    \frame{\includegraphics[width=0.3\textwidth]{lecture-11/carrier-transmission}}
+\end{center}
+The signal $z(t)$ that is transmitted has a special property:
+its ``envelope'' traces out the shape of $x(t) + C$, as shown above.
+Note that this property only holds if $C > |x(t)|$.
+\begin{center}
+    \frame{\includegraphics[width=0.5\textwidth]{lecture-11/peak-detector}}
+\end{center}
+On the receiving end, reading out that ``envelope'' is not very hard to do in hardware:
+all it takes is an RC circuit with properly-tuned components.
+Thus, the receiver just has to read the envelope $y(t)$,
+noting that $x(t) \approx y(t) - C$.
+
+The downside of this approach is that
+it doesn't make use of synchronous demodulation;
+the receiver can't distinguish between multiple transmissions added together,
+even if each transmitter uses a different value for $\omega_c$.
+
+Another downside of this approach
+is the \emph{power} necessary to produce the E/M wave
+$z(t) := x(t) \cos(\omega_c t) + C \cos(\omega_c t)$.
+
+\begin{problem}
+    Compare the power
+    of the E/M wave $x(t) \cos(\omega_c t) + C \cos(\omega_c t)$
+    to that of $x(t) \cos(\omega_c t)$.
+\end{problem}
+
+\begin{solution}
+    Let's say $x_{\mathrm{p}}$ is the peak value of $x(t)$,
+    and $x_{\mathrm{rms}}$ is the root-mean-square value of $x(t)$.
+    \begin{itemize} 
+        \item According to \emph{physics}, the power carried by $x(t) \cos(\omega_c t)$
+        is proportional to $x_{\mathrm{rms}}^2$.
+        \item Note that we require $C > x_{\mathrm{p}}$.
+        According to \emph{physics}, the power carried by $C \cos(\omega_c t)$
+        is proportional to $C^2 > x_{\mathrm{p}}^2$.
+    \end{itemize}
+    The unfortunate fact, however, is that
+    typically $x_{\mathrm{p}} > 35 \cdot x_{\mathrm{rms}}$.
+    \begin{center}
+        \frame{\includegraphics[width=0.3\textwidth]{lecture-11/speech}}
+    \end{center}
+    So the power needed to transmit the carrier
+    tends to be more than $1225$ times
+    the power needed to transmit the message itself.
+    This is an acceptable tradeoff for 50 kW broadcast radio, perhaps,
+    but not for, say, phone calls and cell phone batteries.
+\end{solution}
+
+There are, of course, technologies developed to fix some of these issues;
+we won't get into those details.
+
+\subsection{Recitation: Implementing Band-Pass Filters (BPFs)}
+
+Recalling \href{10.html#recitation-filter-types}{Lecture 10},
+we already have designed systems that function as low-pass filters.
+Now let's design a band-pass filter instead:
+a filter that accepts frequencies within some margin $\pm \Omega_d$
+of either $\Omega_c$ or $-\Omega_c$.
+
+\begin{remark}
+    As a reminder, we are working with DT signals,
+    so all frequencies $\Omega$ are to be interpreted modulo $2\pi$.
+\end{remark}
+
+Here's one strategy that's sure to work.
+
+\begin{theorem}{BPF \#1}
+    Let $h_{\mathrm{LPF}}[n]$ denote the unit-sample response
+    of a low-pass filter.  Then a system whose unit-sample response is
+    $h[n] := h_{\mathrm{LPF}}[n] \cdot \cos(\Omega_c n)$
+    is a band-pass filter.
+\end{theorem}
+
+\begin{proof}
+    We would like the frequency response $H(\Omega)$ of our BPF system
+    to look like two copies of that of an LPF system,
+    one centered at $\Omega = -\Omega_c$,
+    and another centered at $\Omega = \Omega_c$.
+
+    To construct such a frequency response,
+    let's just steal an idea from amplitude modulation.
+    \begin{center}
+        \frame{\includegraphics[width=0.4\textwidth]{lecture-11/BPF}}
+    \end{center}
+    It suffices to take the frequency response $H_{\mathrm{LPF}}(\Omega)$
+    of the LPF filter and convolve it with
+    $C(\Omega) := \pi \cdot \left(\delta[-\Omega_c] + \delta[\Omega_c]\right)$.
+
+    But just as with amplitude modulation
+    (see the ``Filtering Dual'' theorem from earlier),
+    convolving with $C(\Omega)$ is the same as
+    multiplying by $c[n] := \cos(\Omega_c n)$.
+    So we want $h[n] = h_{\mathrm{LPF}}[n] \cdot c[n]
+    = h_{\mathrm{LPF}}[n] \cdot \cos(\Omega_c n)$. ~ $\blacksquare$
+\end{proof}
+
+Instead of defining such a system by its unit-sample response, however,
+let's try defining it in the time domain.
+
+\begin{theorem}{BPF \#2}
+    The BPF we seek is described by the cascading system depicted below.
+    \begin{center}
+        \frame{\includegraphics[width=0.3\textwidth]{lecture-11/BPF-cascade}}
+    \end{center}
+\end{theorem}
+
+\begin{proof}
+    Recalling the relationship between a system and its unit-sample response from
+    \href{9.html#lecture-and-recitation-unit-sample-response-and-convolution}{Lecture 9},
+    we can directly read off:
+    \begin{align*}
+        y[n] & = (x * h)[n] \\
+        & = \sum_{m = -\infty}^{\infty} x[m] \cdot h_{\mathrm{LPF}}[n - m]
+        \cos(\Omega_c(n - m)) \\
+        & = \sum_{m = -\infty}^{\infty} x[m] \cdot h_{\mathrm{LPF}}[n - m]
+        \left(\cos(\Omega_c n) \cos(\Omega_c m) + \sin(\Omega_c n) \sin(\Omega_c m)\right) \\
+        & = \underbrace{\left(
+            \sum_{m = -\infty}^{\infty} x[m] \cos(\Omega_c m) \cdot
+            h_{\mathrm{LPF}}[n - m]
+        \right)}_{
+            x[n] \cos(\Omega_c n) \ * \ h_{\mathrm{LPF}}[n]
+        } \cdot \cos(\Omega_c n) + \underbrace{\left(
+            \sum_{m = -\infty}^{\infty} x[m] \sin(\Omega_c m) \cdot
+            h_{\mathrm{LPF}}[n - m]
+        \right)}_{
+            x[n] \sin(\Omega_c n) \ * \ h_{\mathrm{LPF}}[n]
+        } \cdot \sin(\Omega_c n)
+    \end{align*}
+    And the above is exactly what the cascading system above computes. ~ $\blacksquare$
+\end{proof}
+
+Philosophically, here's one way to think about
+what the system above is actually accomplishing.
+
+\begin{quote}
+    \textbf{Philosophy of BPF \#2.}
+    Recall from
+    \href{7.html#lecture-and-recitation-properties-of-the-dt-fourier-transform}{Lecture 7}
+    that the Fourier transform of a real DT signal $f[n]$
+    satisfies $F(-\Omega) = \overline{F(\Omega)}$.
+    Therefore, if we split $F(\Omega)$ into its real and imaginary components
+    $A(\Omega) + j B(\Omega)$, then $A(\Omega)$ is even and $B(\Omega)$ is odd.
+
+    When $X(\Omega)$ is even,
+    the ``top chain'', alone, of the BPF \#2 system
+    works perfectly as a band-pass filter.
+    \begin{center}
+        \frame{\includegraphics[width=0.2\textwidth]{lecture-11/BPF-even}}
+    \end{center}
+    When $X(\Omega)$ is odd,
+    the ``bottom chain'', alone, of the BPF \#2 system
+    works perfectly as a band-pass filter.
+    \begin{center}
+        \frame{\includegraphics[width=0.2\textwidth]{lecture-11/BPF-odd}}
+    \end{center}
+    And importantly, when $X(\Omega)$ is odd,
+    feeing $X(\Omega)$ into the ``top chain'' of the BPF \#2 system
+    will always return nothing,
+    and same for when an even $X(\Omega)$ is fed into the ``bottom chain''.
+    \begin{center}
+        \frame{\includegraphics[width=0.2\textwidth]{lecture-11/BPF-cancel}}
+    \end{center}
+    Thus, BPF \#2 effectively runs $A(\Omega)$ and $j B(\Omega)$
+    through separate band-pass filters and sums the results.
+\end{quote}
+
+\begin{remark}
+    Note that multiplying by $s[n] := \sin(\Omega_c n)$
+    is the same as convolving by
+    $S(\Omega) := \frac{\pi}{j} \cdot \left(\delta[\Omega_c] - \delta[-\Omega_c]\right)$.
+
+    Also recall from \href{2.html#recitation-symmetry-in-fourier-series}{Lecture 2}
+    that every signal is the sum of an even signal and an odd signal.
+    The fact that $f[n]$ is a real signal is actually not necessary;
+    BPF \#2 works even when $f[n]$ is complex-valued (as it should!).
+\end{remark}
+
+\subsection{Recitation: DSB-AM vs. SSB-SC}
+
+The $x(t) \cos(\omega_c t)$ transmission strategy has a more complicated name:
+\emph{Double Sideband Amplitude Modulation (DSB-AM)}.
+\begin{itemize}
+    \item It's called \emph{Double Sideband} because, in the frequency domain,
+    the transform $X(\omega)$ appears \emph{twice} in the output.
+    \item It's called \emph{amplitude modulation} because, in the time domain,
+    the signal $x(t)$ modulates the amplitude of $\cos(\omega_c t)$.
+\end{itemize}
+The downside of DSB-AM is in the \emph{Double Sideband} property.
+There is an optimization to be made that can
+cut the cost of transmitting messages by a factor of two.
+It's called \emph{Single Sideband Suppressed Carrier (SSB-SC)},
+and it looks like this:
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-11/SSB-SC}}
+\end{center}
+In the above, $\omega_m$ is a frequency such that
+all of the nonzero behavior of $X(\omega)$ lives within the interval
+$[-\omega_m, \omega_m]$.
+
+\textcolor{red}{TODO: Give a convincing explanation
+of how SSB-SC actually works;
+something about it is uniquely special
+for input signals that are purely real-valued, allegedly
+(The 6.300 recitation notes go through an example of SSB-SC in action; see
+\href{https://sigproc.mit.edu/_static/spring26/recitations/Communication_Systems.pdf}{here}
+for the details.)}
+
+\end{document}

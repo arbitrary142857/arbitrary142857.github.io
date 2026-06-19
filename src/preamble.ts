@@ -53,7 +53,8 @@ export function applyBuiltinDefinitions(ctx: Context): void {
   ctx.textMacros.set("extended", math("\\overleftrightarrow{#1}", 1));
   ctx.textMacros.set("rightray", math("\\overrightarrow{#1}", 1));
 
-  ctx.katexMacros["\\mathds"] = "\\mathbb{#1}";
+  // dsfont's \mathds{1} (indicator); KaTeX has no \mathds, and \mathbb only covers A–Z.
+  ctx.katexMacros["\\mathds"] = "\\mathbf{#1}";
 
   for (const name of ["dt", "ddt", "extended", "rightray", "circled"]) {
     delete ctx.katexMacros[`\\${name}`];
