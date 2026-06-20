@@ -358,35 +358,59 @@ Philosophically, here's one way to think about
 what the system above is actually accomplishing.
 
 \begin{quote}
-    \textbf{Philosophy of BPF \#2.}
-    Recall from
-    \href{7.html#lecture-and-recitation-properties-of-the-dt-fourier-transform}{Lecture 7}
-    that the Fourier transform of a real DT signal $f[n]$
-    satisfies $F(-\Omega) = \overline{F(\Omega)}$.
-    Therefore, if we split $F(\Omega)$ into its real and imaginary components
-    $A(\Omega) + j B(\Omega)$, then $A(\Omega)$ is even and $B(\Omega)$ is odd.
+    % \textbf{Philosophy of BPF \#2.}
+    % Recall from
+    % \href{7.html#lecture-and-recitation-properties-of-the-dt-fourier-transform}{Lecture 7}
+    % that the Fourier transform of a real DT signal $f[n]$
+    % satisfies $F(-\Omega) = \overline{F(\Omega)}$.
+    % Therefore, if we split $F(\Omega)$ into its real and imaginary components
+    % $A(\Omega) + j B(\Omega)$, then $A(\Omega)$ is even and $B(\Omega)$ is odd.
 
-    When $X(\Omega)$ is even,
-    the ``top chain'', alone, of the BPF \#2 system
-    works perfectly as a band-pass filter.
-    \begin{center}
-        \frame{\includegraphics[width=0.2\textwidth]{lecture-11/BPF-even}}
-    \end{center}
-    When $X(\Omega)$ is odd,
-    the ``bottom chain'', alone, of the BPF \#2 system
-    works perfectly as a band-pass filter.
-    \begin{center}
-        \frame{\includegraphics[width=0.2\textwidth]{lecture-11/BPF-odd}}
-    \end{center}
-    And importantly, when $X(\Omega)$ is odd,
-    feeing $X(\Omega)$ into the ``top chain'' of the BPF \#2 system
-    will always return nothing,
-    and same for when an even $X(\Omega)$ is fed into the ``bottom chain''.
-    \begin{center}
-        \frame{\includegraphics[width=0.2\textwidth]{lecture-11/BPF-cancel}}
-    \end{center}
-    Thus, BPF \#2 effectively runs $A(\Omega)$ and $j B(\Omega)$
-    through separate band-pass filters and sums the results.
+    % When $X(\Omega)$ is even,
+    % the ``top chain'', alone, of the BPF \#2 system
+    % works perfectly as a band-pass filter.
+    % \begin{center}
+    %     \frame{\includegraphics[width=0.2\textwidth]{lecture-11/BPF-even}}
+    % \end{center}
+    % When $X(\Omega)$ is odd,
+    % the ``bottom chain'', alone, of the BPF \#2 system
+    % works perfectly as a band-pass filter.
+    % \begin{center}
+    %     \frame{\includegraphics[width=0.2\textwidth]{lecture-11/BPF-odd}}
+    % \end{center}
+    % And importantly, when $X(\Omega)$ is odd,
+    % feeing $X(\Omega)$ into the ``top chain'' of the BPF \#2 system
+    % will always return nothing,
+    % and same for when an even $X(\Omega)$ is fed into the ``bottom chain''.
+    % \begin{center}
+    %     \frame{\includegraphics[width=0.2\textwidth]{lecture-11/BPF-cancel}}
+    % \end{center}
+    % Thus, BPF \#2 effectively runs $A(\Omega)$ and $j B(\Omega)$
+    % through separate band-pass filters and sums the results.
+
+    \textbf{Philosophy of BPF \#2.}
+    \textcolor{red}{
+        Give a convincing write-up of how BPF \#2 works.
+        The idea, roughly speaking, is that the frequency response $X(\Omega)$
+        has two relevant sections: one section over the domain
+        $[-\Omega_c \pm \Omega_d]$, and another section over the domain
+        $[+\Omega_c \pm \Omega_d]$.  The challenge is that
+        there is no easy way to isolate one of the two sections on their own.
+    }
+
+    \textcolor{red}{
+        However, by multiplying by $\cos(\Omega_c n)$,
+        we can isolate their sum,
+        and by multiplying by $\sin(\Omega_c n)$,
+        we can isolate their difference.
+        The sum and the difference, together, is sufficient data
+        for isolating each section individually.
+    }
+
+    \textcolor{red}{
+        Unfortunately, the 6.300 notes
+        do not provide helpful diagrams for communicating this point.
+    }
 \end{quote}
 
 \begin{remark}
@@ -425,7 +449,7 @@ $[-\omega_m, \omega_m]$.
 \textcolor{red}{TODO: Give a convincing explanation
 of how SSB-SC actually works;
 something about it is uniquely special
-for input signals that are purely real-valued, allegedly
+for input signals that are purely real-valued, allegedly.
 (The 6.300 recitation notes go through an example of SSB-SC in action; see
 \href{https://sigproc.mit.edu/_static/spring26/recitations/Communication_Systems.pdf}{here}
 for the details.)}
