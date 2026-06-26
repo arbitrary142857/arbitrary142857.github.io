@@ -128,8 +128,10 @@ affects the frequency domain in the way it does.
 
 And so the point is that
 multiplying $x(t)$ by $c(t) := \cos(\omega_c t)$
-is the same as convolving $X(\omega)$
-with $C(\omega) := \pi \cdot \left(\delta(\omega_c) + \delta(-\omega_c)\right)$
+is the same as convolving $X(\omega)$ with the Fourier transform
+$C(\omega) := \pi \cdot \left(
+    \delta(\omega - \omega_c) + \delta(\omega + \omega_c)
+\right)$
 and dividing the result by $2\pi$,
 which has the effect shown below.
 
@@ -309,7 +311,9 @@ Here's one strategy that's sure to work.
     \end{center}
     It suffices to take the frequency response $H_{\mathrm{LPF}}(\Omega)$
     of the LPF filter and convolve it with
-    $C(\Omega) := \pi \cdot \left(\delta[-\Omega_c] + \delta[\Omega_c]\right)$.
+    $C(\Omega) := \pi \cdot \left(
+        [\Omega -\Omega_c] + \delta[\Omega + \Omega_c]
+    \right)$.
 
     But just as with amplitude modulation
     (see the ``Filtering Dual'' theorem from earlier),
@@ -416,7 +420,9 @@ what the system above is actually accomplishing.
 \begin{remark}
     Note that multiplying by $s[n] := \sin(\Omega_c n)$
     is the same as convolving by
-    $S(\Omega) := \frac{\pi}{j} \cdot \left(\delta[\Omega_c] - \delta[-\Omega_c]\right)$.
+    $S(\Omega) := \frac{\pi}{j} \cdot \left(
+        \delta[\Omega - \Omega_c] - \delta[\Omega + \Omega_c]
+    \right)$.
 
     Also recall from \href{2.html#recitation-symmetry-in-fourier-series}{Lecture 2}
     that every signal is the sum of an even signal and an odd signal.
