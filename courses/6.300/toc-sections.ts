@@ -10,6 +10,6 @@ export interface TocPart {
   
   export const TOC_PARTS: TocPart[] = [
     { title: "Fourier Analysis", from: 1, to: 7 },
-    { title: "Systems", from: 8, to: 11 },
+    { title: "Systems", from: 8, to: 12 },
   ];
   
