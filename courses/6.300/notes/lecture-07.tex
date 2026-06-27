@@ -24,8 +24,9 @@ We'll just cut straight to the punchline this time.
 \end{theorem}
 
 \begin{remark}
-    Even though the signal $f[n]$ may be discrete and aperiodic,
-    the Fourier transform $F(\Omega)$ is continuous and periodic!
+    Even though the signal $f[n]$ is discrete and possibly aperiodic,
+    the Fourier transform $F(\Omega)$ is continuous and guaranteed periodic
+    with period $2\pi$.
 \end{remark}
 
 \begin{proof}
@@ -37,12 +38,13 @@ We'll just cut straight to the punchline this time.
     \[ f_N[n] = \sum_{k \in \langle N \rangle} F_N[k] e^{jn \textcolor{purple}{(2\pi k / N)}}
     ~ \text{ where } ~
     F_N[k] = \frac{1}{N} \sum_{n \in \langle N \rangle} f_N[n] e^{-jn \textcolor{purple}{(2\pi k / N)}}. \]
-    Here, $\langle N \rangle$ denotes any set of $N$ consecutive integers centered at zero.
+    Here, $\langle N \rangle$ denotes a set of $N$ consecutive integers roughly centered at zero.
     Remember that for DT Fourier series, $F_N[k]$ is a finite array of length $N$,
     or equivalently, an infinite array with period $N$.
 
-    Let's follow the recipe from last time: take $F(\Omega) := \lim_{N \to \infty} N \cdot F_N[k]$
-    where $\textcolor{purple}{\Omega := 2\pi k / N}$.  Then:
+    Let's follow the recipe from last time: take $F(\Omega) := \lim_{N \to \infty} N \cdot F_N[k]$,
+    where the \emph{continuous} frequency variable $\textcolor{purple}{\Omega := 2\pi k / N}$
+    is held fixed as $N \to \infty$ (so the index $k$ grows in proportion to $N$).  Then:
     \[ F(\Omega) = \lim_{N \to \infty} N \cdot \left(
         \frac{1}{N} \sum_{n \in \langle N \rangle} f_N[n] e^{-jn \textcolor{purple}{(2\pi k / N)}}
     \right)
@@ -51,12 +53,13 @@ We'll just cut straight to the punchline this time.
     Just as promised.
     Now make the parametrization $\{\Omega_k\}_{k \in \langle N \rangle}$ where
     $\textcolor{purple}{\Omega_k := 2\pi k / N}$.
-    Noting that $\Delta \Omega_k = 2\pi / N$ and sending $N \to \infty$, the Fourier series becomes:
+    Noting that $\Delta \Omega := \Omega_{k + 1} - \Omega_k = 2\pi / N$
+    and sending $N \to \infty$, the Fourier series becomes:
     \begin{align*} f[n] = \lim_{N \to \infty} f_N[n]
     & = \lim_{N \to \infty} \sum_{k \in \langle N \rangle}
     F_N[k] e^{jn \textcolor{purple}{(2\pi k / N)}} \\
     & = \lim_{N \to \infty} \frac{1}{2\pi} \sum_{k \in \langle N \rangle}
-    F(\Omega_k) e^{jn\textcolor{purple}{\Omega_k}} \Delta \Omega_k
+    F(\Omega_k) e^{jn\textcolor{purple}{\Omega_k}} \Delta \Omega
     = \frac{1}{2\pi} \int_{\langle 2\pi \rangle}
     F(\Omega) e^{jn \textcolor{purple}{\Omega}} \, \mathrm{d}\Omega. \end{align*}
     Just as promised.  Here, $\langle 2\pi \rangle$ refers to
@@ -66,26 +69,23 @@ We'll just cut straight to the punchline this time.
 \end{proof}
 
 \begin{remark}
-    You might think the DT Fourier transform is the same as the CT Fourier transform.
-    Here's why.
-
-    Given a DT signal $f[n]$, you might consider the CT signal $g(t) := f[\lfloor t \rfloor]$.
-    Then you might claim the following:
+    Given a DT signal $f[n]$, consider the ``staircase'' CT signal $g(t) := f[\lfloor t \rfloor]$.
+    Then the following claim (perhaps surprisingly!) is false.
     \begin{quote}
-        \textbf{Claim (?).} The CT Fourier transform of $g(t)$ is the same as
-        the DT Fourier transform of $f[n]$.
+        \textbf{False Claim.} The CT Fourier transform $G(\omega)$ of $g(t)$ is the same as
+        the DT Fourier transform $F(\Omega)$ of $f[n]$.
     \end{quote}
-    But the CT synthesis equation
-    $g(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} G(\omega) e^{j\omega t} \, \mathrm{d}\omega$
-    differs from the DT synthesis equation
-    $f[n] = \frac{1}{2\pi} \int_{0}^{2\pi} F(\Omega) e^{j\Omega n} \, \mathrm{d}\Omega$,
-    so this claim cannot possibly be true.
+    To see why this claim fails, compute $G(\omega)$ one staircase step at a time:
+    \[ G(\omega) = \sum_{n = -\infty}^{\infty} f[n] \int_{n}^{n + 1} e^{-j \omega t} \, \mathrm{d}t
+    = \sum_{n = -\infty}^{\infty} f[n] e^{-j \omega n} \left[ \frac{1 - e^{-j\omega}}{j\omega} \right]
+    = F(\Omega) \left[ \frac{1 - e^{-j\omega}}{j\omega} \right].
+    ~~~~~ (\Omega :=: \omega) \]
+    So the CTFT $G(\omega)$ is the DTFT $F(\Omega)$ \emph{times} an extra decay factor of
+    $\left[\frac{1 - e^{-j\omega}}{j\omega}\right]$.
 
-    The issue is that the CT Fourier transform of $g(t)$ is \emph{not} the same
-    as the DT Fourier transform of $f[n]$:
-    there is a huge difference between $\int_{n}^{n + 1} g(t) e^{-j \omega t} \, \mathrm{d}t$
-    and $f[n] e^{-j\Omega n}$.  This difference is one reason why
-    the synthesis equations look so different.
+    This factor is also why the synthesis equations differ:
+    the CTFT $G(\omega)$ decays, so it's aperiodic and thus synthesized by $\int_{-\infty}^{\infty}$.
+    In contrast, $F(\Omega)$ is $2\pi$-periodic and thus synthesized by $\int_0^{2\pi}$.
 \end{remark}
 
 \begin{problem}
@@ -105,13 +105,14 @@ We'll just cut straight to the punchline this time.
     }{
         e^{\frac{1}{2}j \Omega} - e^{-\frac{1}{2}j \Omega}
     } = \frac{\sin\left(\left(S + \frac{1}{2}\right)\Omega\right)}{\sin\left(\frac{1}{2}\Omega\right)}. \]
-    Here, we have to simplify a finite geometric series,
-    then have to do some clever algebraic manipulation. ~ $\blacksquare$
+    Here, we simplify a finite geometric series,
+    then multiply the numerator and denominator by $e^{j \Omega / 2}$
+    to reach a quotient of sines. ~ $\blacksquare$
 \end{solution}
 
 \subsection{Lecture and Recitation: Properties of the DT Fourier Transform}
 
-Here's what the Fourier Transforms of the $f[n]$ signal from the previous example
+Here's what the Fourier transforms of the $f[n]$ signal from the previous example
 look like for different values of $S$.
 
 \begin{center}
@@ -121,7 +122,7 @@ look like for different values of $S$.
 Because we're working with DT signals, it's hard to formally put into words
 the time-scaling property.
 
-Other than time-scaling, all of the other CT Fourier transform properties
+Other than time-scaling and duality, all of the other CT Fourier transform properties
 can be ported over to DT easily.
 (Proofs are obvious.)
 
@@ -141,7 +142,7 @@ can be ported over to DT easily.
 \end{theorem}
 
 \begin{theorem}{Time Delay}
-    The FT of $f[n - N]$ is $e^{-j \Omega N} F(\Omega)$.
+    The FT of $f[n - n_0]$ is $e^{-j \Omega n_0} F(\Omega)$.
 \end{theorem}
 
 \begin{theorem}{Derivative FT}
@@ -159,8 +160,9 @@ can be ported over to DT easily.
 \begin{theorem}{Periodic DT}
     Suppose $f[n]$ is a periodic signal with Fourier coefficients $F[k]$,
     so that $f[n] = \sum_{k = 0}^{N - 1} F[k] e^{jn(2\pi k/N)}$.
-    Then the Fourier transform of $f[n]$ is
-    $F(\Omega) := \sum_{k = 0}^{N - 1} 2\pi F[k] \delta\left(\Omega - \frac{2\pi k}{N}\right)$.
+    Then, treating $F[k]$ as an infinite array with period $N$,
+    the Fourier transform of $f[n]$ is
+    $F(\Omega) = \sum_{k = -\infty}^{\infty} 2\pi F[k] \delta\left(\Omega - \frac{2\pi k}{N}\right)$.
 \end{theorem}
 
 Here's what that last theorem looks like visually.
