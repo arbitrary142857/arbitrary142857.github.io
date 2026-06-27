@@ -11,10 +11,10 @@ Here's our prototypical example.
 1 & \text{ if }  t \in (-1, 1). \\
 0 & \text{ otherwise.}
 \end{cases} \]
-The guiding intuition is that all signals are technically periodic—it's just that
+The guiding intuition is that all signals are technically periodic---it's just that
 the period of an aperiodic signal is $T \to \infty$.
-Instead of a \emph{finite sum} $\sum_{k = -\infty}^{\infty} F[k] e^{jkt \omega_0}$,
-we'll write $f$ as an \emph{infinite integral}
+Instead of a \emph{discrete sum} $\sum_{k = -\infty}^{\infty} F[k] e^{jkt \omega_0}$,
+we'll write $f$ as a \emph{continuous integral}
 $\int_{-\infty}^{\infty} F(\omega) e^{jt \omega} \, \mathrm{d}\omega$.
 
 But let's take things slow.
@@ -25,7 +25,7 @@ to have some \emph{finite} period $T$ by constructing an alternative $f_T(t)$.
 1 & \text{ if } (t \% T) \in (-1, 1). \\
 0 & \text{ otherwise.}
 \end{cases} \]
-As a function of $T$, we now determine the length-$T$ array of Fourier coefficients $F_T$
+As a function of $T$, we now determine the array of Fourier coefficients $F_T$
 for the periodic signal $f_T(t)$.
 \[ F_T[k] = \frac{1}{T} \int_{-1}^1 e^{-jt(\textcolor{purple}{2\pi k/T})} \, \mathrm{d}t
 = \frac{1}{T} \left[
@@ -42,9 +42,11 @@ for $T = 16$ and $T = 8$.
 
 \begin{remark}
     Convince yourself that doubling $T$ has the effect of
-    halving the ``height'' and doubling the ``width''.
-    If we want to ``normalize'' the graphs for $T = 16$ and $T = 8$ so they look similar,
-    we'd instead have to graph, say, $T \cdot F_T[k / T]$\dots
+    halving the ``height'' and doubling the ``width''
+    of the raw coefficients $F_T[k]$.
+    If we wanted to ``normalize'' the graphs for $T = 16$ and $T = 8$
+    so they looked similar,
+    we might instead graph, say, $T \cdot F_T[k]$ against $2\pi k/T$\dots
 \end{remark}
 
 And so our Fourier series for $f_T(t)$ looks like the following:
@@ -52,7 +54,7 @@ And so our Fourier series for $f_T(t)$ looks like the following:
 \frac{2\sin(\textcolor{purple}{2\pi k/T})}{\textcolor{purple}{2\pi k/T}}
 e^{jt(\textcolor{purple}{2\pi k/T})}. \]
 There's a reparametrization begging to be made here:
-$\textcolor{purple}{\{\omega_k\}_{-\infty}^{\infty} := 2\pi k/T}$.
+$\textcolor{purple}{\omega_k := 2\pi k/T}$ for each $k \in \mathbb{Z}$.
 Note that $\Delta \omega := \omega_{k + 1} - \omega_k = 2\pi/T$.
 Now we can send $T \to \infty$ and see what happens to the Fourier series.
 \begin{align*}
@@ -81,7 +83,7 @@ and vice versa?
     Given a CT signal $f(t)$, define its Fourier transform to be
     $F(\omega) := \int_{-\infty}^{\infty} f(t) e^{-j\omega t} \, \mathrm{d}t$.
     It then follows that
-    $f(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} F(w) e^{jt \omega} \, \mathrm{d}\omega$.
+    $f(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} F(\omega) e^{jt \omega} \, \mathrm{d}\omega$.
 \end{theorem}
 
 \begin{proof}
@@ -125,11 +127,11 @@ and vice versa?
     \end{itemize}
 \end{remark}
 
-Importantly, there is now a more clear \emph{dual} relationship
+Importantly, there is now a clearer \emph{dual} relationship
 between $f(t)$ and $F(\omega)$.  If the equation
 $F(\omega) := \int_{-\infty}^{\infty} f(t) e^{-j\omega t} \, \mathrm{d}t$
 represents a Fourier transform, then the equation
-$f(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} F(w) e^{jt \omega} \, \mathrm{d}\omega$
+$f(t) = \frac{1}{2\pi} \int_{-\infty}^{\infty} F(\omega) e^{jt \omega} \, \mathrm{d}\omega$
 represents an inverse Fourier transform.
 
 \begin{theorem}{Time-Frequency Duality}
@@ -154,7 +156,7 @@ represents an inverse Fourier transform.
 \end{proof}
 
 Note that this suggests that our prototypical example
-was unique in having a real-valued Fourier transform.  Here's why.
+was special in having a real-valued Fourier transform.  Here's why.
 
 \begin{theorem}{Even / Odd}
     If $f(t)$ is real and even, $F(\omega)$ is real and even.
@@ -173,7 +175,7 @@ More generally, we can say the following:
 
 \begin{theorem}{Hermitian Symmetry}
     If $f(t)$ is real,
-    then $F(-\Omega) = \overline{F(\Omega)}$ for all $\Omega$.
+    then $F(-\omega) = \overline{F(\omega)}$ for all $\omega$.
 \end{theorem}
 
 \begin{proof}
@@ -221,7 +223,7 @@ Here's some intuition as to why ``balancing it out'' is necessary.
     Immediate from plugging in $t = 0$ or $\omega = 0$ as needed. ~ $\blacksquare$
 \end{proof}
 
-Finally, here's a property that \emph{doesn't}
+Finally, here's a property whose frequency half \emph{doesn't}
 have an analogue for Fourier series.
 
 \begin{theorem}{Derivative FTs}
@@ -256,7 +258,8 @@ According to ``Time Scaling'', in fact,
 the effect is that $F_A(\omega)$ ``stretches outward''
 as $A$ tends to infinity, while still maintaining a $y$-intercept of $2$.
 
-At the limit of $A \to \infty$, we find the following.
+At the limit of $A \to \infty$, we discover the following
+(up to a factor of $2$).
 
 \begin{theorem}{Dirac Delta FT}
     Let the \textbf{Dirac delta function} $\delta(t)$
@@ -280,7 +283,7 @@ when taking the Fourier transform of a periodic signal.
     Suppose $f(t)$ is a periodic signal with Fourier coefficients $F[k]$,
     so that $f(t) = \sum_{k = -\infty}^{\infty} F[k] e^{jt(2\pi k/T)}$.
     Then the Fourier transform of $f(t)$ is
-    $F(\omega) := \sum_{k = -\infty}^{\infty} 2\pi F[k] \delta\left(\omega - \frac{2\pi k}{T}\right)$.
+    $F(\omega) = \sum_{k = -\infty}^{\infty} 2\pi F[k] \delta\left(\omega - \frac{2\pi k}{T}\right)$.
 \end{theorem}
 
 \begin{proof}
