@@ -1,0 +1,286 @@
+\lecture{13}
+\title{Discrete Fourier Transform II}
+
+\begin{document}
+
+\subsection{Lecture: Frequency Resolution}
+
+Recall from the end of \href{12.html#recitation-spectral-analysis-interpreting-the-dft}{Lecture 12}
+notes what DT and DFT samples tell us about the original CT signal.
+
+\begin{center}
+    \frame{\includegraphics[width=0.5\textwidth]{lecture-13/time-window}}
+    \frame{\includegraphics[width=0.5\textwidth]{lecture-13/frequency-window}}
+\end{center}
+
+\begin{problem}
+    At a sampling rate of $f_s = 44 \, 100$, a total of $N = 1024$
+    samples are taken from a CT signal of a cello, yielding the DT signal $x[n]$.
+    The DFT of $x[n]$ is $X[k]$, pictured below.
+    \begin{center}
+        \frame{\includegraphics[width=0.4\textwidth]{lecture-13/1024-data}}
+    \end{center}
+    A zoomed-in graph of $|X[k]|$ for $k \in \{0, 1, \dots, 24\}$ is shown above.
+    Estimate the frequency of the original cello CT signal.
+\end{problem}
+
+\begin{solution}
+    Note that $\argmax_k |X[k]| = 7$.
+    The index $k = 7$ in the DFT $X[k]$
+    corresponds to the frequency $7 \times \frac{f_s}{N} \approx 301.46$ Hz.
+
+    More precisely, the true peak frequency must correspond to some index
+    $k \in [6.5, 7.5]$.  This gives us the interval $[280 \, \mathrm{Hz}, 323 \, \mathrm{Hz}]$,
+    corresponding to frequencies between D4 and Eb4.
+\end{solution}
+
+Greater values of $N$ will yield a finer frequency resolution.
+Let's consider one way we might increase the value of $N$.
+
+\begin{problem}
+    Let's increase $N$ by a factor of $8$
+    by defining a new signal $y[n]$ via \textbf{zero-padding}.
+    \[ y[n] := \begin{cases}
+        x[n] & \text{ if } n \in \{0, 1, \dots, N - 1\}. \\
+        0 & \text{ if } n \in \{N, N + 1, \dots, 8N - 1\}.
+    \end{cases} \]
+    We then read from $8 \cdot Y[k]$, where $Y[k]$ is the DFT of $y[n]$.
+    What frequency data should we expect to obtain from this?
+\end{problem}
+
+\begin{solution}
+    Recall from \href{12.html#lecture-dft-vs-dtft-and-windows}{Lecture 12}
+    that $Y[k]$ is the result of taking $8 \cdot N$ samples
+    from the DTFT of $y_w[n]$.  Here's the key:
+    \begin{quote}
+        \textbf{Claim.}
+        The DTFT of $y_w[n]$ is identical to the DTFT of $x_w[n]$.
+        \[ \text{Proof:} ~~~ Y_w(\Omega)
+        = \sum_{n = 0}^{8N - 1} y[n] e^{-j\Omega n}
+        = \sum_{n = 0}^{N - 1} x[n] e^{-j\Omega n}
+        = X_w(\Omega). ~~~ \square \]
+    \end{quote}
+    Thus $Y[k]$ is just a more finely-discretized sampling of $X_w(\Omega)$ than $X[k]$.
+    \begin{center}
+        \frame{\includegraphics[width=0.4\textwidth]{lecture-13/octuple-DFT}}
+    \end{center}
+    Note that $\argmax_k |8 \cdot Y[k]| = 55$,
+    which suggests a tighter interval of frequencies
+    $[293 \, \mathrm{Hz}, 298.77 \, \mathrm{Hz}]$ from $k \in [54.5, 55.5]$.
+    But it would be misleading to be so tight: the peak at $k = 55$
+    is not very much higher than the peak at, say, $k = 54$ or $k = 56$.
+    
+    Through zero-padding, larger values of $N$ will give us a clearer view
+    of the DTFT $X_w(\Omega)$.  But if the DTFT $X_w(\Omega)$ itself is too fuzzy,
+    we still won't get a clearer vision of the correct CT frequency.
+\end{solution}
+
+If we want to genuinely increase our frequency resolution,
+we just need to sample more data.
+Increasing the length of our DT signal by $\times 32$ to $N = 32 \, 768$,
+we arrive at the following.
+
+\begin{center}
+    \frame{\includegraphics[width=0.3\textwidth]{lecture-13/32-DFT}}
+\end{center}
+
+Only now can we see the truth:
+\begin{itemize}
+    \item There are actually two frequencies: both D and E-flat!
+    (In addition to their harmonic series\dots)
+    \item The fundamental frequency is an octave lower than expected,
+    at $k = 108$ (or $145 \, \mathrm{Hz}$) and $k = 114$ (or $153 \, \mathrm{Hz}$).
+\end{itemize}
+Zero-padding can make our understanding of the data more precise,
+but it can't make the data we got any more informative.
+
+\subsection{Miscellaneous: DFT and Inverse DFT}
+
+\begin{remark}
+    This explanation is written with the assumption of knowledge of
+    \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23}
+    from 6.1220 on the Fast Fourier Transform.
+    This knowledge is not necessary, but it is helpful.
+\end{remark}
+
+We first provide an alternative perspective of the DFT,
+as suggested by 6.1220.
+
+\begin{theorem}{DFT = Polynomial Sampling}
+    Consider a DT signal $x[n]$ of length $N$ and its DFT $X[k]$.
+    Furthermore, consider the polynomial $p(z) := \sum_{n = 0}^{N - 1} x[n] z^n$
+    and a primitive $N^{\text{th}}$ root of unity $\omega := e^{-2\pi j/N}$.
+
+    Then $\frac{1}{N} p(\omega^k) = X[k]$ for all $k \in \{0, 1, \dots, N - 1\}$;
+    that is, the DFT effectively just evaluates a polynomial at $N$ roots of unity.
+\end{theorem}
+
+\begin{proof}
+    Follows immediately from the DFT analysis equations from
+    \href{12.html#lecture-discrete-fourier-transform}{Lecture 12}. ~ $\blacksquare$
+\end{proof}
+
+We may now apply reasoning shown in the 6.1220 notes to argue the following.
+
+\begin{theorem}{DFT = Inverse DFT}
+    If $X[k]$ is the DFT of $x[n]$,
+    then the DFT of $X[k]$ is $x'[n] := \frac{1}{N} \cdot x[(-n)\%N]$.
+
+    In other words, the inverse DFT of $X[k]$
+    is the same as the DFT of $X[k]$,
+    multiplied by $N$ and with circular time-reversal.
+\end{theorem}
+
+\begin{proof}
+    Let's view the DFT as simply a map from
+    vectors of length $N$ to vectors of length $N$.
+    The previous theorem indicates that
+    such a map is actually a linear transformation
+    given by multiplication by the DFT matrix $W$.
+    \[
+    \begin{bmatrix}
+        X[0] \\ X[1] \\ X[2] \\ \vdots \\ X[N - 1]
+    \end{bmatrix}
+    = \frac{1}{N} \begin{bmatrix}
+        p(\omega^0) \\ p(\omega^1) \\ p(\omega^2) \\ \vdots \\ p(\omega^{N - 1})
+    \end{bmatrix}
+    = \frac{1}{N} \underbrace{
+        \begin{bmatrix}
+            1 & 1 & 1 & \cdots & 1 \\
+            1 & \omega & \omega^2 & \cdots & \omega^{N - 1} \\
+            1 & \omega^2 & \omega^4 & \cdots & \omega^{2(N - 1)} \\
+            \vdots & \vdots & \vdots & \ddots & \vdots \\
+            1 & \omega^{N - 1} & \omega^{2(N - 1)} & \cdots & \omega^{(N - 1)(N - 1)}
+        \end{bmatrix}
+    }_{W} \begin{bmatrix} x[0] \\ x[1] \\ x[2] \\ \vdots \\ x[N - 1] \end{bmatrix}.
+    \]
+    Thus, the DFT of $X[k]$ is just $\frac{1}{N^2} \cdot W^2 \cdot \mathbf{x}$,
+    where $\mathbf{x}$ is the column vector associated with $x[n]$.
+    \begin{quote}
+        \textbf{Lemma.} We have $W^2 = NP$,
+        where $P$ is the permutation matrix
+        encoding the map $n \mapsto (-n) \% N$.
+
+        \emph{Proof:} Recall that $W\overline{W} = NI$ from the
+        \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23}
+        notes from 6.1220 (or just verify this via straightforward computation).
+        The result $W^2 = NP$ then follows from noting easily
+        that $\overline{W} = WP$. $\square$
+    \end{quote}
+    Thus, the DFT of $X[k]$ is
+    $\frac{1}{N^2} \cdot W^2 \cdot \mathbf{x}
+    = \frac{1}{N} \cdot P \cdot \mathbf{x}$,
+    which indeed corresponds to the signal
+    $x'[n] := \frac{1}{N} \cdot x[(-n)\%N]$. ~ $\blacksquare$
+\end{proof}
+
+Thus, any result we discover about the DFT
+has a natural ``dual'' in the context of the inverse DFT.
+
+\subsection{Lecture and Recitation: Circular Convolution}
+
+\textbf{Definition.}
+Given two arrays $A$ and $B$ and a positive integer $N$, their \textbf{circular convolution} is:
+\[ (A \circledast B)[n] := \sum_{m = 0}^{N - 1} A[m]B[(n - m) \% N]. \]
+
+\begin{remark}
+    It's just polynomial multiplication in the ring $\mathbb{C}[z]/(z^N - 1)$.
+\end{remark}
+
+Just as the DTFT of a convolution is the product of the DTFTs,
+the DFT of a circular convolution is the product of the DFTs.
+
+\begin{theorem}{Circular Convolution = Multiplication}
+    Suppose the DFT of $a[n]$ is $A[k]$, and the DFT of $b[n]$ is $B[k]$,
+    both using the same window size $N$.
+    Then the DFT of $(a \circledast b)[n]$ is $N \cdot A[k] \cdot B[k]$,
+    and the DFT of $a[n] \cdot b[n]$ is $(A \circledast B)[k]$.
+\end{theorem}
+
+\begin{proof}
+    Just the same sort of argument as we saw in
+    \href{10.html#lecture-ltis-by-frequency-response}{Lecture 10}.
+    For the first direction,
+    \[
+    \mathrm{DFT}(a \circledast b)[k]
+    = \frac{1}{N} \sum_{n = 0}^{N - 1} (a \circledast b)[n] e^{-j (2\pi k / N) n}
+    = \frac{1}{N} \underbrace{\left(\sum_{n = 0}^{N - 1} a[n] e^{-j (2\pi k / N)n}\right)}_{
+        = \ N \cdot A[k]
+    }
+    \underbrace{\left(\sum_{n = 0}^{N - 1} b[n] e^{-j (2\pi k / N)n}\right)}_{
+        = \ N \cdot B[k]
+    }
+    = N \cdot A[k] \cdot B[k].
+    \]
+    It's just polynomial multiplication in the ring $\mathbb{C}[z]/(z^N - 1)$.
+    And for the inverse direction,
+    \[ \mathrm{DFT}^{-1}(A \circledast B)[n]
+    = \sum_{k = 0}^{N - 1} (A \circledast B)[k] e^{j (2\pi k / N) n}
+    = \underbrace{\left(\sum_{k = 0}^{N - 1} A[k] e^{j (2\pi k / N)n}\right)}_{
+        = \ a[n]
+    }
+    \underbrace{\left(\sum_{k = 0}^{N - 1} B[k] e^{j (2\pi k / N)n}\right)}_{
+        = \ b[n]
+    }
+    = a[n] \cdot b[n]. \]
+    And that's it; nothing new. ~ $\blacksquare$
+\end{proof}
+
+\begin{problem}
+    Consider a DT signal $x[n]$ of length $11$ whose DFT for $N = 16$ (found via zero-padding) is $X[k]$.
+    Determine how the signal $(x \circledast x)[n]$ relates to the signal
+    $x'[n] := 16 \cdot \mathrm{DFT}^{-1}(X^2[k])$.
+\end{problem}
+
+\begin{solution}
+    By the theorem above, we should expect:
+    \[
+    x'[n] = \sum_{m = 0}^{10} x[m] x[(n - m)\%16] ~~~ \text{ and } ~~~
+    (x \circledast x)[n] = \sum_{m = 0}^{10} x[m] x[(n - m)\%11].
+    \]
+    So we should expect some \emph{time-aliasing} errors between $x'[n]$ and $(x \circledast x)[n]$.
+    For example, suppose $x[n]$ is given by:
+    \[ x[n] := \begin{cases}
+    1 & \text{ if } n \in \{1, 2, 4, 8\} \\
+    0 & \text{ if } n \in \{0, 3, 5, 6, 7, 9, 10\}
+    \end{cases}. \]
+    There is exactly $1$ pair of numbers from $\{1, 2, 4, 8\}$
+    whose sum is $0$ modulo $16$---the pair $(8, 8)$---so $x'[0] = 1$.
+    However, there is no pair of numbers from $\{1, 2, 4, 8\}$ whose sum is $0$ modulo $11$,
+    so $(x \circledast x)[0] = 0$.
+\end{solution}
+
+\subsection{Recitation: Impulse Trains}
+
+An impulse train is a special kind of periodic signal
+consisting of repeating evenly-spaced impulses.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-13/train}}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-13/train-DFT}}
+\end{center}
+
+An example of an impulse train and its DFT is shown above.
+
+\begin{theorem}{Impulse Trains}
+    The Fourier transform of an \textbf{impulse train} is another impulse train.
+    \begin{itemize}
+        \item Given $f[n] := \sum_{m = -\infty}^{\infty} \delta[n - mN]$, its DTFT is
+        $F(\Omega) = \frac{2\pi}{N} \sum_{k = 0}^{N - 1}
+        \delta\left[\Omega - k \cdot \frac{2\pi}{N}\right]$.
+        \item Given $f(t) := \sum_{m = -\infty}^{\infty} \delta(t - mT)$, its CTFT is
+        $F(\omega) = \frac{2\pi}{T} \sum_{k = -\infty}^{\infty}
+        \delta\left(\omega - k \cdot \frac{2\pi}{T}\right)$.
+        \item Given $f[n] := \sum_{m = 0}^{(N / L) - 1} \delta[n - mL]$ where $L \mid N$, its DFT is
+        $F[k] = \frac{1}{L} \sum_{m = 0}^{L - 1} \delta\left[k - m \cdot \frac{N}{L}\right]$.
+    \end{itemize}
+\end{theorem}
+
+\begin{proof}
+    Just plain computation.
+    Work it out in your head;
+    the discussion from \href{6.html#lecture-the-dirac-delta-function}{Lecture 6}
+    on impulses is relevant here. ~ $\blacksquare$
+\end{proof}
+
+\end{document}
