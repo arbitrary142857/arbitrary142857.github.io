@@ -3,7 +3,39 @@
 
 \begin{document}
 
+The content of this lecture is not needed for future lectures,
+but it's a nice payoff of everything built up over the past ten lectures,
+explaining clever applications of signal processing techniques
+in the context of radio transmission.
+
 \subsection{Lecture: Wireless Communication (is Hard)}
+
+One way to interpret the signals we've been studying so far
+is to view them as functions of air pressure at a certain location over time.
+In this sense, one might \emph{physically produce} a signal
+by, say, clapping your hands or shouting.
+
+Another way to interpret a signal, however,
+is as a function of the strength of the electromagnetic field
+at a certain location over time.
+In this sense, one might \emph{physically produce} a signal
+by using an \textbf{antenna}:
+
+\begin{quote}
+    \textbf{Fact.} \emph{(Physics)}
+    In an antenna, electrons oscillate back and forth along its length;
+    to achieve resonance, the wavelength of the signal produced by an antenna
+    must be on the order of the antenna's length.
+\end{quote}
+
+To communicate with someone,
+you might use your voice to produce an
+\emph{air pressure signal}.
+But this form of communication has some disadvantages:
+it doesn't work over long distances, and it's not very private.
+
+What if we tried communicating by using an antenna
+to send an \emph{electromagnetic signal} instead?
 
 \begin{problem}
     We have a signal that represents human speech,
@@ -25,12 +57,6 @@
     So we would need an antenna $1500$ kilometers long\dots
 \end{solution}
 
-\begin{remark}
-    In an antenna, electrons oscillate back and forth along its length;
-    to achieve resonance, the wavelength of the signal produced by an antenna
-    must be on the order of the antenna's length.
-\end{remark}
-
 The issue, of course, is that most antennas are $10$ centimeters long,
 not $1500$ kilometers.
 
@@ -47,8 +73,10 @@ not $1500$ kilometers.
 
 The challenge is that most signals (not just speech!)
 have frequencies that are not at all close to $3$ GHz.
-We need to find some way to \textbf{modulate} these signals
-so that their frequency fits within the desired range.
+
+If we want to communicate meaningful electromagnetic signals via antenna,
+we need to find some way to \textbf{modulate} these signals
+so that their frequencies fit within the desired range.
 
 \subsection{Lecture: Amplitude Modulation}
 
@@ -62,16 +90,25 @@ we might hope to just, say, shift its Fourier transform to the right, like so:
 Recall from
 \href{6.html#lecture-and-recitation-properties-of-the-ct-fourier-transform}{Lecture 6}
 that the effect of this is that $y(t) = e^{j \omega_c t} x(t)$.
-This won't work, though, since the resulting signal $y(t)$ will then be complex-valued,
-and thus not physically transmittable.
-The trick is to try this instead:
+By picking a large enough $\omega_c$,
+we can bring the frequencies of $y(t)$ close to $3$ GHz,
+fixing our antenna-feasibility problem.
+
+But this naive solution won't work as stated---the resulting signal $y(t)$
+is complex-valued, and thus not physically transmittable!
+One easy way to see why is to note that
+$Y(\omega)$ doesn't satisfy Hermitian symmetry:
+$Y(-\omega) \neq \overline{Y(\omega)}$.
+
+The fix is to enforce Hermitian symmetry
+by redefining $Y(\omega)$ like so:
 
 \begin{center}
     \frame{\includegraphics[width=0.3\textwidth]{lecture-11/good-modulation}}
 \end{center}
 
 The effect of the above is that $y(t) = 2\cos(\omega_c t) x(t)$,
-which is real-valued.  You can even see below
+which is real-valued.  In the time domain, you can see
 how $y(t)$ has a very high frequency for large $\omega_c$,
 yet still communicates the ``shape'' of $x(t)$.
 
@@ -82,16 +119,17 @@ yet still communicates the ``shape'' of $x(t)$.
 \textbf{Definition.}
 The system $x(t) \mapsto \cos(\omega_c t) x(t)$ is called
 \textbf{amplitude modulation}.
+(Note that we drop the factor of $2$ here.)
 
 \begin{remark}
-    Note that amplitude modulation is not an LTI system:
-    it's not time-invariant.
+    Note that amplitude modulation is \emph{not} an LTI system:
+    it's not time-invariant!
 
     Additionally, note that we switched from $y(t) = 2\cos(\omega_c t) x(t)$
     to $y(t) = \cos(\omega_c t) x(t)$,
     dropping the factor of $2$.  The effect of this
     is that the amplitudes in $Y(\omega)$ will be half of those in $X(\omega)$.
-    (We'll account for this later.)
+    We'll account for this later.
 \end{remark}
 
 Here's another way to see why amplitude modulation
@@ -123,7 +161,7 @@ affects the frequency domain in the way it does.
         Y(\lambda) \left[ X(\omega - \lambda) \right] \, \mathrm{d}\lambda
         = \frac{1}{2\pi}(X * Y)(\omega).
     \end{align*}
-    And the same goes for DT signals, expectedly. ~ $\blacksquare$
+    And the same goes for DT signals, as expected. ~ $\blacksquare$
 \end{proof}
 
 And so the point is that
@@ -142,8 +180,9 @@ which has the effect shown below.
 \subsection{Lecture: Synchronous Demodulation}
 
 After transmitting the modulated signal $y(t) = x(t) \cos(\omega_c t)$,
-what happens on the receiving end—how can we demodulate $y(t)$
+what happens on the receiving end---how can we demodulate $y(t)$
 to retrieve the original signal $x(t)$?
+The answer is\dots
 
 \textbf{Definition.} The system $y(t) \mapsto \cos(\omega_c t) y(t)$
 is called \textbf{synchronous demodulation}.
@@ -155,27 +194,31 @@ Nonetheless, it works!
     \frame{\includegraphics[width=0.5\textwidth]{lecture-11/demod-convolution}}
 \end{center}
 
-We can see the same effect working in the time domain, too:
+After receiving $y(t)$, we simply
+apply synchronous demodulation, then apply a low-pass filter,
+and finally multiply the result by $2$.
+The diagram above explains why this works in the frequency domain,
+but you can justify it in the time domain, too:
 \[ z(t) = \cos(\omega_c t) y(t) = \cos^2(\omega_c t) x(t)
 = \left(\frac{1}{2} + \frac{1}{2}\cos(2\omega_c t)\right) x(t). \]
-The procedure, to be explicit,
-is to first perform synchronous demodulation,
-apply a low-pass filter,
-and then multiply by $2$.
+Applying a low-pass filter to $z(t)$
+deletes the $\frac{1}{2}\cos(2\omega_c t) x(t)$ term,
+leaving behind just the original signal $\frac{1}{2}x(t)$.
 
 \subsection{Lecture: Multiple Transmitters}
 
-If our receiver must listen to multiple transmitters at once,
-it can do so as long as each transmitter uses a different choice of $\omega_c$.
+This protocol comes built-in with a neat feature:
+it allows a single receiver to listen to multiple transmitters at once,
+as long as each transmitter uses a different choice of $\omega_c$.
 
 \begin{center}
     \frame{\includegraphics[width=0.4\textwidth]{lecture-11/multiple-transmitters}}
 \end{center}
 
 In the above, by specifying the frequency $\omega_c$ to use for synchronous demodulation,
-the outputted signal $y(t)$ can be set to read from any of
+the output signal $y(t)$ can be set to read from any of
 $x_1(t)$, $x_2(t)$, or $x_3(t)$.
-(Setting $\omega_c = \omega_2$, for example, would yield $y(t) = x_2(t)$.)
+Setting $\omega_c = \omega_2$, for example, would yield $y(t) = \frac{1}{2} x_2(t)$.
 
 To demonstrate this, here's what the summed-together signal $z(t)$
 looks like in the frequency domain.
@@ -192,20 +235,29 @@ as shown in the frequency domain.
     \frame{\includegraphics[width=0.4\textwidth]{lecture-11/selected-frequency}}
 \end{center}
 
+\begin{remark}
+    Ever hear of \emph{AM radio} before?
+    It refers to the first type of audio broadcasting technology ever made.
+    And the \emph{AM} stands for \emph{amplitude modulation}.
+\end{remark}
+
 \subsection{Lecture: Amplitude Modulation with Carrier}
 
 Importantly, the carrier signal $\cos(\omega_c t)$ used in amplitude modulation
 must match the carrier signal $\cos(\omega_c t)$ used in synchronous demodulation.
-What happens if the two carrier signal used differ by a phase shift $\phi$, though?
-\[ z(t) = \cos(\omega_c t) \cos(\omega_c t + \phi) x(t)
-= \frac{1}{2} x(t) \left(\cos(\phi) + \cos(2 \omega_c t + \phi)\right)
-= \frac{1}{2} x(t) \cos(\phi) + \frac{1}{2}x(t) \cos(2 \omega_c t + \phi). \]
+What happens if the two carrier signals used differ by a phase shift $\phi$, though?
+\begin{align*}
+    z(t) & = \cos(\omega_c t) \cos(\omega_c t + \phi) \cdot x(t) \\
+    & = \frac{1}{2} \left[\cos(\phi) + \cos(2 \omega_c t + \phi)\right] \cdot x(t) \\
+    & = \frac{1}{2} x(t) \cos(\phi) + \frac{1}{2}x(t) \cos(2 \omega_c t + \phi).
+\end{align*}
 The latter of the two RHS terms will get filtered out via the LPF.
 But the former of those two terms $\frac{1}{2}x(t) \cos(\phi)$
 might experience \emph{fading} for unlucky values of $\phi$
 (say, $\phi \approx \frac{\pi}{2}$).
 
-Let's consider an entirely new approach to modulation and demodulation.
+Let's consider an \textbf{entirely new approach} to modulation and demodulation
+that bypasses this issue.
 \begin{quote}
     \textbf{Approach (AM with Carrier).}
     Suppose we wish to transmit a signal $x(t)$
@@ -221,25 +273,30 @@ Let's consider an entirely new approach to modulation and demodulation.
     \end{enumerate}
 \end{quote}
 Notice how this approach doesn't even use synchronous demodulation;
-the demodulation is the peak detector itself.
+the demodulation is the \emph{peak detector} itself.
+
+To understand why this new protocol works,
+consider the \emph{shape} of the transmitted signal $z(t)$.
 \begin{center}
     \frame{\includegraphics[width=0.3\textwidth]{lecture-11/carrier-transmission}}
 \end{center}
 The signal $z(t)$ that is transmitted has a special property:
-its ``envelope'' traces out the shape of $x(t) + C$, as shown above.
-Note that this property only holds if $C > |x(t)|$.
+its \emph{shape} (formally, ``envelope'') traces out the shape of $x(t) + C$.
+Note that this property relies on the assumption that $C > |x(t)|$.
 \begin{center}
     \frame{\includegraphics[width=0.5\textwidth]{lecture-11/peak-detector}}
 \end{center}
 On the receiving end, reading out that ``envelope'' is not very hard to do in hardware:
-all it takes is an RC circuit with properly-tuned components.
+all it takes is a single RC circuit (our \emph{peak detector}).
 Thus, the receiver just has to read the envelope $y(t)$,
-noting that $x(t) \approx y(t) - C$.
+then subtract $C$ to retrieve $x(t) \approx y(t) - C$.
 
-The downside of this approach is that
+One downside of this approach is that
 it doesn't make use of synchronous demodulation;
 the receiver can't distinguish between multiple transmissions added together,
 even if each transmitter uses a different value for $\omega_c$.
+(A band-pass filter that first isolates a single transmission
+would fix this---that's what real AM radios do.)
 
 Another downside of this approach
 is the \emph{power} necessary to produce the E/M wave
@@ -247,7 +304,7 @@ $z(t) := x(t) \cos(\omega_c t) + C \cos(\omega_c t)$.
 
 \begin{problem}
     Compare the power
-    of the E/M wave $x(t) \cos(\omega_c t) + C \cos(\omega_c t)$
+    of the E/M wave $z(t) = x(t) \cos(\omega_c t) + C \cos(\omega_c t)$
     to that of $x(t) \cos(\omega_c t)$.
 \end{problem}
 
@@ -293,7 +350,8 @@ Here's one strategy that's sure to work.
 
 \begin{theorem}{BPF \#1}
     Let $h_{\mathrm{LPF}}[n]$ denote the unit-sample response
-    of a low-pass filter.  Then a system whose unit-sample response is
+    of a low-pass filter with cutoff frequency $\Omega_d$.
+    Then a system whose unit-sample response is
     $h[n] := h_{\mathrm{LPF}}[n] \cdot \cos(\Omega_c n)$
     is a band-pass filter.
 \end{theorem}
@@ -310,15 +368,15 @@ Here's one strategy that's sure to work.
         \frame{\includegraphics[width=0.4\textwidth]{lecture-11/BPF}}
     \end{center}
     It suffices to take the frequency response $H_{\mathrm{LPF}}(\Omega)$
-    of the LPF filter and convolve it with
+    of the LPF, convolve it with
     $C(\Omega) := \pi \cdot \left(
-        [\Omega -\Omega_c] + \delta[\Omega + \Omega_c]
-    \right)$.
-
+        \delta(\Omega - \Omega_c) + \delta(\Omega + \Omega_c)
+    \right)$, and divide by $2\pi$.
     But just as with amplitude modulation
     (see the ``Filtering Dual'' theorem from earlier),
-    convolving with $C(\Omega)$ is the same as
+    convolving with $C(\Omega)$ and dividing by $2\pi$ is the same as
     multiplying by $c[n] := \cos(\Omega_c n)$.
+
     So we want $h[n] = h_{\mathrm{LPF}}[n] \cdot c[n]
     = h_{\mathrm{LPF}}[n] \cdot \cos(\Omega_c n)$. ~ $\blacksquare$
 \end{proof}
@@ -329,7 +387,7 @@ let's try defining it in the time domain.
 \begin{theorem}{BPF \#2}
     The BPF we seek is described by the cascading system depicted below.
     \begin{center}
-        \frame{\includegraphics[width=0.3\textwidth]{lecture-11/BPF-cascade}}
+        \frame{\includegraphics[width=0.4\textwidth]{lecture-11/BPF-cascade}}
     \end{center}
 \end{theorem}
 
@@ -393,46 +451,65 @@ what the system above is actually accomplishing.
     % through separate band-pass filters and sums the results.
 
     \textbf{Philosophy of BPF \#2.}
-    \textcolor{red}{
-        Give a convincing write-up of how BPF \#2 works.
-        The idea, roughly speaking, is that the frequency response $X(\Omega)$
-        has two relevant sections: one section over the domain
-        $[-\Omega_c \pm \Omega_d]$, and another section over the domain
-        $[+\Omega_c \pm \Omega_d]$.  The challenge is that
-        there is no easy way to isolate one of the two sections on their own.
-    }
+    The input $X(\Omega)$ has two sections we wish to keep:
+    the section $X_+$ over the band $[+\Omega_c \pm \Omega_d]$, and
+    the section $X_-$ over the band $[-\Omega_c \pm \Omega_d]$.
+    (Throughout this discussion, we'll ignore
+    constant factors like $\frac{1}{2}$.)
 
-    \textcolor{red}{
-        However, by multiplying by $\cos(\Omega_c n)$,
-        we can isolate their sum,
-        and by multiplying by $\sin(\Omega_c n)$,
-        we can isolate their difference.
-        The sum and the difference, together, is sufficient data
-        for isolating each section individually.
-    }
+    Here's what happens to $X(\Omega)$
+    when we multiply $x[n]$ by $\cos(\Omega_c n)$ and apply an LPF.
+    \begin{center}
+        \frame{\includegraphics[width=0.25\textwidth]{lecture-11/BPF-cosine}}
+    \end{center}
+    In doing so, we isolate the \emph{sum} of $X_+$ and $X_-$
+    in the middle of the resulting spectrum.
 
-    \textcolor{red}{
-        Unfortunately, the 6.300 notes
-        do not provide helpful diagrams for communicating this point.
-    }
+    In contrast, here's what happens to $X(\Omega)$
+    when we multiply $x[n]$ by $\sin(\Omega_c n)$ and apply an LPF.
+    \begin{center}
+        \frame{\includegraphics[width=0.25\textwidth]{lecture-11/BPF-sine}}
+    \end{center}
+    In this case, we isolate the \emph{difference} of $X_+$ and $X_-$ instead.
+    Here's the reason behind these two effects:
+    \begin{itemize}
+        \item Multiplying $x[n]$ by $c[n] := \cos(\Omega_c n)$
+        is the same as\dots
+        \begin{itemize}
+            \item \dots convolving $X(\Omega)$ with
+            $C(\Omega) := \pi \cdot \left(
+            \delta(\Omega - \Omega_c) + \delta(\Omega + \Omega_c)
+            \right)$ and dividing by $2\pi$.
+        \end{itemize}
+        \item Multiplying $x[n]$ by $s[n] := \sin(\Omega_c n)$
+        is the same as\dots
+        \begin{itemize}
+            \item \dots convolving $X(\Omega)$ with
+            $S(\Omega) := \frac{\pi}{j} \cdot \left(
+            \delta(\Omega - \Omega_c) - \delta(\Omega + \Omega_c)
+            \right)$ and dividing by $2\pi$.
+        \end{itemize}
+    \end{itemize}
+    Neither the sum nor the difference of $X_+$ and $X_-$ are what we want, though.
+    We want $X_+$ and $X_-$ each on their own, not their combination.
+    But here's the point: the sum and the difference, together,
+    are sufficient data for recovering each section individually!
+    Here's how.
+    \begin{itemize}
+        \item Multiplying the ``sum-signal'' by $\cos(\Omega_c n)$
+        deposits the sum $[X_+ + X_-]$ at both $+\Omega_c$ and $-\Omega_c$.
+        \item Multiplying the ``difference-signal'' by $\sin(\Omega_c n)$
+        deposits $[X_+ - X_-]$ at $+\Omega_c$ and $[X_- - X_+]$ at $-\Omega_c$.
+    \end{itemize}
+    Summing these deposits together then
+    leaves $X_+$ back at $+\Omega_c$ and $X_-$ back at $-\Omega_c$,
+    exactly as desired.
 \end{quote}
-
-\begin{remark}
-    Note that multiplying by $s[n] := \sin(\Omega_c n)$
-    is the same as convolving by
-    $S(\Omega) := \frac{\pi}{j} \cdot \left(
-        \delta[\Omega - \Omega_c] - \delta[\Omega + \Omega_c]
-    \right)$.
-
-    Also recall from \href{2.html#recitation-symmetry-in-fourier-series}{Lecture 2}
-    that every signal is the sum of an even signal and an odd signal.
-    The fact that $f[n]$ is a real signal is actually not necessary;
-    BPF \#2 works even when $f[n]$ is complex-valued (as it should!).
-\end{remark}
 
 \subsection{Recitation: DSB-AM vs. SSB-SC}
 
-The $x(t) \cos(\omega_c t)$ transmission strategy has a more complicated name:
+The $x(t) \cos(\omega_c t)$ transmission strategy---the
+first of the two we discussed---has a more complicated name:
 \emph{Double Sideband Amplitude Modulation (DSB-AM)}.
 \begin{itemize}
     \item It's called \emph{Double Sideband} because, in the frequency domain,
@@ -440,24 +517,106 @@ The $x(t) \cos(\omega_c t)$ transmission strategy has a more complicated name:
     \item It's called \emph{amplitude modulation} because, in the time domain,
     the signal $x(t)$ modulates the amplitude of $\cos(\omega_c t)$.
 \end{itemize}
-The downside of DSB-AM is in the \emph{Double Sideband} property.
+The downside of DSB-AM is in the \emph{Double Sideband} property---it
+seems to transmit twice as much data as it needs to.
+
 There is an optimization to be made that can
 cut the cost of transmitting messages by a factor of two.
-It's called \emph{Single Sideband Suppressed Carrier (SSB-SC)},
-and it looks like this:
+Instead of using the wasteful amplitude modulation
+$x(t) \mapsto y(t) := \cos(\omega_c t) x(t)$ from earlier,
+we define $y(t)$ like so:
+
 \begin{center}
     \frame{\includegraphics[width=0.4\textwidth]{lecture-11/SSB-SC}}
 \end{center}
-In the above, $\omega_m$ is a frequency such that
-all of the nonzero behavior of $X(\omega)$ lives within the interval
-$[-\omega_m, \omega_m]$.
 
-\textcolor{red}{TODO: Give a convincing explanation
-of how SSB-SC actually works;
-something about it is uniquely special
-for input signals that are purely real-valued, allegedly.
-(The 6.300 recitation notes go through an example of SSB-SC in action; see
-\href{https://sigproc.mit.edu/_static/spring26/recitations/Communication_Systems.pdf}{here}
-for the details.)}
+In the above, $\omega_m$ is a frequency such that
+the interval $[-\omega_m, \omega_m]$ captures
+all of the nonzero behavior of $X(\omega)$.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-11/SSB-SC-xm}}
+\end{center}
+
+Let's see why this new protocol---called \emph{SSB-SC},
+or \emph{Single-Sideband Suppressed-Carrier}---actually works.
+
+\begin{remark}
+    In what follows,
+    we will (for the first time!) require the fact that
+    $x(t)$ is real, meaning that $X(\omega)$ satisfies Hermitian symmetry.
+    Note that this only guarantees $X(-\omega) = \overline{X(\omega)}$,
+    not that $X(\omega)$ is even!  See
+    \href{6.html#lecture-and-recitation-properties-of-the-ct-fourier-transform}{Lecture 6}.
+\end{remark}
+
+Rather than transmitting a signal that deposits copies of $X(\omega)$
+at $+\omega_c$ and $-\omega_c$, our new protocol
+will deposit a copy of the right half of $X(\omega)$ at $+\omega_c$,
+and the left half of $X(\omega)$ at $-\omega_c$, like so.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-11/SSB-SC-goal}}
+\end{center}
+
+\begin{remark}
+    The name \emph{Single-Sideband Suppressed-Carrier} makes sense:
+    only a \emph{single sideband} of $X(\omega)$
+    is kept on each side, and unlike ``AM with Carrier,''
+    no $C \cos(\omega_c t)$ carrier term is transmitted---the
+    carrier is \emph{suppressed}.
+\end{remark}
+
+Note that we already need to be careful about validity here---we
+must check that $Y(\omega)$ is Hermitian symmetric,
+because if not, the corresponding signal $y(t)$ that we are trying to transmit
+will not be real-valued!
+
+Fortunately, $Y(\omega)$ is Hermitian symmetric.
+But notice how this relies on $x(t)$ being real!
+
+Now we study how the cascading system depicted above
+achieves the goal of SSB-SC promised here.
+
+\begin{quote}
+    \textbf{Philosophy of SSB-SC.}
+    Let $X_+$ denote the right half of $X(\omega)$
+    over the interval $[0, +\omega_m]$, and
+    let $X_-$ denote the left half of $X(\omega)$
+    over the interval $[-\omega_m, 0]$.
+    Just as in BPF \#2, notice:
+    \begin{itemize}
+        \item Multiplying $x(t)$ by $c(t) := \cos\left(\frac{1}{2}\omega_m t\right)$
+        and using an LPF is the same as\dots
+        \begin{itemize}
+            \item \dots overlaying the sum $[X_+ + X_-]$
+            across the band $\left[-\frac{1}{2}\omega_m, \frac{1}{2}\omega_m\right]$.
+        \end{itemize}
+        \item Multiplying $x(t)$ by $s(t) := \sin\left(\frac{1}{2}\omega_m t\right)$
+        and using an LPF is the same as\dots
+        \begin{itemize}
+            \item \dots overlaying the difference $[X_+ - X_-]$
+            across the band $\left[-\frac{1}{2}\omega_m, \frac{1}{2}\omega_m\right]$.
+        \end{itemize}
+    \end{itemize}
+    And just as before,
+    the sum and the difference, together,
+    are sufficient data for recovering each of $X_+$ and $X_-$ individually
+    and depositing them at $+\omega_c$ and $-\omega_c$, respectively.
+    \begin{itemize}
+        \item Multiplying the ``sum-signal'' by $\cos\left((\omega_c + \frac{1}{2}\omega_m)t\right)$
+        deposits the sum $[X_+ + X_-]$ at both $+\omega_c$ and $-\omega_c$.
+        \item Multiplying the ``difference-signal'' by $\sin\left((\omega_c + \frac{1}{2}\omega_m)t\right)$
+        deposits $[X_+ - X_-]$ at $+\omega_c$ and $[X_- - X_+]$ at $-\omega_c$.
+    \end{itemize}
+    Summing these deposits together then leaves
+    $X_+$ at $+\omega_c$ and $X_-$ at $-\omega_c$,
+    exactly as desired.
+    (Here, ``at $\pm\omega_c$'' really means over the bands
+    $[\omega_c, \omega_c + \omega_m]$ and $[-\omega_c - \omega_m, -\omega_c]$,
+    as in the goal diagram---the deposits are \emph{centered}
+    at $\pm(\omega_c + \frac{1}{2}\omega_m)$.)
+\end{quote}
+
 
 \end{document}
