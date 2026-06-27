@@ -18,6 +18,12 @@
 <link rel="stylesheet" href="{{ASSET_PREFIX}}highlight/github.css">
 <style>
 :root {
+  /* Lecture note page gutters (customize here). */
+  --lecture-page-padding-block: 2rem;
+  --lecture-page-padding-inline: 1.5rem;
+  /* Floor for left/right inset on narrow viewports; never closer than this. */
+  --lecture-page-padding-inline-min: 1.25rem;
+
   /* Minimum rendered width for figures on narrow viewports (customize here). */
   --note-figure-min-width: 240px;
 
@@ -83,8 +89,16 @@ body {
 }
 body.lecture-page {
   line-height: 1.5;
-  padding-top: calc(2rem + var(--lecture-navbar-height, 0px));
+  padding-top: calc(var(--lecture-page-padding-block) + var(--lecture-navbar-height, 0px));
+  padding-bottom: var(--lecture-page-padding-block);
+  padding-inline: max(var(--lecture-page-padding-inline-min), var(--lecture-page-padding-inline));
   scroll-behavior: smooth;
+}
+@media (max-width: 36em) { /* match --lecture-nav-mobile-break above */
+  body.lecture-page {
+    /* Scale gutters with viewport width on phones; raise min to taste. */
+    --lecture-page-padding-inline-min: max(1.25rem, 5vw);
+  }
 }
 .katex {
   font-size: 1em;
@@ -459,7 +473,7 @@ p.all-link {
   box-sizing: border-box;
   display: flex;
   height: var(--lecture-navbar-toggle-size);
-  padding: 0.75rem calc(1.5rem + var(--lecture-navbar-toggle-size) + 0.75rem) 0 1.5rem;
+  padding: 0.75rem calc(var(--lecture-page-padding-inline) + var(--lecture-navbar-toggle-size) + 0.75rem) 0 var(--lecture-page-padding-inline);
 }
 .lecture-navbar-track-col {
   align-items: center;
@@ -535,7 +549,7 @@ p.all-link {
   justify-content: center;
   list-style: none;
   margin: 0.35em 0 0;
-  padding: 0 1.5rem;
+  padding: 0 var(--lecture-page-padding-inline);
 }
 .lecture-navbar-section {
   background: #fff;
