@@ -15,6 +15,7 @@
 <meta name="twitter:title" content="{{TITLE}}">
 <meta name="twitter:description" content="{{META_DESCRIPTION}}">
 <link rel="stylesheet" href="{{ASSET_PREFIX}}katex/katex.min.css">
+<link rel="stylesheet" href="{{ASSET_PREFIX}}highlight/github.css">
 <style>
 :root {
   /* Minimum rendered width for figures on narrow viewports (customize here). */
@@ -146,6 +147,24 @@ img.note-figure.framed {
 code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.88em;
+}
+pre.verbatim {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88em;
+  line-height: 1.45;
+  margin: 1em 0;
+  padding: 0.85em 1em;
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+pre.verbatim code {
+  font-size: inherit;
+  background: none;
+  padding: 0;
 }
 section.env {
   margin: 1em 0;

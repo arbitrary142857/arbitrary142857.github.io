@@ -32,7 +32,7 @@ jobs:
         run: |
           mkdir site
           cp index.html lecture-navbar.js mobile.js sitemap.xml robots.txt google7d30abf698d487de.html site/
-          cp -r courses katex fonts site/
+          cp -r courses katex highlight fonts site/
           touch site/.nojekyll
 
       - uses: actions/upload-pages-artifact@v3

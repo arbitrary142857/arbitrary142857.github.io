@@ -57,6 +57,29 @@ export function readSquareBracket(input: string, start: number): Braced | null {
   return null;
 }
 
+/** Find `\end{env}` for verbatim-like environments (content is literal). */
+export function findVerbatimEnvironmentEnd(
+  input: string,
+  env: string,
+  from: number,
+): number {
+  const endTag = `\\end{${env}}`;
+  let i = from;
+
+  while (i < input.length) {
+    const idx = input.indexOf(endTag, i);
+    if (idx === -1) return -1;
+
+    const lineStart = input.lastIndexOf("\n", idx - 1);
+    const before = input.slice(lineStart + 1, idx);
+    if (/^\s*$/.test(before)) return idx;
+
+    i = idx + endTag.length;
+  }
+
+  return -1;
+}
+
 export function findEnvironmentEnd(
   input: string,
   env: string,

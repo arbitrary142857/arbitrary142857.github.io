@@ -10,6 +10,7 @@ export interface TocPart {
   
   export const TOC_PARTS: TocPart[] = [
     { title: "Fourier Analysis", from: 1, to: 7 },
-    { title: "Systems and Convolution", from: 8, to: 13 },
+    { title: "Systems and Convolution", from: 8, to: 11 },
+    { title: "The Discrete Fourier Transform", from: 12, to: 15},
   ];
   

@@ -8,8 +8,10 @@ import {
   resolveXcolorName,
   type Context,
 } from "./preamble.js";
+import { highlightCode } from "./highlight.js";
 import {
   findEnvironmentEnd,
+  findVerbatimEnvironmentEnd,
   findInlineMathEnd,
   findUnescaped,
   extractBracedCommand,
@@ -48,6 +50,8 @@ const MATH_ENVS = new Set([
   "multline",
   "multline*",
 ]);
+
+const VERBATIM_ENVS = new Set(["verbatim", "verbatim*"]);
 
 const HEADING_COMMANDS: Record<string, string> = {
   section: "h2",
@@ -191,6 +195,23 @@ function stripComments(source: string): string {
   let i = 0;
 
   while (i < source.length) {
+    const verbatimBegin = source.slice(i).match(/^\\begin\{(verbatim\*?)\}/);
+    if (verbatimBegin) {
+      const env = verbatimBegin[1];
+      const beginLen = verbatimBegin[0].length;
+      const blockStart = i;
+      const innerEnd = findVerbatimEnvironmentEnd(source, env, i + beginLen);
+      if (innerEnd === -1) {
+        out += source[i];
+        i++;
+        continue;
+      }
+      const end = innerEnd + `\\end{${env}}`.length;
+      out += source.slice(blockStart, end);
+      i = end;
+      continue;
+    }
+
     if (source[i] === "%" && (i === 0 || source[i - 1] !== "\\")) {
       const nl = source.indexOf("\n", i);
       if (nl === -1) break;
@@ -360,10 +381,12 @@ function parseEnvironmentBlock(
   let i = nameEnd + 1;
 
   let boxedWidth = "36em";
+  let verbatimLanguage = "";
   if (body[i] === "[") {
     const optional = readOptionalBracket(body, i);
     if (optional) {
       if (env === "boxed-text") boxedWidth = optional.content.trim();
+      else if (VERBATIM_ENVS.has(env)) verbatimLanguage = optional.content.trim();
       i = optional.end;
     }
   }
@@ -379,11 +402,18 @@ function parseEnvironmentBlock(
   }
 
   const innerStart = i;
-  const innerEnd = findEnvironmentEnd(body, env, innerStart);
+  const innerEnd = VERBATIM_ENVS.has(env)
+    ? findVerbatimEnvironmentEnd(body, env, innerStart)
+    : findEnvironmentEnd(body, env, innerStart);
   if (innerEnd === -1) return null;
 
-  const inner = body.slice(innerStart, innerEnd).trim();
+  const rawInner = body.slice(innerStart, innerEnd);
+  const inner = VERBATIM_ENVS.has(env) ? normalizeVerbatimContent(rawInner) : rawInner.trim();
   const end = innerEnd + `\\end{${env}}`.length;
+
+  if (VERBATIM_ENVS.has(env)) {
+    return { html: renderVerbatim(inner, verbatimLanguage), end };
+  }
 
   if (env === "center") {
     return { html: renderParagraphBlock(inner, ctx, "center"), end };
@@ -433,6 +463,24 @@ function parseEnvironmentBlock(
     html: `<section class="env env-${env}">${renderBody(inner, ctx)}</section>`,
     end,
   };
+}
+
+function normalizeVerbatimContent(raw: string): string {
+  let content = raw.replace(/^\r?\n/, "");
+  if (content.endsWith("\r\n")) content = content.slice(0, -2);
+  else if (content.endsWith("\n")) content = content.slice(0, -1);
+  return content;
+}
+
+function renderVerbatim(content: string, language = ""): string {
+  const lang = language.trim().toLowerCase();
+  if (lang) {
+    const highlighted = highlightCode(content, lang);
+    if (highlighted) {
+      return `<pre class="verbatim"><code class="hljs language-${escapeAttr(lang)}">${highlighted}</code></pre>`;
+    }
+  }
+  return `<pre class="verbatim"><code>${escapeText(content)}</code></pre>`;
 }
 
 function sanitizeCssLength(value: string): string {

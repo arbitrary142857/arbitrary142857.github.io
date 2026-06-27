@@ -1,0 +1,133 @@
+\lecture{14}
+\title{Fast Fourier Transform}
+
+\begin{document}
+
+The explanation of this lecture has been altered
+from the approach taken in 6.300 so as to
+assume the knowledge of the Fast Fourier Transform
+covered in \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23}
+of 6.1220.
+
+\subsection{Recitation: DFT = Polynomial Sampling}
+
+We first provide an alternative perspective of the DFT,
+as suggested by 6.1220.
+
+\begin{theorem}{DFT = Polynomial Sampling}
+    Consider a DT signal $x[n]$ of length $N$ and its DFT $X[k]$.
+    Furthermore, consider the polynomial $p(z) := \sum_{n = 0}^{N - 1} x[n] z^n$
+    and a primitive $N^{\text{th}}$ root of unity $\omega := e^{-2\pi j/N}$.
+
+    Then $\frac{1}{N} p(\omega^k) = X[k]$ for all $k \in \{0, 1, \dots, N - 1\}$;
+    that is, the DFT effectively just evaluates a polynomial at $N$ roots of unity.
+\end{theorem}
+
+\begin{proof}
+    Follows immediately from the DFT analysis equations from
+    \href{12.html#lecture-discrete-fourier-transform}{Lecture 12}. ~ $\blacksquare$
+\end{proof}
+
+We may now apply reasoning shown in the 6.1220 notes to argue the following.
+
+\begin{theorem}{DFT = Inverse DFT}
+    If $X[k]$ is the DFT of $x[n]$,
+    then the DFT of $X[k]$ is $x'[n] := \frac{1}{N} \cdot x[(-n)\%N]$.
+
+    In other words, the inverse DFT of $X[k]$
+    is the same as the DFT of $X[k]$,
+    multiplied by $N$ and with circular time-reversal.
+\end{theorem}
+
+\begin{proof}
+    Let's view the DFT as simply a map from
+    vectors of length $N$ to vectors of length $N$.
+    The previous theorem indicates that
+    such a map is actually a linear transformation
+    given by multiplication by the DFT matrix $W$.
+    \[
+    \begin{bmatrix}
+        X[0] \\ X[1] \\ X[2] \\ \vdots \\ X[N - 1]
+    \end{bmatrix}
+    = \frac{1}{N} \begin{bmatrix}
+        p(\omega^0) \\ p(\omega^1) \\ p(\omega^2) \\ \vdots \\ p(\omega^{N - 1})
+    \end{bmatrix}
+    = \frac{1}{N} \underbrace{
+        \begin{bmatrix}
+            1 & 1 & 1 & \cdots & 1 \\
+            1 & \omega & \omega^2 & \cdots & \omega^{N - 1} \\
+            1 & \omega^2 & \omega^4 & \cdots & \omega^{2(N - 1)} \\
+            \vdots & \vdots & \vdots & \ddots & \vdots \\
+            1 & \omega^{N - 1} & \omega^{2(N - 1)} & \cdots & \omega^{(N - 1)(N - 1)}
+        \end{bmatrix}
+    }_{W} \begin{bmatrix} x[0] \\ x[1] \\ x[2] \\ \vdots \\ x[N - 1] \end{bmatrix}.
+    \]
+    Thus, the DFT of $X[k]$ is just $\frac{1}{N^2} \cdot W^2 \cdot \mathbf{x}$,
+    where $\mathbf{x}$ is the column vector associated with $x[n]$.
+    \begin{quote}
+        \textbf{Lemma.} We have $W^2 = NP$,
+        where $P$ is the permutation matrix
+        encoding the map $n \mapsto (-n) \% N$.
+
+        \emph{Proof:} Recall that $W\overline{W} = NI$ from the
+        \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23}
+        notes from 6.1220 (or just verify this via straightforward computation).
+        The result $W^2 = NP$ then follows from noting easily
+        that $\overline{W} = WP$. $\square$
+    \end{quote}
+    Thus, the DFT of $X[k]$ is
+    $\frac{1}{N^2} \cdot W^2 \cdot \mathbf{x}
+    = \frac{1}{N} \cdot P \cdot \mathbf{x}$,
+    which indeed corresponds to the signal
+    $x'[n] := \frac{1}{N} \cdot x[(-n)\%N]$. ~ $\blacksquare$
+\end{proof}
+
+Thus, any result we discover about the DFT
+has a natural ``dual'' in the context of the inverse DFT.
+
+\subsection{Lecture: The FFT Algorithm}
+
+Refer to \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23} for details.
+The conclusion is that---via a Divide and Conquer algorithm---we may
+compute the DFT of a DT signal of length $N$ in $O(N \log N)$ time.
+
+Note that 6.1220 adopts the convention that
+$p(\omega^k) = X[k]$, rather than the 6.300 convention that
+$\frac{1}{N} p(\omega^k) = X[k]$,
+so in the ``Combine Step'' section,
+we multiply by an extra factor of $\frac{1}{2}$
+that is otherwise omitted in the 6.1220 explanation.
+
+\begin{verbatim}[python]
+from cmath import exp, pi
+
+def FFT(x):
+    """Returns the DFT of x, an array whose length is a power of two."""
+
+    # Base Case
+    N = len(x)
+    if N == 1:
+        return x
+
+    # Divide and Conquer
+    even_x = x[::2]
+    odd_x = x[1::2]
+    FFT_even_x = FFT(even_x)
+    FFT_odd_x = FFT(odd_x)
+
+    # Combine Step
+    FFT_x = []
+    for k in range(N // 2):
+        FFT_x.append((FFT_even_x[k] + exp(-2j * pi * k/N) * FFT_odd_x[k]) / 2)
+    for k in range(N // 2):
+        FFT_x.append((FFT_even_x[k] - exp(-2j * pi * k/N) * FFT_odd_x[k]) / 2)
+
+    return FFT_x
+\end{verbatim}
+
+An implementation of the inverse DFT
+would look very similar,
+except with the exponents negated
+and the factor of $\frac{1}{2}$ removed.
+
+\end{document}
