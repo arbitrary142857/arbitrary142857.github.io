@@ -3,44 +3,39 @@
 
 \begin{document}
 
-\subsection{Lecture: Fourier Series}
+\subsection{Lecture: Pitch vs. Timbre}
 
-Musical instruments playing the \emph{same} note still sound \emph{different}.
+Consider the following graphs of air pressure over time
+detected by a microphone listening to different musical instruments.
 \begin{center}
     \frame{\includegraphics[width=0.45\textwidth]{lecture-01/instrument-signals.png}}
 \end{center}
-We can decompose each signal as a sum of sinusoids via the Fourier Transform.
-\[ f(t) = \sum_{k = 0}^{\infty} (c_k \cos (k \omega_0 t) + d_k \sin (k \omega_0 t)) \]
-Mathematically, we say each signal has the same \textbf{fundamental frequency} $\omega_0$,
-but different coefficients $\{c_k\}_{k = 0}^{\infty}$ and $\{d_k\}_{k = 0}^{\infty}$.
+Notice how each graph has the same period of $\frac{1}{262}$ seconds.
+Consequently, each instrument's sound has the \emph{same pitch}:
+262 Hz to be precise (or approximately C4).
+However, each instrument's sound has a \emph{different timbre}.
+This is because the ``shape'' of each graph
+across a single period differs greatly.
 
-We can also rewrite the above summation like so:
-\begin{align*}
-    f(t) = \ & \sum_{k = 0}^{\infty} (c_k \cos (k \omega_0 t) + d_k \sin (k \omega_0 t)) \\
-    = \ & \sum_{k = 0}^{\infty} m_k \cos(k \omega_0 t + \phi_k) \text{ where }
-    m_k := \sqrt{c_k^2 + d_k^2} \text{ and } \phi_k := \tan^{-1}\left(\dfrac{d_k}{c_k}\right).
-\end{align*}
-Then we can plot $k$ against $m_k$ to isolate the \textbf{harmonic structure} of a signal.
-\begin{center}
-    \frame{\includegraphics[width=0.35\textwidth]{lecture-01/harmonic-structure.png}}
-\end{center}
-Thus, there are two ways we can look at a signal:
-\begin{itemize}
-    \item As a function of time: $f(t)$.
-    \item As a function of frequency: $k \mapsto (\omega_0, m_k, \phi_k)$.
-\end{itemize}
-\begin{problem}
-    Determine the largest possible fundamental frequency $\omega_0$ for
-    the signal $f(t) = \cos(600 \pi t) + \sin(240 \pi t + \pi/4)$.
-\end{problem}
+Signal processing, spiritually, is the study of
+looking beyond just the pitch of a signal.
+How can we quantitatively describe
+the ``shape'' of a signal across one of its periods?
 
-\begin{solution}
-It's just $\gcd(600 \pi, 240 \pi) = 120 \pi$.  Here, $g := \gcd(a, b)$
-is the smallest real number $g$ such that $\frac{a}{g}, \frac{b}{g} \in \mathbb{Z}$.
-\end{solution}
+\subsection{Lecture: Fourier Series}
 
-\begin{theorem}{Fourier Coefficients}
-    For a signal $f(t)$ with period $T$, we have:
+Here's the driving mathematical fact behind Fourier series.
+
+\begin{theorem}{Fourier Analysis}
+    Any (sufficiently well-behaved) signal $f(t)$ with period $T$
+    can be expressed as a sum of sinusoids.
+    \[
+    f(t) = \sum_{k = 0}^{\infty}
+    (c_k \cos (k \omega_0 t) + d_k \sin (k \omega_0 t))
+    \]
+    In the above, $\omega_0 := \frac{2\pi}{T}$ is the \textbf{fundamental frequency},
+    and the coefficients $\{c_k\}_{k = 0}^{\infty}$ and $\{d_k\}_{k = 0}^{\infty}$
+    are the following.
     \[
     c_0 = \dfrac{1}{T} \int_0^T f(t) \, \mathrm{d}t ~~~ \parallel ~~~
     c_{\ell} = \dfrac{2}{T} \int_0^T f(t) \cos(\ell \omega_0 t) \, \mathrm{d}t ~~~ \parallel ~~~
@@ -49,6 +44,9 @@ is the smallest real number $g$ such that $\frac{a}{g}, \frac{b}{g} \in \mathbb{
 \end{theorem}
 
 \begin{proof}
+    Handwaving: assume that $f(t)$ can be expressed as a sum of sinusoids,
+    then derive the formulas for $\{c_k\}_{k = 0}^{\infty}$ and $\{d_k\}_{k = 0}^{\infty}$.
+
     The $c_0$ coefficient is obvious.  For the others, recall for any $A, B \in \mathbb{Z}^+$ that:
     \[
     \int_0^T \cos(A \omega_0 t) \cos(B \omega_0 t) \, \mathrm{d}t =
@@ -63,36 +61,81 @@ is the smallest real number $g$ such that $\frac{a}{g}, \frac{b}{g} \in \mathbb{
     \]
     \[
     \int_0^T \sin(A \omega_0 t) \sin(B \omega_0 t) \, \mathrm{d}t =
-    \int_0^T \dfrac{1}{2} \cos((A - B) \omega_0 t) - \cos((A + B) \omega_0 t) \, \mathrm{d}t = 
+    \int_0^T \dfrac{1}{2} \cos((A - B) \omega_0 t) - \dfrac{1}{2} \cos((A + B) \omega_0 t) \, \mathrm{d}t = 
     \begin{cases}
     T/2 & \text{ if } A = B. \\
     0 & \text{ otherwise. }
     \end{cases}
     \]
-    In some sense, there's a sort of orthonormal basis here or whatever. ~ $\blacksquare$
+    These imply the formulas.
+    In some sense, there's a sort of orthogonal basis here or whatever. ~ $\blacksquare$
 \end{proof}
 
 \begin{remark}
-    Everything is mathematically correct even when $T$ is a multiple of the fundamental period,
-    or when $\omega_0$ is a divisor of the fundamental frequency.  Note that we \emph{require}
-    that $T = 2\pi / \omega_0$ for Fourier Analysis to work.
+    The relationship $\omega_0 = \frac{2\pi}{T}$ must not be broken!
+    For example, if a signal has fundamental frequency $\omega_0 = 10\pi$,
+    then we must have $T = 0.2$, 
+    so its Fourier coefficients must be computed
+    by integrating over an interval of length $0.2$.
 \end{remark}
+
+The fundamental frequency of a signal captures its pitch,
+but the coefficients $\{c_k\}_{k = 0}^{\infty}$ and $\{d_k\}_{k = 0}^{\infty}$
+capture its timbre.
+So we might visualize the \textbf{harmonic structure} of a signal
+by plotting $m_k := \sqrt{c_k^2 + d_k^2}$ against
+the harmonic number $k$.
+
+\begin{center}
+    \frame{\includegraphics[width=0.35\textwidth]{lecture-01/harmonic-structure.png}}
+\end{center}
+
+This tells us that the second harmonic of this signal
+is about twice as strong as its first harmonic (or fundamental).
+
+\begin{remark}
+    The choice of plotting $m_k := \sqrt{c_k^2 + d_k^2}$
+    comes from the following rewrite.
+    \begin{align*}
+        f(t) = \ & \sum_{k = 0}^{\infty} (c_k \cos (k \omega_0 t) + d_k \sin (k \omega_0 t)) \\
+        = \ & \sum_{k = 0}^{\infty} m_k \cos(k \omega_0 t - \phi_k) \text{ where }
+        m_k := \sqrt{c_k^2 + d_k^2} \text{ and } \phi_k := \tan^{-1}\left(\dfrac{d_k}{c_k}\right).
+    \end{align*}
+    So the measurement $m_k$ captures the strength of
+    the part of the signal with frequency $k \omega_0$.
+\end{remark}
+
+Thus, there are two ways we can look at a signal:
+\begin{itemize}
+    \item As a function of time: $f(t)$.
+    \item As a function of frequency: $k \mapsto (\omega_0, m_k, \phi_k)$.
+\end{itemize}
 
 \subsection{Recitation: Computing Fourier Series}
 
-Recall that $\cos(t)$ is even and $\sin(t)$ is odd.  Thus,
-even functions have $d_k = 0$ and odd functions have $c_k = 0$.
+Recall that $\cos(t)$ is even and $\sin(t)$ is odd.  Therefore,
+\begin{itemize}
+    \item If $f(t)$ is even,
+    then $f(t) \sin(k\omega_0 t)$ is odd for all $k$,
+    so $d_k = 0$ for all $k$.
+    \item If $f(t)$ is odd,
+    then $f(t) \cos(k\omega_0 t)$ is odd for all $k$,
+    so $c_k = 0$ for all $k$.
+\end{itemize}
+Thus, if a signal is known to be even or odd,
+its Fourier series can be computed in half the usual number of steps.
 
 \begin{problem}
     Determine the Fourier coefficients of $f(t) = |\sin(t)|$.
 \end{problem}
 
 \begin{solution}
-    This is even with period $T = \pi$ and frequency $\omega_0 = 2$.  Thus, $d_k = 0$ and:
+    This is even with period $T = \pi$ and fundamental frequency $\omega_0 = 2$.
+    Thus, $d_k = 0$ and:
     \[
     c_k = \dfrac{2}{\pi} \int_{0}^{\pi} \sin(t) \cos(2kt) \, \mathrm{d}t
     = \dfrac{1}{\pi} \int_0^{\pi} \sin((1 + 2k)t) + \sin((1 - 2k)t) \, \mathrm{d}t
-    = \dfrac{1}{\pi} \left[ \dfrac{-2}{1 + 2k} + \dfrac{-2}{1 - 2k} \right]
+    = \dfrac{1}{\pi} \left[ \dfrac{2}{1 + 2k} + \dfrac{2}{1 - 2k} \right]
     = \dfrac{-4}{\pi(4k^2 - 1)}. \]
     Separately, we compute $c_0 = \frac{2}{\pi}$ as well.
 \end{solution}
