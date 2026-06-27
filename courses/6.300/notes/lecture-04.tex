@@ -1,11 +1,11 @@
 \lecture{4}
-\title{Sampling, Aliasing, and Quantization}
+\title{Sampling, Aliasing, and DT Signals}
 
 \begin{document}
 
 \subsection{Lecture: Sampling and Aliasing}
 
-In practice, we might have to settle with discretized samples of data,
+In practice, we might have to settle for discretized samples of data,
 rather than the full continuous signal.
 
 \textbf{Definition.} Let $\Delta$ be our \textbf{sampling interval}
@@ -14,8 +14,9 @@ Our data is then the \textbf{discrete-time (DT) signal} $x[n] = f(\Delta n)$,
 as opposed to the \textbf{continuous-time (CT) signal} $f(t)$.
 
 \begin{remark}
-    Just as CT signals have a fundamental period, so too do DT signals---but their
+    Just as CT signals have a fundamental period, so too can DT signals---but their
     fundamental periods must be integers!
+    (And as we'll see later, some DT signals have no fundamental period at all.)
 \end{remark}
 
 But an insufficiently fine sampling might yield misleading results!
@@ -54,7 +55,7 @@ are below the \textbf{Nyquist} frequency $\omega_m := \frac{\pi}{\Delta}$.
 This way, as long as $\omega_1$ and $\omega_2$ are assumed to be below $\omega_m$,
 it is impossible for them to be aliases unless they are equal.
 
-Equivalently, every frequency $\omega$ has a \emph{unique} \textbf{baseband} frequency $\omega' < \omega_m$
+Equivalently, every frequency $\omega$ has a \emph{unique} \textbf{baseband} frequency $\omega' \leq \omega_m$
 such that $\omega$ and $\omega'$ are aliases.
 
 \begin{problem}
@@ -63,7 +64,7 @@ such that $\omega$ and $\omega'$ are aliases.
 
 \begin{solution}
     The frequency is $\omega = 4000$, which gives $\omega \Delta = 4$.
-    In order to be a valid baseband frequency $\omega'$, we require $\omega' \Delta < \pi$.
+    In order to be a valid baseband frequency $\omega'$, we require $\omega' \Delta \leq \pi$.
     Thus, we take the alias $\omega'$ such that $\omega' \Delta = 2\pi - \omega \Delta = 2\pi - 4$,
     yielding a baseband frequency of $\omega' = 2000\pi - 4000$.
 \end{solution}
@@ -80,10 +81,11 @@ the number of bits used to represent each individual sample.
 \begin{center}
     \frame{\includegraphics[width=0.45\textwidth]{lecture-04/quantized-flower}}
 \end{center}
+(We'll never bring this up in 6.300 ever again.)
 
 \subsection{Recitation: The Sampling Theorem}
 
-Here's what it looks like to sample
+Here's what it looks like to take
 more than 2, exactly 2, and fewer than 2 samples per cycle.
 \begin{center}
     \frame{\includegraphics[width=0.45\textwidth]{lecture-04/more-than-two}}
@@ -99,14 +101,14 @@ We can observe the following:
     practically nothing else.
     \item When we sample fewer than 2 times,
     the samples capture the wrong frequency---it
-    appears $\frac{2}{3}$ times the original.
+    appears to be $\frac{2}{3}$ of the original.
 \end{itemize}
 In a sense, it takes at least 2 samples per cycle
 to preserve the information in a sinusoid.
 
 \begin{theorem}{Sampling Theorem}
     If $f_{\text{max}}$ is the highest nonzero (cyclical) frequency
-    in a CT signal, then a sampling rate $f_s \geq 2 f_{\text{max}}$
+    in a CT signal, then a sampling rate $f_s > 2 f_{\text{max}}$
     is enough to prevent all aliasing.
 \end{theorem}
 
@@ -118,7 +120,7 @@ to preserve the information in a sinusoid.
     \end{quote}
     The answer is no.  None of the frequencies we can hear
     will alias, but frequencies above 20 kHz that we can't hear
-    will alias into frequncies that we can hear, thus
+    will alias into frequencies that we can hear, thus
     distorting the recording.
 \end{remark}
 
@@ -164,7 +166,7 @@ the sampling frequency (in \emph{samples per second}).
         \begin{itemize}
             \item But radians are a measurement taken modulo $2\pi$.
             We could also say the angular frequency is
-            $10\pi^4 \pmod{2\pi} \approx 0.19718$.
+            $10\pi^4 \pmod{2\pi} \approx 0.19719$.
         \end{itemize}
         \item The cyclical frequency is $\frac{10\pi^4}{2\pi} = 5\pi^3$ cycles per sample.
         \begin{itemize}
@@ -174,18 +176,18 @@ the sampling frequency (in \emph{samples per second}).
         \end{itemize}
     \end{itemize}
     Note, importantly, that it does not make sense to call the \emph{fundamental} angular frequency
-    $\Omega_0 \approx 0.19718$, say.  This is because this DT signal isn't periodic!  It doesn't have
+    $\Omega_0 \approx 0.19719$, say.  This is because this DT signal isn't periodic!  It doesn't have
     a ``fundamental frequency'' that we can use to (say) write a Fourier series.
 \end{solution}
 
 \begin{remark}
     We just say that if a DT signal has an angular frequency of $K$,
-    then $K' = K \pm 2k \pi$ is \emph{also} is also a valid angular frequency
+    then $K' = K \pm 2k \pi$ is \emph{also} a valid angular frequency
     for all $k \in \mathbb{Z}$.  However, this does \emph{not} hold for CT signals:
     samples are a discrete measurement, but time is not.
 
     (A more mathematical reason why this does not apply for CT signals
-    is that $e^{2\pi i n} \neq 1$ for $n \not \in \mathbb{Z}$.)
+    is that $e^{2\pi j t} \neq 1$ for $t \not \in \mathbb{Z}$.)
 \end{remark}
 
 \subsection{Recitation: Periods of DT Signals}
@@ -206,7 +208,7 @@ but DT signals might not\dots
     \textbf{Definition.}
     If a DT signal has fundamental period $N$,
     then its \textbf{fundamental angular frequency} is $\Omega_0 := \frac{2\pi}{N}$,
-    and its \textbf{fundmaental cyclical frequency} is $F_0 := \frac{1}{N}$.
+    and its \textbf{fundamental cyclical frequency} is $F_0 := \frac{1}{N}$.
     (Aperiodic DT signals do not have fundamental angular / cyclical frequencies.)
 \end{quote}
 
@@ -215,8 +217,8 @@ For DT signals $f[n] = \sin(Kn)$, the relationships $\Omega_0 = K$ and
 $N = \frac{2\pi}{K}$ are not guaranteed!
 
 \begin{remark}
-    Of course, nothing is special about $\sin$ here—all of this
-    applies equally well toward $\cos$ too.
+    Of course, nothing is special about $\sin$ here---all of this
+    applies equally well to $\cos$ too.
 \end{remark}
 
 \begin{problem}
@@ -243,7 +245,7 @@ cannot be easily overlooked!
 \begin{solution}
     Simply that $f_0 \in \mathbb{Q}^+$.
     The fundamental period is the numerator of $\frac{f_s}{f_0}$.
-    So the fundamental period equals $1$ for all of
+    So the fundamental period equals $1$ for
     $f_0 \in \{44 \, 100, 441 \, 000\}$,
     is fairly small for $f_0 \in \{200, 420\}$,
     and is fairly large for $f_0 \in \{199, 420.01, 0.0042\}$.
@@ -265,9 +267,9 @@ Let's put this together with the sampling / aliasing discussion from earlier.
     $f[n] = \cos\left(\frac{11}{10}\pi n\right)$.  Thus $N = 20$,
     so $\Omega_0 = \frac{\pi}{10}$ and $F_0 = \frac{1}{20}$.
     If we were to perform a Fourier analysis of this signal (see Lecture 5),
-    the only nonzero coefficients would be the $9^{\text{th}}$ and $11^{\text{th}}$ harmonic.
+    the only nonzero coefficients would be the $9^{\text{th}}$ and $11^{\text{th}}$ harmonics.
 
-    Of course there is aliasing—there is \emph{always} aliasing—but here,
+    Of course there is aliasing---there is \emph{always} aliasing---but here,
     the original frequency of $\omega_0 = 440\pi$ was above the Nyquist frequency
     of $\omega_m = 400\pi$.  The baseband frequency is $360\pi$;
     indeed, sampling a $180$ Hz signal yields $f'[n] = \cos\left(\frac{9}{10}\pi n\right) = f[n]$.
