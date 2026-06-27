@@ -5,30 +5,37 @@
 
 \subsection{Lecture: Convergence}
 
-\begin{theorem}{Gibb's Phenomenon}
-    Suppose a signal $f(t)$ has a ``step discontinuity'' at $t = t_0$; that is,
-    \[ L = \lim_{t \to t_0^-} f(t) \neq \lim_{t \to t_0^+} f(t) = R. \]
-    Furthermore, let $f_K(t)$ denote the partial sum of the first $K$ terms of the Fourier series for $f(t)$.
-    Then the following hold:
-    \begin{itemize}
-    \item The Fourier series for $f(t_0)$ converges to $\frac{1}{2}(L + R)$ at $t = t_0$.
-    \item The maximum difference between $f(t)$ and $f_K(t)$ around $t_0$
-    converges to $\approx 9\% \cdot |L - R|$ as $K \to \infty$.
-    \item For any $\epsilon > 0$, the length of the interval over which $|f(t) - f_K(t)| > \epsilon$
-    shrinks zero as $K \to \infty$.
-    \end{itemize}
-    In particular, the Fourier series of a discontinuous function converges, but not uniformly.
-\end{theorem}
+Here is the graph of the Fourier series of a square wave,
+truncated to its first hundred terms.
 
-You can see the $9\%$ phenomenon in the diagram below, for the Fourier series of a square wave.
 \begin{center}
     \frame{\includegraphics[width=0.45\textwidth]{lecture-02/gibbs-phenomenon.png}}
 \end{center}
 
-\begin{remark}
+Notice how the discontinuity of the square wave
+presents itself in its Fourier series.
+It turns out that the $9\%$ error shown above
+never goes away, even as arbitrarily many terms are added!
+
+\begin{theorem}{Gibbs' Phenomenon}
+    Suppose a (sufficiently well-behaved) signal $f(t)$
+    has a ``step discontinuity'' at $t = t_0$; that is,
+    \[ L = \lim_{t \to t_0^-} f(t) \neq \lim_{t \to t_0^+} f(t) = R. \]
+    Furthermore, let $f_K(t)$ denote the partial sum of the first $K$ terms of the Fourier series for $f(t)$.
+    Then the following hold:
+    \begin{itemize}
+    \item Evaluated at $t = t_0$, the Fourier series converges to $\frac{1}{2}(L+R)$.
+    \item Near $t_0$, the partial sum $f_K$ overshoots $R$ and undershoots $L$
+    by an amount converging to $\approx 9\% \cdot (R - L)$ (assuming $R > L$).
+    \item For any $\epsilon > 0$, the length of the interval over which $|f(t) - f_K(t)| > \epsilon$
+    shrinks to zero as $K \to \infty$.
+    \end{itemize}
+    In particular, the Fourier series of a discontinuous function
+    converges pointwise, but not uniformly.
+\end{theorem}
+
 The exact value of the $9\%$ constant is
 $\dfrac{1}{\pi} \displaystyle \int_0^\pi \dfrac{\sin(t)}{t} \, \mathrm{d}t - \dfrac{1}{2} \approx 0.08949$.
-\end{remark}
 
 \subsection{Lecture: Transforming Fourier Series}
 
@@ -44,7 +51,8 @@ $\dfrac{1}{\pi} \displaystyle \int_0^\pi \dfrac{\sin(t)}{t} \, \mathrm{d}t - \df
 \begin{remark}
     Think of the Fourier coefficients as describing the \emph{quality} of a signal.
     A piano and a trumpet playing 440 Hz will have different qualities,
-    but a piano playing 440 Hz and a piano playing 660 Hz will not.
+    but a piano playing 440 Hz and a piano playing 880 Hz will not
+    (assuming ideal conditions).
 \end{remark}
 
 \begin{problem}
@@ -62,17 +70,25 @@ $\dfrac{1}{\pi} \displaystyle \int_0^\pi \dfrac{\sin(t)}{t} \, \mathrm{d}t - \df
 
 \subsection{Recitation: Symmetry in Fourier Series}
 
+Recall from \href{1.html#recitation-computing-fourier-series}{Lecture 1}
+that it's easy to compute the Fourier series of an even or odd function.
+
 \begin{theorem}{Everything is Even/Odd}
-    Every function $f(t)$ can be expressed as the sum of an even and odd function.
+    Every function $f(t)$ can be expressed as the sum of an even function
+    and an odd function.
     \[ f(t) =
     \underbrace{\left(\dfrac{f(t) + f(-t)}{2}\right)}_{\text{even}} +
     \underbrace{\left(\dfrac{f(t) - f(-t)}{2}\right)}_{\text{odd}} \]
 \end{theorem}
 
+\begin{proof}
+    The proof is in the statement of the theorem itself. ~ $\blacksquare$
+\end{proof}
+
 In 6.300, ``symmetric'' and ``antisymmetric'' mean ``even'' and ``odd'', respectively---and
 ``asymmetric'' means neither.
 
-Expectedly, if an asymmetric signal can be easily expressed as the sum of a symmetric and
-antisymmetric signal, then computing its Fourier series may be easier done in two steps\dots
+Thus, if an asymmetric signal can be easily expressed as the sum of a symmetric and
+antisymmetric signal, then computing its Fourier series might be easier to do in two steps\dots
 
 \end{document}
