@@ -22,7 +22,7 @@ And when $N$ is an integer, something special happens.
     = \frac{1}{a_k}\left(k^{\text{th}} \text{ term}\right).
 \end{align*}
 
-Every $N$ terms of the infinite sum are ``like terms''—so our \emph{infinite} series
+Terms spaced $N$ apart in the infinite sum are ``like terms''---so our \emph{infinite} series
 collapses down to a \emph{finite} series!
 
 \begin{remark}
@@ -32,8 +32,8 @@ collapses down to a \emph{finite} series!
 \end{remark}
 
 \begin{theorem}{DT Fourier Series}
-    Given any DT signal $f: \mathbb{N} \to \mathbb{R}$ with period $N$
-    and frequency $\Omega_0$, its Fourier series is:
+    For any DT signal $f[n]$ with period $N$
+    and fundamental frequency $\Omega_0 := \frac{2\pi}{N}$, its Fourier series is:
     \[ f[n] = \sum_{k = 0}^{N - 1} a_k e^{j k \Omega_0 n} ~~~~~ \text{ where } ~~~~~
     a_k = \frac{1}{N} \sum_{n = 0}^{N - 1} f[n] e^{-j k \Omega_0 n} ~ \text{ for all }
     k = 0, 1, \dots, N - 1. \]  
@@ -46,7 +46,7 @@ collapses down to a \emph{finite} series!
 \end{proof}
 
 Just as before, we can also consider transformations of DT signals;
-the logic is the exact same as before.
+the logic is exactly the same.
 
 \begin{theorem}{Transforming DT Signals}
     Let $F[k]$ denote the Fourier series coefficients for $f[n]$.
@@ -69,7 +69,7 @@ the logic is the exact same as before.
 Recall that when (say) a piano plays A440 Hz,
 \href{https://www.youtube.com/watch?v=3IAMpH4xF9Q}{
     there are more frequencies present
-} than just plain 440 Hz.  In other words, most of the coefficients
+} than just plain 440 Hz.  In other words, many of the coefficients
 of a piano's Fourier series are nonzero!
 
 But the existence of, say, 880 Hz and 1320 Hz frequencies
@@ -104,7 +104,7 @@ still matches the intended pitch.  Only in the exact case of $f_5[n]$
 is the perceived pitch wrong.
 
 Let's say we alter the signals by setting only the coefficient $F_i[1] \to 0$,
-thereby removing the fundamental frequency and leaving behind only the harmonics. Even then,
+thereby removing the fundamental frequency and leaving behind only the upper harmonics. Even then,
 \href{https://wtt.pauken.org/chapter-4-2/the-missing-fundamental}{
     the perceived pitch \emph{still} matches the intended pitch!
 }
@@ -118,11 +118,11 @@ thereby removing the fundamental frequency and leaving behind only the harmonics
 
 \begin{solution}
     The only novelty is that we must first compute the period $N = 5$,
-    and from there determine that $\Omega = 0.4\pi$.  Then:
+    and from there determine that $\Omega_0 = 0.4\pi$.  Then:
     \[ \sin(1.6\pi n)
     = \frac{1}{2j}\left(\cos(1.6\pi n) + j \sin(1.6\pi n)\right)
     - \frac{1}{2j}\left(\cos(1.6\pi n) - j \sin(1.6\pi n)\right)
-    = \frac{1}{2j}e^{1.6\pi n} - \frac{1}{2j}e^{-1.6\pi n}. \]
+    = \frac{1}{2j}e^{j 1.6\pi n} - \frac{1}{2j}e^{-j 1.6\pi n}. \]
     So the coefficients are $a_4 = \frac{1}{2j}$, $a_1 = -\frac{1}{2j}$,
     and all other coefficients are zero.
 \end{solution}
