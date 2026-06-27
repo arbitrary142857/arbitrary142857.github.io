@@ -1,16 +1,17 @@
 \lecture{3}
-\title{Complex Numbers}
+\title{Complex Fourier Series}
 
 \begin{document}
 
-\subsection{Lecture: Complex Numbers}
+\subsection{Lecture: Complex Fourier Series}
 
 Annoyingly, we denote $j := \sqrt{-1}$.  Fourier series look a lot simpler now.
 \[ f(t) = \sum_{k = 0}^{\infty} \left( c_k \cos(k \omega_0 t) + d_k \sin(k \omega_0 t) \right)
 = \sum_{k = -\infty}^{\infty} a_k e^{j k \omega_0t}. \]
 The relationship between the two looks like this:
-\[ c_k = a_k + a_{(-k)} ~ \text{ and } ~ d_k = j\left(a_k - a_{(-k)}\right) ~~~ \parallel ~~~
+\[ c_k = a_k + a_{(-k)} ~ \text{ and } ~ d_k = j\left(a_k - a_{(-k)}\right) ~ \text{ for } k \geq 1. ~~~ \parallel ~~~
 a_k = \begin{cases}
+c_0 & \text{ for } k = 0. \\
 \frac{1}{2}(c_k - jd_k) & \text{ for } k > 0. \\
 \frac{1}{2}(c_{(-k)} + jd_{(-k)}) & \text{ for } k < 0.
 \end{cases}
@@ -18,8 +19,10 @@ a_k = \begin{cases}
 And more directly, the coefficients $\{a_k\}_{k = -\infty}^{\infty}$ are generated like so.
 
 \begin{theorem}{Complex Fourier Coefficients}
-    Given a signal $f(t)$ with period $T$ and frequency $\omega_0 = 2\pi / T$, we have:
-    \[ a_{\ell} = \dfrac{1}{T} \int_T f(t) e^{-j \omega_0 \ell t} \, \mathrm{d}t. \] 
+    Given a signal $f(t)$ with period $T$
+    and fundamental frequency $\omega_0 := 2\pi / T$, we have:
+    \[ a_{\ell} = \dfrac{1}{T} \int_T f(t) e^{-j \omega_0 \ell t} \, \mathrm{d}t. \]
+    Here, $\int_T$ denotes an integral over any interval of length $T$.
     Note that this holds even for $\ell = 0$.
 \end{theorem}
 
@@ -54,17 +57,17 @@ The usefulness of complex numbers reveals itself when considering more complicat
 \end{problem}
 
 \begin{solution}
-    Sparing some of the computational details, you can verify:
+    Sparing you the computational details, you can verify:
     \[
     c_k' = \begin{cases}
     c_k & k \equiv 0 \pmod{8}. \\
-    \frac{\sqrt{2}}{2}(c_k + d_k) & k \equiv 1 \pmod{8}. \\
-    d_k & k \equiv 2 \pmod{8}. \\
-    \frac{\sqrt{2}}{2}(-c_k + d_k) & k \equiv 3 \pmod{8}. \\
+    \frac{\sqrt{2}}{2}(c_k - d_k) & k \equiv 1 \pmod{8}. \\
+    -d_k & k \equiv 2 \pmod{8}. \\
+    \frac{\sqrt{2}}{2}(-c_k - d_k) & k \equiv 3 \pmod{8}. \\
     -c_k & k \equiv 4 \pmod{8}. \\
-    \frac{\sqrt{2}}{2}(-c_k - d_k) & k \equiv 5 \pmod{8}. \\
-    -d_k & k \equiv 6 \pmod{8}. \\
-    \frac{\sqrt{2}}{2}(c_k - d_k) & k \equiv 7 \pmod{8}.
+    \frac{\sqrt{2}}{2}(-c_k + d_k) & k \equiv 5 \pmod{8}. \\
+    d_k & k \equiv 6 \pmod{8}. \\
+    \frac{\sqrt{2}}{2}(c_k + d_k) & k \equiv 7 \pmod{8}.
     \end{cases}
     \]
     The expression for $d_k'$ is equally messy.  In comparison, $a_k' = e^{-j k(2\pi / 8)} a_k$;
@@ -95,32 +98,34 @@ In some cases, finding the complex Fourier series can be really easy.
     It's just $a_6 = 1$ and everything else is zero.
 \end{solution}
 
-As we saw in lecture, shifting complex Fourier series just multiplies all of the coefficients.
+As we saw in lecture, shifting a signal just multiplies
+each of its complex Fourier coefficients by a unit-magnitude constant.
 
 \begin{theorem}{Delay Property}
     If $f(t)$ has Fourier coefficients $\{a_k\}_{k = -\infty}^{\infty}$, then
     $f(t - \tau)$ has Fourier coefficients $a_k' = a_k \cdot e^{-jk\omega_0 \tau}$.
 \end{theorem}
 
-We can also say things about symmetry and anti-symmetry.
+We can also say things about symmetry and antisymmetry.
 \begin{itemize}
-    \item Iff $f(t)$ is real, then $\{a_k\}$ is Hermitian symmetric: $a_{-k} = \overline{a_k}$.
+    \item A signal $f(t)$ is real iff $\{a_k\}$ is Hermitian symmetric: $a_{-k} = \overline{a_k}$.
     \begin{itemize}
-        \item Iff $f(t)$ is symmetric and real, then $a_k$ is purely real.
-        \item Iff $f(t)$ is antisymmetric and real, then $a_k$ is purely imaginary.
+        \item A real $f(t)$ is symmetric iff every $a_k$ is purely real.
+        \item A real $f(t)$ is antisymmetric iff every $a_k$ is purely imaginary.
     \end{itemize}
 \end{itemize}
 
-Might as well share a fun fact as well.
+Might as well share a fun fact.
 
 \begin{theorem}{Parseval's Theorem}
     For a signal with Fourier coefficients $\{a_k\}_{k = -\infty}^{\infty}$,
-    we have $\int_T |f(t)|^2 \, \mathrm{d}t = \sum_{k = -\infty}^{\infty} |a_k|^2$.
+    we have $\frac{1}{T} \int_T |f(t)|^2 \, \mathrm{d}t = \sum_{k = -\infty}^{\infty} |a_k|^2$.
 \end{theorem}
 
 \begin{proof}
-    It's not that hard; just use $z \overline{z} = |z|^2$ and the fact that
-    $\{e^{jk \omega_0 t}\}_{k = -\infty}^{\infty}$ forms an orthonormal basis. ~ $\blacksquare$
+    Just use $z \overline{z} = |z|^2$ and the fact that
+    $\{e^{jk \omega_0 t}\}_{k = -\infty}^{\infty}$ forms an orthonormal basis
+    under $\langle g, h \rangle := \frac{1}{T} \int_T g(t) \overline{h(t)} \, \mathrm{d}t$. ~ $\blacksquare$
 \end{proof}
 
 \end{document}
