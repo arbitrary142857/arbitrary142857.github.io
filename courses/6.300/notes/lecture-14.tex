@@ -3,11 +3,21 @@
 
 \begin{document}
 
-The explanation of this lecture has been altered
-from the approach taken in 6.300 so as to
-assume the knowledge of the Fast Fourier Transform
-covered in \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23}
-of 6.1220.
+See \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23}
+of 6.1220 for an alternative perspective on the content from this lecture.
+
+\begin{remark}
+    Note that 6.1220 adopts slightly different conventions than 6.300.
+    \begin{itemize}
+        \item In 6.300, the DFT is
+        $X[k] := \frac{1}{N} \sum_{n = 0}^{N - 1} x[n] e^{-j\frac{2\pi k}{N}n}$;
+        refer to \href{12.html#lecture-discrete-fourier-transform}{Lecture 12}.
+        \item In 6.1220, the DFT is
+        $X[k] := \sum_{n = 0}^{N - 1} x[n] e^{j\frac{2\pi k}{N}n}$;
+        simpler for abstract purposes,
+        but not as meaningful in physical contexts.
+    \end{itemize}
+\end{remark}
 
 \subsection{Recitation: DFT = Polynomial Sampling}
 
@@ -15,12 +25,13 @@ We first provide an alternative perspective of the DFT,
 as suggested by 6.1220.
 
 \begin{theorem}{DFT = Polynomial Sampling}
-    Consider a DT signal $x[n]$ of length $N$ and its DFT $X[k]$.
-    Furthermore, consider the polynomial $p(z) := \sum_{n = 0}^{N - 1} x[n] z^n$
-    and a primitive $N^{\text{th}}$ root of unity $\omega := e^{-2\pi j/N}$.
-
-    Then $\frac{1}{N} p(\omega^k) = X[k]$ for all $k \in \{0, 1, \dots, N - 1\}$;
-    that is, the DFT effectively just evaluates a polynomial at $N$ roots of unity.
+    Consider a DT signal $x[n]$ of length $N$
+    along with the corresponding polynomial $p(z) := \sum_{n = 0}^{N - 1} x[n] z^n$.
+    Let $\omega = e^{2\pi j / N}$ be a primitive $N^{\text{th}}$ root of unity.
+    Then:
+    \[ \mathrm{DFT}(x)[k] = \frac{1}{N}p(\omega^{-k})
+    ~~~ \text{ and } ~~~
+    \mathrm{DFT}^{-1}(x)[n] = p(\omega^{n}). \]
 \end{theorem}
 
 \begin{proof}
@@ -28,75 +39,106 @@ as suggested by 6.1220.
     \href{12.html#lecture-discrete-fourier-transform}{Lecture 12}. ~ $\blacksquare$
 \end{proof}
 
-We may now apply reasoning shown in the 6.1220 notes to argue the following.
+The above reinterpretation makes it much easier to argue
+that the DFT of a convolution equals the product of the DFTs.
+
+\begin{theorem}{Convolution = Product}
+    Given DT signals $a[n]$ and $b[n]$
+    with DFTs $A[k]$ and $B[k]$, respectively, we have:
+    \[ \mathrm{DFT}(a \circledast b) = N \cdot A \cdot B
+    ~~~ \text{ and } ~~~
+    \mathrm{DFT}^{-1}(A \circledast B) = a \cdot b. \]
+\end{theorem}
+
+\begin{proof}
+    Say $a[n]$ and $b[n]$ correspond to polynomials $p(z)$ and $q(z)$.
+    The point is that the polynomial corresponding to $(a \circledast b)[n]$
+    is simply $p(z) \cdot q(z)$ in $\mathbb{C}[z] / (z^N - 1)$:
+    convolution is just polynomial multiplication.  Thus,
+    \[ \mathrm{DFT}(a \circledast b)
+    = \left[\frac{1}{N} \cdot p(\omega^{-k}) \cdot q(\omega^{-k})\right]_{k = 0}^{N - 1}
+    = N \cdot \left[\frac{1}{N} \cdot p(\omega^{-k})\right]_{k = 0}^{N - 1}
+    \cdot \left[\frac{1}{N} \cdot q(\omega^{-k})\right]_{k = 0}^{N - 1}
+    = N \cdot \mathrm{DFT}(a) \cdot \mathrm{DFT}(b). \]
+    The argument for the inverse DFT works the same way. ~ $\blacksquare$
+\end{proof}
+
+A corollary of this reinterpretation is the following.
 
 \begin{theorem}{DFT = Inverse DFT}
     If $X[k]$ is the DFT of $x[n]$,
     then the DFT of $X[k]$ is $x'[n] := \frac{1}{N} \cdot x[(-n)\%N]$.
-
-    In other words, the inverse DFT of $X[k]$
-    is the same as the DFT of $X[k]$,
-    multiplied by $N$ and with circular time-reversal.
+    Equivalently,
+    \[ \mathrm{DFT}(\mathrm{DFT}(x)) = \frac{1}{N} \cdot
+    \mathrm{Reverse}(x). \]
 \end{theorem}
 
 \begin{proof}
-    Let's view the DFT as simply a map from
-    vectors of length $N$ to vectors of length $N$.
-    The previous theorem indicates that
-    such a map is actually a linear transformation
-    given by multiplication by the DFT matrix $W$.
-    \[
-    \begin{bmatrix}
-        X[0] \\ X[1] \\ X[2] \\ \vdots \\ X[N - 1]
-    \end{bmatrix}
-    = \frac{1}{N} \begin{bmatrix}
-        p(\omega^0) \\ p(\omega^1) \\ p(\omega^2) \\ \vdots \\ p(\omega^{N - 1})
-    \end{bmatrix}
-    = \frac{1}{N} \underbrace{
-        \begin{bmatrix}
-            1 & 1 & 1 & \cdots & 1 \\
-            1 & \omega & \omega^2 & \cdots & \omega^{N - 1} \\
-            1 & \omega^2 & \omega^4 & \cdots & \omega^{2(N - 1)} \\
-            \vdots & \vdots & \vdots & \ddots & \vdots \\
-            1 & \omega^{N - 1} & \omega^{2(N - 1)} & \cdots & \omega^{(N - 1)(N - 1)}
-        \end{bmatrix}
-    }_{W} \begin{bmatrix} x[0] \\ x[1] \\ x[2] \\ \vdots \\ x[N - 1] \end{bmatrix}.
-    \]
-    Thus, the DFT of $X[k]$ is just $\frac{1}{N^2} \cdot W^2 \cdot \mathbf{x}$,
-    where $\mathbf{x}$ is the column vector associated with $x[n]$.
-    \begin{quote}
-        \textbf{Lemma.} We have $W^2 = NP$,
-        where $P$ is the permutation matrix
-        encoding the map $n \mapsto (-n) \% N$.
-
-        \emph{Proof:} Recall that $W\overline{W} = NI$ from the
-        \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23}
-        notes from 6.1220 (or just verify this via straightforward computation).
-        The result $W^2 = NP$ then follows from noting easily
-        that $\overline{W} = WP$. $\square$
-    \end{quote}
-    Thus, the DFT of $X[k]$ is
-    $\frac{1}{N^2} \cdot W^2 \cdot \mathbf{x}
-    = \frac{1}{N} \cdot P \cdot \mathbf{x}$,
-    which indeed corresponds to the signal
-    $x'[n] := \frac{1}{N} \cdot x[(-n)\%N]$. ~ $\blacksquare$
+    From 6.1220, the \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23} notes
+    provide a linear-algebra-based argument from the fundamentals.
+    But we don't need that:
+    this follows immediately from the relationship between
+    the DFT and inverse DFT in the polynomial setting. ~ $\blacksquare$
 \end{proof}
+
+\begin{remark}
+    All of the mathematical content of the above proof
+    has, in some sense, been deferred
+    to the mathematical content of
+    the consistency of the synthesis and analysis equations
+    from \href{12.html#lecture-discrete-fourier-transform}{Lecture 12}.
+\end{remark}
+
+% \begin{proof}
+%     Let's view the DFT as simply a map from
+%     vectors of length $N$ to vectors of length $N$.
+%     Such a map is actually a linear transformation
+%     given by multiplication by the DFT matrix $W$.
+%     \[
+%     \begin{bmatrix}
+%         X[0] \\ X[1] \\ X[2] \\ \vdots \\ X[N - 1]
+%     \end{bmatrix}
+%     = \frac{1}{N} \begin{bmatrix}
+%         p(\omega^0) \\ p(\omega^1) \\ p(\omega^2) \\ \vdots \\ p(\omega^{N - 1})
+%     \end{bmatrix}
+%     = \frac{1}{N} \underbrace{
+%         \begin{bmatrix}
+%             1 & 1 & 1 & \cdots & 1 \\
+%             1 & \omega & \omega^2 & \cdots & \omega^{N - 1} \\
+%             1 & \omega^2 & \omega^4 & \cdots & \omega^{2(N - 1)} \\
+%             \vdots & \vdots & \vdots & \ddots & \vdots \\
+%             1 & \omega^{N - 1} & \omega^{2(N - 1)} & \cdots & \omega^{(N - 1)(N - 1)}
+%         \end{bmatrix}
+%     }_{W} \begin{bmatrix} x[0] \\ x[1] \\ x[2] \\ \vdots \\ x[N - 1] \end{bmatrix}.
+%     \]
+%     Thus, the DFT of $X[k]$ is just $\frac{1}{N^2} \cdot W^2 \cdot \mathbf{x}$,
+%     where $\mathbf{x}$ is the column vector associated with $x[n]$.
+%     \begin{quote}
+%         \textbf{Lemma.} We have $W^2 = NP$,
+%         where $P$ is the permutation matrix
+%         encoding the map $n \mapsto (-n) \% N$.
+
+%         \emph{Proof:} Recall that $W\overline{W} = NI$ from the
+%         \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23}
+%         notes from 6.1220 (or just verify this via straightforward computation).
+%         The result $W^2 = NP$ then follows from noting easily
+%         that $\overline{W} = WP$. $\square$
+%     \end{quote}
+%     Thus, the DFT of $X[k]$ is
+%     $\frac{1}{N^2} \cdot W^2 \cdot \mathbf{x}
+%     = \frac{1}{N} \cdot P \cdot \mathbf{x}$,
+%     which indeed corresponds to the signal
+%     $x'[n] := \frac{1}{N} \cdot x[(-n)\%N]$. ~ $\blacksquare$
+% \end{proof}
 
 Thus, any result we discover about the DFT
 has a natural ``dual'' in the context of the inverse DFT.
 
 \subsection{Lecture: The FFT Algorithm}
 
-Refer to \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23} for details.
-The conclusion is that---via a Divide and Conquer algorithm---we may
+Via a divide-and-conquer approach, we may
 compute the DFT of a DT signal of length $N$ in $O(N \log N)$ time.
-
-Note that 6.1220 adopts the convention that
-$p(\omega^k) = X[k]$, rather than the 6.300 convention that
-$\frac{1}{N} p(\omega^k) = X[k]$,
-so in the ``Combine Step'' section,
-we multiply by an extra factor of $\frac{1}{2}$
-that is otherwise omitted in the 6.1220 explanation.
+This algorithm is known as the \textbf{Fast Fourier Transform (FFT)}.
 
 \begin{verbatim}[python]
 from cmath import exp, pi
@@ -125,9 +167,24 @@ def FFT(x):
     return FFT_x
 \end{verbatim}
 
+Refer to \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23}
+for details on how this algorithm works;
+keep in mind the difference in convention.
+
 An implementation of the inverse DFT
 would look very similar,
 except with the exponents negated
 and the factor of $\frac{1}{2}$ removed.
+Here's how that looks in code.
+
+\begin{verbatim}[python]
+# DFT Implementation:
+FFT_x.append((FFT_even_x[k] + exp(-2j * pi * k/N) * FFT_odd_x[k]) / 2) # first for loop
+FFT_x.append((FFT_even_x[k] - exp(-2j * pi * k/N) * FFT_odd_x[k]) / 2) # second for loop
+
+# Inverse DFT Implementation:
+FFT_x.append((FFT_even_x[k] + exp(2j * pi * k/N) * FFT_odd_x[k])) # first for loop
+FFT_x.append((FFT_even_x[k] - exp(2j * pi * k/N) * FFT_odd_x[k])) # second for loop
+\end{verbatim}
 
 \end{document}
