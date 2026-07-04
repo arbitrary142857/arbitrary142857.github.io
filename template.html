@@ -27,6 +27,9 @@
   /* Minimum rendered width for figures on narrow viewports (customize here). */
   --note-figure-min-width: 240px;
 
+  /* Audio player background (customize here). */
+  --note-audio-bg: #fff;
+
   /* Lecture footer navigation (customize here). */
   --lecture-nav-margin-top: 3em;
   --lecture-nav-padding: 1.15em 1em;
@@ -154,6 +157,20 @@ img.note-figure {
 }
 img.note-figure.framed {
   box-shadow: 0 0 0 1px #000;
+}
+audio.note-audio {
+  display: block;
+  margin: 0.75em auto;
+  max-width: min(100%, 40em);
+  width: 100%;
+  box-shadow: 0 0 0 1px #000;
+  background-color: var(--note-audio-bg);
+}
+audio.note-audio::-webkit-media-controls-panel {
+  background-color: var(--note-audio-bg);
+}
+audio.note-audio::-webkit-media-controls-enclosure {
+  background-color: var(--note-audio-bg);
 }
 .small-caps,
 .katex .small-caps {

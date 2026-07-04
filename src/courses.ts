@@ -50,6 +50,10 @@ export function courseImagesDir(root: string, courseId: string): string {
   return join(courseDir(root, courseId), "images");
 }
 
+export function courseAudioDir(root: string, courseId: string): string {
+  return join(courseDir(root, courseId), "audio");
+}
+
 export function courseSiteDir(root: string, courseId: string): string {
   return join(root, "courses", courseId);
 }

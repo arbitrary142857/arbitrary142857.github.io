@@ -55,7 +55,7 @@ for (const course of COURSES) {
   const notes = loadNotes(notesDir, course.id);
   const parsed = notes.map((note) => ({
     note,
-    result: parseTex(note.source, preamble, courseRoot, "images"),
+    result: parseTex(note.source, preamble, courseRoot, "images", "audio"),
     titleHtml: renderInlineFragment(note.title, preamble, courseRoot),
     titlePlain: titlePlainText(note.title),
   }));

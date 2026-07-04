@@ -18,6 +18,7 @@ export interface Context {
   katexMacros: Record<string, string>;
   environments: Map<string, Environment>;
   imagePaths: string[];
+  audioPaths: string[];
   projectRoot: string;
   usedSubsectionSlugs: Set<string>;
 }
@@ -28,6 +29,7 @@ export function createContext(): Context {
     katexMacros: {},
     environments: new Map(),
     imagePaths: ["images/"],
+    audioPaths: ["audio/"],
     projectRoot: "",
     usedSubsectionSlugs: new Set(),
   };
@@ -82,7 +84,16 @@ export function parsePreamble(source: string, ctx: Context): void {
     if (cmd.name === "graphicspath") {
       const arg = readBraced(source, i);
       if (arg) {
-        ctx.imagePaths = parseGraphicspathContent(arg.content);
+        ctx.imagePaths = parseMediaPathContent(arg.content, "images/");
+        i = arg.end;
+      }
+      continue;
+    }
+
+    if (cmd.name === "audiopath") {
+      const arg = readBraced(source, i);
+      if (arg) {
+        ctx.audioPaths = parseMediaPathContent(arg.content, "audio/");
         i = arg.end;
       }
       continue;
@@ -307,7 +318,7 @@ function skipPreambleNoise(source: string, start: number): number {
   return i;
 }
 
-function parseGraphicspathContent(content: string): string[] {
+function parseMediaPathContent(content: string, fallback: string): string[] {
   const paths: string[] = [];
   const re = /\{([^{}]*)\}/g;
   let match = re.exec(content);
@@ -315,7 +326,7 @@ function parseGraphicspathContent(content: string): string[] {
     paths.push(match[1]);
     match = re.exec(content);
   }
-  return paths.length > 0 ? paths : ["images/"];
+  return paths.length > 0 ? paths : [fallback];
 }
 
 function skipPackageLine(source: string, start: number): number {

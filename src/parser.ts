@@ -102,6 +102,7 @@ export function parseTex(
   preambleSource = "",
   projectRoot = "",
   imagesDir = "",
+  audioDir = "",
 ): ParseResult {
   const { preamble: docPreamble, body, title, lectures } = extractDocument(bodySource);
   const preamble = [preambleSource.trim(), docPreamble.trim()]
@@ -112,6 +113,9 @@ export function parseTex(
   parsePreamble(preamble, ctx);
   if (imagesDir) {
     ctx.imagePaths = [imagesDir.endsWith("/") ? imagesDir : `${imagesDir}/`];
+  }
+  if (audioDir) {
+    ctx.audioPaths = [audioDir.endsWith("/") ? audioDir : `${audioDir}/`];
   }
   applyBuiltinDefinitions(ctx);
   const html = renderBody(stripComments(body), ctx);
@@ -825,6 +829,10 @@ function parseCommand(
       const rendered = parseIncludeGraphicsCommand(inner, 0, ctx, "framed");
       if (rendered) return { html: rendered.html, end: arg.end };
     }
+    if (inner.startsWith("\\includeaudio")) {
+      const rendered = parseIncludeAudioCommand(inner, 0, ctx);
+      if (rendered) return { html: rendered.html, end: arg.end };
+    }
     return {
       html: `<span class="frame">${parseInline(arg.content, ctx)}</span>`,
       end: arg.end,
@@ -835,6 +843,12 @@ function parseCommand(
     const rendered = parseIncludeGraphicsCommand(input, start, ctx);
     if (rendered) return rendered;
     return { html: escapeText("\\includegraphics"), end: i };
+  }
+
+  if (name === "includeaudio") {
+    const rendered = parseIncludeAudioCommand(input, start, ctx);
+    if (rendered) return rendered;
+    return { html: escapeText("\\includeaudio"), end: i };
   }
 
   const textMacro = ctx.textMacros.get(name);
@@ -1008,6 +1022,36 @@ function parseIncludeGraphicsCommand(
   };
 }
 
+function parseIncludeAudioCommand(
+  input: string,
+  start: number,
+  ctx: Context,
+): { html: string; end: number } | null {
+  if (!input.startsWith("\\includeaudio", start)) return null;
+
+  let i = start + "\\includeaudio".length;
+  let options = "";
+  if (input[i] === "[") {
+    const optional = readOptionalBracket(input, i);
+    if (optional) {
+      options = optional.content;
+      i = optional.end;
+    }
+  }
+
+  const arg = readBraced(input, i);
+  if (!arg) return null;
+
+  const src = resolveAudioSrc(arg.content.trim(), ctx);
+  const style = imageStyleFromOptions(options);
+  const styleAttr = style ? ` style="${escapeAttr(style)}"` : "";
+
+  return {
+    html: `<audio src="{{COURSE_PREFIX}}${escapeAttr(src)}" controls preload="metadata" class="note-audio"${styleAttr}></audio>`,
+    end: arg.end,
+  };
+}
+
 function readColorSpec(
   input: string,
   start: number,
@@ -1128,6 +1172,7 @@ function escapeAttr(text: string): string {
 }
 
 const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg"];
+const AUDIO_EXTENSIONS = [".wav", ".mp3", ".ogg", ".m4a", ".webm", ".aac", ".flac"];
 
 function resolveImageSrc(name: string, ctx: Context): string {
   const normalizedName = name.replace(/^\.\//, "");
@@ -1148,6 +1193,30 @@ function resolveImageSrc(name: string, ctx: Context): string {
     }
 
     return candidate + ".png";
+  }
+
+  return normalizedName;
+}
+
+function resolveAudioSrc(name: string, ctx: Context): string {
+  const normalizedName = name.replace(/^\.\//, "");
+  const hasExtension = /\.[a-zA-Z0-9]+$/.test(normalizedName);
+
+  for (const base of ctx.audioPaths) {
+    const prefix = base.endsWith("/") ? base : `${base}/`;
+    const candidate = `${prefix}${normalizedName}`;
+
+    if (hasExtension || !ctx.projectRoot) {
+      return candidate;
+    }
+
+    for (const ext of AUDIO_EXTENSIONS) {
+      if (existsSync(join(ctx.projectRoot, candidate + ext))) {
+        return candidate + ext;
+      }
+    }
+
+    return candidate + ".wav";
   }
 
   return normalizedName;

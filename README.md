@@ -12,13 +12,30 @@ courses/
     preamble.tex
     notes/lecture-*.tex
     images/lecture-NN/...
+    audio/lecture-NN/...
   18.701/
     preamble.tex
     notes/lecture-*.tex
     images/...
 ```
 
-Each course has its own preamble, notes, and images. The site home page lists courses; each course has its own index, all-lectures page, and per-lecture HTML under `courses/<id>/notes-html/`.
+Each course has its own preamble, notes, images, and audio. The site home page lists courses; each course has its own index, all-lectures page, and per-lecture HTML under `courses/<id>/notes-html/`.
+
+### Images and audio in notes
+
+Images use `\includegraphics` (extension optional if a matching file exists under `images/`):
+
+```tex
+\includegraphics[width=0.4\textwidth]{lecture-15/spectrogram}
+```
+
+Audio uses `\includeaudio` with the same path convention under `audio/`:
+
+```tex
+\includeaudio[width=0.6\textwidth]{lecture-15/sound}
+```
+
+Omit the extension when a unique match exists (`.wav`, `.mp3`, `.ogg`, etc.). Optional `\graphicspath` and `\audiopath` in the preamble override the default directories.
 
 ## Local development
 
@@ -38,7 +55,7 @@ The build also writes `sitemap.xml` and `robots.txt` at the site root (canonical
 
 ## Adding a course
 
-1. Create `courses/<course-id>/` with `preamble.tex`, `notes/`, and `images/`.
+1. Create `courses/<course-id>/` with `preamble.tex`, `notes/`, `images/`, and `audio/` as needed.
 2. Add an entry to `COURSES` in `src/courses.ts`.
 3. Run `npm run build`.
 
