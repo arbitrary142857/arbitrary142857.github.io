@@ -3,6 +3,24 @@
 
 \begin{document}
 
+\subsection{Lecture: Updated DFT Conventions}
+
+This note is purely definitional,
+but it's an important use of jargon that will be assumed for this lecture.
+
+\textbf{Definition.}
+Let $x[n]$ be a DT signal with length $s$.
+The \underline{``DFT of size $N$''} of $x[n]$ when $N \geq s$
+is the result of first zero-padding $x[n]$ to have length $N$,
+then taking the length-$N$ DFT of the result.
+
+So far, we've only talked about the $N = s$ case.
+This lecture will use the $N > s$ case.
+
+\begin{remark}
+    In contrast, the $N < s$ case is completely nonsensical.
+\end{remark}
+
 \subsection{Lecture: Spectrograms}
 
 If you were to shove a recording of a piano playing a single chord
@@ -48,17 +66,12 @@ It is produced by performing several short-time DFTs.
 This process of taking DFTs over sliding windows
 is known as the \textbf{Short-Time Fourier Transform (STFT)}.
 
-\begin{remark}
-    Later on, $N$ will change from denoting the window size
-    to denoting the DFT size.  Those two will become different!
-\end{remark}
-
 \subsection{Lecture: Streaming Windows}
 
-Recall from \href{10.html}{Lecture 10} that
-filtering a DT signal $x[n]$
+Recall from \href{10.html#recitation-filter-types}{Lecture 10} that
+applying a band-pass filter to a DT signal $x[n]$
 is equivalent to multiplying its DTFT $X(\Omega)$ by
-a window-shaped frequency response $H(\Omega)$,
+a box-shaped frequency response $H(\Omega)$,
 which is itself equivalent to convolving
 $x[n]$ with the unit-sample response $h[n]$.
 
@@ -84,9 +97,10 @@ is to apply STFT:
 
 \begin{quote}
     \textbf{Bad Approach.}
-    Break the signal into windows of length $N$,
-    filter each window separately,
-    and concatenate the results.
+    Break $x[n]$ into subsignals $x_i[n]$ of length $N$.
+    For each subsignal, compute $x_i'[n] := (x_i \circledast h)[n]$,
+    where $h[n]$ is a length-$N$ unit-sample response of a band-pass filter.
+    Finally, concatenate all of the $x_i'[n]$ together.
     \frame{\includegraphics[width=0.4\textwidth]{lecture-15/circular-filter}}
     Here's how the result sounds:
     \includeaudio[width=0.4\textwidth]{lecture-15/circular-filter}
@@ -97,115 +111,104 @@ The main issue comes from our neglect of issue \#2:
 circular convolution and time-aliasing.
 
 \begin{remark}
-    It might seem that circular convolution
-    has no flaws.  Here's an incorrect argument as to why.
-    \begin{quote}
-        \textbf{False Argument.}
-        Let $h[n]$ denote the DT signal used as a filter---the
-        inverse DFT of a filtering frequency response.
-        From \href{13.html#lecture-and-recitation-circular-convolution}{Lecture 13},
-        the circular convolution $y[n] := (x \circledast h)[n]$
-        is a DT signal whose DFT only contains good frequencies.
-
-        Therefore, the DTFT concatenation of all of the $y[n]$
-        must only contain good frequencies, too.
-    \end{quote}
-    Here's the flaw in the above: consider the following two extensions on $y[n]$
-    over the domain $\mathbb{N}$, instead of just $[0, N - 1]$.
+    The reason why circular convolution fails is subtle.
+    It is true that each $x_i'[n]$ only contains frequencies inside the desired band.
+    But consider the following two extensions of $x_i'[n]$
+    from the domain $[0, N - 1]$ to the domain $\mathbb{N}$.
     \[
-    y_1[n] := y[n \% N]
+    x_i'^{\,(1)}[n] := y[n \% N]
     ~~~ \text{ and } ~~~
-    y_2[n] := \begin{cases}
-    y[n] & \text{ if } n \in [0, N - 1]. \\
+    x_i'^{\,(2)}[n] := \begin{cases}
+    x_i'[n] & \text{ if } n \in [0, N - 1]. \\
     0 & \text{ otherwise.}
     \end{cases}
     \]
-    The DFT of $y[n]$ does only contain good frequencies,
-    but the implication of this is that the DTFT of $y_1[n]$
-    only contains good frequencies---not $y_2[n]$.
-    Yet the concatenation of all of the $y[n]$
-    is the sum of the $y_2[n]$---not the $y_1[n]$.
+    All that can be said is that the DTFT of $x_i'^{\,(1)}[n]$
+    contains only band frequencies---but not for $x_i'^{\,(2)}[n]$.
+    Yet the concatenation of all of the $x_i'[n]$
+    is the sum of the $x_i'^{\,(2)}[n]$---not the $x_i'^{\,(1)}[n]$.
 
     Therefore, there is no reason for
-    the DTFT of the concatenation of the $y[n]$
-    to only contain good frequencies.
+    the DTFT of the concatenation of the $x_i'[n]$
+    to only contain band frequencies.
 \end{remark}
 
 We really should be taking a linear convolution,
 not a circular convolution,
-and allowing for time in one window to overflow into the next,
-rather than aliasing it backwards.
+meaning we need to allow time in one window to overflow into the next,
+rather than aliasing it back around.
 
 \begin{quote}
-    \textbf{Good Approach (Overlap-Add).}
-    Break the signal into windows of length $s$.
-    Filter each window separately
-    by computing its \emph{linear} convolution
-    with a filter $h[n]$ of length $N - s + 1$ (or less).
-    Add together the results.
+    \textbf{Good Approach (Overlap-Add --- Time Domain).}
+    Break $x[n]$ into subsignals $x_i[n]$ of length $s$.
+    For each subsignal, compute the length-$N$ subsignal
+    $x_i'[n] := (x_i * h)[n]$,
+    where $h[n]$ is a length-$(N - s + 1)$ unit-sample response
+    of a band-pass filter.
+
+    Finally, add all of the $x_i'[n]$ together.
 
     \frame{\includegraphics[width=0.4\textwidth]{lecture-15/overlap-add}}
 
-    Note that the result of each window's convolution
-    may overlap with the results from other windows---hence
+    Note that each window's linear convolution
+    overlaps with the linear convolutions from other windows---hence
     the name ``overlap-add'' and not ``overlap-concatenate''.
 \end{quote}
 
-From this point on, it's important to think
-less in the time domain $h[n]$,
-and more in the frequency domain $H[k]$.
-We can rephrase overlap-add
-from the perspective of the frequency domain
-like so:
+We can equivalently think of overlap-add
+from the frequency domain.
 
 \begin{quote}
     \textbf{Good Approach (Overlap-Add --- Frequency Domain).}
     Break $x[n]$ into subsignals $x_i[n]$ of length $s$.
-    For each subsignal, compute its length-$N$ DFT $X_i[k]$
-    by zero-padding $x_i[n]$ to have length $N$.
-
-    Now compute the element-wise product $X_i'[k] := X_i[k] \cdot H[k]$,
-    for our choice of length-$N$ filtering frequency response $H[k]$.
-    It is because the filter $h = \mathrm{DFT}^{-1}(H)$ has length $\leq N - s + 1$
-    that this filter bypasses any time-aliasing problems.
+    For each subsignal, zero-pad $x_i[n]$ to have length $N$,
+    then compute its DFT $X_i[k]$ of size $N$.
+    Then compute the element-wise products $X_i'[k] := X_i[k] \cdot H[k]$,
+    where $H[k]$ is a length-$N$ frequency response of a band-pass filter.
+    
 
     Finally, compute the length-$N$ subsignals
     $x'_i := \mathrm{DFT}^{-1}(X_i')$ and sum them together.
 \end{quote}
 
-In summary, choosing $H[k]$ is enough
-to define the map from length-$s$ subsignals $x_i[n]$
-to length-$N$ subsignals $x'_i[n]$.
+Note that $H[k]$ is the DFT of size $N$ of $h[n]$,
+where the length of $h[n]$ is only $N - s + 1$.
+(Implicitly, we zero-pad $h[s]$ first\dots)
 
-\begin{remark}
-    The frequency domain is how we would go about
-    algorithmically implementing this filter, too!
-    Naive linear convolution is $O(N^2)$,
-    but two DFT's plus an element-wise product is $O(N \log N)$.
-\end{remark}
-
-Thus, it remains to construct a length-$N$ frequency response $H[k]$
-whose unit-sample response $h[n]$ has length $\leq N - s + 1$.
-
+There are two reasons for wanting to think
+from the perspective of the frequency domain.
+\begin{itemize}
+    \item It's how we would go about algorithmically implementing such a filter.
+    \begin{itemize}
+        \item Naive linear convolution is $O(N^2)$, but two DFT's plus an element-wise product
+        is $O(N \log N)$.
+    \end{itemize}
+    \item It lets us think more closely about filter design:
+    a better filter will have a better $H[k]$.
+\end{itemize}
+We'll discuss that second point in the next section:
+designing $H[k]$ and $h[n]$.
 
 \subsection{Lecture: Short-Time Filter Design}
 
-If we pick $H[k]$ to act as a perfect filter,
-then $h[n]$ will have length $N$.
+The challenge is that $H[k] = \mathrm{DFT}(h[n])$,
+yet $h[n]$ has some length $N_f = N - s + 1$
+that is less than the length of $H[k]$.
 We must compromise in our design of $H[k]$
-so that the last $s$ entries of $h[n]$ are all zeroes.
-Here's how.
+so that the last $N - N_f$ entries of $\mathrm{DFT}^{-1}(h[n])$ are all zeroes.
 
 \begin{quote}
     \textbf{Box Approach.}
-    Let's work in reverse: we'll pick $h[n]$
-    so its last $s$ entries are all zeroes, then hope $H[k]$
-    is an effective filter.
+    Let's work in reverse: we'll design an $h[n]$ of length $N_f$,
+    then hope the $H[k]$ we get is an effective filter.
     \begin{enumerate}
-        \item Take a perfect (infinite, continuous)
+        \item Take a perfect (continuous)
         filtering frequency response $H_1(\Omega)$.  No compromises here.
-        \item Define $h_1[n]$ to be the infinite impulse response
-        $\mathrm{DTFT}^{-1}(H_1(\Omega))$, \emph{truncated} to length $N_f = N - s + 1$.
+        \begin{center}
+            \frame{\includegraphics[width=0.4\textwidth]{lecture-15/BPF}}
+        \end{center}
+        \item Define $h_1[n]$ to be the discretized version of the impulse response
+        $\mathrm{DTFT}^{-1}(H_1(\Omega))$, \emph{truncated} to length $N_f$.
         \begin{center}
             \frame{\includegraphics[width=0.4\textwidth]{lecture-15/DT-h1}}
         \end{center}
@@ -221,7 +224,7 @@ Here's how.
         \end{center}
     \end{enumerate}
     Then $H_2[k]$ is our designed frequency response $H[k]$.
-    Here's how the result sounds:
+    Here's how the result sounds when used with overlap-add:
     \includeaudio[width=0.4\textwidth]{lecture-15/box}
 \end{quote}
 
@@ -229,13 +232,12 @@ That works pretty well!  But if you listen closely,
 you can still faintly hear some of the frequencies from the harmony,
 especially in the second half.
 You can see why in the graph of $H_2[k]$:
-the ``ripples'' mean it's not a perfect filter.
+the graph has ``ripples'' that make it an imperfect filter.
 
-From what compromise do these ripples come?
-The answer is \emph{Step \#2};
+These ripples come from Step \#2:
 ideally, we would take $h_1[n] := \mathrm{DTFT}^{-1}(H_1(\Omega))$
 to be an \emph{infinite} DT signal, but instead,
-we must compromise by \emph{truncating} to have length $N - s + 1$.
+we must compromise by \emph{truncating} to have length $N_f$.
 
 Here's the trick, though:
 what if we \emph{truncated} a bit more smoothly?
@@ -257,7 +259,7 @@ what if we \emph{truncated} a bit more smoothly?
     0 & \text{ otherwise.}
     \end{cases} \]
     used in the previous approach.
-    An alternative choice is a triangle window;
+    Yet another alternative choice is a triangle window;
     you can observe the efficacy of each of these truncation methods
     through the diagram below.
     \begin{center}
@@ -288,24 +290,17 @@ But let's compare them at a logarithmic scale.
     \frame{\includegraphics[width=0.4\textwidth]{lecture-15/window-decibel}}
 \end{center}
 
-In the above, we define decibels at a \emph{relative} scale.
-(Of course we do---turning the volume knob up shouldn't alter these graphs.)
+In the above, decibels are a \emph{relative} unit of measurement.
+(So turning the volume knob up won't alter these graphs.)
 
 \textbf{Definition.}
 Given a signal $x[n]$, say its highest value is $M$.
-Then $x[n]$ in decibels is $10 \log_{10}\left(\frac{x[n]}{M}\right)$.
+Then $x[n]$ in \textbf{decibels} is $10 \log_{10}\left(\frac{x[n]}{M}\right)$.
 
 So a measurement of $-20$ dB corresponds to
 a measurement in the signal that is $\times \frac{1}{100}$ the highest measurement.
 For reference, measurements of $-60$ dB are essentially inaudible,
-whereas measurements of $\approx -25$ dB are still clearly perceptible.
-
-\begin{remark}
-    The relationship between windows and their Fourier transforms
-    is actually what Heisenberg's uncertainty principle is about!
-    Roughly speaking, it says that a tightly-localized frequency response
-    cannot correspond to a tightly-localized signal.
-\end{remark}
+whereas measurements of $\approx -25$ dB are still weakly perceptible.
 
 \subsection{Recitation: Short-Time Fourier Transform}
 
