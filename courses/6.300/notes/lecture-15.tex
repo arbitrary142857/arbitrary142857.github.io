@@ -1,0 +1,358 @@
+\lecture{15}
+\title{Short-Time Fourier Transform}
+
+\begin{document}
+
+\subsection{Lecture: Spectrograms}
+
+If you were to shove a recording of a piano playing a single chord
+through the DFT, you'd be able to retrieve the frequencies of that chord.
+But if you were to shove a recording of a piano playing an entire song
+through the DFT, you'd only retrieve the set of all frequencies
+present in the entire song---not the timing of each frequency,
+or even what order they came in.
+
+The DFT no longer works when \emph{frequencies change over time}.
+If we want to analyze the frequencies in an entire song,
+we need data that shows the frequencies present at each moment in time.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-15/spectrogram}}
+\end{center}
+
+Such data is called a \textbf{spectrogram}, pictured above.
+It is produced by performing several short-time DFTs.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-15/spectrogram-construction}}
+\end{center}
+
+\begin{problem}
+    You're given a DT signal with sampling rate
+    $f_s = 44100$ samples per second and want a spectrogram such that:
+    \begin{itemize}
+        \item Sixteenth notes at a tempo of $120$ beats per minute
+        (each lasting $\frac{1}{8}$ of a second)
+        are distinguished from each other.
+        \item Errors in frequency are less than or equal to $5$ Hz.
+    \end{itemize}
+    Determine the range of all possible window lengths $N$ you might use.
+\end{problem}
+
+\begin{solution}
+    The first condition implies $\frac{N}{f_s} \leq \frac{1}{8}$,
+    and the second condition implies $\frac{f_s}{N} \leq 10$.
+    Together, this implies $N \in [4410, 5512]$.
+\end{solution}
+
+This process of taking DFTs over sliding windows
+is known as the \textbf{Short-Time Fourier Transform (STFT)}.
+
+\begin{remark}
+    Later on, $N$ will change from denoting the window size
+    to denoting the DFT size.  Those two will become different!
+\end{remark}
+
+\subsection{Lecture: Streaming Windows}
+
+Recall from \href{10.html}{Lecture 10} that
+filtering a DT signal $x[n]$
+is equivalent to multiplying its DTFT $X(\Omega)$ by
+a window-shaped frequency response $H(\Omega)$,
+which is itself equivalent to convolving
+$x[n]$ with the unit-sample response $h[n]$.
+
+In the following discussion,
+we'll try to isolate the melody of the following.
+
+\includeaudio[width=0.4\textwidth]{lecture-15/original}
+
+When working with finite-length DFTs,
+two issues arise.
+\begin{enumerate}
+    \item The FFT runs in $O(N \log N)$ time.
+    For very long DT signals $x[n]$,
+    it is not feasible to filter the entire signal at once.
+    \item Filtering DT signals via \emph{circular} convolution
+    gives rise to \emph{time aliasing}
+    (see \href{13.html#lecture-and-recitation-circular-convolution}{Lecture 13}),
+    yielding buggy noises.
+\end{enumerate}
+
+A natural fix for the first issue
+is to apply STFT:
+
+\begin{quote}
+    \textbf{Bad Approach.}
+    Break the signal into windows of length $N$,
+    filter each window separately,
+    and concatenate the results.
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-15/circular-filter}}
+    Here's how the result sounds:
+    \includeaudio[width=0.4\textwidth]{lecture-15/circular-filter}
+\end{quote}
+
+Clearly something sounds off.
+The main issue comes from our neglect of issue \#2:
+circular convolution and time-aliasing.
+
+\begin{remark}
+    It might seem that circular convolution
+    has no flaws.  Here's an incorrect argument as to why.
+    \begin{quote}
+        \textbf{False Argument.}
+        Let $h[n]$ denote the DT signal used as a filter---the
+        inverse DFT of a filtering frequency response.
+        From \href{13.html#lecture-and-recitation-circular-convolution}{Lecture 13},
+        the circular convolution $y[n] := (x \circledast h)[n]$
+        is a DT signal whose DFT only contains good frequencies.
+
+        Therefore, the DTFT concatenation of all of the $y[n]$
+        must only contain good frequencies, too.
+    \end{quote}
+    Here's the flaw in the above: consider the following two extensions on $y[n]$
+    over the domain $\mathbb{N}$, instead of just $[0, N - 1]$.
+    \[
+    y_1[n] := y[n \% N]
+    ~~~ \text{ and } ~~~
+    y_2[n] := \begin{cases}
+    y[n] & \text{ if } n \in [0, N - 1]. \\
+    0 & \text{ otherwise.}
+    \end{cases}
+    \]
+    The DFT of $y[n]$ does only contain good frequencies,
+    but the implication of this is that the DTFT of $y_1[n]$
+    only contains good frequencies---not $y_2[n]$.
+    Yet the concatenation of all of the $y[n]$
+    is the sum of the $y_2[n]$---not the $y_1[n]$.
+
+    Therefore, there is no reason for
+    the DTFT of the concatenation of the $y[n]$
+    to only contain good frequencies.
+\end{remark}
+
+We really should be taking a linear convolution,
+not a circular convolution,
+and allowing for time in one window to overflow into the next,
+rather than aliasing it backwards.
+
+\begin{quote}
+    \textbf{Good Approach (Overlap-Add).}
+    Break the signal into windows of length $s$.
+    Filter each window separately
+    by computing its \emph{linear} convolution
+    with a filter $h[n]$ of length $N - s + 1$ (or less).
+    Add together the results.
+
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-15/overlap-add}}
+
+    Note that the result of each window's convolution
+    may overlap with the results from other windows---hence
+    the name ``overlap-add'' and not ``overlap-concatenate''.
+\end{quote}
+
+From this point on, it's important to think
+less in the time domain $h[n]$,
+and more in the frequency domain $H[k]$.
+We can rephrase overlap-add
+from the perspective of the frequency domain
+like so:
+
+\begin{quote}
+    \textbf{Good Approach (Overlap-Add --- Frequency Domain).}
+    Break $x[n]$ into subsignals $x_i[n]$ of length $s$.
+    For each subsignal, compute its length-$N$ DFT $X_i[k]$
+    by zero-padding $x_i[n]$ to have length $N$.
+
+    Now compute the element-wise product $X_i'[k] := X_i[k] \cdot H[k]$,
+    for our choice of length-$N$ filtering frequency response $H[k]$.
+    It is because the filter $h = \mathrm{DFT}^{-1}(H)$ has length $\leq N - s + 1$
+    that this filter bypasses any time-aliasing problems.
+
+    Finally, compute the length-$N$ subsignals
+    $x'_i := \mathrm{DFT}^{-1}(X_i')$ and sum them together.
+\end{quote}
+
+In summary, choosing $H[k]$ is enough
+to define the map from length-$s$ subsignals $x_i[n]$
+to length-$N$ subsignals $x'_i[n]$.
+
+\begin{remark}
+    The frequency domain is how we would go about
+    algorithmically implementing this filter, too!
+    Naive linear convolution is $O(N^2)$,
+    but two DFT's plus an element-wise product is $O(N \log N)$.
+\end{remark}
+
+Thus, it remains to construct a length-$N$ frequency response $H[k]$
+whose unit-sample response $h[n]$ has length $\leq N - s + 1$.
+
+
+\subsection{Lecture: Short-Time Filter Design}
+
+If we pick $H[k]$ to act as a perfect filter,
+then $h[n]$ will have length $N$.
+We must compromise in our design of $H[k]$
+so that the last $s$ entries of $h[n]$ are all zeroes.
+Here's how.
+
+\begin{quote}
+    \textbf{Box Approach.}
+    Let's work in reverse: we'll pick $h[n]$
+    so its last $s$ entries are all zeroes, then hope $H[k]$
+    is an effective filter.
+    \begin{enumerate}
+        \item Take a perfect (infinite, continuous)
+        filtering frequency response $H_1(\Omega)$.  No compromises here.
+        \item Define $h_1[n]$ to be the infinite impulse response
+        $\mathrm{DTFT}^{-1}(H_1(\Omega))$, \emph{truncated} to length $N_f = N - s + 1$.
+        \begin{center}
+            \frame{\includegraphics[width=0.4\textwidth]{lecture-15/DT-h1}}
+        \end{center}
+        \item Define $h_2[n]$ to be a version of $h_1[n]$
+        that is zero-padded to have length $N$.
+        \begin{center}
+            \frame{\includegraphics[width=0.4\textwidth]{lecture-15/DT-h2}}
+        \end{center}
+        \item Define $H_2[k] := \mathrm{DFT}(h_2[n])$
+        of length $N$.
+        \begin{center}
+            \frame{\includegraphics[width=0.4\textwidth]{lecture-15/H2}}
+        \end{center}
+    \end{enumerate}
+    Then $H_2[k]$ is our designed frequency response $H[k]$.
+    Here's how the result sounds:
+    \includeaudio[width=0.4\textwidth]{lecture-15/box}
+\end{quote}
+
+That works pretty well!  But if you listen closely,
+you can still faintly hear some of the frequencies from the harmony,
+especially in the second half.
+You can see why in the graph of $H_2[k]$:
+the ``ripples'' mean it's not a perfect filter.
+
+From what compromise do these ripples come?
+The answer is \emph{Step \#2};
+ideally, we would take $h_1[n] := \mathrm{DTFT}^{-1}(H_1(\Omega))$
+to be an \emph{infinite} DT signal, but instead,
+we must compromise by \emph{truncating} to have length $N - s + 1$.
+
+Here's the trick, though:
+what if we \emph{truncated} a bit more smoothly?
+
+\begin{quote}
+    \textbf{Hann Window Approach.}
+    We take the same approach as before,
+    but we instead define $h_1[n]$ as follows.
+    \[ h_1[n] := w_h[n] \cdot \mathrm{DTFT}^{-1}(H_1(\Omega))
+    ~~~ \text{ where } ~~~
+    w_h[n] := \begin{cases}
+    \sin\left(\frac{\pi n}{N_f}\right)^2 & \text{ if } n \in [0, N_f - 1] \\
+    0 & \text{ otherwise.}
+    \end{cases} \]
+    The signal $w_h[n]$ is called a \textbf{Hann Window},
+    in contrast to the typical rectangular window
+    \[ w_r[n] := \begin{cases}
+    1 & \text{ if } n \in [0, N_f - 1] \\
+    0 & \text{ otherwise.}
+    \end{cases} \]
+    used in the previous approach.
+    An alternative choice is a triangle window;
+    you can observe the efficacy of each of these truncation methods
+    through the diagram below.
+    \begin{center}
+        \frame{\includegraphics[width=0.4\textwidth]{lecture-15/windows}}
+    \end{center}
+    In the previous approach,
+    the frequencies present in $h_1[n]$
+    would be the result of convolving our perfect filter $H_1(\Omega)$
+    with the ripple-filled signal $\mathrm{DTFT}(w_r[n])$.
+    No wonder the result $H_2[k]$ had so many ripples!
+
+    Expectedly, using the Hann window to construct the truncation $h_1[n]$
+    gives a much cleaner $H_2[k]$.
+    \begin{center}
+        \frame{\includegraphics[width=0.4\textwidth]{lecture-15/Hann-window}}
+    \end{center}
+    And it sounds much better, too---no more
+    harmonies still lingering around.
+    \includeaudio[width=0.4\textwidth]{lecture-15/hann}
+\end{quote}
+
+\subsection{Recitation: Windows and Decibels}
+
+We already saw how the rectangular, triangular, and Hann windows compare.
+But let's compare them at a logarithmic scale.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-15/window-decibel}}
+\end{center}
+
+In the above, we define decibels at a \emph{relative} scale.
+(Of course we do---turning the volume knob up shouldn't alter these graphs.)
+
+\textbf{Definition.}
+Given a signal $x[n]$, say its highest value is $M$.
+Then $x[n]$ in decibels is $10 \log_{10}\left(\frac{x[n]}{M}\right)$.
+
+So a measurement of $-20$ dB corresponds to
+a measurement in the signal that is $\times \frac{1}{100}$ the highest measurement.
+For reference, measurements of $-60$ dB are essentially inaudible,
+whereas measurements of $\approx -25$ dB are still clearly perceptible.
+
+\begin{remark}
+    The relationship between windows and their Fourier transforms
+    is actually what Heisenberg's uncertainty principle is about!
+    Roughly speaking, it says that a tightly-localized frequency response
+    cannot correspond to a tightly-localized signal.
+\end{remark}
+
+\subsection{Recitation: Short-Time Fourier Transform}
+
+We never actually formally defined the STFT.  Let's do that.
+
+\textbf{Definition.} Given a signal $x[n]$ and a window $w[n]$,
+the \textbf{STFT} is the two-dimensional array:
+\[ X[k, m] := \frac{1}{N} \sum_{n = 0}^{N - 1}
+x[n + ms] \cdot w[n] \cdot e^{-jk \frac{2\pi}{N} n}. \]
+Note that $k$ and $m$ each only appear once on the RHS.
+The value of $k$ controls the frequency being measured,
+and the value of $m$ controls the time being measured.
+A \textbf{spectrogram} is a diagram that displays $|X[k, m]|^2$.
+
+Note that the STFT of $x[n]$ depends on three different parameters:
+\[ w[n]: \text{ the type of window } ~~~ \parallel ~~~
+N: \text{ the DFT size } ~~~ \parallel ~~~
+s: \text{ the step size } \]
+Importantly, these parameters do not have to be equal!
+\begin{itemize}
+    \item You can take $s < \mathrm{len}(w[n])$,
+    meaning each data point will be used multiple times!
+    \begin{itemize}
+        \item Or $s > \mathrm{len}(w[n])$, meaning
+        some data points are completely ignored\dots
+    \end{itemize}
+    \item You can take $N > \mathrm{len}(w[n])$,
+    meaning the data collected from the window $w[n]$
+    will be zero-padded to have length $N$.
+    \begin{itemize}
+        \item It does not make sense to take $N < \mathrm{len}(w[n])$.
+        You can not take a DFT of size $6$ on a DT signal of length $7$.
+    \end{itemize}
+\end{itemize}
+Compare the cleanliness of a rectangular window (at left)
+versus a Hann window (at right).
+\begin{center}
+    \frame{\includegraphics[width=0.6\textwidth]{lecture-15/spectrogram-windows}}
+\end{center}
+Expectedly, the parameter settings affect the spectrogram as follows.
+\begin{itemize}
+    \item Increasing $\mathrm{len}(w[n])$ increases the frequency resolution.
+    \item Increasing $N$ increases the fineness of frequency measurements---but
+    only superficially.  (Recall \href{13.html#lecture-frequency-resolution}{Lecture 13}.)
+    \item Decreasing $s$ increases the fineness of time measurements.
+\end{itemize}
+Of course, these improvements to parameter settings
+come at a cost of time complexity.
+
+\end{document}
