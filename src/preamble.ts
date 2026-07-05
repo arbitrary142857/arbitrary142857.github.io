@@ -19,6 +19,7 @@ export interface Context {
   environments: Map<string, Environment>;
   imagePaths: string[];
   audioPaths: string[];
+  widgetPaths: string[];
   projectRoot: string;
   usedSubsectionSlugs: Set<string>;
 }
@@ -30,6 +31,7 @@ export function createContext(): Context {
     environments: new Map(),
     imagePaths: ["images/"],
     audioPaths: ["audio/"],
+    widgetPaths: ["widgets/"],
     projectRoot: "",
     usedSubsectionSlugs: new Set(),
   };
@@ -94,6 +96,15 @@ export function parsePreamble(source: string, ctx: Context): void {
       const arg = readBraced(source, i);
       if (arg) {
         ctx.audioPaths = parseMediaPathContent(arg.content, "audio/");
+        i = arg.end;
+      }
+      continue;
+    }
+
+    if (cmd.name === "widgetpath") {
+      const arg = readBraced(source, i);
+      if (arg) {
+        ctx.widgetPaths = parseMediaPathContent(arg.content, "widgets/");
         i = arg.end;
       }
       continue;

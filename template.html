@@ -217,6 +217,151 @@ pre.verbatim code {
   background: none;
   padding: 0;
 }
+.note-html-embed {
+  margin: 1.5em auto;
+  text-align: left;
+}
+.note-widget-box {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  max-width: 34em;
+  margin: 0 auto;
+  padding: 0.85em 2em 1.65em;
+  background: #faf8f5;
+  box-shadow: 0 0 0 1px #000;
+}
+.note-html-embed canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.speech-viz-toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.55em;
+  margin-top: 0.1em;
+  width: 100%;
+}
+.speech-viz-presets {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.45em;
+}
+.speech-viz-preset {
+  font-family: inherit;
+  font-size: 1em;
+  line-height: 1;
+  min-width: 2.5em;
+  padding: 0.55em 0.75em;
+  border: 1px solid #bbb;
+  background: #fff;
+  color: #1a1a1a;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.speech-viz-preset:hover {
+  background: #faf8f5;
+}
+.speech-viz-preset[aria-pressed="true"] {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+  color: #fff;
+}
+.speech-viz-toolbar-row .note-widget-icon-btn {
+  width: 2.65em;
+  height: 2.65em;
+}
+.speech-viz-toolbar-row .note-widget-icon-btn svg {
+  width: 1.2em;
+  height: 1.2em;
+}
+.note-widget-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7em;
+  margin-top: 0.85em;
+}
+.note-widget-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75em;
+  white-space: nowrap;
+}
+.note-widget-row label {
+  flex: 0 0 2.75em;
+  font-weight: 600;
+  font-size: 0.92em;
+}
+.note-widget-row input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  height: 4px;
+  margin: 0;
+  accent-color: #1a1a1a;
+  cursor: pointer;
+}
+.note-widget-row output {
+  flex: 0 0 4.25em;
+  font-size: 0.92em;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.note-widget-icon-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.35em;
+  height: 2.35em;
+  padding: 0;
+  border: 1px solid #333;
+  background: #fff;
+  color: #1a1a1a;
+  cursor: pointer;
+}
+.note-widget-icon-btn:hover {
+  background: #faf8f5;
+}
+.note-widget-icon-btn[aria-pressed="true"] {
+  background: #1a1a1a;
+  color: #fff;
+}
+.note-widget-icon-btn svg {
+  width: 1.05em;
+  height: 1.05em;
+  fill: currentColor;
+}
+.note-widget-icon-btn .speech-viz-icon-pause {
+  display: none;
+}
+.note-widget-icon-btn[aria-pressed="true"] .speech-viz-icon-play {
+  display: none;
+}
+.note-widget-icon-btn[aria-pressed="true"] .speech-viz-icon-pause {
+  display: block;
+}
+.note-widget-btn {
+  font-family: inherit;
+  font-size: 0.95em;
+  padding: 0.45em 0.85em;
+  border: 1px solid #b8aea2;
+  background: #fff;
+  color: inherit;
+  cursor: pointer;
+}
+.note-widget-btn:hover {
+  background: #faf8f5;
+}
+.note-widget-btn:active {
+  background: #ede8e0;
+}
+.note-widget-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 section.env {
   margin: 1em 0;
 }

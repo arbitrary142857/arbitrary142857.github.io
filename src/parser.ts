@@ -1,5 +1,5 @@
 import katex from "katex";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   createContext,
@@ -52,6 +52,11 @@ const MATH_ENVS = new Set([
 ]);
 
 const VERBATIM_ENVS = new Set(["verbatim", "verbatim*"]);
+const RAW_HTML_ENVS = new Set(["html"]);
+
+function isLiteralEnvironment(env: string): boolean {
+  return VERBATIM_ENVS.has(env) || RAW_HTML_ENVS.has(env);
+}
 
 const HEADING_COMMANDS: Record<string, string> = {
   section: "h2",
@@ -103,6 +108,7 @@ export function parseTex(
   projectRoot = "",
   imagesDir = "",
   audioDir = "",
+  widgetsDir = "",
 ): ParseResult {
   const { preamble: docPreamble, body, title, lectures } = extractDocument(bodySource);
   const preamble = [preambleSource.trim(), docPreamble.trim()]
@@ -116,6 +122,9 @@ export function parseTex(
   }
   if (audioDir) {
     ctx.audioPaths = [audioDir.endsWith("/") ? audioDir : `${audioDir}/`];
+  }
+  if (widgetsDir) {
+    ctx.widgetPaths = [widgetsDir.endsWith("/") ? widgetsDir : `${widgetsDir}/`];
   }
   applyBuiltinDefinitions(ctx);
   const html = renderBody(stripComments(body), ctx);
@@ -199,7 +208,7 @@ function stripComments(source: string): string {
   let i = 0;
 
   while (i < source.length) {
-    const verbatimBegin = source.slice(i).match(/^\\begin\{(verbatim\*?)\}/);
+    const verbatimBegin = source.slice(i).match(/^\\begin\{(verbatim\*?|html)\}/);
     if (verbatimBegin) {
       const env = verbatimBegin[1];
       const beginLen = verbatimBegin[0].length;
@@ -406,21 +415,25 @@ function parseEnvironmentBlock(
   }
 
   const innerStart = i;
-  const innerEnd = VERBATIM_ENVS.has(env)
+  const innerEnd = isLiteralEnvironment(env)
     ? findVerbatimEnvironmentEnd(body, env, innerStart)
     : findEnvironmentEnd(body, env, innerStart);
   if (innerEnd === -1) return null;
 
   const rawInner = body.slice(innerStart, innerEnd);
-  const inner = VERBATIM_ENVS.has(env) ? normalizeVerbatimContent(rawInner) : rawInner.trim();
+  const inner = isLiteralEnvironment(env) ? normalizeVerbatimContent(rawInner) : rawInner.trim();
   const end = innerEnd + `\\end{${env}}`.length;
+
+  if (RAW_HTML_ENVS.has(env)) {
+    return { html: renderRawHtml(inner), end };
+  }
 
   if (VERBATIM_ENVS.has(env)) {
     return { html: renderVerbatim(inner, verbatimLanguage), end };
   }
 
   if (env === "center") {
-    return { html: renderParagraphBlock(inner, ctx, "center"), end };
+    return { html: `<div class="center">${renderBody(inner, ctx)}</div>`, end };
   }
 
   if (env === "itemize") {
@@ -474,6 +487,10 @@ function normalizeVerbatimContent(raw: string): string {
   if (content.endsWith("\r\n")) content = content.slice(0, -2);
   else if (content.endsWith("\n")) content = content.slice(0, -1);
   return content;
+}
+
+function renderRawHtml(content: string): string {
+  return `<div class="note-html-embed">${content.trim()}</div>`;
 }
 
 function renderVerbatim(content: string, language = ""): string {
@@ -638,6 +655,8 @@ function renderParagraphBlock(block: string, ctx: Context, paragraphClass = ""):
           if (heading && heading.end === text.length) return heading.html;
           const audio = parseIncludeAudioCommand(text, 0, ctx);
           if (audio && audio.end === text.length) return audio.html;
+          const widget = parseIncludeWidgetCommand(text, 0, ctx);
+          if (widget && widget.end === text.length) return widget.html;
           return `<p${classAttr}>${parseInline(text, ctx)}</p>`;
         })
         .filter(Boolean);
@@ -835,6 +854,10 @@ function parseCommand(
       const rendered = parseIncludeAudioCommand(inner, 0, ctx);
       if (rendered) return { html: rendered.html, end: arg.end };
     }
+    if (inner.startsWith("\\includewidget")) {
+      const rendered = parseIncludeWidgetCommand(inner, 0, ctx);
+      if (rendered) return { html: rendered.html, end: arg.end };
+    }
     return {
       html: `<span class="frame">${parseInline(arg.content, ctx)}</span>`,
       end: arg.end,
@@ -851,6 +874,12 @@ function parseCommand(
     const rendered = parseIncludeAudioCommand(input, start, ctx);
     if (rendered) return rendered;
     return { html: escapeText("\\includeaudio"), end: i };
+  }
+
+  if (name === "includewidget") {
+    const rendered = parseIncludeWidgetCommand(input, start, ctx);
+    if (rendered) return rendered;
+    return { html: escapeText("\\includewidget"), end: i };
   }
 
   const textMacro = ctx.textMacros.get(name);
@@ -1024,6 +1053,24 @@ function parseIncludeGraphicsCommand(
   };
 }
 
+function parseIncludeWidgetCommand(
+  input: string,
+  start: number,
+  ctx: Context,
+): { html: string; end: number } | null {
+  if (!input.startsWith("\\includewidget", start)) return null;
+
+  let i = start + "\\includewidget".length;
+  const arg = readBraced(input, i);
+  if (!arg) return null;
+
+  const content = loadWidgetContent(arg.content.trim(), ctx);
+  return {
+    html: content ? renderRawHtml(content) : `<p>Missing widget: ${escapeText(arg.content.trim())}</p>`,
+    end: arg.end,
+  };
+}
+
 function parseIncludeAudioCommand(
   input: string,
   start: number,
@@ -1175,6 +1222,36 @@ function escapeAttr(text: string): string {
 
 const IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".svg"];
 const AUDIO_EXTENSIONS = [".wav", ".mp3", ".ogg", ".m4a", ".webm", ".aac", ".flac"];
+const WIDGET_EXTENSIONS = [".html", ".htm"];
+
+function loadWidgetContent(name: string, ctx: Context): string | null {
+  const path = resolveWidgetPath(name, ctx);
+  if (!path) return null;
+  return readFileSync(path, "utf8");
+}
+
+function resolveWidgetPath(name: string, ctx: Context): string | null {
+  const normalizedName = name.replace(/^\.\//, "");
+  const hasExtension = /\.[a-zA-Z0-9]+$/.test(normalizedName);
+
+  for (const base of ctx.widgetPaths) {
+    const prefix = base.endsWith("/") ? base : `${base}/`;
+    const relative = `${prefix}${normalizedName}`;
+
+    if (hasExtension) {
+      const path = join(ctx.projectRoot, relative);
+      if (existsSync(path)) return path;
+      continue;
+    }
+
+    for (const ext of WIDGET_EXTENSIONS) {
+      const path = join(ctx.projectRoot, relative + ext);
+      if (existsSync(path)) return path;
+    }
+  }
+
+  return null;
+}
 
 function resolveImageSrc(name: string, ctx: Context): string {
   const normalizedName = name.replace(/^\.\//, "");
