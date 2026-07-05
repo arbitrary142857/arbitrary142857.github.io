@@ -29,6 +29,8 @@
 
   /* Audio player background (customize here). */
   --note-audio-bg: #fff;
+  --note-audio-mobile-break: 52em;
+  --note-audio-mobile-width: 22em;
 
   /* Lecture footer navigation (customize here). */
   --lecture-nav-margin-top: 3em;
@@ -158,10 +160,13 @@ img.note-figure {
 img.note-figure.framed {
   box-shadow: 0 0 0 1px #000;
 }
-audio.note-audio {
+.note-audio-wrap {
   display: block;
   margin: 0.75em auto;
-  max-width: min(100%, 40em);
+  width: 100%;
+}
+audio.note-audio {
+  display: block;
   width: 100%;
   box-shadow: 0 0 0 1px #000;
   background-color: var(--note-audio-bg);
@@ -171,6 +176,20 @@ audio.note-audio::-webkit-media-controls-panel {
 }
 audio.note-audio::-webkit-media-controls-enclosure {
   background-color: var(--note-audio-bg);
+}
+@media (max-width: 52em) { /* match --note-audio-mobile-break above */
+  .note-audio-wrap {
+    width: min(100%, var(--note-audio-mobile-width)) !important;
+    max-width: min(100%, var(--note-audio-mobile-width)) !important;
+  }
+  audio.note-audio {
+    box-shadow: none;
+    background-color: transparent;
+  }
+  audio.note-audio::-webkit-media-controls-panel,
+  audio.note-audio::-webkit-media-controls-enclosure {
+    background-color: transparent;
+  }
 }
 .small-caps,
 .katex .small-caps {

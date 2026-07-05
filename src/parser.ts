@@ -636,6 +636,8 @@ function renderParagraphBlock(block: string, ctx: Context, paragraphClass = ""):
           if (!text) return "";
           const heading = parseHeadingCommand(text, 0, ctx);
           if (heading && heading.end === text.length) return heading.html;
+          const audio = parseIncludeAudioCommand(text, 0, ctx);
+          if (audio && audio.end === text.length) return audio.html;
           return `<p${classAttr}>${parseInline(text, ctx)}</p>`;
         })
         .filter(Boolean);
@@ -1047,7 +1049,7 @@ function parseIncludeAudioCommand(
   const styleAttr = style ? ` style="${escapeAttr(style)}"` : "";
 
   return {
-    html: `<audio src="{{COURSE_PREFIX}}${escapeAttr(src)}" controls preload="metadata" class="note-audio"${styleAttr}></audio>`,
+    html: `<div class="note-audio-wrap"${styleAttr}><audio src="{{COURSE_PREFIX}}${escapeAttr(src)}" controls preload="metadata" class="note-audio"></audio></div>`,
     end: arg.end,
   };
 }
