@@ -1,0 +1,299 @@
+<div class="note-widget-box">
+<canvas class="speech-viz-canvas" width="800" height="400"></canvas>
+
+<div class="speech-viz-toolbar-row">
+    <div class="speech-viz-presets">
+        <button type="button" class="speech-viz-preset" data-f1="270" data-f2="2290" aria-pressed="false">ee</button>
+        <button type="button" class="speech-viz-preset" data-f1="390" data-f2="1990" aria-pressed="false">ih</button>
+        <button type="button" class="speech-viz-preset" data-f1="530" data-f2="1840" aria-pressed="false">eh</button>
+        <button type="button" class="speech-viz-preset" data-f1="660" data-f2="1680" aria-pressed="false">ae</button>
+        <button type="button" class="speech-viz-preset" data-f1="440" data-f2="1020" aria-pressed="false">uh</button>
+        <button type="button" class="speech-viz-preset" data-f1="730" data-f2="1090" aria-pressed="false">ah</button>
+        <button type="button" class="speech-viz-preset" data-f1="300" data-f2="870" aria-pressed="false">oo</button>
+    </div>
+    <button type="button" class="note-widget-icon-btn speech-viz-play" aria-label="Play sound" aria-pressed="false">
+        <svg class="speech-viz-icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        <svg class="speech-viz-icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+</div>
+
+<div class="note-widget-controls">
+    <div class="note-widget-row">
+        <label for="speech-viz-f0">Pitch</label>
+        <input type="range" id="speech-viz-f0" min="80" max="400" value="120">
+        <output id="speech-viz-f0-out">120 Hz</output>
+    </div>
+    <div class="note-widget-row">
+        <label for="speech-viz-f1">F1</label>
+        <input type="range" id="speech-viz-f1" min="250" max="1000" value="500">
+        <output id="speech-viz-f1-out">500 Hz</output>
+    </div>
+    <div class="note-widget-row">
+        <label for="speech-viz-f2">F2</label>
+        <input type="range" id="speech-viz-f2" min="800" max="3000" value="1500">
+        <output id="speech-viz-f2-out">1500 Hz</output>
+    </div>
+</div>
+</div>
+
+<script>
+(function () {
+    const root = document.currentScript.closest(".note-html-embed");
+    const canvas = root.querySelector(".speech-viz-canvas");
+    const ctx = canvas.getContext("2d");
+    const f0Slider = root.querySelector("#speech-viz-f0");
+    const f1Slider = root.querySelector("#speech-viz-f1");
+    const f2Slider = root.querySelector("#speech-viz-f2");
+    const f0Out = root.querySelector("#speech-viz-f0-out");
+    const f1Out = root.querySelector("#speech-viz-f1-out");
+    const f2Out = root.querySelector("#speech-viz-f2-out");
+    const playBtn = root.querySelector(".speech-viz-play");
+    const presetBtns = root.querySelectorAll(".speech-viz-preset");
+
+    const MAX_FREQ = 4000;
+    const MIN_F0 = 80;
+    const AMP_SCALE = 3.5;
+    const VOLUME = 0.022;
+    const COLORS = {
+        harmonics: "#3eb0e5",
+        envelope: "#1a1a1a",
+        axis: "#1a1a1a",
+    };
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const M = { top: 18, right: 28, bottom: 24, left: 28 };
+
+    let audioCtx = null;
+    let masterGain = null;
+    let oscillators = [];
+    let isPlaying = false;
+
+    function getEnvelopeAmplitude(freq, f1, f2) {
+        const base = Math.max(0.1, 1 - (freq / MAX_FREQ) * 0.8);
+        const r1 = Math.exp(-Math.pow(freq - f1, 2) / 40000);
+        const r2 = Math.exp(-Math.pow(freq - f2, 2) / 60000);
+        const r3 = Math.exp(-Math.pow(freq - 2500, 2) / 80000) * 0.5;
+        return base + r1 * 1.5 + r2 * 1.2 + r3;
+    }
+
+    function plotArea(w, h) {
+        return {
+            x0: M.left,
+            y0: M.top,
+            w: w - M.left - M.right,
+            h: h - M.top - M.bottom,
+        };
+    }
+
+    function freqToX(freq, area) {
+        return area.x0 + (freq / MAX_FREQ) * area.w;
+    }
+
+    function ampToY(amp, area) {
+        return area.y0 + area.h - (amp / AMP_SCALE) * area.h;
+    }
+
+    function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        const cssW = canvas.clientWidth || 800;
+        const cssH = cssW * 0.46;
+        canvas.width = Math.round(cssW * dpr);
+        canvas.height = Math.round(cssH * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return { width: cssW, height: cssH };
+    }
+
+    function clearPresetHighlight() {
+        presetBtns.forEach((btn) => btn.setAttribute("aria-pressed", "false"));
+    }
+
+    function applyPreset(f1, f2) {
+        f1Slider.value = String(f1);
+        f2Slider.value = String(f2);
+        draw();
+    }
+
+    function draw() {
+        const f0 = +f0Slider.value;
+        const f1 = +f1Slider.value;
+        const f2 = +f2Slider.value;
+
+        f0Out.textContent = f0 + " Hz";
+        f1Out.textContent = f1 + " Hz";
+        f2Out.textContent = f2 + " Hz";
+
+        const { width, height } = resizeCanvas();
+        const area = plotArea(width, height);
+
+        ctx.clearRect(0, 0, width, height);
+
+        ctx.strokeStyle = COLORS.axis;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(area.x0, area.y0);
+        ctx.lineTo(area.x0, area.y0 + area.h);
+        ctx.lineTo(area.x0 + area.w, area.y0 + area.h);
+        ctx.stroke();
+
+        ctx.lineWidth = 3.25;
+        ctx.strokeStyle = COLORS.harmonics;
+        ctx.beginPath();
+        for (let freq = f0; freq <= MAX_FREQ; freq += f0) {
+            const x = freqToX(freq, area);
+            const y = ampToY(getEnvelopeAmplitude(freq, f1, f2), area);
+            ctx.moveTo(x, area.y0 + area.h);
+            ctx.lineTo(x, Math.max(area.y0, y));
+        }
+        ctx.stroke();
+
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = COLORS.envelope;
+        ctx.beginPath();
+        for (let px = 0; px <= area.w; px++) {
+            const freq = (px / area.w) * MAX_FREQ;
+            const x = area.x0 + px;
+            const y = ampToY(getEnvelopeAmplitude(freq, f1, f2), area);
+            if (px === 0) ctx.moveTo(x, Math.max(area.y0, y));
+            else ctx.lineTo(x, Math.max(area.y0, y));
+        }
+        ctx.stroke();
+
+        if (isPlaying) updateOscillators();
+    }
+
+    function stopPlayback() {
+        for (const { osc, gain } of oscillators) {
+            try { osc.stop(); } catch (_) {}
+            osc.disconnect();
+            gain.disconnect();
+        }
+        oscillators = [];
+        if (masterGain) {
+            masterGain.disconnect();
+            masterGain = null;
+        }
+        if (audioCtx) {
+            void audioCtx.close();
+            audioCtx = null;
+        }
+        isPlaying = false;
+        playBtn.setAttribute("aria-pressed", "false");
+        playBtn.setAttribute("aria-label", "Play sound");
+    }
+
+    function ensureAudioContext() {
+        if (!audioCtx || audioCtx.state === "closed") {
+            audioCtx = new AudioCtx();
+        }
+        if (audioCtx.state === "suspended") {
+            void audioCtx.resume();
+        }
+        const buffer = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
+        const unlock = audioCtx.createBufferSource();
+        unlock.buffer = buffer;
+        unlock.connect(audioCtx.destination);
+        unlock.start(0);
+        return audioCtx;
+    }
+
+    function startOscillatorPool() {
+        const count = Math.floor(MAX_FREQ / MIN_F0);
+        for (let i = 0; i < count; i++) {
+            const osc = audioCtx.createOscillator();
+            osc.type = "sine";
+            const gain = audioCtx.createGain();
+            gain.gain.value = 0;
+            osc.connect(gain);
+            gain.connect(masterGain);
+            osc.start();
+            oscillators.push({ osc, gain });
+        }
+    }
+
+    function updateOscillators(immediate) {
+        if (!isPlaying || !audioCtx) return;
+
+        const f0 = +f0Slider.value;
+        const f1 = +f1Slider.value;
+        const f2 = +f2Slider.value;
+        const now = audioCtx.currentTime;
+        const ramp = 0.03;
+
+        let peak = 0;
+        const harmonics = [];
+        for (let freq = f0; freq <= MAX_FREQ; freq += f0) {
+            const amp = getEnvelopeAmplitude(freq, f1, f2);
+            peak = Math.max(peak, amp);
+            harmonics.push({ freq, amp });
+        }
+
+        for (let i = 0; i < oscillators.length; i++) {
+            const { osc, gain } = oscillators[i];
+            if (i < harmonics.length) {
+                const { freq, amp } = harmonics[i];
+                const level = (amp / peak) * VOLUME;
+                if (immediate) {
+                    osc.frequency.value = freq;
+                    gain.gain.value = level;
+                } else {
+                    osc.frequency.setTargetAtTime(freq, now, ramp);
+                    gain.gain.setTargetAtTime(level, now, ramp);
+                }
+            } else if (immediate) {
+                gain.gain.value = 0;
+            } else {
+                gain.gain.setTargetAtTime(0, now, ramp);
+            }
+        }
+    }
+
+    function startPlayback() {
+        ensureAudioContext();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = 1;
+        masterGain.connect(audioCtx.destination);
+        startOscillatorPool();
+        isPlaying = true;
+        playBtn.setAttribute("aria-pressed", "true");
+        playBtn.setAttribute("aria-label", "Stop sound");
+        updateOscillators(true);
+    }
+
+    function togglePlayback() {
+        if (isPlaying) {
+            stopPlayback();
+            return;
+        }
+        startPlayback();
+    }
+
+    let lastPlayPointer = 0;
+    f0Slider.addEventListener("input", () => { clearPresetHighlight(); draw(); });
+    f1Slider.addEventListener("input", () => { clearPresetHighlight(); draw(); });
+    f2Slider.addEventListener("input", () => { clearPresetHighlight(); draw(); });
+    playBtn.addEventListener("pointerdown", (e) => {
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        e.preventDefault();
+        lastPlayPointer = Date.now();
+        togglePlayback();
+    });
+    playBtn.addEventListener("click", (e) => {
+        if (Date.now() - lastPlayPointer < 400) return;
+        togglePlayback();
+    });
+    playBtn.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            togglePlayback();
+        }
+    });
+    presetBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            presetBtns.forEach((b) => b.setAttribute("aria-pressed", "false"));
+            btn.setAttribute("aria-pressed", "true");
+            applyPreset(+btn.dataset.f1, +btn.dataset.f2);
+        });
+    });
+    window.addEventListener("resize", draw);
+    draw();
+})();
+</script>
