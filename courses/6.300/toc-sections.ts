@@ -12,6 +12,6 @@ export interface TocPart {
     { title: "Fourier Analysis", from: 1, to: 7 },
     { title: "Systems and Convolution", from: 8, to: 11 },
     { title: "The Discrete Fourier Transform", from: 12, to: 16 },
-    { title: "2D Fourier Transforms", from: 17, to: 17 }
+    { title: "The 2D Fourier Transform", from: 17, to: 18 }
   ];
   

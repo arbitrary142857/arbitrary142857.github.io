@@ -1,0 +1,155 @@
+\lecture{18}
+\title{2D Fourier Transform II}
+
+\begin{document}
+
+\subsection{Lecture: Rotation}
+
+\begin{theorem}{FT Rotation}
+    Rotating a picture by $\psi$
+    rotates its Fourier transform by $\psi$.
+\end{theorem}
+
+\begin{proof}
+    Use polar coordinates instead of rectangular coordinates.
+    \begin{itemize}
+        \item Express points $(x, y)$ in space as $(r, \theta)$
+        using the relation $x = r\cos\theta$ and $y = r\sin\theta$.
+        \item Express points $(\omega_x, \omega_y)$ in the frequency plane
+        as $(\omega, \phi)$ using the relation
+        $\omega_x = \omega\cos \phi$ and $\omega_y = \omega\sin \phi$.
+    \end{itemize}
+    The relationship between $f(x, y)$ and $F(\omega_x, \omega_y)$
+    implies a relationship between their polar equivalents
+    $f_p(r, \theta)$ and $F_p(\omega, \phi)$.
+    \begin{align*}
+        F_p(\omega, \phi)
+        & = F(\omega\cos\phi, \omega\sin\phi) \\
+        & = \iint_{\mathbb{R}^2} f(x, y)
+        e^{-j(\left[\omega\cos\phi\right] x + \left[\omega\sin\phi\right] y)}
+        \, \mathrm{d}y \, \mathrm{d}x \\
+        & = \iint_{\mathbb{R}^2} f_p(r, \theta)
+        e^{-j(\left[\omega\cos\phi\right]\left[r\cos\theta\right]
+        + \left[\omega\sin\phi\right]\left[r\sin\theta\right])}
+        \, r \mathrm{d}r \, \mathrm{d}\theta
+        = \iint_{\mathbb{R}^2} f_p(r, \theta)
+        e^{-j\omega r \cos(\phi - \theta)}
+        r \, \mathrm{d}r \, \mathrm{d}\theta.
+    \end{align*}
+    Therefore, if $f_p'(r, \theta) := f_p(r, \theta - \psi)$
+    is the rotated picture, the rotated Fourier transform is:
+    \[ F_p'(\omega, \phi)
+    = \iint_{\mathbb{R}^2} f_p(r, \textcolor{purple}{\theta - \psi})
+    e^{-j\omega r \cos(\phi - \theta)}
+    r \, \mathrm{d}r \, \mathrm{d}\theta
+    = \iint_{\mathbb{R}^2} f_p(r, \textcolor{purple}{\lambda})
+    e^{-j\omega r \cos(\phi - \textcolor{purple}{(\lambda + \psi)})}
+    r \, \mathrm{d}r \, \textcolor{purple}{\mathrm{d}\lambda}
+    = F_p(\omega, \phi - \psi). \]
+    Just as promised. ~ $\blacksquare$
+\end{proof}
+
+Below is a visual demonstration of the above theorem.
+
+\begin{center}
+    \frame{\includegraphics[width=0.6\textwidth]{lecture-18/rotate-DFT}}
+\end{center}
+
+\begin{remark}
+    Check yourself: why does it make sense
+    that the DFT of three dots arranged this way
+    should look like a cosine wave?
+\end{remark}
+
+Below is the DFT of the moon.
+Notice how the DFT features strong signals along
+the west-northwest to east-southeast axis.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-18/moon-DFT}}
+\end{center}
+
+This should make sense---do you see the presence of
+north-northeast to south-southwest signals
+in the original image?
+
+\subsection{Lecture: Phase}
+
+All of the discussion so far
+has concerned the magnitude of the DFT.
+What about the phase?
+
+\begin{center}
+    \frame{\includegraphics[width=0.6\textwidth]{lecture-18/boat-DFT}}
+\end{center}
+
+Evidently, phase is hugely important for visual perception---but strangely,
+not so much for auditory perception.  Why is that?
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-18/phase-shift}}
+\end{center}
+
+The point is that visual perception cares a lot about \emph{edge detection},
+and even just a single out-of-phase harmonic can ruin that.
+In contrast, the ear cares mostly about frequencies,
+not about the relative phases of those frequencies.
+
+\subsection{Lecture and Recitation: Convolution and Filtering}
+
+Convolution in 2D works just as you'd expect.
+
+\begin{center}
+    \frame{\includegraphics[width=0.2\textwidth]{lecture-18/2D-convolution}}
+\end{center}
+
+There's conventional convolution and circular convolution, too.
+
+\begin{center}
+    \frame{\includegraphics[width=0.3\textwidth]{lecture-18/convolution-types}}
+\end{center}
+
+And of course, convolution and the DFT behave nicely together, too.
+
+\begin{theorem}{Convolution = Multiplication}
+    Suppose the DFTs of $f[n_x, n_y]$ and $g[n_x, n_y]$
+    are $F[k_x, k_y]$ and $G[k_x, k_y]$, respectively.
+    Then the DFT of $(f \circledast g)[n_x, n_y]$ is
+    $N_xN_y \cdot F[k_x, k_y] \cdot G[k_x, k_y]$,
+    and the DFT of $(f \cdot g)[n_x, n_y]$ is
+    $(F \circledast G)[k_x, k_y]$.
+\end{theorem}
+
+\begin{proof}
+    Same idea as in the 1D case from
+    \href{13.html#lecture-and-recitation-circular-convolution}{Lecture 13},
+    just with multivariate polynomials this time. ~ $\blacksquare$
+\end{proof}
+
+\begin{problem}
+    Given that $H[k_r, k_c] = (-1)^{k_r + k_c}$,
+    determine how $(f \circledast h)[r, c]$ relates to $f[r, c]$.
+\end{problem}
+
+\begin{solution}
+    Note that $H$ is separable via
+    $H[k_r, k_c] = (-1)^{k_r} \cdot (-1)^{k_c}$.
+    Taking $H_1[k_r] := (-1)^{k_r}$ and $H_2[k_c] := (-1)^{k_c}$,
+    we have:
+    \[ h_1[r] := \mathrm{DFT}^{-1}(H_1[k_r])
+    = N_r \cdot \delta\left[r - \frac{N_r}{2}\right]
+    ~~~ \text{ and } ~~~
+    h_2[c] := \mathrm{DFT}^{-1}(H_2[k_c])
+    = N_c \cdot \delta\left[c - \frac{N_c}{2}\right] \]
+    Therefore, the inverse DFT of $H[k_r, k_c]$
+    is the product of the two expressions above.
+    \[ h[r, c]
+    := \mathrm{DFT}^{-1}(H[k_r, k_c])
+    = h_1[r] \cdot h_2[c]
+    = N_r N_c \cdot \delta\left[r - \frac{N_r}{2}, c - \frac{N_c}{2}\right]. \]
+    Thus, convolving with $h[r, c]$ cyclically shifts $f[r, c]$
+    in the direction $\left(\frac{N_r}{2}, \frac{N_c}{2}\right)$
+    and scales it by $N_rN_c$.
+\end{solution}
+
+\end{document}
