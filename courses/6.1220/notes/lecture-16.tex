@@ -22,13 +22,13 @@
 \end{proof}
 
 \begin{problem}{Set Cover}
-    Given subsets $\{S_i\}_{i = 1}^n \subseteq \mathcal{U}$, find a cover of $\mathcal{U}$ using as few subsets as possible.
+    Given subsets $S_1, \dots, S_n \subseteq \mathcal{U}$, find a cover of $\mathcal{U}$ using as few subsets as possible.
 \end{problem}
 
 \begin{solution}{Set Cover}
-    Greedily pick sets of maximum cardinality.  This is an $O(\log |\mathcal{U}|)$-approximation algorithm---for the same reasons as our bad Vertex Cover approximation algorithm!
+    Greedily pick sets covering the most uncovered elements.  This is an $O(\log |\mathcal{U}|)$-approximation algorithm---for the same reasons as our bad Vertex Cover approximation algorithm!
 
-    (The Vertex Cover approximation algorithm never used the fact that edges connect \emph{two} vertices\dots)
+    (The bad Vertex Cover approximation algorithm never used the fact that edges connect \emph{two} vertices\dots)
 \end{solution}
 
 It turns out that if $\textbf{P} \neq \textbf{NP}$, then we cannot do better.  All of this is true for the weighted case, too.
@@ -38,7 +38,7 @@ It turns out that if $\textbf{P} \neq \textbf{NP}$, then we cannot do better.  A
 \end{problem}
 
 \begin{solution}{Clique}
-    Partition $V$ into $\frac{n}{\log n}$ subsets $\{G_i\}$ of size $\log n$.  For each subset $G_i$ of size $\log n$, brute-force through every subgraph of $G_i$ to find the maximum clique in $G_i$.  Output the largest clique you found.
+    Partition $V$ into $\frac{n}{\log n}$ subsets $\{G_i\}$ of size $\log n$.  For each subset $G_i$ of size $\log n$, brute-force through every subset of $G_i$ to find the maximum clique in $G_i$.  Output the largest clique you found.
 
     This is an $\left(\frac{n}{\log n}\right)$-approximation.  Obviously.  And this is tight.  Obviously.
 \end{solution}
@@ -50,7 +50,7 @@ It turns out that we can't do better.
 \end{remark}
 
 \begin{problem}{Max-3-SAT}
-    Given a $3$-CNF formula, maximized the number of satisfied clauses.
+    Given a $3$-CNF formula, maximize the number of satisfied clauses.
 
     Assume each clause has three distinct variables, for simplicity.
 \end{problem}

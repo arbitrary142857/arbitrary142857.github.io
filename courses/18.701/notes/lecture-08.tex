@@ -6,7 +6,7 @@
 The goal for today will be to prove the validity of Jordan Normal Form.
 
 \begin{remark}
-    It only makes sense to discuss Jordan Normal Form if our linear operator $T: V \to V$ has eigenvalues to begin with.  Thus, from here onward, we will assume the characteristic polynomial of $T$ splits into linear factors.
+    It only makes sense to discuss Jordan Normal Form if our linear operator $T: V \to V$ has a full set of eigenvalues to begin with.  Thus, from here onward, we will assume the characteristic polynomial of $T$ splits into linear factors.
     
     This can be achieved, say, by demanding that the field of $V$ is algebraically closed.  So Jordan Normal Form does not necessarily exist for vector spaces over $\mathbb{R}$, but it certainly exists for vector spaces over $\mathbb{C}$.
 
@@ -43,11 +43,11 @@ Let $U := \im T^k$ be the subspace to which we stabilize, and also consider $W :
     \[ \dim U + \dim W = \dim (\im T^k) + \dim (\ker T^k) = \dim V. \]
     It remains to show $U \cap W = \{0\}$.  Since $U = TU$, the restriction map $T_{|U} : U \to U$ is surjective.  But $T_{|U}$ is a linear operator, so by the Dimension Theorem, $T_{|U}$ must then be injective.
 
-    Now consider some $v \in U \cap W$.  Since $v \in W = \ker T$, it must be that $Tv = 0$.  But since $v \in U$ as well, and $T_{|U}: U \to U$ is injective, the equation $Tv = T(0) = 0$ implies $v = 0$, as desired. ~ $\blacksquare$
+    Now consider some $v \in U \cap W$.  Since $v \in W = \ker T^k$, it must be that $T^kv = 0$.  But since $v \in U$ as well, and $T_{|U}: U \to U$ is injective---hence so is $T^k_{|U}$---the equation $T^kv = T^k(0) = 0$ implies $v = 0$, as desired. ~ $\blacksquare$
 \end{proof}
 
 Thus, we may choose a basis of $V$ to be the union of a basis of $U$ and a basis of $W$.  Now, recalling that $T_{|U}: U \to U$ is a bijective map and $T^k_{|W}: W \to W$ annihilates $W$, the matrix $M_T$ from this choice of basis must look like:
-\[ M_T = \begin{bmatrix} M_{T_{|U}} & 0 \\ 0 & M_{T_{|W}} \end{bmatrix} \text{ where } M_{T_{|U}} \text{ is an invertible linear operator and } M_{T_{|W}} \text{ is nilpotent.} \]
+\[ M_T = \begin{bmatrix} M_{T_{|U}} & 0 \\ 0 & M_{T_{|W}} \end{bmatrix} \text{ where } M_{T_{|U}} \text{ is an invertible matrix and } M_{T_{|W}} \text{ is nilpotent.} \]
 Now suppose, hypothetically, we had the following tool:
 \begin{quote}
     \textcolor{purple}{\textbf{Tool (Hammer).}} Using the \textcolor{purple}{\textbf{hammer}} on a \textit{nilpotent} linear operator $T: V \to V$ rewrites $M_T$ as a JNF matrix by choosing an appropriate basis for $V$.
@@ -68,7 +68,7 @@ Then given any linear operator $T: V \to V$, we propose the following algorithm 
 
 \end{quote}
 
-The only way this algorithm could fail is if we ``zoom in'' indefinitely.  We claim this is impossible; this is where our decision to shift $T \mapsto T'$ comes in!  Because $T'$ has a zero eigenvalue, the linear operator $T'_{|U}: U \to U$ must have lower rank than $T: V \to V$.  But since $V$ is finite-dimensional, our ``zooming in'' must eventually yield a $T'_{|U}: U \to U$ with rank zero, at which point we're done!
+The only way this algorithm could fail is if we ``zoom in'' indefinitely.  We claim this is impossible; this is where our decision to shift $T \mapsto T'$ comes in!  Because $T'$ has a zero eigenvalue, $W$ contains the nonzero subspace $\ker T'$, so the linear operator $T'_{|U}: U \to U$ acts on a space of strictly smaller dimension than $V$.  But since $V$ is finite-dimensional, our ``zooming in'' must eventually yield $U = \{0\}$, at which point we're done!
 
 \begin{remark}
     Of course, the above algorithm can be phrased more formally using strong induction.
@@ -83,11 +83,11 @@ Recall that the \textcolor{purple}{hammer} chooses a basis for a nilpotent linea
 \textbf{Example.} Suppose our nilpotent linear operator $T: V \to V$, with our \textcolor{purple}{hammer's} choice of basis $\{e_1, e_2, e_3, e_4, e_5\}$, appears in JNF as:
 \[ M_T = \begin{bmatrix} J_3(0) & 0 \\ 0 & J_2(0) \end{bmatrix} = \begin{bsmallmatrix} 0 & 1 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 0 & 0 \end{bsmallmatrix} \]
 Then this choice of basis $\{e_1, e_2, e_3, e_4, e_5\}$ has the following property:
-\[ e_1 \stackrel{T}{\mapsto} e_2 \stackrel{T}{\mapsto} e_3 \stackrel{T}{\mapsto} 0 ~~~ \text{ and } ~~~ e_4 \stackrel{T}{\mapsto} e_5 \stackrel{T}{\mapsto} 0. \]
+\[ e_3 \stackrel{T}{\mapsto} e_2 \stackrel{T}{\mapsto} e_1 \stackrel{T}{\mapsto} 0 ~~~ \text{ and } ~~~ e_5 \stackrel{T}{\mapsto} e_4 \stackrel{T}{\mapsto} 0. \]
 That's interesting---the \textcolor{purple}{hammer} chooses a basis that forms chains descending down to $0$ when operated on by $T$.  So we can rewrite the ``docstring'' for our \textcolor{purple}{hammer} as follows:
 
 \begin{quote}
-    \textcolor{purple}{\textbf{Tool (Hammer, Revised).}} Using the \textcolor{purple}{\textbf{hammer}} on a \emph{nilpotent} linear operator $T: V \to V$ chooses a basis $\{\{e_{i, j}\}_{j = 1}^{k_i}\}_{i = 1}^{\ell}$ of $V$ that forms $\ell$ chains of length $k_{\ell}$ each, as shown below:
+    \textcolor{purple}{\textbf{Tool (Hammer, Revised).}} Using the \textcolor{purple}{\textbf{hammer}} on a \emph{nilpotent} linear operator $T: V \to V$ chooses a basis $\{\{e_{i, j}\}_{j = 1}^{k_i}\}_{i = 1}^{\ell}$ of $V$ that forms $\ell$ chains, the $i$-th of length $k_i$, as shown below:
 \[
 \begin{cases}
 e_{1, k_1} \stackrel{T}{\mapsto} \dots \stackrel{T}{\mapsto} e_{1, 2} \stackrel{T}{\mapsto} e_{1, 1} \stackrel{T}{\mapsto} 0 \\
@@ -98,26 +98,26 @@ e_{\ell, k_{\ell}} \stackrel{T}{\mapsto} \dots \stackrel{T}{\mapsto} e_{\ell, 2}
 \]
 \end{quote}
 
-To build our \textcolor{purple}{hammer}, it suffices to be able to choose choose a basis of any nilpotent $T: V \to V$ satisfying this chain-like structure.  We'll prove this with a \textbf{proof by induction} on the dimension of $V$.
+To build our \textcolor{purple}{hammer}, it suffices to be able to choose a basis of any nilpotent $T: V \to V$ satisfying this chain-like structure.  We'll prove this with a \textbf{proof by induction} on the dimension of $V$.
 \begin{quote}
     \textbf{Inductive Hypothesis.} For all vector spaces $W$ with $\dim W < \dim V$, the \textcolor{purple}{hammer} exists for any nilpotent linear operator $T: W \to W$.
 \end{quote}
-For the inductive step, take $W := \im T$.  Since $T$ is nilpotent, $\dim W < \dim V$ by the Dimension Theorem.  Then by the inductive hypothesis on the linear operator $T_{|W}: W \to W$, the \textcolor{purple}{hammer} gives us a basis of $\{e_{i, j}\}$ of $W$ with a chain-like structure with respect to $T_{|W}$.
+For the inductive step, take $W := \im T$.  Since $T$ is nilpotent, $\dim W < \dim V$ by the Dimension Theorem.  Then by the inductive hypothesis on the linear operator $T_{|W}: W \to W$, the \textcolor{purple}{hammer} gives us a basis $\{e_{i, j}\}$ of $W$ with a chain-like structure with respect to $T_{|W}$.
 
 We need to extend $\{e_{i, j}\} \subseteq W$ to a basis of $V$ that preserves our chain-like structure.  Here are two extensions:
 \begin{itemize}
-    \item \textbf{Extension \#1.} Extend each individual chain by one: more precisely, for each chain $i = 1, \dots, \ell$, extend it by a vector called $e_{i, k_i + 1} \in V$ that satisfies $e_{i, k_i + 1} \stackrel{T}{\mapsto} e_{i, k_i}$.  Such an $e_{i, k_{i + 1}} \in V$ exists because $W = \im T$.
+    \item \textbf{Extension \#1.} Extend each individual chain by one: more precisely, for each chain $i = 1, \dots, \ell$, extend it by a vector called $e_{i, k_i + 1} \in V$ that satisfies $e_{i, k_i + 1} \stackrel{T}{\mapsto} e_{i, k_i}$.  Such an $e_{i, k_i + 1} \in V$ exists because $W = \im T$.
 
     Thus, we can extend $\{e_{i, j}\} \subseteq W$ by adding $\{e_{i, k_i + 1}\}_{i = 1}^{\ell}$.
     \item \textbf{Extension \#2.} Recall the following fact:
 \begin{quote}
     \textbf{Fact.} For any vector space $B$, a subspace $A \subseteq B$, and any basis of $A$, we may extend the basis of $A$ by adding $\dim B - \dim A$ vectors to form a basis of $B$.
 \end{quote}
-    Using the above fact for $B = \ker T$ and $A = W \cap (\ker T) = \{e_{1, 1}, \dots, e_{\ell, 1}\}$, there exist $\dim(\ker T) - \ell$ basis vectors $\{e_{\ell + 1, 1}, \dots, e_{\dim (\ker T), 1} \}$ that extends the basis of $W \cap (\ker T)$ to a basis of $\ker T$.
+    Using the above fact for $B = \ker T$ and $A = W \cap (\ker T) = \mathrm{span}(\{e_{1, 1}, \dots, e_{\ell, 1}\})$, there exist $\dim(\ker T) - \ell$ basis vectors $\{e_{\ell + 1, 1}, \dots, e_{\dim (\ker T), 1} \}$ that extends the basis of $W \cap (\ker T)$ to a basis of $\ker T$.
 
     Thus, we can extend $\{e_{i, j}\} \subseteq W$ by adding $\{e_{i, 1}\}_{i = \ell + 1}^{\dim (\ker T)}$.
 \end{itemize}
-Extending our basis by both $S_1$ and $S_2$ indeed preserves the chain-like structure:
+Extending our basis by both Extension \#1 and Extension \#2 indeed preserves the chain-like structure:
 \[
 \begin{cases}
 e_{1, k_1} \stackrel{T_{|W}}{\mapsto} \dots \stackrel{T_{|W}}{\mapsto} e_{1, 2} \stackrel{T_{|W}}{\mapsto} e_{1, 1} \stackrel{T_{|W}}{\mapsto} 0 \\
@@ -129,7 +129,7 @@ e_{\ell, k_{\ell}} \stackrel{T_{|W}}{\mapsto} \dots \stackrel{T_{|W}}{\mapsto} e
     e_{1, k_1 + 1} \stackrel{T}{\mapsto} e_{1, k_1} \stackrel{T}{\mapsto} \dots \stackrel{T}{\mapsto} e_{1, 2} \stackrel{T}{\mapsto} e_{1, 1} \stackrel{T}{\mapsto} 0 \\
     % e_{2, k_2 + 1} \stackrel{T}{\mapsto} e_{2, k_2} \stackrel{T}{\mapsto} \dots \stackrel{T}{\mapsto} e_{2, 2} \stackrel{T}{\mapsto} e_{2, 1} \stackrel{T}{\mapsto} 0 \\
     ~~~\vdots \\
-    e_{\ell, k_{\ell + 1}} \stackrel{T}{\mapsto} e_{\ell, k_{\ell}} \stackrel{T}{\mapsto} \dots \stackrel{T}{\mapsto} e_{\ell, 2} \stackrel{T}{\mapsto} e_{\ell, 1} \stackrel{T}{\mapsto} 0 \\
+    e_{\ell, k_{\ell} + 1} \stackrel{T}{\mapsto} e_{\ell, k_{\ell}} \stackrel{T}{\mapsto} \dots \stackrel{T}{\mapsto} e_{\ell, 2} \stackrel{T}{\mapsto} e_{\ell, 1} \stackrel{T}{\mapsto} 0 \\
     e_{\ell + 1, 1} \stackrel{T}{\mapsto} 0 \\
     ~~~ \vdots \\
     e_{\dim(\ker T), 1} \stackrel{T}{\mapsto} 0
@@ -139,10 +139,10 @@ There are now $\dim(\ker T)$ chains with lengths $k_i'$, where $k_i' = k_i + 1$ 
 \begin{itemize}
     \item \textbf{Linear Independence.} Suppose there were some nontrivial linear dependence on our extended basis.  Then the idea is to apply $T$ to this linear dependence:
     \[ \sum_{i = 1}^{\dim (\ker T)} \sum_{j = 1}^{k_i'} c_{i, j} e_{i, j} = 0 ~ \stackrel{T}{\implies} ~ \sum_{i = 1}^{\ell} \sum_{j = 1}^{k_i} c_{i, j + 1} e_{i, j} = 0. \]
-    When we apply $T$, the linear dependence on our extended basis becomes a linear dependence on the original basis.  But the original basis was properly chosen by our \textcolor{purple}{hammer} to be a linearly independent basis of $W$, so there cannot exist such a linear dependence!
+    When we apply $T$, the linear dependence on our extended basis becomes a linear dependence on the original basis.  But the original basis was properly chosen by our \textcolor{purple}{hammer} to be a linearly independent basis of $W$, so every $c_{i, j}$ with $j \geq 2$ must vanish.  All that survives is $\sum_i c_{i, 1}e_{i, 1} = 0$, and $\{e_{i, 1}\}_{i = 1}^{\dim (\ker T)}$ is a basis of $\ker T$ by Extension \#2, so those coefficients vanish too---there cannot exist such a linear dependence!
     \item \textbf{Spanning.} We know our extended basis is linearly independent.  Furthermore, the original basis contained $\dim W$ vectors, and our new basis extended the original basis by $\dim ( \ker T)$ vectors.
 
-    So our new basis contains $\dim W + \dim ( \ker T) = \dim ( \im T) + \dim (\ker T) = \dim V$ vectors, and its linearly independent, so it must be spanning!
+    So our new basis contains $\dim W + \dim ( \ker T) = \dim ( \im T) + \dim (\ker T) = \dim V$ vectors, and it's linearly independent, so it must be spanning!
 \end{itemize}
 Thus, our extended basis really is a valid basis!  So---at long last---we're done.
 
@@ -150,8 +150,8 @@ Thus, our extended basis really is a valid basis!  So---at long last---we're don
 
 \begin{theorem}{Cayley-Hamilton}
     Consider some $M \in \mathbb{C}^{n \times n}$.  Consider a degree $n$ polynomial $p: \mathbb{C} \to \mathbb{C}$ defined by:
-    \[ p(\lambda) := \det(\lambda I_n - M) = \lambda^n + c_1 \lambda^{n - 1} + \dots + c_{n - 1} \lambda + c_0. \]
-    Then $p(M) := M^n + c_1 M^{n - 1} + \dots + c_{n - 1} M + c_n$ must equal $0$.
+    \[ p(\lambda) := \det(\lambda I_n - M) = \lambda^n + c_1 \lambda^{n - 1} + \dots + c_{n - 1} \lambda + c_n. \]
+    Then $p(M) := M^n + c_1 M^{n - 1} + \dots + c_{n - 1} M + c_n I_n$ must equal $0$.
 \end{theorem}
 
 Importantly, here is an \textbf{\emph{\textcolor{red}{incorrect}}} proof of this theorem.
@@ -163,7 +163,7 @@ This doesn't work, of course.
 \begin{remark}
     The \emph{permanent} is a variant of the determinant defined by:
     \[ \mathrm{perm} \ A := \sum_{\sigma \in S_n} \prod_{i = 1}^n A_{i, \sigma(i)}. \]
-    In other words, the permanent is a determinant without the $\mathrm{sign} \ \sigma$ factor.  Then the Cayley-Hamilton is not true if $\det(\lambda I_n - M)$ is replaced with $\mathrm{perm}(\lambda I_n - M)$.
+    In other words, the permanent is a determinant without the $\mathrm{sign} \ \sigma$ factor.  Then the Cayley-Hamilton theorem is not true if $\det(\lambda I_n - M)$ is replaced with $\mathrm{perm}(\lambda I_n - M)$.
 \end{remark}
 
 A more correct proof is to just hit the theorem with our JNF sledgehammer: since the statement of our theorem is independent of basis, it suffices to prove the theorem for JNF matrices, at which point it's obvious.

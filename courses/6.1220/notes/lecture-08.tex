@@ -44,8 +44,8 @@ And here's a similar fact, from the cutting perspective.
 \begin{claim}
     Say $T = (V, F)$ is a spanning tree of $G = (V, E)$, and consider any edge $e = \overline{uv} \in F$.  Then:
     \begin{itemize}
-        \item If we remove $e$ from $T$, we get two connected components $S$ and $T$ (containing $u$ and $v$, respectively).
-        \item For any $e' \in E$ connecting $S$ and $T$, the subgraph $T' \setminus \{ e \} \cup \{e'\}$ is a spanning tree.
+        \item If we remove $e$ from $T$, we get two connected components $A$ and $B$ (containing $u$ and $v$, respectively).
+        \item For any $e' \in E$ connecting $A$ and $B$, the subgraph $T' := T \setminus \{ e \} \cup \{e'\}$ is a spanning tree.
     \end{itemize}
 \end{claim}
 
@@ -79,7 +79,7 @@ This inspires Kruskal's Algorithm, which constructs $T$ by adding edges to a for
         \item Initialize $F \leftarrow \emptyset$.  Initialize a $\textsc{Union-Find}$ data structure to store connected components.  Sort $E$ by weight.
         \item Scan through all edges $e_i = (u_i, v_i)$ for all $i = 1, 2, \dots, |E|$, in increasing order of weight.
         \begin{itemize}
-            \item For each $(u_i, v_i)$ such that $\textsc{FindSet}(u_i) \neq \textsc{FindSet}(v_i)$, add $e_i$ to $F$ and apply $\textsc{Union}(u_i, v_i)$.
+            \item For each $(u_i, v_i)$ such that $\textsc{Find-Set}(u_i) \neq \textsc{Find-Set}(v_i)$, add $e_i$ to $F$ and apply $\textsc{Union}(u_i, v_i)$.
         \end{itemize}
         \item Finally, return $F$.
     \end{enumerate}
@@ -88,7 +88,7 @@ This inspires Kruskal's Algorithm, which constructs $T$ by adding edges to a for
 \begin{proof}
     It suffices to demonstrate by induction that $F$ is always a subset of some MST.
 
-    Suppose $F \subseteq T$ initially, for some MST $T$.  Now we draw an edge $e = (u_i, v_i)$ between $A := \textsc{FindSet}(u_i)$ and $B := V \setminus A$.  (Intuitively, we should think of edge $e$ as bridging across the ``cut'' $V = A \sqcup B$.)
+    Suppose $F \subseteq T$ initially, for some MST $T$.  Now we draw an edge $e = (u_i, v_i)$ between the connected component $A$ of $u_i$ in $(V, F)$ and $B := V \setminus A$.  (Intuitively, we should think of edge $e$ as bridging across the ``cut'' $V = A \sqcup B$.)
 
     If $e = (u_i, v_i) \in T$, we're fine.  Otherwise, take the fundamental cycle of $e$ with respect to $T$; this cycle must bridge across the ``cut'' $V = A \sqcup B$ a second time along some edge $e'$.
 
@@ -100,9 +100,9 @@ Here's our runtime analysis of Kruskal's Algorithm.
 \begin{solution}{Kruskal's Algorithm Runtime}
 There's only three major steps.
     \begin{enumerate}
-        \item Initialize the $\textsc{Union-Find}$ data structure takes $O(|V|)$ time.
+        \item Initializing the $\textsc{Union-Find}$ data structure takes $O(|V|)$ time.
         \item Sorting $E$ takes $O(|E| \log |E|) = O(|E| \log |V|)$ time (since $|E| = O(|V|^2)$).
-        \item All of the $\textsc{Union}$ operations take $O(|E| \cdot \alpha(|V|))$ time.
+        \item All of the $\textsc{Union-Find}$ operations take $O(|E| \cdot \alpha(|V|))$ time.
     \end{enumerate}
 So in total, we can say the runtime of Kruskal's Algorithm is $O(|E| \log |V|)$.
 \end{solution}
@@ -113,7 +113,7 @@ This also inspires Prim's Algorithm, which grows $F$ by connecting vertices to a
     Recall the following properties of a \emph{priority queue} implemented by a \emph{Fibonacci heap}.
     \begin{itemize}
         \item A priority queue $Q$ stores keys together with their values.
-        \item The method $Q.\textsc{DeleteMin}()$ returns the lowest-value key of $Q$ and deletes it in $O(\log n)$ time.
+        \item The method $Q.\textsc{DeleteMin}()$ returns the lowest-value key of $Q$ and deletes it in $O(\log n)$ amortized time.
         \item The methods $Q.\textsc{Insert}(k, v)$ and $Q.\textsc{DecreaseKey}(k, v)$ run in $O(1)$ amortized time.
     \end{itemize}
 \end{remark}
@@ -126,13 +126,15 @@ This also inspires Prim's Algorithm, which grows $F$ by connecting vertices to a
         \begin{itemize}
             \item The queue $Q$ will store keys $v \in V$ with values $d(v) := \min \{ w(u, v) \mid u \in V_F \text{ and } \overline{uv} \in E\}$.
             \item The $\textsc{Parent}$ array will store for each $v$ the vertex with $w(v, \textsc{Parent}[v]) = d(v)$.
-            \item Initialize $\textsc{Parent}[u] = \textsc{Null}$ for all $u \in V$.
+            \item Initialize $\textsc{Parent}[u] \leftarrow \textsc{Null}$ for all $u \in V$.
         \end{itemize}
         \item Pick some starting vertex $s$, and initialize $Q.\textsc{Insert}(s, 0)$ and $Q.\textsc{Insert}(v, \infty)$ for all $v \neq s$.
         \item While $Q$ is nonempty\dots
         \begin{enumerate}
             \item Add the edge $(u, \textsc{Parent}[u])$ to $F$, where $u \leftarrow Q.\textsc{DeleteMin}()$.
-            \item Now that we've added $u$ to $F$, we need to make some updates.  For each $v$ neighboring $u$\dots
+            
+            (Add nothing when $\textsc{Parent}[u] = \textsc{Null}$, as on the first iteration.)
+            \item Now that we've added $u$ to $F$, we need to make some updates.  For each $v$ neighboring $u$ still in $Q$\dots
             \begin{itemize}
                 \item Update $d(v) \leftarrow  \min\{d(v), w(u, v)\}$, and update $Q.\textsc{DecreaseKey}(v, d(v))$ as needed.
                 \item If $d(v)$ was updated, then also update $\textsc{Parent}[v] \leftarrow u$.
@@ -145,13 +147,13 @@ This also inspires Prim's Algorithm, which grows $F$ by connecting vertices to a
 \begin{proof}
     Again, we wish to show $F$ is invariably a subset of some MST.
 
-    It's actually the same argument as before.  Consider the cut $V = S \sqcup (V \setminus S)$.  You can do \emph{whatever} to bridge this cut and the result will still be an ST, minimal if you do the ``\emph{whatever}'' with minimal weight. ~ $\blacksquare$
+    It's actually the same argument as before.  Consider the cut $V = V_F \sqcup (V \setminus V_F)$.  You can do \emph{whatever} to bridge this cut and the result will still be an ST, minimal if you do the ``\emph{whatever}'' with minimal weight. ~ $\blacksquare$
 \end{proof}
 
 This runs in $O(|E| + |V|\log |V|)$ time, since\dots
 \begin{itemize}
     \item We have $|V|$ iterations of $Q.\textsc{DeleteMin}()$, each of which takes $O(\log |V|)$ time.
-    \item The updates $d(v) \leftarrow \min \{d(v), w(u, v)\}$ has amortized $O(1)$ cost with a Fibonacci heap, $O(|E|)$ total.
+    \item The updates $d(v) \leftarrow \min \{d(v), w(u, v)\}$ have amortized $O(1)$ cost with a Fibonacci heap, $O(|E|)$ total.
 \end{itemize}
 
 \end{document}

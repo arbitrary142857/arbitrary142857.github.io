@@ -28,21 +28,21 @@
         & = \iint_{\mathbb{R}^2} f(x, y)
         e^{-j(\left[\omega\cos\phi\right] x + \left[\omega\sin\phi\right] y)}
         \, \mathrm{d}y \, \mathrm{d}x \\
-        & = \iint_{\mathbb{R}^2} f_p(r, \theta)
+        & = \int_{2\pi} \int_{0}^{\infty} f_p(r, \theta)
         e^{-j(\left[\omega\cos\phi\right]\left[r\cos\theta\right]
         + \left[\omega\sin\phi\right]\left[r\sin\theta\right])}
-        \, r \mathrm{d}r \, \mathrm{d}\theta
-        = \iint_{\mathbb{R}^2} f_p(r, \theta)
+        r \, \mathrm{d}r \, \mathrm{d}\theta
+        = \int_{2\pi} \int_{0}^{\infty} f_p(r, \theta)
         e^{-j\omega r \cos(\phi - \theta)}
         r \, \mathrm{d}r \, \mathrm{d}\theta.
     \end{align*}
     Therefore, if $f_p'(r, \theta) := f_p(r, \theta - \psi)$
     is the rotated picture, the rotated Fourier transform is:
     \[ F_p'(\omega, \phi)
-    = \iint_{\mathbb{R}^2} f_p(r, \textcolor{purple}{\theta - \psi})
+    = \int_{2\pi} \int_{0}^{\infty} f_p(r, \textcolor{purple}{\theta - \psi})
     e^{-j\omega r \cos(\phi - \theta)}
     r \, \mathrm{d}r \, \mathrm{d}\theta
-    = \iint_{\mathbb{R}^2} f_p(r, \textcolor{purple}{\lambda})
+    = \int_{2\pi} \int_{0}^{\infty} f_p(r, \textcolor{purple}{\lambda})
     e^{-j\omega r \cos(\phi - \textcolor{purple}{(\lambda + \psi)})}
     r \, \mathrm{d}r \, \textcolor{purple}{\mathrm{d}\lambda}
     = F_p(\omega, \phi - \psi). \]
@@ -111,7 +111,7 @@ There's conventional convolution and circular convolution, too.
 
 And of course, convolution and the DFT behave nicely together, too.
 
-\begin{theorem}{Convolution = Multiplication}
+\begin{theorem}{Circular Convolution = Multiplication}
     Suppose the DFTs of $f[n_x, n_y]$ and $g[n_x, n_y]$
     are $F[k_x, k_y]$ and $G[k_x, k_y]$, respectively.
     Then the DFT of $(f \circledast g)[n_x, n_y]$ is
@@ -135,7 +135,7 @@ And of course, convolution and the DFT behave nicely together, too.
     Note that $H$ is separable via
     $H[k_r, k_c] = (-1)^{k_r} \cdot (-1)^{k_c}$.
     Taking $H_1[k_r] := (-1)^{k_r}$ and $H_2[k_c] := (-1)^{k_c}$,
-    we have:
+    we have (assuming $N_r$ and $N_c$ are even):
     \[ h_1[r] := \mathrm{DFT}^{-1}(H_1[k_r])
     = N_r \cdot \delta\left[r - \frac{N_r}{2}\right]
     ~~~ \text{ and } ~~~

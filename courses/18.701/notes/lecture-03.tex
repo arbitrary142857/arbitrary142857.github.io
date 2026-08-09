@@ -27,7 +27,7 @@ Note that $\ker(f)$ is a subgroup of $G$, and $\im(f)$ is a subgroup of $H$.  (C
 
 \textbf{Example.} Take the homomorphism $f: GL_n(\mathbb{R}) \to \mathbb{R}^{\times}$ defined by $f(M) = \det M$.  Then the image of $f$ is $\im(f) = \mathbb{R}^{\times}$ (i.e. $f$ is surjective), and the kernel of $f$ is $\ker(f) = SL_n(\mathbb{R})$.
 
-\textbf{Example.} Take the homomorphism $f: S_n \to \{-1, 1\}$ send permutations $\pi \in S_n$ to the sign of $\pi$.  The kernel of $f$ must be a subgroup of $S_n$; this subgroup is the \textbf{alternating group} $A_n$, consisting of all even permutations in $S_n$.
+\textbf{Example.} Take the homomorphism $f: S_n \to \{-1, 1\}$ sending permutations $\pi \in S_n$ to the sign of $\pi$.  The kernel of $f$ must be a subgroup of $S_n$; this subgroup is the \textbf{alternating group} $A_n$, consisting of all even permutations in $S_n$.
 
 \textbf{Example.} Let $G$ be a group, and fix an element $g \in G$.  Then we may take the homomorphism $f: (\mathbb{Z}, +) \to G$ defined by $f(n) := g^n$.  In this case,
 \begin{itemize}
@@ -37,7 +37,7 @@ Note that $\ker(f)$ is a subgroup of $G$, and $\im(f)$ is a subgroup of $H$.  (C
 
 \subsection{Cosets}
 
-\textbf{Example.} Recall that $3\mathbb{Z}$ is a subgroup of $\mathbb{Z}$.  This subgroup can be ``copied-and-translated'' twice to form the subsets $3\mathbb{Z} + 1$ and $3\mathbb{Z} + 2$ in $G$.  (Note that these subsets are not subgroups!)
+\textbf{Example.} Recall that $3\mathbb{Z}$ is a subgroup of $\mathbb{Z}$.  This subgroup can be ``copied-and-translated'' twice to form the subsets $3\mathbb{Z} + 1$ and $3\mathbb{Z} + 2$ in $\mathbb{Z}$.  (Note that these subsets are not subgroups!)
 
 Let's give a name to these ``copied-and-translated'' subsets associated with a subgroup: \textbf{cosets.}
 
@@ -57,14 +57,14 @@ The phrase ``coset'' (without further specification) should be assumed to mean `
     To prove the first fact, simply note that the size of any coset $gH$ is equal to $|H|$.  This is because the natural map $T: H \to gH$ defined by $T(h) = gh$ is a bijection. ~ $\blacksquare$
 
     To prove the second fact, consider two distinct cosets $C_1 = g_1H$ and $C_2 = g_2H$.  Suppose, for the sake of contradiction, that these two cosets are not disjoint.  Then there exists $h_1, h_2 \in H$ such that $g_1h_1 \in C_1$ and $g_2h_2 \in C_2$ are the same; that is, $g_1h_1 = g_2h_2$.  Equivalently, $g_1 = g_2h_2h_1^{-1}$.  However, this implies
-    \[ C_ 1 = g_1H = (g_2h_2h_1^{-1})H = g_2(h_2h_1^{-1}H) = g_2H = C_2. \]
+    \[ C_1 = g_1H = (g_2h_2h_1^{-1})H = g_2(h_2h_1^{-1}H) = g_2H = C_2. \]
     So in fact, we have shown that if there is just a \emph{single} pair of elements $g_1h_1$ and $g_2h_2$ in $C_1$ and $C_2$ that match, then we can show the \emph{entirety} of $C_1$ and $C_2$ must match completely!  ~ $\blacksquare$
 \end{proof}
 
 Here's an equivalent, more intuitive rephrasing of the above theorem:
 
 \begin{theorem}{Cosets form Partitions}
-    Let $H$ be a subgroup of $G$.  Then the set of all left cosets of $H$ partition the elements of $G$ into disjoint subsets of size $|H|$.
+    Let $H$ be a subgroup of $G$.  Then the set of all left cosets of $H$ partitions the elements of $G$ into disjoint subsets of size $|H|$.
 \end{theorem}
 
 Note that all of the above theorems hold equally true if every instance of ``left'' is replaced with ``right''.  However, the partitioning of $G$ formed by left cosets usually does not equal the partitioning formed by right cosets!
@@ -104,13 +104,13 @@ How do cosets and homomorphisms relate?
     \[ \boxed{\begin{cases}f(g_1) = f(g_2) ~ \iff ~ g_1 = kg_2 \text{ for some } k \in \ker(f) \\
     f(g_1) = f(g_2) ~ \iff ~ g_1 = g_2k \text{ for some } k \in \ker(f)\end{cases}} \]
     We can now use cosets to rephrase the above statement as follows:
-    \[ \boxed{\begin{cases}f(g_1) = f(g_2) ~ \iff ~ g_1 \text{ and } g_2 \text{ are in the same left coset of } \ker(f). \\
-    f(g_1) = f(g_2) ~ \iff ~ g_1 \text{ and } g_2 \text{ are in the same right coset of } \ker(f). \end{cases}} ~~~~~ (\bigstar) \]
+    \[ \boxed{\begin{cases}f(g_1) = f(g_2) ~ \iff ~ g_1 \text{ and } g_2 \text{ are in the same right coset of } \ker(f). \\
+    f(g_1) = f(g_2) ~ \iff ~ g_1 \text{ and } g_2 \text{ are in the same left coset of } \ker(f). \end{cases}} ~~~~~ (\bigstar) \]
 \end{solution*}
 
 The above motivates the following definition:
 
-\textbf{Definition (Normal).} A subgroup $N \subseteq G$ of $G$ is \textbf{normal} if $gN = Ng$ for all $g \in G$.
+\textbf{Definition (Normal).} A subgroup $N \subseteq G$ is \textbf{normal} if $gN = Ng$ for all $g \in G$.
 
 This is because the above result $(\bigstar)$ immediately implies the following theorem:
 
@@ -120,8 +120,8 @@ This is because the above result $(\bigstar)$ immediately implies the following 
 
 \textbf{Example.} Consider $G = S_3$ and a subgroup $N = \{e, (1 \ 2)\}$.  Then:
 \begin{itemize}
-    \item The left cosets of $N$ are $N = \{e, (1 \ 2)\}$, $N(1 \ 3) = \{(1 \ 3), (1 \ 3 \ 2)\}$, and $N(2 \ 3) = \{(2 \ 3), (1 \ 2 \ 3)\}$.
-    \item The right cosets of $N$ are $N = \{e, (1 \ 2)\}$, $(1 \ 3)N = \{(1 \ 3), (1 \ 2 \ 3)\}$, and $(2, 3)N = \{ (2 \ 3), (1 \ 3 \ 2)\}$.
+    \item The left cosets of $N$ are $N = \{e, (1 \ 2)\}$, $(1 \ 3)N = \{(1 \ 3), (1 \ 2 \ 3)\}$, and $(2 \ 3)N = \{ (2 \ 3), (1 \ 3 \ 2)\}$.
+    \item The right cosets of $N$ are $N = \{e, (1 \ 2)\}$, $N(1 \ 3) = \{(1 \ 3), (1 \ 3 \ 2)\}$, and $N(2 \ 3) = \{(2 \ 3), (1 \ 2 \ 3)\}$.
 \end{itemize}
 Thus, $N$ is not normal, since (e.g.) $N(1 \ 3) \neq (1 \ 3)N$.  In other words, the partitioning of $G$ formed by the left cosets of $N$ is \emph{different} from the partitioning of $G$ formed by the right cosets of $N$.  
 
@@ -136,7 +136,7 @@ Thus, $N$ is not normal, since (e.g.) $N(1 \ 3) \neq (1 \ 3)N$.  In other words,
 
 \subsection{Conjugation}
 
-\textbf{Definition (Conjugation).} Given elements $a, b \in G$, the \textbf{conjugation} of $a$ by $b$ is defined to be $bab^{-1}$.  More generally, if $H$ is a subgroup of $G$, then the \textbf{conjugation} of $a$ by $H$ is $aHa^{-1}$.
+\textbf{Definition (Conjugation).} Given elements $a, b \in G$, the \textbf{conjugation} of $a$ by $b$ is defined to be $bab^{-1}$.  More generally, if $H$ is a subgroup of $G$, then the \textbf{conjugation} of $H$ by $a$ is $aHa^{-1}$.
 
 It turns out (easy to check) that if $H$ is a subgroup, then $aHa^{-1}$ is also always a subgroup.  Thus, we can think of conjugation by $g \in G$ as an action that sends subgroups of $G$ to subgroups of $G$.
 
@@ -171,14 +171,14 @@ Here's a useful theorem that we won't prove today.
 \end{theorem}
 
 \begin{problem}{Correspondence Theorem Application \#1}
-    Consider the determinant homomorphism $\det: G \to G'$, with $G = GL_n(\mathbb{R})$ and $G' = \mathbb{R}^{\times}$.  Then $K = \ker(\det) = SL_2(\mathbb{R})$.  What does the Correspondence Theorem say?
+    Consider the determinant homomorphism $f = \det: G \to G'$, with $G = GL_n(\mathbb{R})$ and $G' = \mathbb{R}^{\times}$.  Then $K = \ker(f) = SL_n(\mathbb{R})$.  What does the Correspondence Theorem say?
 \end{problem}
 
 \begin{solution}
     The set $B := \{\text{subgroups of } \mathbb{R}^{\times}\}$ is easier to analyze; for example, $\mathbb{Q}^{\times}$ is a subgroup in $B$.
     
-    By the Correspondence Theorem, the subgroup $\mathbb{Q}^{\times}$ must correspond to a new, quirky subgroup of $GL_n(\mathbb{R})$ containing $K = SL_2(\mathbb{R})$ that we didn't know of before.  This subgroup is:
-    \[ f^{-1}(\mathbb{Q}^{\times}) = \{M \in GL_n(\mathbb{R}): \det M \in \mathbb{Q}^+\} \in A. \]
+    By the Correspondence Theorem, the subgroup $\mathbb{Q}^{\times}$ must correspond to a new, quirky subgroup of $GL_n(\mathbb{R})$ containing $K = SL_n(\mathbb{R})$ that we didn't know of before.  This subgroup is:
+    \[ f^{-1}(\mathbb{Q}^{\times}) = \{M \in GL_n(\mathbb{R}): \det M \in \mathbb{Q}^{\times}\} \in A. \]
     There are many, many other subgroups of $GL_n(\mathbb{R})$ that live between $K$ and $G$.
 \end{solution}
 
@@ -194,5 +194,4 @@ Here's a useful theorem that we won't prove today.
     So in fact, this tells us every subgroup of $C_n$ is of the form $\langle g^d \rangle$ for some $d \mid n$.
 \end{solution}
 
-% test2
-% test3
+\end{document}

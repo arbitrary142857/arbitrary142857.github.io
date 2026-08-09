@@ -116,7 +116,7 @@ circular convolution and time-aliasing.
     But consider the following two extensions of $x_i'[n]$
     from the domain $[0, N - 1]$ to the domain $\mathbb{N}$.
     \[
-    x_i'^{\,(1)}[n] := y[n \% N]
+    x_i'^{\,(1)}[n] := x_i'[n \% N]
     ~~~ \text{ and } ~~~
     x_i'^{\,(2)}[n] := \begin{cases}
     x_i'[n] & \text{ if } n \in [0, N - 1]. \\
@@ -163,24 +163,24 @@ from the frequency domain.
     Break $x[n]$ into subsignals $x_i[n]$ of length $s$.
     For each subsignal, zero-pad $x_i[n]$ to have length $N$,
     then compute its DFT $X_i[k]$ of size $N$.
-    Then compute the element-wise products $X_i'[k] := X_i[k] \cdot H[k]$,
+    Then compute the element-wise products $X_i'[k] := N \cdot X_i[k] \cdot H[k]$,
     where $H[k]$ is a length-$N$ frequency response of a band-pass filter.
     
 
     Finally, compute the length-$N$ subsignals
-    $x'_i := \mathrm{DFT}^{-1}(X_i')$ and sum them together.
+    $x_i' := \mathrm{DFT}^{-1}(X_i')$ and sum them together.
 \end{quote}
 
 Note that $H[k]$ is the DFT of size $N$ of $h[n]$,
 where the length of $h[n]$ is only $N - s + 1$.
-(Implicitly, we zero-pad $h[s]$ first\dots)
+(Implicitly, we zero-pad $h[n]$ first\dots)
 
 There are two reasons for wanting to think
 from the perspective of the frequency domain.
 \begin{itemize}
     \item It's how we would go about algorithmically implementing such a filter.
     \begin{itemize}
-        \item Naive linear convolution is $O(N^2)$, but two DFT's plus an element-wise product
+        \item Naive linear convolution is $O(N^2)$, but two DFTs plus an element-wise product
         is $O(N \log N)$.
     \end{itemize}
     \item It lets us think more closely about filter design:
@@ -195,7 +195,7 @@ The challenge is that $H[k] = \mathrm{DFT}(h[n])$,
 yet $h[n]$ has some length $N_f = N - s + 1$
 that is less than the length of $H[k]$.
 We must compromise in our design of $H[k]$
-so that the last $N - N_f$ entries of $\mathrm{DFT}^{-1}(h[n])$ are all zeroes.
+so that the last $N - N_f$ entries of $\mathrm{DFT}^{-1}(H[k])$ are all zeroes.
 
 \begin{quote}
     \textbf{Box Approach.}
@@ -319,7 +319,7 @@ Note that the STFT of $x[n]$ depends on three different parameters:
 \[ w[n]: \text{ the type of window } ~~~ \parallel ~~~
 N: \text{ the DFT size } ~~~ \parallel ~~~
 s: \text{ the step size } \]
-Importantly, these parameters do not have to be equal!
+Importantly, $\mathrm{len}(w[n])$, $N$, and $s$ do not have to be equal!
 \begin{itemize}
     \item You can take $s < \mathrm{len}(w[n])$,
     meaning each data point will be used multiple times!
@@ -332,7 +332,7 @@ Importantly, these parameters do not have to be equal!
     will be zero-padded to have length $N$.
     \begin{itemize}
         \item It does not make sense to take $N < \mathrm{len}(w[n])$.
-        You can not take a DFT of size $6$ on a DT signal of length $7$.
+        You cannot take a DFT of size $6$ on a DT signal of length $7$.
     \end{itemize}
 \end{itemize}
 Compare the cleanliness of a rectangular window (at left)
@@ -342,7 +342,8 @@ versus a Hann window (at right).
 \end{center}
 Expectedly, the parameter settings affect the spectrogram as follows.
 \begin{itemize}
-    \item Increasing $\mathrm{len}(w[n])$ increases the frequency resolution.
+    \item Increasing $\mathrm{len}(w[n])$ increases the frequency resolution,
+    at the cost of time resolution.
     \item Increasing $N$ increases the fineness of frequency measurements---but
     only superficially.  (Recall \href{13.html#lecture-frequency-resolution}{Lecture 13}.)
     \item Decreasing $s$ increases the fineness of time measurements.

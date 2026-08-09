@@ -11,7 +11,7 @@ Here's an example of this duality.
 More generally, the dual looks like this:
 
 \begin{claim}
-The following is true.
+If both linear programs are feasible, the following is true.
 \[ \max\{ c^{\top} x \mid A x \leq b \text{ and } x \geq 0 \} = \min\{ b^{\top}y \mid A^{\top}y \geq c \text{ and } y \geq 0 \} \]
 \end{claim} \vspace{-0.8cm}
 
@@ -25,7 +25,7 @@ Some jargon dumping:
 \begin{itemize}
     \item In the former, we have $m$ primal constraints and $n$ primal decision variables.
     \item In the dual, we have $m$ dual decision variables and $n$ dual constraints. 
-    \item The dual of the dual is itself.
+    \item The dual of the dual is the primal.
 \end{itemize}
 
 \begin{remark}
@@ -39,13 +39,13 @@ Take some time to convince yourself that the dual is the following.
 Be very careful about the choices of $\{\geq, \leq, =\}$.
 
 \begin{remark}
-    Given a solution to the primal, we can find a solution to the dual.  We do this by identifying the constraints in the primal that are slacked, ignoring those, and setting everything else to be strict.  This is DCW-Equality.
+    Given an optimal solution to the primal, we can find an optimal solution to the dual.  We do this by identifying the constraints in the primal that are slacked, ignoring those, and setting everything else to be tight.  This is DCW-Equality.
 \end{remark}
 
 We can use LP to solve the MST problem.  Give indicator variables $x_e$ for all edges with $x_e \geq 0$.
-\[ \text{Minimize } \sum_{e \in E} w(e) x_e \text{ given } \sum_{e \text{ crosses } \Pi} x_e \geq |\Pi| - 1 \text{ and } x_e \geq 0. \]
+\[ \text{Minimize } \sum_{e \in E} w(e) x_e ~ \text{ given } ~ \sum_{e \text{ crosses } \Pi} x_e \geq |\Pi| - 1 \text{ for all partitions } \Pi \text{ of } V \text{ and } x_e \geq 0. \]
 The optimal value is at most the weight of an MST.  The hope is that the optimal solution uses $x_e \in \{0, 1\}$, in which case the optimal solution \emph{is} an MST.  Note that the \emph{dual} of this problem looks like:
-\[ \text{Maximize } \sum_{\text{partitions } \Pi} (|\Pi| - 1)y_{\Pi} \text{ given } \sum_{e \text{ crosses } \Pi} y_{\Pi} \leq w(e) \text{ and } y_{\Pi} \geq 0. \]
+\[ \text{Maximize } \sum_{\text{partitions } \Pi} (|\Pi| - 1)y_{\Pi} ~ \text{ given } ~ \sum_{\Pi \, : \, e \text{ crosses } \Pi} y_{\Pi} \leq w(e) \text{ for all } e \in E \text{ and } y_{\Pi} \geq 0. \]
 (We did not finish this example in lecture.)
 
 \end{document}

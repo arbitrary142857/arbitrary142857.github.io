@@ -3,7 +3,7 @@
 
 \begin{document}
 
-\textbf{Definition (Linear Programming).} We seek to optimize a linear objective function subject to linearity equality and linear inequality constraints.  It will always look like:
+\textbf{Definition (Linear Programming).} We seek to optimize a linear objective function subject to linear equality and linear inequality constraints.  It will always look like:
 \[ \text{Max / min of } \left(\sum_{i = 1}^n c_i x_i\right) \text{ given } x_i \in \mathbb{R}^{\geq 0} \text{ and } \left \{ \left(\sum_{i = 1}^n A_{j, i} x_i \ \right) \bigstar_j \ b_j \right \}_{j = 1}^m \text{ for } \bigstar_j \in \{ \leq , \geq , =\}. \]
 
 \begin{problem}{Claw Machine}
@@ -17,7 +17,7 @@
 
 We can determine a \emph{normal form} for linear programs.
 \begin{itemize}
-    \item Finding the max of $\mathcal{P}$ is the same as finding the min of $-\mathcal{P}$.  So we'll default max.
+    \item Finding the max of a linear program $\mathcal{P}$ is the same as finding the min of $-\mathcal{P}$.  So we'll default max.
     \item If $\bigstar_j$ is only allowed to be $\leq$, then we can also implement constraints with $\geq$ and $=$.
     \begin{itemize}
         \item (Using \emph{slack variables}, we can implement $\{\leq, \geq, =\}$ using just $=$.  But we'll use $\leq$.)
@@ -25,16 +25,16 @@ We can determine a \emph{normal form} for linear programs.
 \end{itemize}
 We can also rewrite our constraints in linear algebra notation.  (Here, we say $\vec{m} \leq \vec{n}$ iff $m_i \leq n_i$ for all indices $i$.)
 \[ \text{Find max of } \vec{c} \cdot \vec{x} \text{ given } \vec{x} \geq \vec{0} \text{ and } A\vec{x} \leq \vec{b}. \]
-\textbf{Definition.} Given a set of constraints given by $A \vec{x} \leq \vec{b}$ of a linear program $\mathcal{P}$,
+\textbf{Definition.} Given a set of constraints $A \vec{x} \leq \vec{b}$ of a linear program $\mathcal{P}$,
 \begin{itemize}
-    \item We say a \textbf{feasible solution} is some $\vec{\tilde{x}}$ such that $A\vec{\tilde{x}} \leq \vec{b}$.
+    \item We say a \textbf{feasible solution} is some $\vec{\tilde{x}} \geq \vec{0}$ such that $A\vec{\tilde{x}} \leq \vec{b}$.
     \item We say $\textsc{Feasible}(\mathcal{P})$ is the set of all $\vec{x} \in \mathbb{R}^{\geq 0}$ such that $A\vec{x} \leq \vec{b}$.
     \item Some constraints might be \textbf{degenerate} in that they can be removed without changing $\textsc{Feasible}$.
     \begin{itemize}
         \item This can happen by \emph{weakening} via $\{x \geq 2, x \geq 0\} \to \{x \geq 2\}$.
         \item This can happen by \emph{linear combination} via $\{a \geq 2, b \geq 3, a + b \geq 5\} \to \{a \geq 2, b \geq 3\}$.
     \end{itemize}
-    \item We say the \textbf{optimal value}, possibly $\infty$, is achieved by some \textbf{optimal solution}.
+    \item We say the \textbf{optimal value}, possibly $\infty$, is the supremum of $\vec{c} \cdot \vec{x}$ over $\textsc{Feasible}(\mathcal{P})$; if it is finite, it is achieved by some \textbf{optimal solution}.
     \begin{itemize}
         \item If the optimal value is finite, then the LP is \textbf{bounded}.  Otherwise, the LP is \textbf{unbounded}.
         \item If $\textsc{Feasible}(\mathcal{P})$ is bounded (topologically speaking), then LP must be bounded.
@@ -45,8 +45,8 @@ We can also rewrite our constraints in linear algebra notation.  (Here, we say $
         \end{itemize}
     \end{itemize}
 \end{itemize}
-The optimal solution always occurs at a corner point, obviously.  There exist polynomial-time solving algorithms.
+Some optimal solution always occurs at a corner point, obviously.  There exist polynomial-time solving algorithms.
 
-There's this idea of duality that's also pretty obvious.  You want to \emph{minimize} the RHS of a linear combination $\vec{y}$ of the constraints $A \vec{x} \leq \vec{b}$, constrained on the LHS of this linear combination being at most $\vec{c} \cdot \vec{x}$.
+There's this idea of duality that's also pretty obvious.  You want to \emph{minimize} the RHS of a nonnegative linear combination $\vec{y}$ of the constraints $A \vec{x} \leq \vec{b}$, constrained on the LHS of this linear combination being at least $\vec{c} \cdot \vec{x}$.
 
 \end{document}

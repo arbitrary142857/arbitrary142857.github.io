@@ -11,7 +11,7 @@ Consider $G$ to be the rotational symmetry group of a regular icosahedron.
 \begin{center}
     \frame{\includegraphics[width=0.2\textwidth]{lecture-02/regular-icosahedron.png}}
 \end{center}
-We know from Lecture 11 that $G \subseteq SO_3(\mathbb{R})$ has $60$ group elements.  These elements are:
+We know from Lecture 12 that $G \subseteq SO_3(\mathbb{R})$ has $60$ group elements.  These elements are:
 \[
 \text{group elements of } G = 
 \begin{cases}
@@ -39,9 +39,9 @@ The above will let us show $G$ is simple!
 \end{theorem}
 
 \begin{proof}
-    Suppose $H \unlhd G$ is a normal subgroup.  Recall this means $gHg^{-1} = g$ for all $g \in G$.  Equivalently, $H$ must be the union of conjugacy classes of $G$.
+    Suppose $H \unlhd G$ is a normal subgroup.  Recall this means $gHg^{-1} = H$ for all $g \in G$.  Equivalently, $H$ must be the union of conjugacy classes of $G$.
 
-    But by inspection, the union of conjugacy classes of $G$ cannot have a number of elements that is a divisor of $60$ (other than $1$ or $60$).  So $H$ cannot exist. ~ $\blacksquare$
+    But by inspection, the union of conjugacy classes of $G$ (including $\{1\}$) cannot have a number of elements that is a divisor of $60$ (other than $1$ or $60$).  So $H$ cannot exist. ~ $\blacksquare$
 \end{proof}
 
 The crux of the above argument, to reiterate, was the following useful observation:
@@ -53,7 +53,7 @@ The crux of the above argument, to reiterate, was the following useful observati
 \begin{remark}
     It turns out that $G \cong A_5$.  One way to see this is to note:
     \begin{enumerate}
-        \item The rotations $G$ of a regular icosahedron is isomorphic to the rotations $G'$ of a regular dodecahedron.
+        \item The rotations $G$ of a regular icosahedron are isomorphic to the rotations $G'$ of a regular dodecahedron.
         \item There are $5$ cubes inscribed in a regular dodecahedron.
     \end{enumerate}
     Thus, $G$ is isomorphic to permutations of those $5$ cubes, and it turns out that these permutations must be even. \vspace{-0.2cm}
@@ -86,11 +86,11 @@ Meanwhile, the infinite group $(\mathbb{Z}, +)$ has no composition series: nontr
 \begin{boxed-text}[32em]
     \textbf{Chisel.} Given groups $G$ and $H$ with $H \unlhd G$ and $G/H$ not simple, \\
     
-    the chisel constructs a group $T$ such that $H \unlhd T \unlhd G$.
+    the chisel constructs a group $T$ such that $H \unlhd T \unlhd G$, with $H \neq T \neq G$.
 \end{boxed-text}
     To build a composition series given a chisel, we can just start with $\{1\} \unlhd G$ and use the chisel repeatedly.
 
-    How does the chisel work?  Well, since $G / H$ is not simple, there must exist some normal subgroup $N \unlhd G / H$.  So the chisel decides to choose $T := \pi^{-1}(N)$, where $\pi: G \to H$ is the quotient map.
+    How does the chisel work?  Well, since $G / H$ is not simple, there must exist some normal subgroup $N \unlhd G / H$ besides $\{1\}$ and $G / H$.  So the chisel decides to choose $T := \pi^{-1}(N)$, where $\pi: G \to G / H$ is the quotient map.
     
     We now check the chisel's work by showing this choice of $T$ is valid:
     \begin{itemize}
@@ -99,7 +99,7 @@ Meanwhile, the infinite group $(\mathbb{Z}, +)$ has no composition series: nontr
         \[ \text{``For all } g \in G, \text{ we have } gHg^{-1} = H\text{.''} ~~~~~  \text{ implies } ~~~~~ \text{``For all } t \in T, \text{ we have } tHt^{-1} = H\text{.''} \] \vspace{-0.85cm}
         \item The fact $T \unlhd G$ follows from the property $\pi(T) = N \unlhd G / H$.  Indeed, for any $g \in G$,
         \[ \pi(gTg^{-1}) = \pi(g) \pi(T) \pi(g^{-1}) = \pi(g) N \pi(g)^{-1} = N \text{ since } N \unlhd G / H. \]
-        Thus, $gTg^{-1} \subseteq \pi^{-1}(N) = T$ for all $T$.  And $gTg^{-1} \subseteq T$ for all $g \in G$ is good enough to show $T \unlhd G$.
+        Thus, $gTg^{-1} \subseteq \pi^{-1}(N) = T$ for all $g$.  And $gTg^{-1} \subseteq T$ for all $g \in G$ is good enough to show $T \unlhd G$.
     \end{itemize}
     So the chisel works correctly, and we're done. ~ $\blacksquare$
 \end{proof}
@@ -114,13 +114,13 @@ It turns out composition series are unique, up to order of ``prime factors''!
     Then the simple quotients $\{A_i / A_{i + 1}:  i = 0, 1, \dots, r - 1\}$ map bijectively with $\{B_i / B_{i + 1} :  i = 0, 1, \dots, s - 1\}$.
 \end{theorem}
 
-\textbf{Example.} The two composition series of $C_6$ have the same sets simple quotients: $\{C_3, C_2\}$ and $\{C_2, C_3\}$.
+\textbf{Example.} The two composition series of $C_6$ have the same sets of simple quotients: $\{C_3, C_2\}$ and $\{C_2, C_3\}$.
 \begin{align*} & \langle x \rangle \supseteq \langle x^3 \rangle \supseteq \{1\} ~~ \text{ has quotients } ~~ \langle x \rangle / \langle x^3 \rangle \cong C_3 \text{ and } \langle x^3 \rangle / \{1 \} \cong C_2. \\
 & \langle x \rangle \supseteq \langle x^2 \rangle \supseteq \{1 \} ~~ \text{ has quotients } ~~ \langle x \rangle / \langle x^2 \rangle \cong C_2 \text{ and } \langle x^2 \rangle / \{1 \} \cong C_3. \end{align*}
 We'll spend the rest of lecture proving the Jordan-Holder Theorem.  But first, some precautions:
 \begin{itemize}
     \item Two non-isomorphic groups can have the same sets of simple quotients.  For example,
-    \begin{align*} & S_3 \supseteq A_3 \supseteq \{1\} ~~ \text{ has quotients } ~~ S_3 / A_3 \cong C_2 \text{ and } C_3 / \{1\} \cong C_3. \\ 
+    \begin{align*} & S_3 \supseteq A_3 \supseteq \{1\} ~~ \text{ has quotients } ~~ S_3 / A_3 \cong C_2 \text{ and } A_3 / \{1\} \cong C_3. \\
     & C_6 \supseteq C_3 \supseteq \{1\} ~~ \text{ has quotients } ~~ C_6 / C_3 \cong C_2 \text{ and } C_3 / \{1\} \cong C_3. \end{align*}
     But unfortunately, $C_6 \not \cong S_3$.
     \item The condition $G_i \unlhd G_{i - 1}$ does \emph{not} imply, transitively, that $G_m \unlhd G_n$ for all $m \geq n$.  For example, taking
@@ -141,13 +141,13 @@ We'll need two lemmas to prove the Jordan-Holder Theorem.  This one's the first.
 \end{theorem}
 
 \begin{proof}
-    To prove the first point, we simply check that $1 \in HK$ (obviously), and:
+    To prove the first point, we simply check that $1 \in HK$ (obviously), that $(hk)^{-1} = h^{-1}(hk^{-1}h^{-1}) \in HK$, and:
     \[ hk h' k' = \underbrace{(hh')}_{\in H} \ \underbrace{(h'^{-1}k h')}_{\in K} \ \underbrace{(k')}_{\in K} \in HK. \]
     For the second point, we'll use the quotient map $\pi: G  \to G / K$.  Then:
     \begin{itemize}
         \item The First Isomorphism Theorem says $HK / K \cong \pi(HK)$.
         \item Since $K = \ker \pi$, we have $\pi(HK) = \pi(H)$.
-        \item Well, $\pi(H)$ is itself the image of $\pi_{|H}: H \to H / \ker(\pi_{|H})$.  But $\ker(\pi_{|H}) = H \cap K$, so $\pi(H) \cong H / (H \cap K)$.
+        \item Well, $\pi(H)$ is itself the image of $\pi_{|H}: H \to G / K$.  But $\ker(\pi_{|H}) = H \cap K$, so $\pi(H) \cong H / (H \cap K)$.
     \end{itemize}
     Stringing together all three parts of the above yields $HK / K \cong H / (H \cap K)$, as desired. ~ $\blacksquare$
 \vspace{0.1cm}
@@ -163,10 +163,10 @@ Some comments on the Second Isomorphism Theorem:
     \begin{center}
         If $K \unlhd G$, then the group generated by $H$ and $K$ is $HK = \{hk \mid h \in H, k \in K\}$.
     \end{center}
-    Usually, the group generated $H$ and $K$ looks like $\{h_1k_1h_2k_2\dots \mid h_i \in H, k_i \in K\}$.  However, when $K \unlhd G$, we have the property that for any $h \in H$ and $k \in K$, there is some $k' \in K$ such that $kh = hk'$.
+    Usually, the group generated by $H$ and $K$ looks like $\{h_1k_1h_2k_2\dots \mid h_i \in H, k_i \in K\}$.  However, when $K \unlhd G$, we have the property that for any $h \in H$ and $k \in K$, there is some $k' \in K$ such that $kh = hk'$.
     
     So we may repeatedly use this property to shift all the $k_i$'s in the product $h_1k_1h_2k_2\dots$ to the right.
-    \item[\textbf{(\#3)}] Nothing in $G$ matters besides elements in $HK$.  Thus, instead of mandating $K \unlhd G$, we could have gotten away with only mandating that $hKh^{-1} = K$ for all $h \in H$ instead.
+    \item[\textbf{(\#3)}] Nothing in $G$ matters besides elements in $HK$.  Thus, instead of mandating $K \unlhd G$, we could have gotten away with only mandating that $hKh^{-1} = K$ for all $h \in H$.
 
     In other words, the clause ``$K \unlhd G$'' in the theorem statement could have been replaced with ``$H \subseteq N(K)$''.  Here, $N(K)$ denotes the \textbf{normalizer} of $K$: the set $N(K) := \{g \in G: gKg^{-1} = K\}$.
 \end{itemize}
@@ -176,7 +176,7 @@ Some comments on the Second Isomorphism Theorem:
 Now for the second of the two lemmas.
 
 \begin{theorem}{Diamond Lemma}
-    If $H$ and $K$ are distinct normal subgroups of $G$ with $G / H$ and $G / K$ both simple, \vspace{-0.05cm}
+    If $H$ and $K$ are distinct normal subgroups of $G$ with $G / H$ and $G / K$ both simple, then \vspace{-0.05cm}
     \[ G / H \cong K / (H \cap K) ~ \text{ and } ~ G / K \cong H / (H \cap K). \] \vspace{-0.8cm}
 \end{theorem}
 
@@ -185,9 +185,9 @@ Now for the second of the two lemmas.
 
     Since $H$ and $K$ are normal subgroups of $G$, so is $HK$.  Then $HK \unlhd G$ implies $(HK / K) \unlhd (G / K)$ as well.  But $G / K$ was assumed to be simple!  Thus, either $HK / K \cong \{1\}$ or $HK / K \cong G / K$.
     
-    The latter is what we want, so assume the former: $HK / K \cong \{1\}$, or equivalently, $H \subset K$.  This lets us talk about $K / H$; in particular, $(K / H) \unlhd (G / H)$ holds.  But we now have another problem: $G / H$ was assumed to be simple!
+    The latter is what we want, so assume the former: $HK / K \cong \{1\}$, or equivalently, $H \subseteq K$.  This lets us talk about $K / H$; in particular, $(K / H) \unlhd (G / H)$ holds.  But we now have another problem: $G / H$ was assumed to be simple!
     
-    Thus, either $K / H = \{1\}$ or $K / H \cong G / H$.
+    Thus, either $K / H = \{1\}$ or $K / H = G / H$.
     \begin{itemize}
         \item The former implies $K = H$, contradicting the assumption $K \neq H$ in the theorem statement.
         \item The latter implies $K = G$, contradicting the assumption that $G / K$ was simple.  (Trivial groups aren't simple!)
@@ -202,19 +202,19 @@ There's not much to say about the Diamond Lemma.  The following image reveals th
 
 \subsection{Proof of The Jordan-Holder Theorem}
 
-We're now ready to prove the Jordan Holder Theorem.  Recall that we have a group $G$ with two composition series:
+We're now ready to prove the Jordan-Holder Theorem.  Recall that we have a group $G$ with two composition series:
     \[ G = A_0 \supseteq A_1 \supseteq \dots \supseteq A_r = \{1\} ~~ \text{ and } ~~ G = B_0 \supseteq B_1 \supseteq \dots \supseteq B_s = \{1\} \]
 We'd like to show these two series are \emph{equivalent}; that is, their simple quotients $\{A_i / A_{i + 1}\}$ and $\{B_i / B_{i + 1}\}$ map bijectively with each other.  Our approach is induction on $r$, with inductive hypothesis:
 \begin{center}
-    \textbf{Inductive Hypothesis.} If $G$ has \emph{any} composition series of length $r - 1$, \\ then all composition series of $G$ are equivalent.
+    \textbf{Inductive Hypothesis.} If a group $G'$ has \emph{any} composition series of length $r - 1$, \\ then all composition series of $G'$ are equivalent.
 \end{center}
-(Here we WLOG $r > s$.) The entire rest of the proof is captured in the following chain of equivalences:
+(Here we WLOG $r \geq s$.) The entire rest of the proof is captured in the following chain of equivalences:
 
 \begin{center}
     \frame{\includegraphics[width=0.7\textwidth]{lecture-14/jordan-holder-proof}}
 \end{center}
 
-There's two steps to the proof: step \circled{1} and step \circled{2}.
+There are two steps to the proof: step \circled{1} and step \circled{2}.
 
 \begin{enumerate}
     \item[\circled{1}] We may assume $A_1 \neq B_1$; indeed, if $A_1 = B_1$, then the inductive hypothesis would tell us $A_1 \supseteq \dots \supseteq A_r$ and $B_1 \supseteq \dots \supseteq B_s$ were equivalent, and we'd be done.

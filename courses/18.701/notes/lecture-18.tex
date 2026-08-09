@@ -13,7 +13,7 @@
     \item A \textbf{Hermitian space} is a finite-dimensional $\mathbb{C}$-vector space with a Hermitian inner product.
 \end{itemize}
 
-Last time, we showed that all bilinear forms look like $\langle x, y \rangle = x^{\dagger} My$, where $M$ is diagonal with entries $1$, $-1$, or $0$.  In the particular case when $\langle \bullet, \bullet \rangle$ is positive definite, all diagonal entries have to be $1$, so:
+Last time, we showed that all symmetric bilinear / Hermitian forms look like $\langle x, y \rangle = x^{\dagger} My$, where $M$ is diagonal with entries $1$, $-1$, or $0$.  In the particular case when $\langle \bullet, \bullet \rangle$ is positive definite, all diagonal entries have to be $1$, so:
 
 \begin{theorem}{Orthonormal Basis}
     Every Euclidean or Hermitian space has an orthonormal basis; that is, a basis $\{b_i\}$ such that $\langle b_i, b_j \rangle = 1$ whenever $i = j$ and $0$ otherwise.
@@ -45,8 +45,9 @@ In particular, the inner product of any Hermitian space might as well just be $\
 \begin{remark}
     (Reading Comprehension) Three questions:
     \begin{itemize}
-        \item Why was normalizing every $\{b_i\}$ necessary?  What goes wrong if the original $\{b_i\}_{i = 1}^n$ isn't a basis?
-        \item What goes wrong is the space is not Hermitian?
+        \item Why was normalizing every $\{b_i\}$ necessary?
+        \item What goes wrong if the original $\{b_i\}_{i = 1}^n$ isn't a basis?
+        \item What goes wrong if the space is not Hermitian?
     \end{itemize}
 \end{remark}
 
@@ -75,10 +76,10 @@ Finally, here's one more equivalent definition for ``positive definite''.
 
     We'll construct our basis in a manner similar to the Gram-Schmidt process.
     \begin{enumerate}
-        \item Begin with any basis of normalized unit vectors $(e_1, \dots, e_n)$.
+        \item Begin with the standard basis of normalized unit vectors $(e_1, \dots, e_n)$.
         \item Adjust each of the $e_2, \dots, e_n$ to be orthogonal to $e_1$ in the following manner.
         \begin{enumerate}
-            \item Replace $e_i$ with $e_i - \frac{\langle e_i, e_1 \rangle}{\langle e_1, e_1 \rangle} e_1$ for all $i > 1$.
+            \item Replace $e_i$ with $e_i - \frac{\langle e_1, e_i \rangle}{\langle e_1, e_1 \rangle} e_1$ for all $i > 1$.
             \item Normalize every $e_i$ again.
         \end{enumerate}
         \item We now have $\langle e_i, e_1 \rangle = 0$ for all $i > 1$.  Thus, $A$ must now have the following form:
@@ -98,7 +99,7 @@ Finally, here's one more equivalent definition for ``positive definite''.
 
 \textit{\textcolor{red!80}{Warning!}} Consider the following claim.
 \begin{quote}
-    \textbf{Claim.} A matrix $A \in \mathrm{Herm}_n(\mathbb{C})$ is positive-semidefinite if and only if $\det(A_{ij} \mid _{1 \leq i, j \leq k}) \geq 0$ for all $k$.
+    \textbf{Claim.} A matrix $A \in \mathrm{Herm}_n(\mathbb{C})$ is positive semidefinite if and only if $\det(A_{ij} \mid _{1 \leq i, j \leq k}) \geq 0$ for all $k$.
 \end{quote}
 This claim is wrong!  Take $A = \begin{bsmallmatrix} 0 & 0 \\ 0 & -1 \end{bsmallmatrix}$ for a counterexample.
 
@@ -159,10 +160,10 @@ Note that the Spectral Theorem is stronger than our result from last lecture!  S
     \[ T = U^{\dagger} \Lambda U \text{ and } T^{\dagger} = U^{\dagger}\Lambda^{\dagger} U. ~ \implies ~ TT^{\dagger} = U^{\dagger} \Lambda \Lambda^{\dagger}U = U^{\dagger} \Lambda^{\dagger} \Lambda U = T^{\dagger}T. ~ \implies ~ T \text{ is normal.} \]
     Now for the hard part: showing $T$ is diagonalizable given $T$ is normal.  We'll need two lemmas.
     \begin{quote}
-        \textbf{Lemma 1.} Suppose $W \subseteq V$ such that $TW = W$.  Then we also have $T^{\dagger}W^{\perp} = W^{\perp}$.
+        \textbf{Lemma 1.} Suppose $W \subseteq V$ such that $TW \subseteq W$.  Then we also have $T^{\dagger}W^{\perp} \subseteq W^{\perp}$.
 
-        \emph{Proof:} It's just a chain of equivalences.
-        \begin{align*} u \in W^{\perp} ~ \iff ~ & \langle u, w \rangle = 0 \text{ for all } w \in W \\ \iff ~ & \langle u, Tw \rangle = 0 \text{ for all } w \in W \\ \iff ~ & \langle T^{\dagger}u, w \rangle = 0 \text{ for all } w \in W ~ \iff ~ T^{\dagger}u \in W^{\perp}. ~~~ \square \end{align*} \vspace{-0.8cm}
+        \emph{Proof:} It's just a chain of implications.
+        \begin{align*} u \in W^{\perp} ~ \iff ~ & \langle u, w \rangle = 0 \text{ for all } w \in W \\ \implies ~ & \langle u, Tw \rangle = 0 \text{ for all } w \in W \\ \iff ~ & \langle T^{\dagger}u, w \rangle = 0 \text{ for all } w \in W ~ \iff ~ T^{\dagger}u \in W^{\perp}. ~~~ \square \end{align*} \vspace{-0.8cm}
     \end{quote}
     Our first lemma didn't actually need $T$ to be normal!  Our second lemma, on the other hand\dots
     \begin{quote}
@@ -177,9 +178,9 @@ Note that the Spectral Theorem is stronger than our result from last lecture!  S
     \end{quote}
     Now for the actual proof: induct on $\dim V$.  Pick some eigenvector $v \in V$, and consider $W = \mathbb{C}v$.  Then:
     \begin{enumerate}
-        \item Since $W$ is an eigenspace of $T$, we have $TW = W$.
-        \item By Lemma 2, $W$ is an eigenspace of $T^{\dagger}$ as well, so we have $T^{\dagger}W = W$, too.
-        \item By Lemma 1, the previous two points imply $TW^{\perp} = W^{\perp}$ and $T^{\dagger}W^{\perp} = W^{\perp}$.
+        \item Since $W$ is an eigenspace of $T$, we have $TW \subseteq W$.
+        \item By Lemma 2, $W$ is an eigenspace of $T^{\dagger}$ as well, so we have $T^{\dagger}W \subseteq W$, too.
+        \item By Lemma 1, the previous two points imply $TW^{\perp} \subseteq W^{\perp}$ and $T^{\dagger}W^{\perp} \subseteq W^{\perp}$.
     \end{enumerate}
     That final point means $T_{|W^{\perp}}$ and $T_{|W^{\perp}}^{\dagger}$ are well-defined.  In particular:
     \begin{itemize}
@@ -189,6 +190,6 @@ Note that the Spectral Theorem is stronger than our result from last lecture!  S
     Since $V = W \oplus W^{\perp}$, combining the diagonalizations of $T_{|W^{\perp}}$ and $T_{|W}$ yields a diagonalization of $T$.  And since $W$ and $W^{\perp}$ are perpendicular, this diagonalization has an orthonormal basis. ~ $\blacksquare$
 \end{proof}
 
-It turns out that the Spectral Theorem is a very powerful hammer, and there's a lot more nails to use it on than you'd expect.  We'll leave the hammering of nails for next lecture.
+It turns out that the Spectral Theorem is a very powerful hammer, and there are a lot more nails to use it on than you'd expect.  We'll leave the hammering of nails for next lecture.
 
 \end{document}

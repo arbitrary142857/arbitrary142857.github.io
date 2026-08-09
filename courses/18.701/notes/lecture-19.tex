@@ -10,7 +10,7 @@ Today will be dedicated to applying the Spectral Theorem in three broader contex
 We've done enough foreshadowing already.
 \begin{itemize}
     \item In Section 16.3, we foreshadowed how all quadratic polynomials $\mathbb{R}^n \to \mathbb{R}$ look like:
-\[ \text{quadratic polynomials} = \underbrace{\left(\sum_{i, j} A_{i, j} x_i x_j\right)}_{\text{degree 2 terms}} + \underbrace{\left(\sum_{i} c_i x_i \right)}_{\text{degree 1 terms}} \ + \ \left(C\right) = x^{\top}Ax + b^{\top}x + c. \]
+\[ \text{quadratic polynomials} = \underbrace{\left(\sum_{i, j} A_{i, j} x_i x_j\right)}_{\text{degree 2 terms}} + \underbrace{\left(\sum_{i} b_i x_i \right)}_{\text{degree 1 terms}} \ + \ \left(c\right) = x^{\top}Ax + b^{\top}x + c. \]
     \item In Section 17.5, we foreshadowed how the signature of $A$ encodes its behavior.
 \end{itemize}
 Let's get to the punchline of this foreshadowing.
@@ -19,7 +19,7 @@ Let's get to the punchline of this foreshadowing.
 
 \textbf{Example.} We already know the $n = 1$ and $n = 2$ cases from high school.
 \begin{itemize}
-    \item In $n = 1$, quadric surfaces are either pairs of points, singular points, or the empty set.
+    \item In $n = 1$, quadric surfaces are either pairs of points, single points, the empty set, or all of $\mathbb{R}$.
     \item In $n = 2$, quadric surfaces are conics: ellipses, hyperbolas, and the degeneracies.
 \end{itemize}
 We now use a special case of the Spectral Theorem in the context of $\mathbb{R}$.
@@ -42,18 +42,18 @@ The point is that \textcolor{purple}{$y = T^{-1}x$} represents an orthonormal ch
     \[ \left\{ y \in \mathbb{R}^n : \left(\sum_{i = 1}^n \lambda_i y_i^2\right) + \left(\sum_{i = 1}^n b_i y_i \right) + c = 0 \right \} \] \vspace{-0.3cm}
 \end{theorem}
 
-Furthermore, if $\det A \neq 0$, then each $\lambda_i$ is nonzero, so we can complete the square and scale, yielding\dots
+Furthermore, if $\det A \neq 0$, then each $\lambda_i$ is nonzero, so we can complete the square, leaving $\sum_{i = 1}^n \lambda_i y_i^2 = k$ for some constant $k$.  When $k \neq 0$, we can also scale, yielding\dots
 
 \begin{theorem}{Non-Singular Quadric Classification}
-    All nonsingular quadric surfaces are linearly equivalent to:
+    All nonsingular quadric surfaces---those with $\det A \neq 0$ and $k \neq 0$---are affinely equivalent to:
     \[ \left\{ y \in \mathbb{R}^n : \sum_{i = 1}^n \lambda_i y_i^2 = 1 \right \}, \text{ where each $\lambda_i$ is either $+1$ or $-1$.} \] \vspace{-0.5cm}
 \end{theorem}
 
 Some corollaries of these observations:
 \begin{itemize}
-    \item There are only $\lfloor \frac{n}{2} \rfloor + 1$ non-singular quadric surfaces in $\mathbb{R}^n$.
+    \item There are only $n + 1$ non-singular quadric surfaces in $\mathbb{R}^n$.
     \item Parabolas are a degeneracy!  They correspond to a singular choice of $A$.
-    \item Almost all randomly chosen $\mathbb{R}^3$ quadric surfaces (say, $67xy + 41z^2 - 14yz + 34x = 1$, for example) are linearly equivalent to one of the following: ~ $x^2 + y^2 + z^2 = 1 ~~ \text{ or } ~~ x^2 + y^2 - z^2 = 1 ~~ \text{ or } ~~ x^2 - y^2 - z^2 = 1$.
+    \item Almost all randomly chosen $\mathbb{R}^3$ quadric surfaces (say, $67xy + 41z^2 - 14yz + 34x = 1$, for example) are affinely equivalent to one of the following: ~ $x^2 + y^2 + z^2 = 1 ~~ \text{ or } ~~ x^2 + y^2 - z^2 = 1 ~~ \text{ or } ~~ x^2 - y^2 - z^2 = 1$.
 \end{itemize}
 
 
@@ -77,12 +77,12 @@ We'll first build all necessary mathematical foundations, up to the Rayleigh-Rit
 \end{itemize}
 
 \begin{theorem}{Variance of Linear Combinations}
-    For any $c \in \mathbb{R}^n$, we have $\Var(c^{\top}X) = c^{\top}Mc$.
+    Let $M := \mathrm{Cov}(X)$.  Then for any $c \in \mathbb{R}^n$, we have $\Var(c^{\top}X) = c^{\top}Mc$.
 \end{theorem}
 
 \begin{proof}
     Just plain computation. \vspace{-0.1cm}
-    \[ \Var(c^{\top}X) = \Var\left(\sum_{i = 1}^n c_iX_i\right) = \mathbb{E}\left [ \left(\sum_{i = 1}^n c_i x_i \right)^2 \right ] = c^{\top}Mc. ~~~ \blacksquare \] \vspace{-0.5cm}
+    \[ \Var(c^{\top}X) = \Var\left(\sum_{i = 1}^n c_iX_i\right) = \mathbb{E}\left [ \left(\sum_{i = 1}^n c_i X_i \right)^2 \right ] = c^{\top}Mc. ~~~ \blacksquare \] \vspace{-0.5cm}
 \end{proof}
 
 \begin{theorem}{Rayleigh-Ritz}
@@ -92,7 +92,7 @@ We'll first build all necessary mathematical foundations, up to the Rayleigh-Rit
 
 \begin{proof}
     By the Spectral theorem, $\{v_1, \dots, v_n\}$ is an orthonormal basis.  Writing $c = \sum_{i = 1}^n \alpha_i v_i$ yields:
-    \[ \dfrac{c^{\top}Mc}{c^{\top}c} = \dfrac{\sum_{i = 1}^n \alpha_i^2 \lambda_i}{\sum_{i = 1}^n \alpha_i^2} = \sum_{i = 1}^n \left(\dfrac{\alpha_i^2}{\sum_{i = 1}^n \alpha_i^2}\right) \lambda_i. \]
+    \[ \dfrac{c^{\top}Mc}{c^{\top}c} = \dfrac{\sum_{i = 1}^n \alpha_i^2 \lambda_i}{\sum_{i = 1}^n \alpha_i^2} = \sum_{i = 1}^n \left(\dfrac{\alpha_i^2}{\sum_{j = 1}^n \alpha_j^2}\right) \lambda_i. \]
     This is a weighted average of $\{\lambda_i\}_{i = 1}^n$, and the maximum possible weighted average is $\max\{\lambda_i\}_{ i = 1}^n = \lambda_1$.
     
     More generally, when $c \perp v_i$ for all $i < k$, we're forced to have $\alpha_i = 0$ for all $i < k$.  Then we instead have a weighted average of $\{\lambda_i\}_{i = k}^n$, for which the maximum possible value is $\lambda_k$. ~ $\blacksquare$
@@ -104,7 +104,7 @@ Mathematics aside, here's what we wish to do with our random variables $\{X_i\}_
     \textbf{Intuition.} Many samples from $X$ form a point cloud in $\mathbb{R}^n$. We wish to look at \\ this point cloud from a certain angle---a certain orthonormal basis, perhaps---so that \\ the axes of our orthonormal basis point in ``meaningful directions''.
 \end{center}
 
-What qualifies a ``meaningful direction'', then?  The Rayleigh-Ritz theorem proposes a good candidate.
+What qualifies as a ``meaningful direction'', then?  The Rayleigh-Ritz theorem proposes a good candidate.
 
 \begin{theorem}{Rayleigh-Ritz Corollary}
     Let $M$ be the covariance matrix of $X$.  Then $\frac{\Var(c^{\top}X)}{c^{\top}c}$ is maximized when $c$ is the eigenvector of $M$ with greatest eigenvalue.
@@ -112,7 +112,7 @@ What qualifies a ``meaningful direction'', then?  The Rayleigh-Ritz theorem prop
 
 Think of our point cloud as a messy ellipsoid centered at the origin.  Then the $c$ that maximizes $\frac{\Var(c^{\top}X)}{c^{\top} c}$ will be the $c$ that points along the highest-variance axis of $X$---that is, the longest axis of the ellipsoid!
 
-In fact, the more general case of Rayleigh-Ritz indicates that the set of all eigenvectors of $X$ will point along orthogonal axes of this ellipsoid!  In conclusion, \vspace{0.1cm}
+In fact, the more general case of Rayleigh-Ritz indicates that the set of all eigenvectors of $M$ will point along orthogonal axes of this ellipsoid!  In conclusion, \vspace{0.1cm}
 
 \begin{boxed-text}[32em]
     \textbf{--- Conclusion (PCA) ---} \vskip{0.5em}
@@ -154,16 +154,16 @@ Intuitively, $\mathrm{Cov}(X)_{i, j}$ gives the sample covariance of $X_i$ and $
 
 If $X$ factors in this way as $X = V \Sigma W^{\top}$ with singular values $\{\sigma_i\}$, then the sample covariance matrix is:
 \[ \mathrm{Cov}(X) = \dfrac{1}{m - 1} (W \Sigma^{\top} V^{\top}) (V \Sigma W^{\top}) = \dfrac{1}{m - 1} W (\Sigma^{\top} \Sigma)W^{\top} = \dfrac{1}{m - 1} W \begin{bsmallmatrix} \sigma_1^2 & \cdots & 0 \\ \vdots & \ddots & \vdots \\ 0 & \cdots & \sigma_n^2 \end{bsmallmatrix}W^{\top} \]
-The way $\Sigma^{\top}\Sigma$ is written above assumes $n \geq m$.  If $n < m$, then the remaining $m - n$ diagonal entries are zeroes. \vspace{0.1cm}
+The way $\Sigma^{\top}\Sigma$ is written above assumes $m \geq n$.  If $m < n$, then the remaining $n - m$ diagonal entries are zeroes. \vspace{0.1cm}
 
 \begin{boxed-text}
     \textbf{--- Conclusion (SVD on Covariance Matrices) ---} \vskip{0.5em}
 
-    Consider a matrix $X \in \mathbb{R}^{m \times n}$ of data.  Assume $n \geq m$. \\ Factor $X$ as $V \Sigma W^{\top}$ with singular values $\sigma_1 \geq \sigma_2 \geq \dots \geq 0$. \vskip{0.5em}
+    Consider a matrix $X \in \mathbb{R}^{m \times n}$ of data.  Assume $m \geq n$. \\ Factor $X$ as $V \Sigma W^{\top}$ with singular values $\sigma_1 \geq \sigma_2 \geq \dots \geq 0$. \vskip{0.5em}
 
     Then $\mathrm{Cov}(X)$ has eigenvalues $\left\{\tfrac{\sigma_i^2}{m - 1}\right\}_{i = 1}^n$ and eigenvectors being the columns of $W$. \vskip{0.5em}
 
-    (If $n < m$, then the remaining $m - n$ eigenvalues are zeroes.)
+    (If $m < n$, then the remaining $n - m$ eigenvalues are zeroes.)
 \end{boxed-text} \vspace{0.1cm}
 
 Some useful diagrams depicting object-level examples of what SVD does.
@@ -172,7 +172,7 @@ Some useful diagrams depicting object-level examples of what SVD does.
 \end{center} \vspace{-0.3cm}
 Some good things to keep in mind while we prove SVD.
 \begin{itemize}
-    \item For orthonormal matrices $V$ and $W$, we always have $V^{\top} = V^{-1}$ and $W^{\top} = W^{-1}$.
+    \item For orthogonal matrices $V$ and $W$, we always have $V^{\top} = V^{-1}$ and $W^{\top} = W^{-1}$.
     \item Recall $A \in \mathbb{R}^{m \times n}$ is a map $A: \mathbb{R}^n \to \mathbb{R}^m$, so $W$ and $V$ are operators on the domain and codomain, respectively.
 \end{itemize}
 
@@ -181,7 +181,7 @@ Some good things to keep in mind while we prove SVD.
     
     We begin by rephrasing our win condition.
     \begin{quote}
-        \textbf{Claim.} It suffices to find orthonormal bases $\{v_1, \dots, v_m\} \in \mathbb{R}^m$ and $\{w_1, \dots, w_n\} \in \mathbb{R}^n$ and constants $\{\sigma_1, \dots, \sigma_n\}$ such that $Aw_i = \sigma_i v_i$ for all $i = 1, 2, \dots, n$.
+        \textbf{Claim.} It suffices to find orthonormal bases $\{v_1, \dots, v_m\} \subseteq \mathbb{R}^m$ and $\{w_1, \dots, w_n\} \subseteq \mathbb{R}^n$ and constants $\{\sigma_1, \dots, \sigma_n\}$ such that $Aw_i = \sigma_i v_i$ for all $i = 1, 2, \dots, n$.
 
         \emph{Proof:} Use the $\{v_i\}_{i = 1}^m$ and $\{w_i\}_{i = 1}^n$ as columns of $V$ and $W$, and use the $\{\sigma_i\}_{i = 1}^n$ as the diagonal of $\Sigma$.
 
@@ -193,7 +193,7 @@ Some good things to keep in mind while we prove SVD.
     Observe the following properties of $A^{\top}A \in \mathbb{R}^{n \times n}$.
     \begin{itemize}
         \item Since $A^{\top}A$ is symmetric, the Spectral theorem says its eigenvectors form an orthonormal basis. \\ Thus, we may take $\{w_i\}_{i = 1}^n$ to be this orthonormal basis.  \emph{(This move is forced---why?)}
-        \item Since $A^{\top}A$ is positive semi-definite the eigenvalues $\{\lambda_i\}_{i = 1}^n$ of $A^{\top}A$ are nonnegative. \\ Thus, we may take $\{\sigma_i\}_{i = 1}^n$ to be $\sigma_i = \sqrt{\lambda_i}$ for all $i$.  \emph{(This move is forced---why?)}
+        \item Since $A^{\top}A$ is positive semidefinite, the eigenvalues $\{\lambda_i\}_{i = 1}^n$ of $A^{\top}A$ are nonnegative. \\ Thus, we may take $\{\sigma_i\}_{i = 1}^n$ to be $\sigma_i = \sqrt{\lambda_i}$ for all $i$.  \emph{(This move is forced---why?)}
     \end{itemize}
     Great!  We've already found $\{w_i\}_{i = 1}^n$ and $\{\sigma_i\}_{i = 1}^n$.
     
@@ -211,7 +211,7 @@ Some good things to keep in mind while we prove SVD.
 Unlike some of our previous ``factorization'' theorems, this one applies to \emph{all} matrices!
 
 \begin{remark}
-    Despite how long the above proof is, it's actually extremely motivated---in particular, $AA^{\top}$ and $A^{\top}A$ tell us what $V$, $W$, and $\Sigma$, \emph{have} to be, and then it remains to check that everything remains consistent.
+    Despite how long the above proof is, it's actually extremely motivated---in particular, $AA^{\top}$ and $A^{\top}A$ tell us what $V$, $W$, and $\Sigma$ \emph{have} to be, and then it remains to check that everything remains consistent.
 \end{remark}
 
 \emph{Hint: It is rumored that the SVD may be useful for Problem Set \#10.}
@@ -234,7 +234,7 @@ Unlike some of our previous ``factorization'' theorems, this one applies to \emp
 
 We're about to transition to a new topic: embedding groups into geometric objects.
 
-\textbf{Example.} There exists a natural bijection $SO_2(\mathbb{R}) \leftrightarrow S_2$, where $S_2$ is the unit circle.
+\textbf{Example.} There exists a natural bijection $SO_2(\mathbb{R}) \leftrightarrow S^1$, where $S^1$ is the unit circle.
 
 The interesting point, however, is that it's surprisingly difficult to embed $SO_3(\mathbb{R})$ into a geometric object!
 

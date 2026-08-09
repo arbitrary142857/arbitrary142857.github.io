@@ -171,13 +171,14 @@ And of course, there's a 2D DFT as well, and it works just as before.
 \end{theorem}
 
 \begin{remark}
-    The 2D DFT is equivalent to the evaluation of the polynomial
+    The 2D DFT is, up to a factor of $\frac{1}{N_xN_y}$,
+    the evaluation of the polynomial
     $p(z_x, z_y) := \sum_{n_x = 0}^{N_x - 1} \sum_{n_y = 0}^{N_y - 1}
     f[n_x, n_y] z_x^{n_x} z_y^{n_y}$ as $z_x$ and $z_y$
     span the $N_x^{\text{th}}$ and $N_y^{\text{th}}$ roots of unity, respectively.
     And naturally, 2D circular convolution is just 
     multivariate polynomial multiplication in the ring
-    $\mathbb{C}[z_x, z_y]/((z_x^{N_x} - 1)(z_y^{N_y} - 1))$, and so on\dots
+    $\mathbb{C}[z_x, z_y]/(z_x^{N_x} - 1, z_y^{N_y} - 1)$, and so on\dots
 \end{remark}
 
 \subsection{Recitation and Lecture: 2D DFT Algebraic Properties}
@@ -276,7 +277,7 @@ Only the phase changes.
 The key idea to keep in mind is the following:
 \begin{quote}
     \textbf{Idea.} Lines in the space domain
-    manifest as lines perpendicular to their counterparts in the frequency domain.
+    manifest as perpendicular lines in the frequency domain.
 \end{quote}
 Here's an example of the DFT of a triangle.
 Notice how the DFT has three linear features,
@@ -315,7 +316,7 @@ And a collection of evenly-spaced parallel lines
 is exactly what a 2D cosine wave looks like.
 
 But the DFT of a 2D cosine wave is two dots,
-antipodal from one another on a circle of radius
+antipodal to one another on a circle of radius
 equal to the frequency of the cosine wave.
 Since a fingerprint consists of evenly-spaced parallel lines
 \emph{in all directions}, those pairs of dots
@@ -324,7 +325,7 @@ forming the bright ring of radius $\approx 40$.
 
 In fact, a common preprocessing step in fingerprint analysis
 is to bandpass-filter around the ridge frequency---often implemented
-by masking that ring in the DFT before taking the inverse transform,
+by keeping only that ring in the DFT before taking the inverse transform,
 yielding a high-contrast image of the ridges.
 
 \end{document}

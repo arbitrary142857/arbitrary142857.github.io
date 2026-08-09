@@ -7,7 +7,7 @@ Here's another way to handle key collisions.
 
 \begin{solution}{Open Addressing}
     Every key $k \in \mathcal{U}$ is assigned not just one hash value in $\{0, 1, \dots, m - 1\}$, but rather a \emph{permutation} of $\{0, 1, \dots, m - 1\}$ called a \emph{probing sequence}:
-    \[ h: \mathcal{U} \times \{0, 1, \dots, m - 1\} \to \{0, 1, \dots, m-  1\} ~ \text{ such that } ~ k \mapsto (h(k, 0), h(k, 1), \dots, h(k, m - 1)). \]
+    \[ h: \mathcal{U} \times \{0, 1, \dots, m - 1\} \to \{0, 1, \dots, m-  1\} ~ \text{ such that } ~ k ~ \text{ has probing sequence } (h(k, 0), h(k, 1), \dots, h(k, m - 1)). \]
     We implement our desired operations as follows:
     \begin{itemize}
         \item $\textsc{Insert}(k, v)$: Find the smallest $p$ such that $T[h(k, p)] = \textsc{Null} \text{ or } \textsc{Deleted}$, then set $T[h(k, p)] = (k, v)$.
@@ -33,20 +33,20 @@ Here's another way to handle key collisions.
 \begin{proof}
     Handwaving\dots a guess for $p$ succeeds with probability $1 - \alpha$, so the EV \# of tries is $\frac{1}{1 - \alpha}$. ~ $\blacksquare$
 
-    The rigorous proof goes $\underset{h}{\mathbb{E}}[X] = \displaystyle\sum_{j = 1}^m j \cdot \underset{h}{\mathrm{Pr}}[X = j] = \displaystyle \sum_{j = 1}^m \underset{h}{\mathrm{Pr}}[X \geq j] \leq \displaystyle\sum_{j = 1}^m \alpha^{j - 1} = \frac{1}{1 - \alpha}$, hooray. ~ $\blacksquare$
+    The rigorous proof goes $\underset{h}{\mathbb{E}}[X] = \displaystyle\sum_{j = 1}^m j \cdot \underset{h}{\mathrm{Pr}}[X = j] = \displaystyle \sum_{j = 1}^m \underset{h}{\mathrm{Pr}}[X \geq j] \leq \displaystyle\sum_{j = 1}^m \alpha^{j - 1} \leq \frac{1}{1 - \alpha}$, hooray. ~ $\blacksquare$
 
-    Even more formally, we need to justify $\underset{h}{\mathrm{Pr}}[X \geq j] \leq \alpha^{j - 1}$, so we should be writing something like:
-    \[ \underset{h}{\mathrm{Pr}}[X \geq j] = \underset{h}{\mathrm{Pr}}[E_1 \wedge E_2 \wedge \dots \wedge E_{j - 1}] = \underset{h}{\mathrm{Pr}}[E_1] \times \underset{h}{\mathrm{Pr}}[E_2 \mid E_1] \times \dots \cdot \underset{h}{\mathrm{Pr}}[E_{j - 1} \mid E_1 \wedge E_2 \wedge \dots \wedge E_{j - 2}]. \]
-    And the $\ell^{\text{th}}$ term in this product is upper-bounded by $\frac{n - \ell + 1}{m - 1 + 1} \leq \frac{n}{m} = \alpha$, as desired. ~ $\blacksquare$
+    Even more formally, we need to justify $\underset{h}{\mathrm{Pr}}[X \geq j] \leq \alpha^{j - 1}$, so we should be writing something like the following, where $E_i$ is the event that the $i^{\text{th}}$ probe finds an occupied slot:
+    \[ \underset{h}{\mathrm{Pr}}[X \geq j] = \underset{h}{\mathrm{Pr}}[E_1 \wedge E_2 \wedge \dots \wedge E_{j - 1}] = \underset{h}{\mathrm{Pr}}[E_1] \times \underset{h}{\mathrm{Pr}}[E_2 \mid E_1] \times \dots \times \underset{h}{\mathrm{Pr}}[E_{j - 1} \mid E_1 \wedge E_2 \wedge \dots \wedge E_{j - 2}]. \]
+    And the $\ell^{\text{th}}$ term in this product is upper-bounded by $\frac{n - \ell + 1}{m - \ell + 1} \leq \frac{n}{m} = \alpha$, as desired. ~ $\blacksquare$
 \end{proof}
 
 Generating probing sequences uniformly at random is hard, so in practice, we implement like so.
 
 \begin{solution}{Probing Methods}
-    Pick any two hash functions $h_1, h_2: \mathcal{U} \to \{0, 1, m - 1\}$.  We can use:
+    Pick any two hash functions $h_1, h_2: \mathcal{U} \to \{0, 1, \dots, m - 1\}$.  We can use:
     \begin{itemize}
         \item \textbf{Linear Probing.} Take $h(k, p) := (h_1(k) + p) \%m$.
-        \item \textbf{Double Hashing Probing.} Take $h(k, p) = (h_1(k) + p \cdot h_2(k)) \%m$.
+        \item \textbf{Double Hashing Probing.} Take $h(k, p) := (h_1(k) + p \cdot h_2(k)) \%m$.  (This is a permutation only when $\gcd(h_2(k), m) = 1$.)
     \end{itemize}
 \end{solution}
 
@@ -79,10 +79,10 @@ Here's the smart solution by Fredman-Komlos-Szemeredi (1984) that passes the spa
 \begin{solution}{Optimal-Space Solution}
     Sample a hash function $h_1 \in \mathcal{H}_1$ that goes $h_1: \mathcal{U} \to \{0, 1, \dots, n - 1\}$.
     \begin{itemize}
-        \item Suppose $N_{\ell} := |h_1^{-1}(\ell)|$ for all $\ell \in \{0, 1, \dots, n - 1\}$.
+        \item Suppose $N_{\ell} := |h_1^{-1}(\ell) \cap \{k_1, \dots, k_n\}|$ for all $\ell \in \{0, 1, \dots, n - 1\}$.
         \item Use the suboptimal-space solution to fit $N_{\ell}$ key-value pairs in the $\ell^{\text{th}}$ bucket.
         
-        Using $O(N_{\ell})$ time and $O(N_{\ell}^2)$ space, give the $\ell^{\text{th}}$ bucket a sampled hash function $h_{2, \ell}: h_1^{-1}(\ell) \to \{0, 1, \dots, N_{\ell}^2 - 1\} \in \mathcal{H}_{2, \ell}$.
+        Using $O(N_{\ell})$ time and $O(N_{\ell}^2)$ space, give the $\ell^{\text{th}}$ bucket a sampled hash function $h_{2, \ell} \in \mathcal{H}_{2, \ell}$ that goes $h_{2, \ell}: h_1^{-1}(\ell) \to \{0, 1, \dots, N_{\ell}^2 - 1\}$.
     \end{itemize}
     Our data structure is then a \emph{two-dimensional} array: $n$ buckets, the $\ell^{\text{th}}$ of which has $N_{\ell}^2$ slots to hash into.
 \end{solution}
@@ -92,12 +92,12 @@ Here's the smart solution by Fredman-Komlos-Szemeredi (1984) that passes the spa
 
     The hard part is achieving $O(n)$ space.  If we choose $h_1$ unluckily, we won't actually get $O(n)$ space!  However,
     \[ \textbf{Claim.} ~~~~~ \underset{h \sim \mathcal{H}_1}{\mathrm{Pr}} \left [ \left(\sum_{\ell = 0}^{n - 1} N_{\ell}^2\right) > 4n \right ] < \dfrac{1}{2}. \]
-    To prove this, note that by Markov's inequality, it suffices to to show $\underset{h \sim \mathcal{H}_1}{\mathbb{E}}\left [ \sum_{\ell = 0}^{n - 1} N_{\ell}^2 \right ] < 2n$.  This takes some clever work:
+    To prove this, note that by Markov's inequality, it suffices to show $\underset{h \sim \mathcal{H}_1}{\mathbb{E}}\left [ \sum_{\ell = 0}^{n - 1} N_{\ell}^2 \right ] < 2n$.  This takes some clever work:
     \begin{align*}
         \underset{h \sim \mathcal{H}_1}{\mathbb{E}} \left [ \sum_{\ell = 0}^{n - 1} N_{\ell}^2 \right ] = \ & \underset{h \sim \mathcal{H}_1}{\mathbb{E}} \left [ \sum_{\ell = 0}^{n - 1} \left ( N_{\ell} + \sum_{j \neq j'} \mathds{1}\left [ h(k_j) = h(k_{j'}) = \ell \right ] \right ) \right ] \\
         = \ & \underset{h \sim \mathcal{H}_1}{\mathbb{E}}\left [ \sum_{\ell = 0}^{n - 1} N_{\ell} \right ] + \underset{h \sim \mathcal{H}_1}{\mathbb{E}} \left [  \sum_{\ell = 0}^{n - 1}  \sum_{j \neq j'} \mathds{1}\left [ h(k_j) = h(k_{j'}) = \ell \right ] \right ] \\
         = \ & n + \sum_{j \neq j'} \left(\underset{h \sim \mathcal{H}_1}{\mathrm{Pr}}[h(k_j) = h(k_{j'})] \right) \\
-        \leq \ & n + \frac{n^2}{n} = 2n.
+        \leq \ & n + \frac{n(n - 1)}{n} < 2n.
     \end{align*}
     Thus, we can guarantee $O(n)$ space in expected $O(n)$ time by repeatedly resampling $h_1$ until the space is less than $4n$. ~ $\blacksquare$
 \end{proof}

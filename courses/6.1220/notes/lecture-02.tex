@@ -41,13 +41,13 @@ Unfortunately, picking the pivot is important.  If we unluckily always pick $x =
 
 In fact, we don't even need to pick \emph{exactly} the median.
 
-\textbf{Definition.} For any $\frac{1}{2} \leq c \leq 1$, we say $x \in A$ is $c$-balanced if $\max \{ |L(x)|, |G(x)|\} \leq cN$.
+\textbf{Definition.} For any $\frac{1}{2} \leq c < 1$, we say $x \in A$ is $c$-balanced if $\max \{ |L(x)|, |G(x)|\} \leq cN$.
 
 \begin{boxed-text}[32em]
     \emph{Observation.} If an oracle could tell us a $c$-balanced element in $O(N)$ time, \\ then we'd have $T(N) = T\left(cN\right) + O(N)$, which implies $T(N) = O(N)$.
 \end{boxed-text}
 
-How do we find $c$-balanced element?  The trick is to use Rank Finding again!
+How do we find a $c$-balanced element?  The trick is to use Rank Finding again!
 
 \begin{solution}{Rank Finding \#3}
     Divide $A$ into $\frac{N}{5}$ buckets of size $5$.  Say $M$ is the set of all bucket medians, with $|M| = \frac{N}{5}$.  Then set $x = \textsc{RankFindFast}\left(M, \frac{|M|}{2}\right)$ as the pivot, and proceed from there.
@@ -58,7 +58,7 @@ How do we find $c$-balanced element?  The trick is to use Rank Finding again!
     \begin{quote}
         \textbf{Claim.} Our choice of pivot $x$ is $\frac{7}{10}$-balanced.
 
-        \emph{Proof:} The constant $\frac{7}{10}$ is $1 - \frac{1}{2} \times \frac{3}{5}$.  More generally, when $5 = 2k + 1$, we have $c = \frac{3k + 1}{4k + 2}$.  ~ $\square$
+        \emph{Proof:} The constant $\frac{7}{10}$ is $1 - \frac{1}{2} \times \frac{3}{5}$.  More generally, for buckets of size $2k + 1$, we have $c = \frac{3k + 1}{4k + 2}$.  ~ $\square$
     \end{quote}
     
     Now let's discuss the time complexity.  The recursion for this problem looks like:
@@ -81,7 +81,7 @@ How do we find $c$-balanced element?  The trick is to use Rank Finding again!
 \end{problem}
 
 \begin{solution}{Karatsuba}
-    Write $a = y + 2^{N/2} \cdot x$ and $b = w + 2^{N/2} \cdot z$, so $a = [x] [y]$ and $b = [w] [z]$ and:
+    Write $a = y + 2^{N/2} \cdot x$ and $b = z + 2^{N/2} \cdot w$, so $a = [x] [y]$ and $b = [w] [z]$ and:
     \begin{align*}
         ab = \ & 2^N \cdot xw + 2^{N / 2} \cdot (xz + yw) + yz \\
         = \ & (2^N - 2^{N / 2}) \cdot xw + 2^{N / 2} \cdot (x + y)(w + z) + (1 - 2^{N / 2}) \cdot yz.

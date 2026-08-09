@@ -48,17 +48,17 @@ To classify these ``orthogonal'' linear maps $f: \mathbb{H} \to \mathbb{H}$, we'
     \end{quote}
     It remains to prove the following about reflections:
     \begin{quote}
-        \textbf{Claim.} Every reflection in $\mathbb{R}^4$ is of the form $f_{\alpha}: x \mapsto - \alpha \overline{x} \alpha$.
+        \textbf{Claim.} Every reflection in $\mathbb{R}^4$ is of the form $f_{\alpha}: x \mapsto - \alpha \overline{x} \alpha$ for some $|\alpha| = 1$.
 
         \emph{Proof:} We claim $f_{\alpha}$ is the reflection sending the basis $\{\alpha, \alpha i, \alpha j, \alpha k\}$ to $\{- \alpha, \alpha i, \alpha j, \alpha k\}$.  Indeed,
         \[ f_{\alpha}(\alpha i) = - \alpha \overline{\alpha i} \alpha = - \alpha (-i) \overline{\alpha} \alpha = \alpha i |\alpha |^2 = \alpha i ~~~ \text{ and } ~~~ f_{\alpha}(\alpha) = - \alpha \overline{\alpha} \alpha = - |\alpha|^2 \alpha = -\alpha. \]
-        So $f_{\alpha}$ is a reflection about the plane perpendicular to $\alpha$. ~ $\square$
+        So $f_{\alpha}$ is a reflection about the hyperplane perpendicular to $\alpha$. ~ $\square$
     \end{quote}
-    Thus, our proposed maps $f: x \mapsto \alpha x \beta$ and $f: x \mapsto \alpha \overline{x} \beta$ generate all reflections, which generate $O_4(\mathbb{R})$. ~ $\blacksquare$
+    Thus, our proposed maps $f: x \mapsto \alpha x \beta$ and $f: x \mapsto \alpha \overline{x} \beta$ include all reflections, which generate $O_4(\mathbb{R})$; and they are closed under composition, so they are \emph{all} of $O_4(\mathbb{R})$. ~ $\blacksquare$
 \end{proof}
 
 \begin{remark}
-    Multiplying by elements of $\mathbb{H}$ yield ``rotations'' of $\mathbb{R}^4$, whereas conjugation yields ``reflections'' of $\mathbb{R}^4$.
+    Multiplying by elements of $\mathbb{H}$ yields ``rotations'' of $\mathbb{R}^4$, whereas conjugation yields ``reflections'' of $\mathbb{R}^4$.
 \end{remark}
 
 In summary, recalling that $\{\alpha \in \mathbb{H} : |\alpha| = 1 \} \cong S^3$, we have the following description of $O_4(\mathbb{R})$.
@@ -71,7 +71,7 @@ More specifically, one can restrict the above to describe only maps in $SO_4(\ma
 This makes sense---conjugations yield ``reflections'', which have negative determinant.  By corollary\dots
 
 \begin{theorem}{Describing $SO_3(\mathbb{R})$}
-    All rotations of $\mathbb{R} i \oplus \mathbb{R}j \oplus \mathbb{R}k$ are $f: x \mapsto \alpha x \alpha^{-1}$ for $\alpha \in \mathbb{H}$ for $|\alpha| = 1$.
+    All rotations of $\mathbb{R} i \oplus \mathbb{R}j \oplus \mathbb{R}k$ are $f: x \mapsto \alpha x \alpha^{-1}$ for $\alpha \in \mathbb{H}$ with $|\alpha| = 1$.
 \end{theorem}
 
 \begin{proof}
@@ -94,12 +94,12 @@ Three-dimensional computer graphics use quaternions for this reason!
 
 Recall from last lecture the following interpretations of $SU_2$.
 \begin{align*}
-SU_2 \cong \ & \left \{ \begin{bsmallmatrix} \alpha & \beta \\ - \overline{\beta} & \overline{\alpha} \end{bsmallmatrix} : \alpha, \beta \in \mathbb{C} \text{ and } \alpha^2 + \beta^2 = 1\right \} \cong  \{v \in \mathbb{R}^4: |v| = 1 \} \cong \{ \alpha \in \mathbb{H} : |\alpha| = 1 \}\cong S^3. 
+SU_2 \cong \ & \left \{ \begin{bsmallmatrix} \alpha & \beta \\ - \overline{\beta} & \overline{\alpha} \end{bsmallmatrix} : \alpha, \beta \in \mathbb{C} \text{ and } |\alpha|^2 + |\beta|^2 = 1\right \} \cong  \{v \in \mathbb{R}^4: |v| = 1 \} \cong \{ \alpha \in \mathbb{H} : |\alpha| = 1 \}\cong S^3. 
 \end{align*}
 To be more precise about these isomorphisms\dots
 \begin{itemize}
-    \item The isomorphism $SU_2 \cong \{v \in \mathbb{R}^4 : |v| = 1\}$ is via $\begin{bsmallmatrix} \alpha & \beta \\ -\overline{\beta} & \overline{\alpha} \end{bsmallmatrix} \mapsto (\Real[\alpha], \mathrm{Im}[\alpha], \mathrm{Re}[\beta], \mathrm{Im}[\beta]) \in \mathbb{R}^4$.
-    \item The isomorphism $SU_2 \cong \{ z \in \mathbb{H} : |z| = 1\}$ is via $\begin{bsmallmatrix} \alpha & \beta \\ -\overline{\beta} & \overline{\alpha} \end{bsmallmatrix} \mapsto \alpha + j \beta \in \mathbb{H}$.
+    \item The isomorphism $SU_2 \cong \{v \in \mathbb{R}^4 : |v| = 1\}$ is via $\begin{bsmallmatrix} \alpha & \beta \\ -\overline{\beta} & \overline{\alpha} \end{bsmallmatrix} \mapsto (\mathrm{Re}[\alpha], \mathrm{Im}[\alpha], \mathrm{Re}[\beta], \mathrm{Im}[\beta]) \in \mathbb{R}^4$.
+    \item The isomorphism $SU_2 \cong \{ z \in \mathbb{H} : |z| = 1\}$ is via $\begin{bsmallmatrix} \alpha & \beta \\ -\overline{\beta} & \overline{\alpha} \end{bsmallmatrix} \mapsto \alpha + \beta j \in \mathbb{H}$.
 \end{itemize}
 Since $SU_2 \cong S^3$, the previous section showed $SU_2 / \{\pm 1\} \cong SO_3(\mathbb{R})$; that is, $SU_2$ is a \emph{double cover} of $SO_3(\mathbb{R})$.
 
@@ -135,7 +135,7 @@ Since $SU_2 \cong S^3$, the previous section showed $SU_2 / \{\pm 1\} \cong SO_3
 Trace in $SU_2$ has a nice analogue in $\mathbb{H}$, which you can check by plain computation:
 
 \begin{theorem}{Redefining Trace}
-    Every $A = \begin{bsmallmatrix} \alpha & \beta \\ -\overline{\beta} & \overline{\alpha} \end{bsmallmatrix} \in SU_2$ yields a $\gamma = \alpha + j \beta \in \mathbb{H}$.  Then $\mathrm{tr}(A) = 2 \mathrm{Re}[\gamma]$.
+    Every $A = \begin{bsmallmatrix} \alpha & \beta \\ -\overline{\beta} & \overline{\alpha} \end{bsmallmatrix} \in SU_2$ yields a $\gamma = \alpha + \beta j \in \mathbb{H}$.  Then $\mathrm{tr}(A) = 2 \mathrm{Re}[\gamma]$.
 \end{theorem}
 
 This inspires the following \emph{geometric} description of conjugacy classes in $SU_2$.
@@ -146,7 +146,7 @@ The diagram above has the following features:
 \begin{itemize}
     \item The space $SU_2 \cong \{ \alpha \in \mathbb{H} : |\alpha| = 1\} \cong S^3$ is depicted as the blue surface of a sphere.
     \begin{itemize}
-        \item Technically speaking, this is wrong!  Notably, $S^3$ is the surface of the four-dimensional ball $B^4$.  But we can't draw $B^4$, so we'll have to settle with using $S^2$ to visually represent $S^3$.
+        \item Technically speaking, this is wrong!  Notably, $S^3$ is the surface of the four-dimensional ball $B^4$.  But we can't draw $B^4$, so we'll have to settle for using $S^2$ to visually represent $S^3$.
     \end{itemize}
     \item Conjugacy classes---that is, collections of matrices with the same trace---look like green lines of latitude.
 \end{itemize}
@@ -155,7 +155,7 @@ The diagram above has the following features:
 Keep in mind that everything we say about $SU_2$ applies equally well to the subgroup $\{\alpha \in \mathbb{H} : |\alpha | = 1 \}$ of $\mathbb{H}$.  In particular, multiplication in $SU_2$ is isomorphic to multiplication in $\mathbb{H}$.
 \begin{itemize}
     \item (Reading Comprehension) Convince yourself that the North Pole is $\{+I_2\}$, and the South Pole is $\{-I_2\}$.
-    \item (Reading Comprehension) Convince yourself that conjugacy classes of $SU_2$ are isomorphic to $S^2$.
+    \item (Reading Comprehension) Convince yourself that the remaining conjugacy classes of $SU_2$ are isomorphic to $S^2$.
     \item (Reading Comprehension) Convince yourself that $i$, $j$, and $k$ live on the equator of $S^3$.
 \end{itemize}
 \end{remark}
@@ -167,7 +167,7 @@ We've interpreted the lines of latitude---what about the lines of longitude?
 \end{center}
 The diagram above has the following features:
 \begin{itemize}
-    \item The red equator meets the orange line of latitude at some point $x \in S^3$ with $\mathrm{Re}[x] = 0$. \\ (Or equivalently, $A \in SU_2$ with $\mathrm{tr}(A) = 0$.)
+    \item The red equator meets the orange line of longitude at some point $x \in S^3$ with $\mathrm{Re}[x] = 0$. \\ (Or equivalently, $A \in SU_2$ with $\mathrm{tr}(A) = 0$.)
     \item The line of longitude is parametrized by $\{ 1 \cdot \cos \theta + x \cdot \sin \theta \mid \theta \in [0, 2\pi) \}$.
 \end{itemize}
 
@@ -189,7 +189,7 @@ One last thing: we'll use the results we've established so far to provide a geom
     \textbf{Claim.} The only normal subgroups of $SU_2$ are $\{1\}$, $\{1, -1\}$, and $SU_2$.
 \end{boxed-text}
 
-Say $G$ is a normal subgroup of $SU_2$ that is not either $\{1\}$ or $\{1, -1\}$.  We wish to show $G \cong SU_2$.
+Say $G$ is a normal subgroup of $SU_2$ that is not either $\{1\}$ or $\{1, -1\}$.  We wish to show $G = SU_2$.
 
 We may pick some $x \in G$ such that $x \not \in \{1, -1\}$, marked in the diagram below.
 
@@ -209,7 +209,7 @@ Let $S$ be the conjugacy class of $x$, shown as a green latitudinal line.
 \end{itemize}
 Thus, just from assuming $x \in G$, we've shown $G$ must also contain the entire region highlighted in green!
 
-Now consider any longitudinal subgroup $H$ of $SU_2$.  Since $G$ contains the whole region highlighted in green, $G$ must also intersect every longitudinal subgroup $H$ at some generator of $H$.  Thus, $H \subseteq G$.
+Now consider any longitudinal subgroup $H$ of $SU_2$.  Since $G$ contains the whole region highlighted in green, $G$ must also contain an entire arc of $H$.  And an arc generates all of $H$, so $H \subseteq G$.
 
 But the longitudinal subgroups of $SU_2$ together cover all of $SU_2$.  So $G$ contains all of $SU_2$, done. ~ $\blacksquare$
 

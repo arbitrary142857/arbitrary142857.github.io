@@ -12,18 +12,18 @@ Last time, we classified all discrete subgroups of $O_2(\mathbb{R})$.  Our goal 
 We'll set up today's discussion with the following theorem and definition.
 
 \begin{theorem}{Discrete Subgroups of $\mathbb{R}^2$}
-    Every discrete subgroup of $(\mathbb{R}^2, +)$ is either of the form $\mathbb{Z}v$ or $\mathbb{Z}v + \mathbb{Z}w$, where $v$ and $w$ are vectors in $\mathbb{R}^2$.
+    Every discrete subgroup of $(\mathbb{R}^2, +)$ is either of the form $\mathbb{Z}v$ or $\mathbb{Z}v + \mathbb{Z}w$, where $v$ and $w$ are linearly independent vectors in $\mathbb{R}^2$.
 \end{theorem}
 
 \begin{proof}
     The proof is analysis-flavored, so we only provide a sketch here.
     
-    For any discrete subgroup $H \subseteq (\mathbb{R}^2, +)$, we may take $v$ to be the vector of least magnitude in $H$, then take $w$ to be the vector of least magnitude in $H \setminus \mathbb{Z}v$.
+    For any discrete subgroup $H \subseteq (\mathbb{R}^2, +)$, we may take $v$ to be the nonzero vector of least magnitude in $H$, then take $w$ to be the vector of least magnitude in $H \setminus \mathbb{Z}v$.
     
-    If there is still some $x \in H \setminus (v \mathbb{Z} + w\mathbb{Z})$, then look for the ``remainder'' when $x$ is quotiented out by $v \mathbb{Z} + w \mathbb{Z}$ to contradict the minimality of $|v|$ and $|w|$. ~ $\blacksquare$
+    If there is still some $x \in H \setminus (\mathbb{Z}v + \mathbb{Z}w)$, then look for the ``remainder'' when $x$ is quotiented out by $\mathbb{Z}v + \mathbb{Z}w$ to contradict the minimality of $|v|$ and $|w|$. ~ $\blacksquare$
 \end{proof}
 
-\textbf{Definition (Lattice).} A subset of $\mathbb{R}^2$ is a \textbf{lattice} if it is of the form $\mathbb{Z}v$ or $\mathbb{Z}v + \mathbb{Z}w$.
+\textbf{Definition (Lattice).} A subset of $\mathbb{R}^2$ is a \textbf{lattice} if it is of the form $\mathbb{Z}v$ or $\mathbb{Z}v + \mathbb{Z}w$ for linearly independent $v$ and $w$.
 
 \subsection{Point Groups and Lattices}
 
@@ -51,10 +51,10 @@ Importantly, the point group of a tiling is \emph{not} the same as the group of 
 
 \subsection{Classifying Discrete Symmetry Groups: Mathematical Reasoning}
 
-Any discrete symmetry group $G \subseteq M_2$ is described in full by its point group $\overline{G}$ and its lattice $L$.  What can we say about the relationship between $\overline{G}$ and $L$?
+Any discrete symmetry group $G \subseteq M_2$ is built out of its point group $\overline{G}$ and its lattice $L$.  What can we say about the relationship between $\overline{G}$ and $L$?
 
 \begin{theorem}{Point Groups are a Symmetry of the Lattice}
-    Given a discrete subgroup $G \subseteq M_2$, consider its corresponding point group $\overline{G} = \pi(g)$ and lattice $L = \ker(\pi) \cap G$.
+    Given a discrete subgroup $G \subseteq M_2$, consider its corresponding point group $\overline{G} = \pi(G)$ and lattice $L = \ker(\pi) \cap G$.
     
     Then for any $A \in \overline{G}$ and any $x_0 \in L$, we have $Ax_0 \in L$.  In other words, $\overline{G}(L) = L$.
 \end{theorem}
@@ -66,22 +66,22 @@ Any discrete symmetry group $G \subseteq M_2$ is described in full by its point 
         \item The isometry $f_2: x \mapsto x + x_0$ is in $G$.
     \end{itemize}
     The key idea is to consider the conjugation of $f_2$ by $f_1$, which is in $G$.
-    \begin{align*} f_1f_2f_1^{-1}: x \ \mapsto \ & A(A^{_1}x - A^{-1}b + x_0) + b \\
+    \begin{align*} f_1f_2f_1^{-1}: x \ \mapsto \ & A(A^{-1}x - A^{-1}b + x_0) + b \\
     = \ & x + Ax_0. \end{align*}
-    Thus, $x + Ax_0$ is in $G$, so $Ax_0$ is in $L$, as desired. ~ $\blacksquare$
+    Thus, $x \mapsto x + Ax_0$ is in $G$, so $Ax_0$ is in $L$, as desired. ~ $\blacksquare$
 \end{proof}
 
-What kind of point groups $\overline{G} \in O_2(\mathbb{R})$ can preserve a lattice $L$, then?
+What kind of point groups $\overline{G} \subseteq O_2(\mathbb{R})$ can preserve a lattice $L$, then?
 
 \begin{theorem}{Crystallographic Restriction}
-    Consider some point group $\overline{G} \in O_2(\mathbb{R})$, which must look like $C_n$ or $D_n$ for some $n$.  Then if $L$ is a nontrivial lattice preserved by $\overline{G}$, it must in fact be the case that $n \in \{1, 2, 3, 4, 6\}$.
+    Consider some point group $\overline{G} \subseteq O_2(\mathbb{R})$, which must look like $C_n$ or $D_n$ for some $n$.  Then if $L$ is a nontrivial lattice preserved by $\overline{G}$, it must in fact be the case that $n \in \{1, 2, 3, 4, 6\}$.
 \end{theorem}
 
 \begin{proof}
-    The key idea is to consider the vector $x$ of minimal length in $L$.
+    The key idea is to consider the nonzero vector $x$ of minimal length in $L$.
 \begin{itemize}
     \item If $n > 6$, then $\overline{G}$ contains some rotation $R$ by an angle less than $\frac{\pi}{3}$.  But then $|Rx - x| < |x|$ by geometry, contradicting the minimality of $|x|$.
-    \item Similarly, if $n = 5$, then $\overline{R}$ contains the rotation $R$ by angle $\frac{2\pi}{5}$.  But then $|R^2x + x| < |x|$ by geometry, contradicting the minimality of $|x|$.
+    \item Similarly, if $n = 5$, then $\overline{G}$ contains the rotation $R$ by angle $\frac{2\pi}{5}$.  But then $|R^2x + x| < |x|$ by geometry, contradicting the minimality of $|x|$.
 \end{itemize}
     So the above implies $n \in \{1, 2, 3, 4, 6\}$, and we're done. ~ $\blacksquare$
 \end{proof}
@@ -89,7 +89,7 @@ What kind of point groups $\overline{G} \in O_2(\mathbb{R})$ can preserve a latt
 Thus, our answer to the big question for today is the following:
 
 \begin{boxed-text}[42em]
-\textbf{Answer.} If $G \subseteq M_2$ is a discrete symmetry group, then $\overline{G} = \pi(G)$ \\ must look like $C_n$ or $D_n$
+\textbf{Answer.} If $G \subseteq M_2$ is a discrete symmetry group with a nontrivial lattice, then $\overline{G} = \pi(G)$ \\ must look like $C_n$ or $D_n$
 for some $n \in \{1, 2, 3, 4, 6\}$.
 \end{boxed-text}
 
@@ -103,7 +103,7 @@ We categorize our results based on the rank of our lattice.
 
 \textbf{Example (Rank 0 Lattices).} If the lattice $L$ has rank zero, then $L = \{0\}$, and every single point group $C_n$ or $D_n$ works (even if $n \not \in \{1, 2, 3, 4, 6\}$).  This is uninteresting.
 
-\textbf{Example (Rank 1 Lattices: Frieze Groups).} Consider the lattice $L = \mathbb{Z}v$.    Then it turns out $\overline{G} \in \{C_1, D_1, C_2, D_2\}$, achievable in $7$ different ways up to isomorphism.  These are called \textbf{Frieze Groups}. \vspace{0.15cm}
+\textbf{Example (Rank 1 Lattices: Frieze Groups).} Consider the lattice $L = \mathbb{Z}v$.    Then it turns out $\overline{G} \in \{C_1, D_1, C_2, D_2\}$, achievable in $7$ different ways.  These are called \textbf{Frieze Groups}. \vspace{0.15cm}
 
 \begin{center}
     \frame{\includegraphics[width=0.5\textwidth]{lecture-11/frieze-groups.png}}
@@ -115,7 +115,7 @@ We categorize our results based on the rank of our lattice.
     \frame{\includegraphics[width=0.5\textwidth]{lecture-11/wallpaper-groups.png}}
 \end{center}
 
-And these are all of the discrete symmetry groups of some shape $S \in \mathbb{R}^2$.  The end. \vspace{0.1cm}
+And these are all of the discrete symmetry groups of some shape $S \subseteq \mathbb{R}^2$.  The end. \vspace{0.1cm}
 
 \begin{center}
     \frame{\includegraphics[width=0.5\textwidth]{lecture-11/wallpaper-pattern.jpeg}}
@@ -146,7 +146,7 @@ For ease of writing, we will often denote the image of $(g, s)$ by $g \cdot s$.
 Importantly, the third point in the example above provides the intuition behind the following theorem.
 
 \begin{theorem}{Cayley's Theorem}
-    Every group $G$ is a subgroup of $S_n$, where $n = |G|$.
+    Every group $G$ is isomorphic to a subgroup of $S_n$, where $n = |G|$.
 \end{theorem}
 
 \begin{proof}
@@ -154,7 +154,7 @@ Importantly, the third point in the example above provides the intuition behind 
 
     Intuitively, $f$ is an injective homomorphism.  Here's the formal mathematical jargon that justifies this intuition.
     \begin{itemize}
-        \item To show $f$ is a homomorphism, just write $f(gh) \cdot s = (gh) \cdot s = g \cdot (h \cdot s) = g \cdot (f(h)(s)) = (f(g) \circ f(h))(s)$.
+        \item To show $f$ is a homomorphism, just write $f(gh)(s) = (gh) \cdot s = g \cdot (h \cdot s) = g \cdot (f(h)(s)) = (f(g) \circ f(h))(s)$.
         \item To show $f$ is injective, note that if $f(g) = f(h)$, then $gs = hs$, meaning $g = h$.
     \end{itemize}
     Thus, $H = f(G) \subseteq S_n$ is a subgroup of $S_n$ for which $f: G \to H$ is an isomorphism, meaning $G \cong H$ and win. ~ $\blacksquare$

@@ -36,7 +36,8 @@ $\hat{\theta}_n \approx \theta + \frac{\sigma}{\sqrt{n}}Z$, where $Z \sim \mathc
 \end{solution}
 
 Asymptotic normality implies $\hat{\theta} \approx \mathcal{N}(\theta, \sigma^2 / n)$.
-But wait---the variance of $\hat{\theta}$ is also just $\mathrm{se}^2(\hat{\theta})$, right?
+But wait---the variance of $\hat{\theta}$ is also just $\mathrm{se}^2(\hat{\theta})$,
+so $\mathrm{se}(\hat{\theta}) = \frac{\sigma}{\sqrt{n}}$, right?
 
 \begin{remark}
     The following claim is not true.
@@ -78,7 +79,7 @@ We say $1 - \alpha$ is the \textbf{coverage} of the CI.
     the possible values of $\theta$.
 \end{remark}
 
-\textbf{Definition.} A sequence of confidence intervals
+\textbf{Definition.} A sequence of random intervals
 $\{C_n\}_{n = 1}^{\infty}$ has \textbf{asymptotic coverage} $1 - \alpha$
 if $\liminf_{n \to \infty} \Pr_{\theta}(\theta \in C_n) \geq 1 - \alpha$.
 

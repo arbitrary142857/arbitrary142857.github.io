@@ -1,5 +1,5 @@
 \lecture{13}
-\title{Intractibility (Part I)}
+\title{Intractability (Part I)}
 
 \begin{document}
 
@@ -22,10 +22,10 @@ We say an algorithm runs in time $O(t(n))$ if it can solve any instance of size 
     Instead of \emph{time}, we could also consider \emph{space}, or \emph{in-place}-ness, or \emph{randomness} as limited resources\dots
 \end{remark}
 
-An algorithm is \textbf{tractable} if has a runtime of $O(n^k)$ for some constant $k$, and \textbf{intractable} otherwise.
+A problem is \textbf{tractable} if it has an algorithm with runtime $O(n^k)$ for some constant $k$, and \textbf{intractable} otherwise.
 \begin{itemize}
     \item From lecture, we know MST, min-cut, and shortest-path are all tractable.
-    \item But max-cut and longest-path are not intractable.
+    \item But max-cut and longest-path are not known to be tractable.
     \begin{itemize}
         \item Max-cut can be approximated easily, though!  But not longest-path\dots
     \end{itemize}
@@ -33,7 +33,7 @@ An algorithm is \textbf{tractable} if has a runtime of $O(n^k)$ for some constan
 There are many variants of problems.
 \begin{itemize}
     \item \textbf{Decision:} Instances have YES / NO solutions.
-    \item \textbf{Search:} Instances have solutions of a certain quality of weight.
+    \item \textbf{Search:} Instances have solutions of a certain quality or weight.
     \item \textbf{Optimization:} Instances have solutions of a maximal quality or weight.
 \end{itemize}
 So the MST problem can have the following variants:
@@ -47,7 +47,7 @@ So the MST problem can have the following variants:
 
 Only consider problems $\pi$ that are decision variants.
 
-\textbf{Definition (P).} A problem $\pi$ is solvable in (deterministic) \textbf{polynomial} time iff there exists a (deterministic) algorithm $A_{\pi}$ and a constant $k$ such that for every instance $x$, we have:
+\textbf{Definition (P).} A problem $\pi$ is solvable in (deterministic) \textbf{polynomial} time iff there exists a (deterministic) algorithm $A_{\pi}$ and a constant $c$ such that for every instance $x$, we have:
 \[ A_{\pi}(x) \text{ runs in time } O(|x|^c). ~~~ \textbf{ AND } ~~~ A_{\pi}(x) = \pi(x). \]
 
 \textbf{Definition (NP).} A problem $\pi$ is solvable in \textbf{non-deterministic polynomial} time iff there exists a (deterministic) verifier algorithm $V_{\pi}$ and constants $c, c'$ such that for every instance $x$ of size $|x| = n$, we have:
@@ -71,7 +71,7 @@ It's easy to find \textbf{coNP} problems by negating \textbf{NP} problems; ``are
 \end{claim}
 
 \begin{proof}
-    The desired \textbf{NP} and \textbf{coNP} algorithms just run the \textbf{P} algorithm. ~ $\blacksquare$
+    The desired \textbf{NP} and \textbf{coNP} algorithms just run the \textbf{P} algorithm (negated, for \textbf{coNP}). ~ $\blacksquare$
 \end{proof}
 
 These are the possible relationships between \textbf{P}, \textbf{NP}, and \textbf{coNP}. \vspace{0.3cm}
@@ -90,7 +90,7 @@ These are the possible relationships between \textbf{P}, \textbf{NP}, and \textb
     Formally, take any $\pi \in \textbf{coNP}$.  Then $\overline{\pi} \in \textbf{NP} = \textbf{P} \subseteq \textbf{coNP}$, so $\overline{\pi} \in \textbf{coNP}$.  But then $\pi = \overline{\overline{\pi}} \in \textbf{NP} = \textbf{P}$, done. ~ $\blacksquare$
 \end{proof}
 
-\textbf{Definition (EXP).} A problem $\pi$ is solvable in (deterministic) \textbf{polynomial} time iff there exists a (deterministic) algorithm $A_{\pi}$ and a constant $k$ such that for every instance $x$, we have:
+\textbf{Definition (EXP).} A problem $\pi$ is solvable in (deterministic) \textbf{exponential} time iff there exists a (deterministic) algorithm $A_{\pi}$ and a constant $c$ such that for every instance $x$, we have:
 \[ A_{\pi}(x) \text{ runs in time } O(2^{|x|^c}). ~~~ \textbf{ AND } ~~~ A_{\pi}(x) = \pi(x). \]
 
 \begin{claim}
@@ -100,7 +100,7 @@ These are the possible relationships between \textbf{P}, \textbf{NP}, and \textb
 \begin{proof}
     Obviously $\textbf{P} \subseteq \textbf{EXP}$ because polynomial-time is faster than exponential-time.
 
-    For any $\pi \in \textbf{NP}$, we can solve $\pi$ by checking all $2^{\left(n^{c'}\right)}$ possible certificates. ~ $\blacksquare$
+    For any $\pi \in \textbf{NP}$ (or $\textbf{coNP}$), we can solve $\pi$ by checking all $2^{\left(n^{c'}\right)}$ possible certificates. ~ $\blacksquare$
 \end{proof}
 
 \begin{remark}

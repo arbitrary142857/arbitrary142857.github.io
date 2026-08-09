@@ -6,7 +6,11 @@
 \subsection{Computing the MLE}
 
 In this lecture, we'll turn our attention to actually computing the MLE.
-Recall that the MLE is the solution to an \emph{optimization} problem:
+For very simple models, computing the MLE as a function of the sample data
+$\{X_i\}_{i = 1}^n$ is very easy; recall
+\href{9.html#defining-the-maximum-likelihood-estimator-mle}{Lecture 9}.
+
+More generally, the MLE is the solution to an \emph{optimization} problem:
 for what value $\theta$ is $\ell_n(\theta) := \sum_{i = 1}^n \log f_{\theta}(X_i)$ maximized?
 
 There are two natural approaches to solving optimization problems.
@@ -23,7 +27,7 @@ There are two natural approaches to solving optimization problems.
 \begin{quote}
     \textbf{Newton-Raphson (Root Finding).} The idea is to find a root of $\ell_n'(\theta)$
     and hope the critical point we find is a global maximum.
-    The \href{https://en.wikipedia.org/wiki/Newton\%27s_method}{Newton-Raphson algorithm}
+    The \href{https://en.wikipedia.org/wiki/Newton's_method}{Newton-Raphson algorithm}
     updates guesses $\{\theta_i\}_{i = 1}^{\infty}$ for the root like so:
     \[ \theta_{i + 1} = \theta_i - \frac{\ell'_n(\theta_i)}{\ell''_n(\theta_i)}. \]
 \end{quote}
@@ -48,11 +52,11 @@ of men and women.  We might (simplistically) assume the following:
     and $(1 - p)$ of being from a man.
     \item The height of a randomly chosen man
     has some PDF $f_{\mu_0}$ from the model $\{\mathcal{N}(\mu_0, 1) \mid \mu_0 \in \mathbb{R}\}$.
-    \item The height a random chosen woman
+    \item The height of a randomly chosen woman
     has some PDF $f_{\mu_1}$ from the model $\{\mathcal{N}(\mu_1, 1) \mid \mu_1 \in \mathbb{R}\}$.
 \end{itemize}
 Our samples thus follow the PDF
-$f = (1 - p)f_0 + pf_1$.  This is a \textbf{mixture model},
+$f = (1 - p)f_{\mu_0} + pf_{\mu_1}$.  This is a \textbf{mixture model},
 with parameter $(\mu_0, \mu_1, p)$.  More generally\dots
 
 \begin{quote}
@@ -97,15 +101,15 @@ the \textbf{EM Algorithm}.
     then estimating $(p, \theta_0, \theta_1)$ is doable.
 
     \emph{Reasoning:} Of course, if we know all the $Z_i$, we can just estimate $p$ directly.
-    \[ p = \frac{1}{n} \sum_{i = 1}^n Z_i. \]
+    \[ \hat{p} = \frac{1}{n} \sum_{i = 1}^n Z_i. \]
     As for $(\theta_0, \theta_1)$,
     the rough idea is just to split the samples $\{Y_i\}_{i = 1}^n$
     into two halves based on their value of $Z_i$.
     Then just use one half to estimate $\theta_0$, and the other half to estimate $\theta_1$.
     Formally, this looks like:
-    \[ \theta_0 = \argmax_{\theta_0} \sum_{i = 1}^n (1 - Z_i) \log f_{\theta_0}(Y_i)
+    \[ \hat{\theta}_0 = \argmax_{\theta_0} \sum_{i = 1}^n (1 - Z_i) \log f_{\theta_0}(Y_i)
     ~~~ \text{ and } ~~~
-    \theta_1 = \argmax_{\theta_1} \sum_{i = 1}^n Z_i \log g_{\theta_1}(Y_i). \]
+    \hat{\theta}_1 = \argmax_{\theta_1} \sum_{i = 1}^n Z_i \log g_{\theta_1}(Y_i). \]
     And these are a lot easier to compute.
 \end{quote}
 
@@ -124,7 +128,7 @@ But maybe we can at least \emph{estimate} the $Z_i$\dots
     }. \]
     Here, $\hat{Z}_i$ is not a discrete value in $\{0, 1\}$,
     but rather a continuous value in $[0, 1]$.
-    Still, it's a good enough estimate where the reasoning in \textbf{Idea \#1} still holds.
+    Still, it's a good enough estimate that the reasoning in \textbf{Idea \#1} still holds.
 \end{quote}
 
 We have a problem though: \textbf{Idea \#1} relies on \textbf{Idea \#2},
@@ -175,7 +179,7 @@ and vice versa!  Here's the trick, though: we don't care.
 It turns out the following is true.
 
 \begin{theorem}{EM Algorithm Efficacy}
-    The EM algorithm increases the log likelihood at every iteration; that is,
+    The EM algorithm never decreases the log likelihood; that is,
     \[ \ell_n(\theta_0^{(t + 1)}, \theta_1^{(t + 1)}, p^{(t + 1)}) \geq
     \ell_n(\theta_0^{(t)}, \theta_1^{(t)}, p^{(t)}) ~ \text{ for all } t. \]
 \end{theorem}

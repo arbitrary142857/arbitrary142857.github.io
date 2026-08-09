@@ -3,7 +3,7 @@
 
 \begin{document}
 
-\textbf{Definition (Sublinear).} An algorithm is \textbf{sublinear} if it is solved in less than $O(n)$ time---less time than it takes to even read the whole input!  (Naturally, these are approximation algorithms.)
+\textbf{Definition (Sublinear).} An algorithm is \textbf{sublinear} if it runs in less than $O(n)$ time---less time than it takes to even read the whole input!  (Naturally, these are approximation algorithms.)
 
 \textbf{Definition (Classical Approximation).} In classical (e.g. optimization) problems, an approximation algorithm should return an answer within a factor of $\alpha$ of the correct one.
 
@@ -29,7 +29,7 @@
 \end{problem}
 
 \begin{remark}
-    Solving this problem exactly requires $O(nd)$ time.  To distinguish the graphs $K_{n/2} \sqcup K_{n/2}$ and $K_{n/2, n/2}$, one must check $\frac{n}{2} \times \frac{n}{2} = O(n^2)$ edges, which is in fact greater than $O(nd)$.
+    Solving this problem exactly requires $O(nd)$ time.  To distinguish the graphs $K_{n/2} \sqcup K_{n/2}$ and $K_{n/2, n/2}$, one must check $\frac{n}{2} \times \frac{n}{2} = \Theta(n^2)$ edges, which is indeed $\Theta(nd)$, as $d = \Theta(n)$ for these graphs.
 \end{remark}
 
 \begin{solution}{Connectivity}
@@ -55,7 +55,7 @@
 \begin{quote}
     \textbf{Process.} Pick a random vertex $v$.  Run BFS on $v$ until either $v$ is discovered to be in a connected component with less than $\frac{2}{\epsilon d}$ vertices, or $\frac{2}{\epsilon d}$ vertices have been visited.
 \end{quote}
-    If we ``catch'' a vertex $v$ as being part of a connected component with less than $\frac{2}{\epsilon d}$, we declare \textsc{No}.
+    If we ``catch'' a vertex $v$ as being part of a connected component with less than $\frac{2}{\epsilon d}$ vertices, we declare \textsc{No}.
     
     If $G$ is not $\epsilon$-close to connected, the probability we discover this is:
     \[ \mathrm{Pr}[\text{one of the vertices is ``caught''}] \geq 1 - \left( 1 - \dfrac{1}{2}\epsilon d \right)^{C/\epsilon d} > 1 - \dfrac{1}{e^{C/2}}. \]
@@ -69,7 +69,7 @@
 \begin{remark}
     The list $(1, 3, 5, \dots, 2n - 1, 2, 4, 6, \dots, 2n)$ is a useful counterexample.
 
-    The list $(2, 1, 4, 3, \dots, 2n, 2n - 1)$ is another useful counterexample.  (There's only $\frac{n}{2}$ inversions!)
+    The list $(2, 1, 4, 3, \dots, 2n, 2n - 1)$ is another useful counterexample.  (There's only $n$ inversions!)
 \end{remark}
 
 \begin{solution}{Sorted}
@@ -81,19 +81,20 @@
     \begin{quote}
         \textbf{Process.} Pick an index $i \in [n]$ uniformly at random.  Compute the value $V = x_i$.  Now binary search for $V$ as if the list were sorted and you didn't know where it was.
     \end{quote}
+    If any of these binary searches fails, we declare \textsc{No}.
     The runtime is $O\left (\frac{C}{\epsilon} \cdot \log n\right )$, which is sublinear.
 
     To argue correctness, say an index $i$ is \emph{good} if the binary search for $x_i$ succeeds.
     \begin{quote}
         \textbf{Claim.} If $i < j$ and $i$ and $j$ are both \emph{good}, then $x_i < x_j$.
 
-        \emph{Proof:} Consider the binary search trees for $x_i$ and $x_j$.
+        \emph{Proof:} Consider the binary search paths for $x_i$ and $x_j$.
         
         At some point they diverge; at that point, everything to the left (including $x_i$) better be smaller, and everything to the right (including $x_j$) better be bigger. ~ $\square$
     \end{quote}
-    The point is that if we remove all elements that are not good, then the remaining list is sorted.  Thus, if a list is not $\epsilon$-close to sorted, it must have at least $\epsilon n$ vertices.
+    The point is that if we remove all elements that are not good, then the remaining list is sorted.  Thus, if a list is not $\epsilon$-close to sorted, it must have at least $\epsilon n$ elements that are not \emph{good}.
     
-    So our probability of success is at least $1 - \left(1 - \frac{1}{\epsilon}\right)^{C/\epsilon} \geq 1 - e^{-C}$, yippee. ~ $\blacksquare$
+    So our probability of success is at least $1 - \left(1 - \epsilon\right)^{C/\epsilon} \geq 1 - e^{-C}$, yippee. ~ $\blacksquare$
 \end{solution}
 
 \end{document}

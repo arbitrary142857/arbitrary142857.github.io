@@ -14,10 +14,10 @@ Roughly speaking, the quality of our streaming algorithm has to do with:
     \item How long it takes to update $C(X \cup \{x\})$ given $C(X)$ and $\{x\}$.
 \end{itemize}
 \begin{remark}
-    An easy exercise: find a streaming algorithm for finding maximum element of a list, such that\dots
+    An easy exercise: find a streaming algorithm for finding the maximum element of a list, such that\dots
     \begin{itemize}
         \item The sketch $C(X)$ has size $O(1)$.
-        \item We can compute $f(x)$ exactly given $C(X)$.
+        \item We can compute $f(X)$ exactly given $C(X)$.
         \item Updating $C(X)$ takes $O(1)$ time.
     \end{itemize}
 \end{remark}
@@ -43,7 +43,7 @@ Perhaps expectedly, Flajolet-Martin sucks; let's analyze its quality using the $
     \begin{align*}
         \mathrm{Pr}\left [ \tilde{f}(X) \in ((1 - \epsilon) n, (1 + \epsilon)n) \right] = \left(1 - \dfrac{1}{(1 + \epsilon)n + 1}\right)^n - \left(1 - \dfrac{1}{(1 - \epsilon)n + 1}\right)^n \approx e^{-1/(1 + \epsilon)} - e^{-1/(1 - \epsilon)}.
     \end{align*}
-    Notably, $\delta \approx 1 - (e^{-1/(1 + \epsilon)} - e^{-1/(1 - \epsilon)})$ does not tend very small for large $n$---especially for small $\epsilon$. ~ $\blacksquare$
+    Notably, $\delta \approx 1 - (e^{-1/(1 + \epsilon)} - e^{-1/(1 - \epsilon)})$ does not tend to be very small for large $n$---especially for small $\epsilon$. ~ $\blacksquare$
 \end{proof}
 
 Here's a better algorithm than Flajolet-Martin.
@@ -75,28 +75,28 @@ Here's a better algorithm than Flajolet-Martin.
 \begin{proof}
     Say that $X$ has $d := f(X)$ distinct values.  Let's justify only the bound $\mathrm{Pr}\left [\tilde{f}(X) \geq (1 + \epsilon) d\right ] \leq \frac{1}{12}$.
 
-    If $|C(x)| < k$, then we are in the ``top case'' for $\tilde{f}(X)$, so this probability is obviously zero.
+    If $|C(X)| < k$, then we are in the ``top case'' for $\tilde{f}(X)$, so this probability is obviously zero.
 
-    Otherwise, $\tilde{f}(X) \geq (1 + \epsilon) d$ means that at least $k$ hash values are less than $L = k u^3 \cdot \left [ (1 + \epsilon) d \right ]^{-1}$.  Consider indicator variables $Y_i$ that measure whether the $i^{\text{th}}$ distinct element is hashed to a value at most $L$.  If $Y := \sum_{i = 1}^d Y_i$, then:
+    Otherwise, $\tilde{f}(X) \geq (1 + \epsilon) d$ means that at least $k$ hash values are at most $L = k u^3 \cdot \left [ (1 + \epsilon) d \right ]^{-1}$.  Consider indicator variables $Y_i$ that measure whether the $i^{\text{th}}$ distinct element is hashed to a value at most $L$.  If $Y := \sum_{i = 1}^d Y_i$, then:
     \[ \mathbb{E}[Y] = d \cdot \mathbb{E}[Y_i] = \dfrac{k}{1 + \epsilon} ~~~ \text{ and } ~~~ \mathbb{V}[Y] = d \cdot \mathbb{V}[Y_i] = d \cdot\left(\mathbb{E}[Y_i^2] - (\mathbb{E}[Y_i])^2\right) \leq d \cdot \mathbb{E}[Y_i^2] = \dfrac{k}{1 + \epsilon}. \]
     We're allowed to say $\mathbb{V}[Y] = \sum_{i = 1}^d \mathbb{V}[Y_i]$ because the $2$-wise independence means $\mathrm{cov}(Y_i, Y_j) = 0$ for $i \neq j$.
 
     Now Chebyshev's inequality gives us:
     \[ \mathrm{Pr}[Y \geq k] = \mathrm{Pr}\left [ Y - \dfrac{k}{1 + \epsilon} \geq \dfrac{\epsilon k}{1 + \epsilon} \right ] \leq \mathrm{Pr} \left [ |Y - \mathbb{E}[Y]| \geq \dfrac{\epsilon k}{1 + \epsilon} \right] \leq \dfrac{\mathbb{V}[Y]}{\left(\frac{\epsilon k}{1 + \epsilon}\right)^2}  \leq \dfrac{1 + \epsilon}{\epsilon^2k} \leq \dfrac{1}{12}. \]
-    The other direction is $\mathrm{Pr}\left [\tilde{f}(X) \leq (1 + \epsilon) d\right ] \leq \frac{1}{4}$ hence the $\delta = \frac{1}{3}$ constant.  It's not exactly symmetric. ~ $\blacksquare$
+    The other direction is $\mathrm{Pr}\left [\tilde{f}(X) \leq (1 - \epsilon) d\right ] \leq \frac{1}{4}$ hence the $\delta = \frac{1}{3}$ constant.  It's not exactly symmetric. ~ $\blacksquare$
 \end{proof}
 
-The space is $O(k \log u) = O\left(\frac{\log u}{\epsilon^2}\right)$, and so is the time; the $\log u$ comes from max-heap insertion operations.
+The space is $O(k \log u) = O\left(\frac{\log u}{\epsilon^2}\right)$, and the update time is $O(\log k)$; the $\log k$ comes from max-heap insertion operations.
 
 \begin{remark}
-    We used the term ``$2$-wise independent hashing'' earlier.  Here's the details of what that means:
+    We used the term ``$2$-wise independent hashing'' earlier.  Here are the details of what that means:
     \begin{quote}
         \textbf{Definition.} A hash family $\mathcal{H} = \{h_i: \mathcal{U} \to M\}$ is $t$-wise independent if, for all distinct keys $k_1, \dots, k_t \in \mathcal{U}$ and (not necessarily distinct!) values $i_1, \dots, i_t \in M$, we have:
         \[ \underset{h \sim \mathcal{H}}{\mathrm{Pr}} \left [ \bigwedge_{j = 1}^t h(k_j) = i_j \right ] = \dfrac{1}{|M|^t}. \]
-        For prime values of $m$, one possible $t$-wise independent hash family is:
+        For prime values of $m := |M|$, one possible $t$-wise independent hash family is:
         \[ \mathcal{H} := \left \{ h_{(a_0, \dots, a_{t - 1})}(k) := \left( \left(\sum_{i = 0}^{t - 1} a_i k^i\right) \% m \right) \right \}_{(a_0, \dots, a_{t - 1}) \in M^t}. \]
     \end{quote}
-    Note that $2$-wise hash families are guaranteed universal, and $s$-wise independence implies $t$-wise independence for $s > t$.
+    Note that $2$-wise independent hash families are guaranteed universal, and $s$-wise independence implies $t$-wise independence for $s > t$.
 \end{remark}
 
 \begin{problem}{Majority}
@@ -116,9 +116,9 @@ The space is $O(k \log u) = O\left(\frac{\log u}{\epsilon^2}\right)$, and so is 
 \begin{proof}
     Say $M$ is the majority element.  Consider some transition $(c, x) \to (c - 1, [x \text{ or } \textsc{Null}])$ upon reading in a new $x_i$.  Think of this instance of $x_i$ as ``eliminating'' an instance of $x$ earlier in the stream.
 
-    In this way, instances of $x$ form disjoint pairs with different values $x_i$ later in the stream.  And \emph{removing} any one of these pairs from the stream does not affect the final answer of the algorithm!1
+    In this way, instances of $x$ form disjoint pairs with different values $x_i$ later in the stream.  And \emph{removing} any one of these pairs from the stream does not affect the final answer of the algorithm!
 
-    But if we remove all such pairs, the result is an input stream of only $M$'s.  So $M$ must be the final answer. ~ $\blacksquare$
+    But if we remove all such pairs, the result is an input stream of only $M$'s---the leftovers are all copies of the final $x$, and $M$ is too frequent to be paired away entirely.  So $M$ must be the final answer. ~ $\blacksquare$
 
     % Say $M$ is the majority element, and that $M$ appears more than half the time.
     
@@ -136,7 +136,7 @@ The space is $O(k \log u) = O\left(\frac{\log u}{\epsilon^2}\right)$, and so is 
     \begin{itemize}
         \item If $x_i$ matches any of the $x$ values, increment its corresponding $c$.
         \item Otherwise, if some $x$ equals $\textsc{Null}$, replace that $\textsc{Null}$ with $x_i$ and set $c = 1$.
-        \item Otherwise, decrement all $c$.
+        \item Otherwise, decrement all $c$.  Set any $x$ whose $c$ becomes $0$ to \textsc{Null}.
     \end{itemize}
     Then every element that appears more than $\frac{1}{k}$ of the time will be one of the $x$ values.
 \end{solution}
@@ -147,10 +147,10 @@ The space is $O(k \log u) = O\left(\frac{\log u}{\epsilon^2}\right)$, and so is 
 
 \begin{proof}
     Similar argument as before.  Every transition of the form
-    \[ \{(c_1, x_1), (x_2, x_2), \dots, (c_k, x_k)\} \stackrel{x_i}{\longrightarrow} \{(c_1 - 1, x_1), (c_2 - 1, x_2), \dots, (c_k - 1, x_k)\} \]
-    can be viewed as an instance of $x_i$ ``eliminating'' an instance of each of $x_1, x_2, \dots, x_k$.
+    \[ \{(c_1, x_1), (c_2, x_2), \dots, (c_{k - 1}, x_{k - 1})\} \stackrel{x_i}{\longrightarrow} \{(c_1 - 1, x_1), (c_2 - 1, x_2), \dots, (c_{k - 1} - 1, x_{k - 1})\} \]
+    can be viewed as an instance of $x_i$ ``eliminating'' an instance of each of $x_1, x_2, \dots, x_{k - 1}$.
 
-    Removing any of these $(k + 1)$-tuples from the input stream does not affect the final result of the algorithm.  Remove $(k + 1)$-tuples until you cannot any longer; the resulting stream still has every $x$ that appears more than $\frac{1}{k}$ of the time. ~ $\blacksquare$
+    Removing any of these $k$-tuples from the input stream does not affect the final result of the algorithm.  Remove $k$-tuples until you cannot any longer; the resulting stream still has every $x$ that appears more than $\frac{1}{k}$ of the time. ~ $\blacksquare$
 \end{proof}
 
 \begin{problem}{Approximate Heavy Hitters}
@@ -163,14 +163,14 @@ The space is $O(k \log u) = O\left(\frac{\log u}{\epsilon^2}\right)$, and so is 
 \end{problem}
 
 \begin{solution}{Count-Min}
-    Take $d := \lceil \log_2 \delta^{-1} \rceil$ and $m := \lceil 2 \epsilon^{-1} \rceil$.  Furthermore, consider a $2$-wish independent hash family $\mathcal{H} := \{ h_i : \mathcal{U} \to [1, 2, \dots, m]\}$ and sample $d$ hash functions $\{h_1, h_2, \dots, h_d\}$ from $\mathcal{H}$.
+    Take $d := \lceil \log_2 \delta^{-1} \rceil$ and $m := \lceil 2 \epsilon^{-1} \rceil$.  Furthermore, consider a $2$-wise independent hash family $\mathcal{H} := \{ h_i : \mathcal{U} \to \{1, 2, \dots, m\}\}$ and sample $d$ hash functions $\{h_1, h_2, \dots, h_d\}$ from $\mathcal{H}$.
 
     Our sketch is a $d \times m$ two-dimensional array $C$, where $C[i][j]$ stores the \# of $x_k$ in the input stream with $h_i(x_k) = j$.  Then we estimate that the \emph{frequency} of $x_k$ is $\#(x_k) := \underset{1 \leq i \leq d}{\min} C[i][h_i(x_k)]$.
 
-    Based on these frequency estimates, we select the heavy hitters to be all $x_k$ with $\#(x_k) \geq \frac{n}{k}$.  (Finding these $x_k$ requires updating a min-heap that keeps track of high-frequency $x_k$ incrementally.)
+    Based on these frequency estimates, we select the heavy hitters to be all $x_k$ with $\#(x_k) \geq \frac{n}{k}$, where $n := |X|$.  (Finding these $x_k$ requires updating a min-heap that keeps track of high-frequency $x_k$ incrementally.)
 \end{solution}
 
-In other words, Count-Min has $d$ hash functions each use $m$ space to try to estimate the frequency of each $x_k$.  Hash collisions will cause hash functions to overestimate, so we use the minimum estimate across all $h_i$.
+In other words, Count-Min has $d$ hash functions, each using $m$ space, to try to estimate the frequency of each $x_k$.  Hash collisions will cause hash functions to overestimate, so we use the minimum estimate across all $h_i$.
 
 \begin{proof}
     There are two conditions that Approximate Heavy Hitters demands of us.  The former is obvious.
@@ -183,16 +183,16 @@ In other words, Count-Min has $d$ hash functions each use $m$ space to try to es
     \begin{quote}
         \textbf{Claim 2.} If an element appears at most $\frac{1}{k} - \epsilon$ of the time, Count-Min returns it with probability at most $\delta$.
 
-        \emph{Proof:} Count-Min returns such an $x_k$ if every single $h_i$ overestimates by at least $\epsilon n$.  Well,
+        \emph{Proof:} Count-Min returns such an $x_k$ only if every single $h_i$ overestimates by at least $\epsilon n$.  Well,
         \[ \underset{h_i \sim \mathcal{H}}{\mathbb{E}}[\text{how much } h_i \text{ overestimates } (\text{true \#})(x_k)] = \sum_{x_j \neq x_k} \underset{h_i \sim \mathcal{H}}{\mathrm{Pr}} \left [ h_i(x_j) = h_i(x_k) \right ] < \dfrac{n}{m}. \]
         (This step requires $\mathcal{H}$ to be universal.) Therefore, by Markov's inequality,
         \[ \underset{h_i \sim \mathcal{H}}{\mathrm{Pr}}[h_i \text{ overestimates (true \#)($x_k$) by more than } \epsilon n] \leq \dfrac{n / m}{\epsilon n} \leq \dfrac{1}{2}. \]
-        So the probability that every single $h_i$ overestimates by too much is at most $\left(\frac{1}{2}\right)^{d} = \delta$. ~ $\square$
+        So the probability that every single $h_i$ overestimates by too much is at most $\left(\frac{1}{2}\right)^{d} \leq \delta$. ~ $\square$
     \end{quote}
     And that's why we chose $d := \lceil \log_2 \delta^{-1} \rceil$ and $m := \lceil 2 \epsilon^{-1} \rceil$. ~ $\blacksquare$
 \end{proof}
 
-\textbf{Definition (Jacard Similarity).} Given sets $S$ and $T$, their \textbf{Jacard similarity} is $J(S, T) := \frac{|S \cap T|}{|S \cup T|}$.
+\textbf{Definition (Jaccard Similarity).} Given sets $S$ and $T$, their \textbf{Jaccard similarity} is $J(S, T) := \frac{|S \cap T|}{|S \cup T|}$.
 
 \begin{problem}{Similarity Search}
     Consider a collection of $n$ sets $A_1, \dots, A_n \subseteq \mathcal{U}$ and a target set $A \subseteq \mathcal{U}$, all of size at most $d$.  Given $1 > s > s' > 0$, output \textsc{Yes} if there is some $A_i$ such that $J(A_i, A) \geq s$, and \textsc{No} if $J(A_i, A) < s'$ for all $A_i$.
@@ -202,12 +202,12 @@ The solution to this problem is fairly complex and generalizable, so we only giv
 
 \begin{solution}{Approximate Similarity Search}
     Sample $tL$ random hash functions $h_{1, 1}, \dots, h_{L, t}: \mathcal{U} \to [0, 1]$, and define:
-    \[ \sigma_{\ell}(K) := \left( \underset{k \in K}{\min} \{ h_{\ell, 1}(k) \}, \ \underset{k \in K}{\min} \{ h_{\ell, 2}(k) \}, \ \dots, \ \underset{k \in K}{\min} \{ h_{\ell, t}(k) \} \} \right). \]
+    \[ \sigma_{\ell}(K) := \left( \underset{k \in K}{\min} \{ h_{\ell, 1}(k) \}, \ \underset{k \in K}{\min} \{ h_{\ell, 2}(k) \}, \ \dots, \ \underset{k \in K}{\min} \{ h_{\ell, t}(k) \} \right). \]
     Then output \textsc{Yes} if there is some set $A_j$ and some $1 \leq \ell \leq L$ such that $\sigma_{\ell}(A_j) = \sigma_{\ell}(A)$, and \textsc{No} otherwise.
     \begin{quote}
         \textbf{Claim.} If $J(A_j, A) = \lambda$, then $\mathrm{Pr}[\sigma_{\ell}(A_j) = \sigma_{\ell}(A) \text{ for some } \ell] \geq 1 - (1 - \lambda^t)^L$. 
     \end{quote}
-    Thus, we should tune the parameters $t$ and $L$ so that $1 - (1 - (s')^t)^L$ is small and $1 - (1 - s^t)^L$ is big.  (Bigger $t$ eliminate false positives, whereas bigger $L$ eliminate false negatives.)
+    Thus, we should tune the parameters $t$ and $L$ so that $1 - (1 - (s')^t)^L$ is small and $1 - (1 - s^t)^L$ is big.  (Bigger $t$ eliminates false positives, whereas bigger $L$ eliminates false negatives.)
 \end{solution}
 
 \end{document}

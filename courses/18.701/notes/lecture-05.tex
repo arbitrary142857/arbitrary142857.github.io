@@ -15,7 +15,7 @@ So far we've directed our attention to properties and structures relating to gro
 \end{enumerate}
 
 \begin{remark}
-    All fields $F$ contain $\mathbb{Z}$; that is, it makes sense to refer to ``$5$'' or ``$-67$'' as elements of $F$.  This is because $1$ is an element of $F$, so when we refer to ``$5$'' in $F$, we're just referring to ``$1 + 1 + 1 + 1 + 1$''.
+    All fields $F$ contain an image of $\mathbb{Z}$; that is, it makes sense to refer to ``$5$'' or ``$-67$'' as elements of $F$.  This is because $1$ is an element of $F$, so when we refer to ``$5$'' in $F$, we're just referring to ``$1 + 1 + 1 + 1 + 1$''.
 \end{remark}
 
 \textbf{Example.} All of $(\mathbb{R}, +, \cdot)$, $(\mathbb{C}, +, \cdot)$, and $(\mathbb{Q}, +, \cdot)$ are fields.  Meanwhile, $(\mathbb{Z}, +, \cdot)$ is not a field.
@@ -27,11 +27,11 @@ Most of the algebraic properties we expect from $(\mathbb{R}, +, \cdot)$ hold in
 \end{theorem}
 
 \begin{proof}
-    Since $0$ is the additive inverse, $y + 0 = y$.  Multiplying by $x$ on both sides yields $x \cdot y + x \cdot 0 = x \cdot y$.  Subtracting $x \cdot y$ from both sides yields $x \cdot 0 = 0$.
+    Since $0$ is the additive identity, $y + 0 = y$.  Multiplying by $x$ on both sides yields $x \cdot y + x \cdot 0 = x \cdot y$.  Subtracting $x \cdot y$ from both sides yields $x \cdot 0 = 0$.
 \end{proof}
 
 \begin{theorem}{Zero Product Property}
-    For any $x, y \in F$, if $xy = 0$, then either $x = 0$ or $y = 0$. ~ $\blacksquare$
+    For any $x, y \in F$, if $xy = 0$, then either $x = 0$ or $y = 0$.
 \end{theorem}
 
 \begin{proof}
@@ -49,18 +49,18 @@ Of particular note are \emph{finite} fields.  We can name some in the theorem be
 
     If $n = ab$ is composite, then $a$ does not have a multiplicative inverse, so $(\mathbb{Z}/n\mathbb{Z}, +, \cdot)$ is not a field.
 
-    If $n$ is prime, then we claim all $a \in \mathbb{Z}/n\mathbb{Z}$ have a multiplicative inverse.  Here are two proofs:
+    If $n$ is prime, then we claim all nonzero $a \in \mathbb{Z}/n\mathbb{Z}$ have a multiplicative inverse.  Here are two proofs:
 
-    \underline{Proof \#1:} Consider the subgroup $\langle a \rangle$ of $\mathbb{Z}/n\mathbb{Z}$.  By Lagrange's Theorem, the order of this subgroup divides $n$.  But $n$ is prime, so the order of this subgroup must either be $1$ or $n$.
+    \underline{Proof \#1:} Consider the additive subgroup $\langle a \rangle$ of $\mathbb{Z}/n\mathbb{Z}$.  By Lagrange's Theorem, the order of this subgroup divides $n$.  But $n$ is prime, so the order of this subgroup must either be $1$ or $n$.
     
-    In the former case, $\langle a \rangle = \{1\}$.  And in the latter case, $\langle a \rangle = \mathbb{Z}/n\mathbb{Z}$.  In either case, $\langle a \rangle$ contains $1$, meaning there is some integer $b \in \mathbb{Z}$ such that $ab = 1$, as desired. ~ $\square$
+    The former case would mean $\langle a \rangle = \{0\}$, i.e. $a = 0$, which we've excluded.  So we're in the latter case, where $\langle a \rangle = \mathbb{Z}/n\mathbb{Z}$.  Then $\langle a \rangle$ contains $1$, meaning there is some integer $b \in \mathbb{Z}$ such that $ab = 1$, as desired. ~ $\square$
 
-    \underline{Proof \#2:} Equivalently, it suffices show that for any $a \in \mathbb{Z}$ such that $\gcd(a, n) = 1$, there must exist $b, c \in \mathbb{Z}$ such that $ab + nc = 1$.  The key idea is to consider the group $a\mathbb{Z} + n\mathbb{Z}$.  It must be a subgroup of $\mathbb{Z}$, so it looks like $k\mathbb{Z}$ for some $k \in \mathbb{Z}$.  This $k$ must satisfy the property that $k \mid a$ and $k \mid n$.  But $\gcd(a, n) = 1$, so it must be that $k = 1$.
+    \underline{Proof \#2:} Equivalently, it suffices to show that for any $a \in \mathbb{Z}$ such that $\gcd(a, n) = 1$, there must exist $b, c \in \mathbb{Z}$ such that $ab + nc = 1$.  The key idea is to consider the group $a\mathbb{Z} + n\mathbb{Z}$.  It must be a subgroup of $\mathbb{Z}$, so it looks like $k\mathbb{Z}$ for some $k \in \mathbb{Z}$.  This $k$ must satisfy the property that $k \mid a$ and $k \mid n$.  But $\gcd(a, n) = 1$, so it must be that $k = 1$.
     
-    In other words, $a\mathbb{Z} + n\mathbb{Z} = \mathbb{Z}$.  So there exists some $b, c \in \mathbb{Z}$ such that $ab + nc = 1$, exactly as desired. ~ $\square$
+    In other words, $a\mathbb{Z} + n\mathbb{Z} = \mathbb{Z}$.  So there exist some $b, c \in \mathbb{Z}$ such that $ab + nc = 1$, exactly as desired. ~ $\square$
 \end{proof}
 
-Thus, the set $(\mathbb{Z}/n\mathbb{Z}, +, \cdot)$ is a field for primes $n$.  But be careful!  This does not hold when $n$ is a prime power, since (e.g.) $3 \in (\mathbb{Z}/9\mathbb{Z}, +, \cdot)$ has no multiplicative inverse.
+Thus, the set $(\mathbb{Z}/n\mathbb{Z}, +, \cdot)$ is a field for primes $n$.  But be careful!  This does not hold when $n$ is a higher power of a prime, since (e.g.) $3 \in (\mathbb{Z}/9\mathbb{Z}, +, \cdot)$ has no multiplicative inverse.
 
 \begin{remark}
     There still do exist finite fields with prime-power order, though.  They just look different.
@@ -70,7 +70,7 @@ Thus, the set $(\mathbb{Z}/n\mathbb{Z}, +, \cdot)$ is a field for primes $n$.  B
 
 \textbf{Definition (Vector Space).} Let $F$ be a field.  Call the elements of $F$ ``scalars''.  Then $V$ is a \textbf{vector space over $\mathbf{F}$} if:
 \begin{itemize}
-    \item It has two binary operations: vector addition $+: V \times V \to V$ and scalar multiplication $\cdot: F \times V \to V$.
+    \item It has two binary operations: abelian-group vector addition $+: V \times V \to V$ and scalar multiplication $\cdot: F \times V \to V$.
     \item The multiplicative identity $1 \in F$ satisfies $1v = v$ for all $v \in V$.
     \item For any $\lambda, \mu \in F$ and any $v \in V$, we have $(\lambda \mu) \cdot v = \lambda(\mu \cdot v)$. \emph{(Associative Law)}
     \item For any $\lambda, \mu \in F$ and any $u, v \in V$, we have $\lambda(u + v) = \lambda u + \lambda v$ and $(\lambda + \mu)v = \lambda v + \mu v$. \emph{(Distributive Law)}
@@ -87,12 +87,12 @@ Note, importantly, that there is no sense of vector multiplication.
 
 Recall that we can define matrices $M \in \mathbb{R}^{m \times n}$ as linear maps $M: \mathbb{R}^n \to \mathbb{R}^m$ between vector spaces $\mathbb{R}^m$ and $\mathbb{R}^n$ over $\mathbb{R}$.  Let's generalize this so that it applies to general fields $F$ beyond just $\mathbb{R}$.
 
-\textbf{Definition (Matrices).} Consider vector spaces $F^m$ and $F^n$ over a field $F$.  Then a matrix $M \in F^{m \times n}$ is both (i) an rectangular array consisting of elements of $F$, and (ii) a linear map between vectors in $F^n$ to vectors in $F^m$.
-\[ M = \begin{bmatrix} M_{11} & M_{12} & \cdots & M_{1n} \\ M_{21} & M_{22} & \cdots & M_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ M_{m1} & M_{m2} & \cdots & M_{mn} \end{bmatrix} ~ \implies ~ M\begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_n \end{bmatrix} = \begin{bmatrix} M_{11}v_1 + M_{12}v_2 + \cdots + M_{1n}v_n \\ M_{21} v_1 + M_{22} v_2 + \cdots + M_{2n} v_n \\ \vdots \\ A_{m1} v_1 + A_{m2}v_2 + \cdots + A_{mn} v_n \end{bmatrix} \]
+\textbf{Definition (Matrices).} Consider vector spaces $F^m$ and $F^n$ over a field $F$.  Then a matrix $M \in F^{m \times n}$ is both (i) a rectangular array consisting of elements of $F$, and (ii) a linear map from vectors in $F^n$ to vectors in $F^m$.
+\[ M = \begin{bmatrix} M_{11} & M_{12} & \cdots & M_{1n} \\ M_{21} & M_{22} & \cdots & M_{2n} \\ \vdots & \vdots & \ddots & \vdots \\ M_{m1} & M_{m2} & \cdots & M_{mn} \end{bmatrix} ~ \implies ~ M\begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_n \end{bmatrix} = \begin{bmatrix} M_{11}v_1 + M_{12}v_2 + \cdots + M_{1n}v_n \\ M_{21} v_1 + M_{22} v_2 + \cdots + M_{2n} v_n \\ \vdots \\ M_{m1} v_1 + M_{m2}v_2 + \cdots + M_{mn} v_n \end{bmatrix} \]
 In other words, we just extend the notational definitions from matrices in $\mathbb{R}^{m \times n}$ verbatim to matrices in $F^{m \times n}$.  Furthermore, all the row-reduction properties of matrices in $\mathbb{R}^{m \times n}$ work for matrices in $F^{m \times n}$, too.
 
 \begin{remark}
-    It does not make sense to describe linear maps between \emph{arbitrary} vector spaces $M: V \to W$ using a matrix.  Matrices only makes sense if the vector spaces $V$ and $W$ are both of the form $F^m$ and $F^n$.
+    It does not make sense to describe linear maps between \emph{arbitrary} vector spaces $M: V \to W$ using a matrix.  Matrices only make sense if the vector spaces $V$ and $W$ are both of the form $F^m$ and $F^n$.
 \end{remark}
 
 \textbf{Definition (Span).} Let $V$ be a vector space over $F$.  Then for any set of vectors $\{v_1, \dots, v_n\} \subseteq V$, their \textbf{span} is:
@@ -108,7 +108,7 @@ Infinite sums in general vector spaces are nonsensical because there is no inher
 \textbf{Definition (Spanning).} We say that a set $S \subseteq V$ of vectors \textbf{spans} $V$ if $\mathrm{span}(S) = V$.
 
 \textbf{Definition (Linear Independence).} A set $S \subseteq V$ of vectors is \textbf{linearly independent} if any finite linear combination of vectors in $S$ equals zero if and only if all coefficients are zero.  In other words,
-\[ \text{For all } v_1, \dots, v_n \in S, \text{ we have } \left ( \sum_{i = 1}^n \lambda_i v_i = 0 \right) \iff \left( \lambda_i = 0 \text{ for all } i \right)  \]
+\[ \text{For all distinct } v_1, \dots, v_n \in S, \text{ we have } \left ( \sum_{i = 1}^n \lambda_i v_i = 0 \right) \iff \left( \lambda_i = 0 \text{ for all } i \right)  \]
 
 Here's an equivalent definition of linear independence.
 
@@ -120,7 +120,9 @@ Here's an equivalent definition of linear independence.
     Argue by contradiction: suppose some $v \in \mathrm{span}(S)$ has two distinct linear combinations of $S = \{v_1, \dots, v_n\}$.
     \[ \begin{cases} v = \lambda_1v_1 + \dots + \lambda_n v_n \\
     v = \mu_1 v_1 + \dots + \mu_n v_n \end{cases}. \]
-    Subtracting these two linear combinations yields $0 = (\lambda_1 - \mu_1)v_1 + \dots + (\lambda_n - \mu_n)v_n$, which is a nontrivial linear combination of $S$ equal to zero.  So $S$ is not linearly independent, contradiction. ~ $\blacksquare$
+    Subtracting these two linear combinations yields $0 = (\lambda_1 - \mu_1)v_1 + \dots + (\lambda_n - \mu_n)v_n$, which is a nontrivial linear combination of $S$ equal to zero.  So $S$ is not linearly independent, contradiction.
+    
+    Conversely, if $S$ is not linearly independent, then some nontrivial linear combination of $S$ equals zero, giving $0$ a second expression alongside the all-zero one. ~ $\blacksquare$
 \end{proof}
 
 \subsection{Basis and Dimension}
@@ -137,7 +139,7 @@ Now that we've defined span and linear independence, we can talk about bases.
     \item There are many bases of the vector space $\mathbb{R}$ over $\mathbb{Q}$, but they're impossible to describe explicitly.
 \end{itemize}
 
-We want to be use the size of a basis of $V$ to talk about the dimension of $V$.  Here's a first step.
+We want to use the size of a basis of $V$ to talk about the dimension of $V$.  Here's a first step.
 
 \textbf{Definition (Finite Dimension).} A vector space $V$ is said to be \textbf{finite-dimensional} if and only if it has a finite spanning set (and therefore a finite basis).
 
@@ -149,7 +151,7 @@ We want to be use the size of a basis of $V$ to talk about the dimension of $V$.
     Since $V$ is finite-dimensional, there exists a finite set $S = \{v_1, \dots, v_n\} \subseteq V$ of vectors that spans $V$.  If $S$ is also linearly independent, then we're done: $S$ is our basis.  If $S$ is not linearly independent, that means:
     \[ \lambda_1 v_1 + \dots + \lambda_n v_n = 0 \text{ for some } \{\lambda_i\} \in F \text{ not all zero.} \]
     Pick some index $i$ such that the coefficient $\lambda_i$ is nonzero.  We claim that for this $i$, we can just remove $v_i$ from $S$ and still be left with a spanning set $S' := S \setminus \{v_i\}$.  The reason why is the following:
-    \[ \lambda_1 v_1 + \dots + \lambda_n v_n = 0 ~ \implies ~ v_i = \left(-\dfrac{\lambda_1}{\lambda_i}\right)v_1 + \cdots + \left(-\dfrac{\lambda_{i - 1}}{\lambda_i}\right)v_{i - 1} + \left(-\dfrac{\lambda_{i + 1}}{\lambda_i}\right)v_{i + 1} + \cdots \left(-\dfrac{\lambda_n}{\lambda_i}\right)v_n. \]
+    \[ \lambda_1 v_1 + \dots + \lambda_n v_n = 0 ~ \implies ~ v_i = \left(-\dfrac{\lambda_1}{\lambda_i}\right)v_1 + \cdots + \left(-\dfrac{\lambda_{i - 1}}{\lambda_i}\right)v_{i - 1} + \left(-\dfrac{\lambda_{i + 1}}{\lambda_i}\right)v_{i + 1} + \cdots + \left(-\dfrac{\lambda_n}{\lambda_i}\right)v_n. \]
     In other words, because $\lambda_i$ is nonzero, $v_i$ must already be in the span of $S'$, meaning $\mathrm{span}(S') = \mathrm{span}(S)$.
     
     So as long as $S$ is not linearly independent, we can keep removing vectors from $S$ while preserving the property that $S$ spans $V$.  Since $S$ is finite, this process of removing vectors from $S$ must end eventually, at which point $S$ must be linearly independent and thus a basis of $V$. ~ $\blacksquare$
@@ -171,13 +173,13 @@ However, we need to check that this definition is self-consistent.  Must any two
 
 \begin{proof}
     Argue by contradiction: suppose $r < s$.  Because $S_1$ spans $V$, we may express every single $w_j \in S_2$ as a linear combination of elements in $S_1$.  Suppose these linear combinations look like this:
-    \[ \text{For all } i \in \{1, \dots, s\}, ~ \text{ we have } \sum_{j = 1}^r A_{ij} v_j = w_i. \]
+    \[ \text{For all } j \in \{1, \dots, s\}, ~ \text{ we have } \sum_{i = 1}^r A_{ij} v_i = w_j. \]
     Note that, as portrayed above, the $\{A_{ij}\}$ are nothing more than plain coefficients of linear combinations.  But suppose we interpreted the $\{A_{ij}\}$ as entries of an $r \times s$ matrix $A$, anyway.
     
-    Then if we perform row-reduction on $A$, the resulting matrix must have a column of zeroes.  This means that the there is some nonzero $x = \{x_1, \dots, x_s\}\in F^s$ such that $Ax = 0$.
+    Then if we perform row-reduction on $A$, the resulting matrix must have a column without a pivot, since $r < s$.  This means that there is some nonzero $x = \{x_1, \dots, x_s\}\in F^s$ such that $Ax = 0$.
 
     The finish is to violate the linear independence of $S_2$ by using $\{x_i\}$ as coefficients of a linear combination of $S_2$.
-    \[ \sum_{j = 1}^s x_j w_j = \sum_{j = 1}^s x_j \left(\sum_{i = 1}^r A_{ij}v_i\right) = \sum_{i = 1}^r \left(\sum_{j = 1}^s A_{ij} x_j \right) v_i = \sum_{j = 1}^s (0)v_i = 0.  \]
+    \[ \sum_{j = 1}^s x_j w_j = \sum_{j = 1}^s x_j \left(\sum_{i = 1}^r A_{ij}v_i\right) = \sum_{i = 1}^r \left(\sum_{j = 1}^s A_{ij} x_j \right) v_i = \sum_{i = 1}^r (0)v_i = 0.  \]
     This contradicts the linear independence of $S_2$, as desired. ~ $\blacksquare$
 \end{proof}
 

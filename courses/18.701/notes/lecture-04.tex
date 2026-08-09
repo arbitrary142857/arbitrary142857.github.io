@@ -42,13 +42,12 @@ We'll start by giving a proof of the Correspondence Theorem.
     \begin{quote}
         \textbf{Step 3.} For any $H' \in B$, we have $f(f^{-1}(H')) = H'$.
 
-        \emph{Proof:} Again, $f(f^{-1}(H')) \subseteq H'$ is clear, independent of the context of $f$ and $H$.  So it remains to show $H' \subseteq f(f^{-1}(H'))$.  The key tool for this step is the assumption that $f$ is surjective.
+        \emph{Proof:} Again, $f(f^{-1}(H')) \subseteq H'$ is clear, independent of the context of $f$ and $H'$.  So it remains to show $H' \subseteq f(f^{-1}(H'))$.  The key tool for this step is the assumption that $f$ is surjective.
         \begin{itemize}
             \item Equivalently, it remains to show that if $h' \in H'$, then $h' \in f(f^{-1}(H'))$.
             \item Because $f$ is surjective, there exists some $h \in G$ such that $f(h) = h'$.
-            \item Well, then for this $h$, we have $h \in f^{-1}(H')$.  So $f(h) $
+            \item Well, then for this $h$, we have $h \in f^{-1}(H')$.  So $f(h) = h' \in f(f^{-1}(H'))$, as desired. ~ $\square$
         \end{itemize}
-        Note that this step works completely independent of the context of $f$ and $H$. ~ $\square$
     \end{quote}
 \end{proof}
 
@@ -59,7 +58,7 @@ Some ``reading comprehension'' questions:
 \end{problem}
 
 \begin{solution}
-    Consider a subgroup $H\subseteq G$ that does not contain $K$.  Then the subgroup $H' = f(H)$ of $G'$ contains the identity of $G'$, but $H$ does not contain the identity of $G$.  So $f^{-1}(f(H)) = f^{-1}(H') \neq H$, which is bad. ~ $\square$
+    Consider a subgroup $H\subseteq G$ that does not contain $K$.  Then the subgroup $H' = f(H)$ of $G'$ contains the identity of $G'$, so $f^{-1}(H')$ contains $K$, but $H$ does not.  So $f^{-1}(f(H)) = f^{-1}(H') \neq H$, which is bad. ~ $\square$
 \end{solution}
 
 \begin{problem}{Surjectivity}
@@ -75,7 +74,7 @@ Some ``reading comprehension'' questions:
 Recall that $H$ is a normal subgroup of $G$ (denoted $H \unlhd G$) if and only if $gHg^{-1} = H$ for all $g \in G$.
 
 \begin{remark}
-    Equivalently, $H \unlhd G$ if and only if $gHg^{-1} \subseteq H$ (i.e. we only need to check one direction of inclusion).  The reason is that subgroup conjugation is a bijection; $gHg^{-1}$ and $H$ always have the same size.
+    Equivalently, $H \unlhd G$ if and only if $gHg^{-1} \subseteq H$ for all $g \in G$ (i.e. we only need to check one direction of inclusion).  The reason is that subgroup conjugation is a bijection; $gHg^{-1}$ and $H$ always have the same size.
 \end{remark}
 
 Also recall that every kernel $K$ of a homomorphism $f: G \to G'$ is a normal subgroup.  But does the other direction hold?  Must every normal subgroup $K \unlhd G$ be the kernel of some homomorphism $f: G \to G'$?
@@ -93,7 +92,7 @@ Also recall that every kernel $K$ of a homomorphism $f: G \to G'$ is a normal su
         \[ (g_1K)(g_2K) = g_1(Kg_2)K = g_1(g_2K)K = (g_1g_2)K, \]
         which itself is a coset, as desired! ~ $\square$
     \end{quote}
-    Thus, we may take $G'$ to be the group of all cosets of $H$ under the operation of coset multiplication!  Then the homomorphism $f: G \to G'$ defined by $f(g) = gK$ is exactly what we need.  ~ $\blacksquare$
+    Thus, we may take $G'$ to be the group of all cosets of $K$ under the operation of coset multiplication!  Then the homomorphism $f: G \to G'$ defined by $f(g) = gK$ is exactly what we need.  ~ $\blacksquare$
 \end{proof}
 
 The group of cosets $G'$ in the proof above has a special name.
@@ -116,7 +115,7 @@ The group of cosets $G'$ in the proof above has a special name.
     The claim that ``cosets of $K$ are closed under multiplication'' is false if $K$ is not a normal subgroup.  Take $G = S_3$ and $H = \{e, (1 \ 2)\}$ for a counterexample.
 \end{remark}
 
-\textbf{Example.} The group $G = GL_n(\mathbb{R})$ and $K \unlhd G$ to be $K = SL_n(\mathbb{R})$.  Then the quotient group $G/K = GL_n(\mathbb{R})/SL_n(\mathbb{R})$ is isomorphic to $(\mathbb{R}^{\times}, \times)$.
+\textbf{Example.} Take the group $G = GL_n(\mathbb{R})$ and $K \unlhd G$ to be $K = SL_n(\mathbb{R})$.  Then the quotient group $G/K = GL_n(\mathbb{R})/SL_n(\mathbb{R})$ is isomorphic to $(\mathbb{R}^{\times}, \times)$.
 
 \subsection{The Isomorphism Theorems}
 
@@ -125,7 +124,7 @@ There are many isomorphism theorems, whose names are largely inconsistent across
 \begin{theorem}{First Isomorphism Theorem}
     Let $f: G \to G'$ be a surjective homomorphism, and take $K = \ker(f)$.  Then $G/K$ is isomorphic to $G'$ under some isomorphism $\bar{f}: G/K \to G'$.
     
-    More strongly, if we denote $\pi: G \to G/K$, then there is \emph{unique} choice of $\bar{f}$ for which $f = \bar{f} \circ \pi$.
+    More strongly, if we denote $\pi: G \to G/K$, then there is a \emph{unique} choice of $\bar{f}$ for which $f = \bar{f} \circ \pi$.
 \end{theorem}
 
 \begin{proof}
@@ -135,9 +134,9 @@ There are many isomorphism theorems, whose names are largely inconsistent across
     \begin{quote}
         \textbf{Check \#1.} Is $\bar{f}$ well defined?
 
-        \emph{Proof:} Yes!  Suppose $g_1K$ and $g_2K$ refer to the same coset in $G/K$; then it suffices to show show $f(g_1K) = f(g_2K)$.  Note that there exist $k_1, k_2 \in K$ such that $g_1k_1 = g_2k_2$, so we may write:
-        \[ f(g_1K) = f(g_1) = f(g_2k_1k_2^{-1}) = f(g_2) = f(g_2K), \]
-        as desired.  (The key simplifying step $f(g_2k_1k_2^{-1}) = f(g_2)$ follows from $K = \ker(f)$.) ~ $\square$
+        \emph{Proof:} Yes!  Suppose $g_1K$ and $g_2K$ refer to the same coset in $G/K$; then it suffices to show $\bar{f}(g_1K) = \bar{f}(g_2K)$.  Note that there exist $k_1, k_2 \in K$ such that $g_1k_1 = g_2k_2$, so we may write:
+        \[ \bar{f}(g_1K) = f(g_1) = f(g_2k_2k_1^{-1}) = f(g_2) = \bar{f}(g_2K), \]
+        as desired.  (The key simplifying step $f(g_2k_2k_1^{-1}) = f(g_2)$ follows from $K = \ker(f)$.) ~ $\square$
 
         \textbf{Check \#2.} Is $\bar{f}$ an isomorphism?
 
@@ -153,8 +152,8 @@ There are many isomorphism theorems, whose names are largely inconsistent across
 
 Now given any homomorphism $f: G \to G'$, we may factor it as follows:
 \begin{itemize}
-    \item Note that $f$ may not be surjective, so consider the inclusion map $\mathrm{i}: \im(G) \to G'$.
-    \item The map $f: G \to \im(f)$ is a surjective map, so we can apply the First Isomorphism Theorem on it!  If $K = \ker(f)$, then this gives us the maps $\pi: f \to G/K$ and $\bar{f}: G/K \to \im(f)$.
+    \item Note that $f$ may not be surjective, so consider the inclusion map $\mathrm{i}: \im(f) \to G'$.
+    \item The map $f: G \to \im(f)$ is a surjective map, so we can apply the First Isomorphism Theorem on it!  If $K = \ker(f)$, then this gives us the maps $\pi: G \to G/K$ and $\bar{f}: G/K \to \im(f)$.
     \item Therefore, the map $f: G \to G'$ can be factored as $f = \mathrm{i} \circ \bar{f} \circ \pi$.
 \end{itemize}
 See the ``category theory'' diagram below for a visualization of this factorization.
@@ -168,8 +167,8 @@ See the ``category theory'' diagram below for a visualization of this factorizat
 
 What does $[ \pi \sigma \pi^{-1} ]$ look like?  Well, it sends $\pi(a_i)$ to:
 \[ [ \pi \sigma \pi^{-1} ] \pi(a_i) = [ \pi \sigma ] (a_i) = \pi(a_{i + 1}) \]
-Therefore, the permutation $\pi \sigma \pi^{-1}$ can be written in cycle notation as $\pi \sigma \pi^{-1} = (\pi(a_1) \ \pi(a_2) \ \cdots \ \pi(a_n))$.  In other words, conjugating a permutation is equivalent to ``relabeling'' its entries.
+Therefore, the permutation $\pi \sigma \pi^{-1}$ can be written in cycle notation as $\pi \sigma \pi^{-1} = (\pi(a_1) \ \pi(a_2) \ \cdots \ \pi(a_k))$.  In other words, conjugating a permutation is equivalent to ``relabeling'' its entries.
 
-In general, this means $H = \langle ( 1 \ 2 \ \cdots \ n ) \rangle \cong C_n \subseteq S_n$ cannot be a normal subgroup of $S_n$ for $n > 3$.  This is because $\pi H \pi^{-1}$ can equal \emph{any} $n$-cycle of $S_n$, so $H$ does not remain invariant under conjugation.
+In general, this means $H = \langle ( 1 \ 2 \ \cdots \ n ) \rangle \cong C_n \subseteq S_n$ cannot be a normal subgroup of $S_n$ for $n > 3$.  This is because $\pi H \pi^{-1}$ can be generated by \emph{any} $n$-cycle of $S_n$, so $H$ does not remain invariant under conjugation.
 
 \end{document}

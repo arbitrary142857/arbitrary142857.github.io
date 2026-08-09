@@ -7,7 +7,7 @@
     Among all $52!$ permutations of a deck of cards, pick one at random.
 \end{problem}
 
-The challenge is that we cannot just define a map $f: [1, 2, \dots, 52!] \to \{\text{permutations}\}$, because $52!$ is huge.
+The challenge is that we cannot just define a map $f: \{1, 2, \dots, 52!\} \to \{\text{permutations}\}$, because $52!$ is huge.
 
 \begin{center}
     \textbf{Meta-Algorithm.} To efficiently sample from a very large probability distribution $\pi$, \\ just define a Markov chain that converges to $\pi$ as $t \to \infty$.
@@ -30,7 +30,8 @@ To clarify the rules a little:
 \begin{solution}{Independent Set}
     Start with an independent set $I$.  Repeat the following process.
     \begin{quote}
-        \textbf{Process.} If $v \in I$, then remove $v$ with probability $\frac{1}{2}$. \\
+        \textbf{Process.} Pick a vertex $v \in V$ uniformly at random. \\
+        If $v \in I$, then remove $v$ with probability $\frac{1}{2}$. \\
         If $v \not \in I$ and $v$ can be added to $I$, then add $v$ with probability $\frac{1}{2}$.
     \end{quote}
     We claim that $\pi$ is the unique stationary distribution of $W$, and that $\pi_0W^T \to \pi$ as $T \to \infty$.
@@ -38,11 +39,11 @@ To clarify the rules a little:
 
 \begin{proof}
 The desired (uniform) distribution $\pi$ is stationary with respect to $W$.  This is because $W$ is symmetric:
-\[ \text{For all } (I, I'), \text{ we have } W(I \to I') = \frac{1}{2 |V|} \text{ or } W(I \to I') = 0. \]
+\[ \text{For all } I \neq I', \text{ we have } W(I \to I') = \frac{1}{2 |V|} \text{ or } W(I \to I') = 0. \]
 It thus remains to check convergence and uniqueness.
 \begin{itemize}
     \item Uniqueness: The Markov chain has a unique recurrent component; that's because it's strongly connected.
-    \item Convergence: The Markov chain is aperiodic because there are some cycles $v \to v$ of length $1$. 
+    \item Convergence: The Markov chain is aperiodic because there are some cycles $I \to I$ of length $1$.
 \end{itemize}
 Therefore, $\pi$ must be the stationary distribution of $W$. ~ $\blacksquare$
 \end{proof}
@@ -57,7 +58,7 @@ We'd like to generalize the approach from above.  More specifically,
 \end{quote}
 The tricky part is guaranteeing that the $\pi$ we want truly is stationary with respect to $W$.  Here's how.
 
-\textbf{Definition (Metropolis-Hastings Algorithm.)} Say our target distribution is $\pi$, and let $Q$ be \emph{any} Markov chain.  We don't know $\pi$, but we do know $F$, so we may create a new Markov chain like so:
+\textbf{Definition (Metropolis-Hastings Algorithm).} Say our target distribution is $\pi$, and let $Q$ be \emph{any} Markov chain.  We don't know $\pi$, but we do know $F$, so we may create a new Markov chain like so:
 \[ W(x \to y) := Q(x \to y) \cdot \underbrace{\min \left \{ 1, \ \dfrac{F(y)}{F(x)} \cdot \dfrac{Q(y \to x)}{Q(x \to y)} \right \}}_{\text{acceptance factor}} ~~~ \text{ and } ~~~ W(x \to x) = 1 - \sum_{y \neq x} W(x \to y). \]
 \begin{remark}
     When the target distribution $\pi$ is \emph{uniform}, Metropolis-Hastings returns the Markov chain
@@ -71,7 +72,7 @@ This new Markov chain is equivalent to the following:
     \item Starting at state $x$, sample a transition $x \to y$ according to $Q$.
     \item Actually move to $y$ with probability $p_{\text{accept}}$.  Otherwise, stay at $x$.
 \end{itemize}
-The acceptance factor, in a sense, adjusts our generic Markov chain $Q$ to account for the distribution $F$ desired.
+The acceptance factor, in a sense, adjusts our generic Markov chain $Q$ to account for the weights $F$ desired.
 \end{remark}
 
 To see the motivation and validity for this selection of $W$, we introduce the notion of \textbf{reversible} Markov chains.
@@ -111,6 +112,7 @@ The choice to pick the stationary distribution $\pi$ for our $X_t$ was not arbit
 
     Suppose, WLOG, that the $x \to y$ acceptance factor $\frac{F(y)}{F(x)} \cdot \frac{Q(y \to x)}{Q(x \to y)}$ is less than $1$.  Then detailed balance says:
     \[ \pi(x) W(x \to y) = \pi(x) \cdot \left(Q(x \to y) \cdot \dfrac{F(y)}{F(x)} \cdot \dfrac{Q(y \to x)}{Q(x \to y)}\right) = \left(\pi(x) \cdot \dfrac{F(y)}{F(x)}\right) \cdot Q(y \to x) = \pi(y) \cdot Q(y \to x). \]
+    Meanwhile, the $y \to x$ acceptance factor is $1$, since its ratio is the reciprocal of the one above.  So $\pi(y) W(y \to x) = \pi(y) \cdot Q(y \to x)$ as well.
     So indeed, detailed balance is satisfied, and we win. ~ $\blacksquare$
 \end{proof}
 
@@ -121,7 +123,7 @@ Of course, Metropolis-Hastings doesn't do \emph{all} the work---we still need to
 \end{remark}
 
 \begin{problem}{Graph Colorings}
-    Given a graph $G$, sample a coloring of its vertices with $q > \max\{\deg v\} + 1$ colors, uniformly at random across all colorings.
+    Given a graph $G$, sample a valid coloring of its vertices with $q > \max\{\deg v\} + 1$ colors, uniformly at random across all valid colorings.
 \end{problem}
 
 \begin{solution}{Graph Colorings}
@@ -134,7 +136,7 @@ Of course, Metropolis-Hastings doesn't do \emph{all} the work---we still need to
 
 \begin{proof}
     To show that $\pi$ is a stationary distribution, just note that $\pi$ is uniform and $W$ is symmetric:
-    \[ W(\chi, \chi') = W(\chi', \chi) = \begin{cases} 0 & \text{if $\chi$ and $\chi'$ more than one vertex apart} \\ \dfrac{1}{nq} & \text{if $\chi$ and $\chi'$ are exactly one vertex apart} \end{cases} \]
+    \[ W(\chi, \chi') = W(\chi', \chi) = \begin{cases} 0 & \text{if $\chi$ and $\chi'$ are more than one vertex apart} \\ \dfrac{1}{|V| q} & \text{if $\chi$ and $\chi'$ are exactly one vertex apart} \end{cases} \]
     It remains to show uniqueness.  The main difficulty is connectivity.
     \begin{quote}
         \textbf{Claim.} For any pair of $q$-colorings $(\chi, \chi')$, there is a sequence of Markov chain transitions $\chi \to \chi'$.
@@ -147,11 +149,11 @@ Of course, Metropolis-Hastings doesn't do \emph{all} the work---we still need to
 
         So if $\chi'(v) = \chi(u)$ for some neighbor $u \sim v$, just recolor $u$, reducing to the easy case. ~ $\square$
     \end{quote}
-    So connectivity holds.  Aperiodicity does, too, as there are edges $v \to v$.  I'm convinced. ~ $\blacksquare$
+    So connectivity holds.  Aperiodicity does, too, as there are edges $\chi \to \chi$.  I'm convinced. ~ $\blacksquare$
 \end{proof}
 
 \begin{remark}
-    This fails when $q = \max \{ \deg v \} + 1$ because the graph is disconnected.  (Take $G = K_4$ and $q = 4$.)
+    This fails when $q = \max \{ \deg v \} + 1$ because the Markov chain is disconnected.  (Take $G = K_4$ and $q = 4$.)
 \end{remark}
 
 \end{document}

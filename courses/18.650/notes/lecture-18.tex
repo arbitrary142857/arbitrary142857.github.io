@@ -18,7 +18,7 @@ are i.i.d. samples from $\mathcal{N}(0, 1)$.
 
 Note that $\mathbb{E}[X] = k$ and $\mathbb{V}[X] = 2k$ if $X \sim \chi_k^2$.
 
-\textbf{Definition.} The $\alpha^{\text{th}}$ quantile of the $\chi_k^2$ distribution
+\textbf{Definition.} The upper $\alpha$ quantile of the $\chi_k^2$ distribution
 is denoted $\chi^2_{k, \alpha}$, where $\mathbb{P}(X > \chi^2_{k, \alpha}) = \alpha$
 given $X \sim \chi_k^2$.
 
@@ -42,7 +42,8 @@ determines whether $H_0 : f = f_0$ or $H_1: f \neq f_0$.
     where $E_j$ is the ``expected'' count $E_j := n f_0(j)$ assuming $H_0$.
     \end{itemize}
     Then our test statistic is $T_n := \sum_{j = 1}^k \frac{(O_j - E_j)^2}{E_j}$,
-    we claim that $T_n \rightsquigarrow \chi_{k - 1}^2$ as $n \to \infty$,
+    we claim that under $H_0$, we have
+    $T_n \rightsquigarrow \chi_{k - 1}^2$ as $n \to \infty$,
     and our test is $\Psi := \mathds{1}(T_n > \chi_{k - 1, \alpha}^2)$.
 \end{theorem}
 
@@ -63,7 +64,7 @@ Recall that the Wald test for population means relies on the following two appro
     by the LLN, CLT, and Slutsky's.
     (See \href{1-3.html#applying-slutsky-s-theorem}{Lectures 1-3 notes}.)
 \end{enumerate}
-Suppose that our population distribution is approximately normal:
+Suppose that our population distribution is normal:
 $X \sim \mathcal{N}(\mu, \sigma^2)$.
 Then approximation \#1 holds---it's not even an approximation!
 But for small $n$, approximation \#2, which says

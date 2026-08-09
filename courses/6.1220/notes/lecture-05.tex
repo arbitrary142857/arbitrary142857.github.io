@@ -26,7 +26,7 @@ Given $n \times n$ matrices $A, B, C \in \mathbb{F}_2^{n \times n}$, verify whet
 \end{problem}
 
 \begin{solution}{Randomized Solution \#1}
-    Pick a random $v \in \mathbb{F}_2^n$.  Check whether $Cv = A(Bv)$ in $\Theta(n^2)$ time.
+    Pick a random nonzero $v \in \mathbb{F}_2^n$.  Check whether $Cv = A(Bv)$ in $\Theta(n^2)$ time.
 \end{solution}
 
 This is a guaranteed success if $\det(C - AB) \neq 0$, and performs worse the lower the nonzero rank of $C - AB$ is.  Notably, if $C \neq AB$, the algorithm succeeds with probability at least $\frac{1}{2}$.
@@ -45,13 +45,13 @@ Recall the following solution outline, altered slightly to integrate randomness:
     Pick a \emph{random} pivot $x \in A$, with $L(x) := \{ y \in A \mid y < x\}$ and $G(x) := \{ y \in A \mid y > x \}$.  Then recurse either on $L(x)$ or $G(x)$, depending on whether $|L(x)| \geq r$.
 \end{solution}
 
-We can sacrifice a little time complexity to be slightly more efficient, too.
+We can sacrifice a little time complexity to make the analysis simpler, too.
 
 \begin{solution}{Paranoid Select}
-    Randomly try pivots $x \in A$ until $x$ is $\frac{3}{4}$-balanced, that is, $\frac{1}{4}A \leq \mathrm{Rank}(x) \leq \frac{3}{4}A$.
+    Randomly try pivots $x \in A$ until $x$ is $\frac{3}{4}$-balanced, that is, $\frac{1}{4}|A| \leq \textsc{Rank}(x) \leq \frac{3}{4}|A|$.
 \end{solution}
 
-In expectation, Paranoid Select requires two tries to pick a good $x$, yielding $\Theta(n)$ runtime in expectation.
+In expectation, Paranoid Select requires two tries to pick a good $x$, yielding $\Theta(N)$ runtime in expectation.
 
 \begin{remark}
     Though the analysis of Paranoid Select is simpler, it turns out Quick Select is just better in practice.
@@ -72,13 +72,15 @@ which solves to $T(n) = \Theta(n \log n)$.  (We skipped over the step of showing
 To finish, we'll analyze the non-paranoid version of quick sort: what happens if we allow randomly-chosen unbalanced pivots?
 
 \begin{boxed-text}[34em]
-    \textbf{Chernoff Bound.} For a random binomial variable $Y = B(n, p)$ and $\beta \in [0, 1]$: \vspace{-0.3cm}
+    \textbf{Chernoff Bound.} For a binomial random variable $Y = B(n, p)$ and $\beta \in [0, 1]$: \vspace{-0.3cm}
     \[ \mathbb{E}[Y] = np ~~ \text{ and } ~~ \mathbb{P}[Y \geq (1 + \beta) \cdot np] \leq e^{-\frac{1}{3} \beta^2  np}. \] \vspace{-0.8cm}
     
-    For example, when $\beta = 0.2$, this upper-bounds the probability \\ that a binomial variable exceeds $20\%$ its expected value.
+    For example, when $\beta = 0.2$, this upper-bounds the probability \\ that a binomial variable exceeds its expected value by $20\%$.
 \end{boxed-text}
 
-\textbf{Claim.} With high probability (e.g., at least $1 - \frac{1}{n}$), Quick Sort runs in $O(n \log n)$ time.
+\begin{claim}
+    With high probability (e.g., at least $1 - \frac{1}{n}$), Quick Sort runs in $O(n \log n)$ time.
+\end{claim}
 
 \begin{proof}
     Call a choice of pivot \emph{good} if it is $\frac{3}{4}$-balanced, and \emph{bad} otherwise.
@@ -90,15 +92,15 @@ To finish, we'll analyze the non-paranoid version of quick sort: what happens if
     1 & \text{if } a_i \text{ is involved in a bad pivot at depth } k \\
     0 & \text{if } a_i \text{ is involved in a good pivot at depth } k
     \end{cases} \]
-    We want $a_i$ to encounter good pivots, so we want $Y_i = \sum_{k = 0}^L Y_{i, k}$ to (probably) be small.  Well, $Y_i = B(L, 0.5)$, so:
+    We want $a_i$ to encounter good pivots, so we want $Y_i = \sum_{k = 1}^L Y_{i, k}$ to (probably) be small.  Well, $Y_i = B(L, 0.5)$, so:
     \[ \mathbb{P}[Y_i \geq 0.6L] \leq e^{-\frac{1}{3} (0.2)^2 L (0.5)} = e^{-\frac{1}{150}L} ~ \implies ~ \mathbb{P}[Y_i \leq 0.6L] \geq 1 - e^{-\frac{1}{150}L}. \]
     We must declare a \emph{logarithmic} depth $L$ for which the following hold:
     \begin{enumerate}
         \item If $Y_i \leq 0.6L$ for all $i$, then Quick Sort has succeeded (i.e. no $a_i$ is still in a subset with $>1$ size).
         \item The probability that $Y_i \leq 0.6L$ for all $i$ is high.
     \end{enumerate}
-    We claim $L = 300 \cdot \ln n$ works.  For part 1, the condition $Y_i \leq 0.6L$ tells us:
-    \[ \text{size of the subset containing } a_i \text{ at depth } L \leq n \cdot \left(\dfrac{3}{4}\right)^{0.6L} = n \cdot n^{\ln \left(\frac{3}{4}\right) \times 0.6 \times 300} \approx n^{-33} < 1. \]
+    We claim $L = 300 \cdot \ln n$ works.  For part 1, the condition $Y_i \leq 0.6L$ (i.e. at least $0.4L$ good pivots) tells us:
+    \[ \text{size of the subset containing } a_i \text{ at depth } L \leq n \cdot \left(\dfrac{3}{4}\right)^{0.4L} = n \cdot n^{\ln \left(\frac{3}{4}\right) \times 0.4 \times 300} \approx n^{-33} < 1. \]
     For part 2, we can use the union bound:
     \[ \mathbb{P}[Y_i \geq 0.6L] \leq e^{-\frac{1}{150}L} = \dfrac{1}{n^2} ~ \implies ~  \mathbb{P}[Y_i \geq 0.6L \text{ for some } i] \leq n \cdot \dfrac{1}{n^2} = \dfrac{1}{n}. \]
     So with probability at least $1 - \frac{1}{n}$, every $a_i$ is ``done with quick sort'' by depth $L = 300 \cdot \ln n$.  Since the depth $L$ is logarithmic in $n$, this means Quick Sort has run in $O(n \log n)$ time, as desired. ~ $\blacksquare$

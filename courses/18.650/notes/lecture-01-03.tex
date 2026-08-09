@@ -64,7 +64,7 @@ First, getting some jargon and preliminary facts out of the way.
 An immediate corollary of the above fact is the following.
 
 \begin{theorem}{Sample Mean Stats}
-    Suppose $X_1, X_2, \dots, X_n \sim X$ are sampled i.i.d.,
+    Suppose $X_1, X_2, \dots, X_n \sim \mathbb{P}$ are sampled i.i.d.,
     yielding a sample mean $\bar{X}_n$.  Suppose further
     that $\mathbb{E}[X_i] = \mu$ and $\mathbb{V}[X_i] = \sigma^2$.  Then
     $\mathbb{E}[\bar{X}_n] = \mu$ and
@@ -94,11 +94,12 @@ we say ``$X_n$ converges to $X$ in distribution'' (denoted $X_n \rightsquigarrow
     get sufficiently close together.
 \end{remark}
 
-\textbf{Example.} Consider $X_n \sim \text{Ber}(\frac{1}{2})$
+\textbf{Example.} Consider independent $X_n \sim \text{Ber}(\frac{1}{2})$
 and $X \sim \text{Ber}(\frac{1}{2})$.  Then $X_n \rightsquigarrow X$ is true,
 but $X_n \convprob X$ is not.
 
-Expectedly, the latter of these is much less strict than the former.
+Expectedly, convergence in distribution is much less strict
+than convergence in probability.
 Here's a not-completely-obvious theorem.
 
 \begin{theorem}{Relationship Between Convergence}
@@ -110,7 +111,7 @@ Here's a not-completely-obvious theorem.
     but it's really uncommon.
     \begin{itemize}
         \item \textbf{Example.} Consider
-        $X_1, X_2, \dots \overset{\text{i.i.d}}{\sim} \mathcal{U}(0, 1)$,
+        $X_1, X_2, \dots \overset{\text{i.i.d.}}{\sim} \mathcal{U}(0, 1)$,
         and define $M_n = \max(X_1, \dots, X_n)$.
         Then $M_n \convprob 1$.
         \item \textbf{Example.} Consider $U \sim \mathcal{U}(0, 1)$,
@@ -140,7 +141,7 @@ Here's a completely-obvious theorem.
 \end{theorem}
 
 \begin{proof}
-    Chebyshev's; the point is that $\mathbb{V}[\bar{X}_n] \to 0$
+    Chebyshev's, assuming finite variance; the point is that $\mathbb{V}[\bar{X}_n] \to 0$
     as $n \to \infty$. ~ $\blacksquare$
 \end{proof}
 
@@ -187,14 +188,15 @@ The former of these two bullets is not hard to prove; the latter is pretty hard.
         If $X_n \rightsquigarrow X$ and $Y_n \rightsquigarrow Y$,
         then $X_n + Y_n \rightsquigarrow X + Y$.
     \end{quote}
-    A counterexample is $X_n, X, Y \sim \mathcal{N}(0, 1)$ and $Y_n = -X_n$.
+    A counterexample is $X_n, X, Y \sim \mathcal{N}(0, 1)$ with $X \perp Y$,
+    and $Y_n = -X_n$.
 \end{remark}
 
 To prove things about convergence, it helps to know the following fact.
 
 \begin{theorem}{Continuous Mapping Theorem}
     If $X_n \convprob X$, then $g(X_n) \convprob g(X)$ for any continuous function $g$.
-    Similarly, if $X_n \rightsquigarrow X$, then $g(X_n) \rightsquigarrow X$.
+    Similarly, if $X_n \rightsquigarrow X$, then $g(X_n) \rightsquigarrow g(X)$.
 \end{theorem}
 
 \subsection{The Delta Method}
@@ -221,24 +223,31 @@ when $g(x) = x$, the Delta method is the CLT verbatim.
     The second term converges ($\convprob$) to $0$. ~ $\blacksquare$
 \end{proof}
 
-\subsection{Applying Slutsky's Theorem}
+\subsection{Applying Convergence Theorems}
 
 Here's the set-up.
 
 \begin{quote}
-    \textbf{Set-Up.} Someone claims Harvard grades have a mean salary of below $120$K.
+    \textbf{Set-Up.} Someone claims Harvard grads have a mean salary of below $120$K.
     To test this, you collect $X_1, X_2, \dots, X_{100}$ salaries (i.i.d.)
     and find that $\bar{X}_n = 121$K and $\hat{\sigma} = 0.3$K (in thousands).
 
-    You'd like to say $\bar{X}_n \rightsquigarrow \mathcal{N}(120, 0.3^2/100)$;
+    You'd like to say $\bar{X}_n \approx \mathcal{N}(120, 0.3^2/100)$;
     this would let you compute $\Pr(\bar{X}_n \geq 121)$ using the normal distribution.
 
     But the CLT doesn't immediately apply here---the \emph{true} standard
     deviation isn't known to be $\hat{\sigma}$.  What now?
 \end{quote}
 
+\begin{remark}
+    As a reminder,
+    the sample standard deviation $\hat{\sigma}$
+    is the same as $\sqrt{s_n^2}$,
+    where $s_n^2$ is the sample variance.
+\end{remark}
+
 The point is that Slutsky's Theorem lets us say
-$\bar{X}_n \rightsquigarrow \mathcal{N}(120, 0.3^2/100)$
+$\bar{X}_n \approx \mathcal{N}(120, 0.3^2/100)$
 anyway, even though we don't know the exact value of $\sigma$.
 
 \begin{theorem}{Sample Variance is Unbiased}
@@ -253,7 +262,7 @@ anyway, even though we don't know the exact value of $\sigma$.
         \mathbb{E}\left[\sum_{i = 1}^n (X_i - \bar{X}_n)^2\right]
         & = \mathbb{E}\left[ \sum_{i = 1}^n (X_i - \mu)^2 \right]
         - \mathbb{E}\left[2(\bar{X}_n - \mu)\sum_{i = 1}^n (X_i - \mu)
-        + n(\bar{X}_n - \mu)^2\right] \\
+        - n(\bar{X}_n - \mu)^2\right] \\
         & = \underbrace{\mathbb{E}\left[ \sum_{i = 1}^n (X_i - \mu)^2 \right]}_{n \sigma^2}
         - \underbrace{\mathbb{E}\left[n(\bar{X}_n - \mu)^2\right]}_{n\left(\frac{\sigma^2}{n}\right)}
         = (n - 1)\sigma^2.
@@ -262,10 +271,48 @@ anyway, even though we don't know the exact value of $\sigma$.
     if it were $\frac{1}{n}$, it would no longer be unbiased! ~ $\blacksquare$
 \end{proof}
 
-With the above, we can justify $\bar{X}_n \rightsquigarrow \mathcal{N}(120, 0.3^2/100)$ as follows:
+Unbiasedness alone says nothing about large $n$, so we need one more fact.
+
+\begin{theorem}{Sample Variance is Consistent}
+    Assuming $\sigma^2 < \infty$, we have $s_n^2 \convprob \sigma^2$.
+\end{theorem}
+
+\begin{proof}
+    The Law of Large Numbers doesn't apply to $s_n^2$ as written,
+    since $s_n^2$ is not the mean of i.i.d. sampled random variables.
+    Let's rewrite $s_n^2$ to fix that.
+    \[
+        s_n^2
+        = \frac{1}{n - 1} \left[ \sum_{i = 1}^n (X_i - \bar{X}_n)^2 \right]
+        = \frac{1}{n - 1} \left[
+            \left(\sum_{i = 1}^n X_i^2\right) - n \cdot \bar{X}_n^2
+        \right]
+        = \frac{n}{n - 1} \left[
+            \left(\frac{1}{n}\sum_{i = 1}^n X_i^2\right) - \bar{X}_n^2
+        \right].
+    \]
+    Now the Law of Large Numbers does apply, twice:
+    \begin{itemize}
+        \item The $X_i^2$ are i.i.d. with finite mean $\sigma^2 + \mu^2$,
+        so the LLN says
+        $\frac{1}{n}\sum_{i = 1}^n X_i^2 \convprob \mathbb{E}[X_1^2]$.
+        \item The LLN says $\bar{X}_n \convprob \mu$.
+        Then the Continuous Mapping Theorem (with $g(x) = x^2$)
+        gives $\bar{X}_n^2 \convprob \mu^2$.
+    \end{itemize}
+    Convergence of Sums then handles the bracketed part of $s_n^2$.
+    \[ \left(\frac{1}{n}\sum_{i = 1}^n X_i^2\right) - \bar{X}_n^2
+    \convprob \mathbb{E}[X_1^2] - \mu^2 = \sigma^2. \]
+    As for the leftover $\frac{n}{n - 1}$ factor,
+    note that $\frac{n}{n - 1} \convprob 1$,
+    so convergence of products yields
+    $s_n^2 \convprob 1 \cdot \sigma^2 = \sigma^2$,
+    as desired. ~ $\blacksquare$
+\end{proof}
+
+With the above, we can justify $\bar{X}_n \approx \mathcal{N}(120, 0.3^2/100)$ as follows:
 \begin{enumerate}
-    \item By the Law of Large Numbers, $\mathbb{E}[s_n^2] = \sigma^2$
-    gives us $s_n^2 \convprob \sigma^2$.
+    \item By consistency of the sample variance, $s_n^2 \convprob \sigma^2$.
     \item Then the Continuous Mapping Theorem (with $g(x) = \sqrt{x}$)
     gives $\hat{\sigma} \convprob \sigma$.  In other words,
     $\frac{\sigma}{\hat{\sigma}} \convprob 1$.

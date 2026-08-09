@@ -21,7 +21,7 @@ of 6.1220 for an alternative perspective on the content from this lecture.
 
 \subsection{Recitation: DFT = Polynomial Sampling}
 
-We first provide an alternative perspective of the DFT,
+We first provide an alternative perspective on the DFT,
 as suggested by 6.1220.
 
 \begin{theorem}{DFT = Polynomial Sampling}
@@ -35,15 +35,15 @@ as suggested by 6.1220.
 \end{theorem}
 
 \begin{proof}
-    Follows immediately from the DFT analysis equations from
+    Follows immediately from the DFT analysis and synthesis equations from
     \href{12.html#lecture-discrete-fourier-transform}{Lecture 12}. ~ $\blacksquare$
 \end{proof}
 
 The above reinterpretation makes it much easier to argue
-that the DFT of a convolution equals the product of the DFTs.
+that the DFT of a circular convolution equals the product of the DFTs.
 
 \begin{theorem}{Convolution = Product}
-    Given DT signals $a[n]$ and $b[n]$
+    Given DT signals $a[n]$ and $b[n]$ of length $N$
     with DFTs $A[k]$ and $B[k]$, respectively, we have:
     \[ \mathrm{DFT}(a \circledast b) = N \cdot A \cdot B
     ~~~ \text{ and } ~~~
@@ -68,7 +68,7 @@ A corollary of this reinterpretation is the following.
 \begin{theorem}{DFT = Inverse DFT}
     If $X[k]$ is the DFT of $x[n]$,
     then the DFT of $X[k]$ is $x'[n] := \frac{1}{N} \cdot x[(-n)\%N]$.
-    Equivalently,
+    Equivalently, writing $\mathrm{Reverse}$ for circular reversal,
     \[ \mathrm{DFT}(\mathrm{DFT}(x)) = \frac{1}{N} \cdot
     \mathrm{Reverse}(x). \]
 \end{theorem}

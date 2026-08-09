@@ -10,13 +10,13 @@ You can verify that all of the following are true.
 \begin{theorem}{Bootstrap Properties}
     Suppose we have (i.i.d.) samples $\{X_i\}_{i = 1}^n$
     with $\mu = \mathbb{E}[X_i]$ and $\sigma^2 = \mathbb{V}[X_i]$,
-    and suppose $\{X_i^*\}_{i = 1}^m$ is some bootstrap sample of $\{X_i\}_{i = 1}^n$.
+    and suppose $\{X_j^*\}_{j = 1}^m$ is some bootstrap sample of $\{X_i\}_{i = 1}^n$.
     \begin{enumerate}
-        \item We have $\mathbb{E}[X_i^* \mid \{X_i\}_{i = 1}^n] = \bar{X}_n$.
-        \item We have $\mathbb{E}[X_i^*] = \mu$.
-        \item We have $\mathbb{V}[X_i^* \mid \{X_i\}_{i = 1}^n] =
-        \frac{1}{n} \sum_{i = 1}^n X_i^2 - (\bar{X}_n)^2 = \hat{\sigma}_n^2$.
-        \item We have $\mathbb{V}[X_i^*] = \sigma^2$.
+        \item We have $\mathbb{E}[X_j^* \mid \{X_i\}_{i = 1}^n] = \bar{X}_n$.
+        \item We have $\mathbb{E}[X_j^*] = \mu$.
+        \item We have $\mathbb{V}[X_j^* \mid \{X_i\}_{i = 1}^n] =
+        \frac{1}{n} \sum_{i = 1}^n X_i^2 - (\bar{X}_n)^2 = \frac{n - 1}{n} s_n^2$.
+        \item We have $\mathbb{V}[X_j^*] = \sigma^2$.
     \end{enumerate}
 \end{theorem}
 Not very surprising, and not hard to prove.

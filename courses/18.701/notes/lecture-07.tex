@@ -17,7 +17,7 @@ But here's the catch: a linear transformation can only be written as $\begin{bsm
 
 We want to study properties of linear operators $T: V \to V$ that don't depend on a choice of basis.  Here's one:
 
-\textbf{Definition (Eigenvectors and Eigenvalues).} Given a linear operator $T: V \to V$ over a vector space $V$ over a field $F$, we say $v \in V$ is an \textbf{eigenvector} of $T$ with \textbf{eigenvalue} $\lambda \in F$ if $Tv = \lambda v$ and $v$ is nonzero.
+\textbf{Definition (Eigenvectors and Eigenvalues).} Given a linear operator $T: V \to V$ on a vector space $V$ over a field $F$, we say $v \in V$ is an \textbf{eigenvector} of $T$ with \textbf{eigenvalue} $\lambda \in F$ if $Tv = \lambda v$ and $v$ is nonzero.
 
 \begin{theorem}{Eigenvalues are Polynomial Roots}
     Consider an $n$-dimensional vector space $V$ over a field $F$, along with a linear operator $T: V \to V$.  Then $\lambda$ is an eigenvalue of $T$ if and only if $\det (\lambda I_n - T)  = 0$.
@@ -35,12 +35,12 @@ We want to study properties of linear operators $T: V \to V$ that don't depend o
 
 The above theorem inspires the following definition:
 
-\textbf{Definition (Characteristic Polynomial).} Let $T: V \to V$ be a linear operator of an $n$-dimensional vector space $V$ over a field $F$.  Then the \textbf{characteristic polynomial} of $T$ is the polynomial $\det (\lambda I_n - T)$ in $\lambda$.
+\textbf{Definition (Characteristic Polynomial).} Let $T: V \to V$ be a linear operator on an $n$-dimensional vector space $V$ over a field $F$.  Then the \textbf{characteristic polynomial} of $T$ is the polynomial $\det (\lambda I_n - T)$ in $\lambda$.
 
 So the set of eigenvalues of a linear operator $T: V \to V$ is the set of roots of its characteristic polynomial.
 
 \begin{remark}
-    Like the previous remark, the characteristic polynomial of $T$ does not depend the basis of $V$.
+    Like the previous remark, the characteristic polynomial of $T$ does not depend on the basis of $V$.
 \end{remark}
 
 \textbf{Example.} Consider the linear operator $\begin{bsmallmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 2 \end{bsmallmatrix}: \mathbb{R}^3 \to \mathbb{R}^3$.  Then the only eigenvalues are $1$ and $2$.  In particular,
@@ -53,29 +53,29 @@ So the set of eigenvalues of a linear operator $T: V \to V$ is the set of roots 
     Technically, the $0$ vector should not be in the set of eigenvectors.  But if we want our eigenspace to be a subspace of a vector space, then we reluctantly have to let $0$ enter the eigenspace regardless.
 \end{remark}
 
-\textbf{Example.} Consider the linear operator $\begin{bsmallmatrix} \cos \theta & - \sin \theta \\ \sin \theta & \cos \theta \end{bsmallmatrix}: \mathbb{R}^2 \to \mathbb{R}^2$.  This linear operator rotates vectors, meaning it is impossible for the image of a nonzero $v \in \mathbb{R}^2$ to be only a scaled version of $v$ (as long as $\theta \not \in \{0, \pi, \dots\}$).  In particular, the characteristic polynomial of this linear operator is a quadratic equation with no real roots. 
+\textbf{Example.} Consider the linear operator $\begin{bsmallmatrix} \cos \theta & - \sin \theta \\ \sin \theta & \cos \theta \end{bsmallmatrix}: \mathbb{R}^2 \to \mathbb{R}^2$.  This linear operator rotates vectors, meaning it is impossible for the image of a nonzero $v \in \mathbb{R}^2$ to be only a scaled version of $v$ (as long as $\theta \not \in \{0, \pi, \dots\}$).  In particular, the characteristic polynomial of this linear operator is a quadratic polynomial with no real roots. 
 
-However, if $V$ is any $\mathbb{C}$-vector space (rather than an $\mathbb{R}$-vector space), then the characteristic polynomial of any linear operator $T: V \to V$ can always be factored in $\mathbb{C}$.  In this case, $T: V \to V$ will always have $\dim V$ eigenvalues (up to multiplicity).  For this reason, it will be more convenient to work strictly in $\mathbb{C}$-vector spaces.
+However, if $V$ is any $\mathbb{C}$-vector space (rather than an $\mathbb{R}$-vector space), then the characteristic polynomial of any linear operator $T: V \to V$ can always be factored in $\mathbb{C}$.  In this case, $T: V \to V$ will always have $\dim V$ eigenvalues (with multiplicity).  For this reason, it will be more convenient to work strictly in $\mathbb{C}$-vector spaces.
 
 \subsection{Eigenbases and Diagonalization}
 
 \begin{theorem}{Eigenvector Independence}
-    Consider a linear operator $T: V \to V$ with eigenvectors $\{v_1, \dots, v_k\}$ and respective eigenvalues $\{\lambda_1, \dots, \lambda_k\}$.  Then if $\{\lambda_1, \dots, \lambda_k\}$ are distinct, then $\{v_1, \dots, v_k\}$ are linearly independent.
+    Consider a linear operator $T: V \to V$ with eigenvectors $\{v_1, \dots, v_k\}$ and respective eigenvalues $\{\lambda_1, \dots, \lambda_k\}$.  If $\{\lambda_1, \dots, \lambda_k\}$ are distinct, then $\{v_1, \dots, v_k\}$ are linearly independent.
 \end{theorem}
 
 \begin{proof}
     Argue by induction on $k$.  The case of $k = 1$ is obvious, so the inductive step will be our focus.  Suppose, for the sake of contradiction, that the eigenvectors $\{v_1, \dots, v_k\}$ were not linearly independent.
     
-    Then there exist $c_1, \dots, c_k \in F$ such that:
+    Then there exist $c_1, \dots, c_k \in F$, not all zero, such that:
     \[ c_1 v_1 + \dots + c_k v_k = 0 ~ \implies ~ c_1T(v_1) + \dots + c_kT(v_k) = 0 ~ \implies ~ c_1\lambda_1v_1 + \dots + c_k\lambda_k v_k = 0. \]
-    Now subtract $\lambda_1(c_1v_1 + \dots c_kv_k) = 0$ from both sides of the above to get:
+    Now subtract $\lambda_1(c_1v_1 + \dots + c_kv_k) = 0$ from both sides of the above to get:
     \[ 0v_1 + (c_2\lambda_2 - c_2\lambda_1)v_2 + \dots + (c_k\lambda_k - c_k \lambda_1)v_k = 0. \]
-    This is a nontrivial linear combination of $\{v_2, \dots, v_k\}$ that equals zero, violating the inductive hypothesis. ~ $\blacksquare$
+    Some $c_i$ with $i \geq 2$ must be nonzero: otherwise $c_1v_1 = 0$ with $c_1 \neq 0$, forcing $v_1 = 0$.  So, since the $\lambda_i$ are distinct, this is a nontrivial linear combination of $\{v_2, \dots, v_k\}$ that equals zero, violating the inductive hypothesis. ~ $\blacksquare$
 \end{proof}
 
-Suppose the eigenvalues $\{\lambda_1, \dots, \lambda_k\}$ are distinct.  Recall that $k$ is the dimension of $V$, so $\{v_1, \dots, v_k\}$ is a linearly independent set of size $\dim V$.  This means the eigenvectors form a basis of $V$.
+Suppose the eigenvalues $\{\lambda_1, \dots, \lambda_k\}$ are distinct.  Suppose further that $k$ is the dimension of $V$, so $\{v_1, \dots, v_k\}$ is a linearly independent set of size $\dim V$.  This means the eigenvectors form a basis of $V$.
 
-\textbf{Definition (Eigenbasis).} If $\dim V = k$ and linear operator $T: V \to V$ has $k$ distinct eigenvalues, then the eigenvectors $\{v_1, \dots, v_n\}$ of $T$ form an \textbf{eigenbasis}.
+\textbf{Definition (Eigenbasis).} If $\dim V = k$ and linear operator $T: V \to V$ has $k$ distinct eigenvalues, then the eigenvectors $\{v_1, \dots, v_k\}$ of $T$ form an \textbf{eigenbasis}.
 
 \begin{theorem}{Linear Operator Classification}
     If a linear operator $T: V \to V$ has distinct eigenvalues, then under an appropriate choice of basis, $M_T$ is a diagonal matrix with diagonal $\{\lambda_1, \dots, \lambda_k\}$.
@@ -85,7 +85,7 @@ Suppose the eigenvalues $\{\lambda_1, \dots, \lambda_k\}$ are distinct.  Recall 
     Just choose the basis to be the eigenbasis of $T$. ~ $\blacksquare$
 \end{proof}
 
-\textbf{Definition (Diagonalizable).} A matrix $M \in GL_n(F)$ is \textbf{diagonalizable} if there exists some matrix $A \in GL_n(F)$ such that $A^{-1}MA$ is a diagonal matrix; that is, $M$ looks like a diagonal matrix under a different choice of basis.
+\textbf{Definition (Diagonalizable).} A matrix $M \in F^{n \times n}$ is \textbf{diagonalizable} if there exists some matrix $A \in GL_n(F)$ such that $A^{-1}MA$ is a diagonal matrix; that is, $M$ looks like a diagonal matrix under a different choice of basis.
 
 So any matrix representation $M_T$ of a linear operator $T$ with \emph{distinct} eigenvalues is diagonalizable; the choice of $A$ is the matrix whose columns directly read off the eigenvectors of $T$.
 
@@ -101,32 +101,32 @@ If $T$ has non-distinct eigenvalues, how ``clean'' can we make $T$ look under th
 
 \subsection{Nilpotent Matrices and Jordan Blocks}
 
-A good classification of matrices $T$ with non-distinct eigenvalues are \textbf{nilpotent} matrices.
+A good class of matrices with non-distinct eigenvalues is the class of \textbf{nilpotent} matrices.
 
-\textbf{Definition (Nilpotent).} A matrix $M \in GL_n(F)$ is \textbf{nilpotent} if $M^k = 0$ for some positive integer $k$.
+\textbf{Definition (Nilpotent).} A matrix $M \in F^{n \times n}$ is \textbf{nilpotent} if $M^k = 0$ for some positive integer $k$.
 
-\textbf{Example.} The matrix $M = \begin{bsmallmatrix} 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 0 \end{bsmallmatrix} \in GL_4(\mathbb{C})$ is nilpotent.  This is because:
+\textbf{Example.} The matrix $M = \begin{bsmallmatrix} 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 0 \end{bsmallmatrix} \in \mathbb{C}^{4 \times 4}$ is nilpotent.  This is because:
 \[ M^1 = \begin{bsmallmatrix} 0 & 1 & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 0 \end{bsmallmatrix} ~~ \implies ~~ M^2  = \begin{bsmallmatrix} 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \end{bsmallmatrix} ~~ \implies ~~ M^3 = \begin{bsmallmatrix} 0 & 0 & 0 & 1 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \end{bsmallmatrix} ~~ \implies ~~ M^4 = \begin{bsmallmatrix} 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \end{bsmallmatrix} \]
 
 \begin{theorem}{Nilpotence Forces Zero Eigenvalues}
-    If $M \in GL_n(F)$ is a nilpotent matrix, and $\lambda$ is an eigenvalue of $M: F^n \to F^n$, then $\lambda = 0$.
+    If $M \in F^{n \times n}$ is a nilpotent matrix, and $\lambda$ is an eigenvalue of $M: F^n \to F^n$, then $\lambda = 0$.
 \end{theorem}
 
 \begin{proof}
-    Since $M$ is nilpotent, suppose $M^k = 0$ for some positive integer $k$.  Also consider an eigenvector $v \in F^n$ with eigenvalue $\lambda$.  Recall that if $v$ is an eigenvector of $M$, then $Mv$ is also an eigenvector of $M$.  Thus, we can apply $M$ to $v$ a total of $k$ times, and each time we apply $M$, the result will be equivalent to multiplying $v$ by $\lambda$.
+    Since $M$ is nilpotent, suppose $M^k = 0$ for some positive integer $k$.  Also consider an eigenvector $v \in F^n$ with eigenvalue $\lambda$.  We can apply $M$ to $v$ a total of $k$ times, and each time we apply $M$, the result will be equivalent to multiplying $v$ by $\lambda$.
 
-    Therefore, $M^kv = \lambda^k v$.  But $M^k = 0$, so $\lambda^k v = 0$.  But since $v$ is nonzero, so $\lambda^k v = 0$ forces $\lambda = 0$. ~ $\blacksquare$
+    Therefore, $M^kv = \lambda^k v$.  But $M^k = 0$, so $\lambda^k v = 0$.  But since $v$ is nonzero, $\lambda^k v = 0$ forces $\lambda = 0$. ~ $\blacksquare$
 \end{proof}
 
-Thus, nilpotent matrices are have eigenvalues $\{0, \dots, 0\}$, which are evidently not distinct.  We can generalize nilpotent matrices to a family of matrices with eigenvalues $\{\lambda, \dots, \lambda\}$ like so:
+Thus, nilpotent matrices have eigenvalues $\{0, \dots, 0\}$, which are evidently not distinct.  We can generalize nilpotent matrices to a family of matrices with eigenvalues $\{\lambda, \dots, \lambda\}$ like so:
 
 \textbf{Definition (Jordan Blocks).} For some dimension $n$ and constant $\lambda \in F$, the \textbf{Jordan Block} $J_n(\lambda)$ is:
 \[ J_n(\lambda) := \begin{bsmallmatrix} \lambda & 1 & 0 & \cdots & 0 \\ 0 & \lambda & 1 & \cdots &  0 \\ 0 & 0 & \lambda & \cdots & 0 \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & 0 & \cdots & \lambda\end{bsmallmatrix} = \lambda I_n + \begin{bsmallmatrix} 0 & 1 & 0 & \cdots & 0 \\ 0 & 0 & 1 & \cdots & 0 \\ 0 & 0 & 0 & \cdots & 0 \\ \vdots & \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & 0 & \cdots & 0 \end{bsmallmatrix}. \]
 
-Note that even though Jordan Blocks don't have unique eigenvalues, we haven't actually checked yet that Jordan Blocks aren't diagonalizable nonetheless.  Let's check that.
+Note that even though Jordan Blocks don't have distinct eigenvalues, we haven't actually checked yet that Jordan Blocks aren't diagonalizable nonetheless.  Let's check that.
 
 \begin{theorem}{Diagonalizability of Jordan Blocks}
-    Every Jordan Block $J_n(\lambda)$ is not diagonalizable.
+    Every Jordan Block $J_n(\lambda)$ with $n \geq 2$ is not diagonalizable.
 \end{theorem}
 
 \begin{proof}
@@ -145,12 +145,12 @@ If $T$ has non-distinct eigenvalues, how ``clean'' can we make $T$ look under th
 
 \end{boxed-text}
 
-We've just shown that Jordan Blocks are one such clean form that we might try to make $T$ look like under the right choice of basis.  It turns out, as stated by the theorem below, that Jordan Blocks are pretty much good enough!
+We've just shown that Jordan Blocks can't be made diagonal, so they're one such clean form that we might try to make $T$ look like under the right choice of basis.  It turns out, as stated by the theorem below, that Jordan Blocks are pretty much good enough!
 
 \begin{theorem}{Jordan Normal Form}
     Suppose $M \in F^{n \times n}$ has $n$ eigenvalues $\{\lambda_1, \dots, \lambda_n\}$.  Then $M$, after an appropriate choice of basis, must look like a direct sum of Jordan Blocks $\{J_{n_i}(\lambda_i)\}_{i = 1}^k$.
-    \[ A^{-1} M A = \begin{bsmallmatrix} J_{n_1}(\lambda_1) & 0 & \cdots & 0 \\ 0 & J_{n_2}(\lambda_2) & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & J_{n_k}(\lambda_k) \end{bsmallmatrix} \text{ for some } A \in F^{n \times n}. \]
-    Each $n_i$ must be the multiplicity of eigenvalue $\lambda_i$ as a root of the characteristic polynomial of $M$.
+    \[ A^{-1} M A = \begin{bsmallmatrix} J_{n_1}(\lambda_1) & 0 & \cdots & 0 \\ 0 & J_{n_2}(\lambda_2) & \cdots & 0 \\ \vdots & \vdots & \ddots & \vdots \\ 0 & 0 & \cdots & J_{n_k}(\lambda_k) \end{bsmallmatrix} \text{ for some } A \in GL_n(F). \]
+    The sizes $n_i$ of the Jordan Blocks sharing a given eigenvalue must sum to the multiplicity of that eigenvalue as a root of the characteristic polynomial of $M$.
 \end{theorem}
 
 \textbf{Example.} Consider the following two matrices in $GL_4(\mathbb{C})$.
@@ -161,7 +161,7 @@ We've just shown that Jordan Blocks are one such clean form that we might try to
 
 The proof of this theorem will be deferred to next lecture; it's not easy.  In summary:
 \begin{itemize}
-    \item If all of $n$ eigenvalues of $M$ are distinct, then each Jordan Block looks like a $1 \times 1$ matrix $\begin{bsmallmatrix} \lambda_i \end{bsmallmatrix}$, and the Jordan Normal Form is exactly a diagonal matrix, as expected.
+    \item If all $n$ eigenvalues of $M$ are distinct, then each Jordan Block looks like a $1 \times 1$ matrix $\begin{bsmallmatrix} \lambda_i \end{bsmallmatrix}$, and the Jordan Normal Form is exactly a diagonal matrix, as expected.
     \item It's only if eigenvalues are non-distinct that some Jordan Blocks will not be $1 \times 1$ matrices, and so the Jordan Normal Form will not be diagonal.  But at least it'll look pretty nice anyway!
 \end{itemize}
 

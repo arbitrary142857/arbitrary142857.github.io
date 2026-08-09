@@ -5,7 +5,7 @@
 
 \subsection{Multivariate PDFs}
 
-Random vectors $X \in \mathbb{R}^{k}$ can have PDF's $f(x)$ too,
+Random vectors $X \in \mathbb{R}^{k}$ can have PDFs $f(x)$ too,
 where $\Pr(X \in R) = \int_R f(x) \, \mathrm{d}x$ for
 any (measurable) region $R \subseteq \mathbb{R}^k$.
 
@@ -57,13 +57,14 @@ For completeness, we give a derivation here.
     \begin{quote}
         Why does $\Sigma^{1/2}$ always exist?  Well, by the Spectral Theorem,
         $\Sigma = Q \Lambda Q^{\top}$, where $\Lambda = \mathrm{diag}(\lambda_1, \dots, \lambda_k)$
-        and $Q \in O_k(\mathbb{R})$.  But $\Sigma$ is positive semidefinite,
-        so the $\lambda_i$ are all nonnegative,
+        and $Q \in O_k(\mathbb{R})$.  But $\Sigma$ is positive definite,
+        so the $\lambda_i$ are all positive,
         meaning $\Sigma^{1/2} := Q \Lambda^{1/2} Q^{\top}$ works.
     \end{quote}
     Returning to the PDF $f_Z(z)$, we therefore must substitute $z = \Sigma^{-1/2}(x - \mu)$.
-    Careful, though---$f_Z(z)$ is a \emph{density}, and the linear map
-    $T(z) = \Sigma^{1/2}z + \mu$ will stretch space by a factor of $\det T = \det(\Sigma)^{1/2}$.
+    Careful, though---$f_Z(z)$ is a \emph{density}, and the affine map
+    $T(z) = \Sigma^{1/2}z + \mu$ will stretch space by a factor of
+    $\det(\Sigma^{1/2}) = \det(\Sigma)^{1/2}$.
     Thus, the final PDF is:
     \[ f_X(x) = f_Z(z) \cdot \frac{1}{\det(\Sigma)^{1/2}}
     = \frac{1}{\sqrt{(2\pi)^k}} \exp\left(-\frac{1}{2}(\Sigma^{-1/2}(x - \mu))^{\top}
@@ -71,9 +72,12 @@ For completeness, we give a derivation here.
     And the above simplifies to the multivariate PDF promised at the beginning. ~ $\blacksquare$
 \end{proof}
 
-Note that the above theorem only produces a valid PDF when $\Sigma$
-is symmetric and positive definite, because all covariance matrices
-are symmetric and positive definite.
+Note that all covariance matrices are positive semidefinite,
+so the above theorem only makes sense when $\Sigma$
+is symmetric and positive semidefinite.
+More strongly, we better have $\Sigma$ be positive \emph{definite},
+or else $\Sigma$ would give a degenerate Gaussian with no PDF,
+as $\Sigma^{-1}$ would make no sense.
 
 \subsection{Multivariate Gaussian Properties and Theorems}
 
@@ -141,7 +145,7 @@ And so does the multivariate delta method.
 \end{problem}
 
 \begin{solution}
-    Compute $\mathbb{V}[X + 3Y]$ doesn't even depend on
+    Computing $\mathbb{V}[X + 3Y]$ doesn't even depend on
     our random vector being jointly Gaussian; just note:
     \[
     \mathbb{V}[X + 3Y] =
@@ -162,7 +166,7 @@ And so does the multivariate delta method.
 
 More generally, given a $k$-dimensional Gaussian random vector
 $X \sim \mathcal{N}(\mu, \Sigma)$, you can think of each entry $X_i$ of $X$ as:
-\[ X_i = \mu_i + \sum_{j = 1}^k \lambda_j Z_j, ~ \text{ where } 
+\[ X_i = \mu_i + \sum_{j = 1}^k a_{ij} Z_j, ~ \text{ where } 
 Z_j \sim \mathcal{N}(0, 1) ~ \text{ for all } j = 1, \dots, k. \]
 Importantly, the $Z_j$ are all independent,
 so computing something like $\mathbb{V}[X_1^3X_2^4 + X_5X_7X_8]$ cannot be hard:
@@ -194,13 +198,14 @@ and the rest must be trivial.
         \exp\left(-\frac{(x - \mu_X)^2}{2\sigma_X^2}\right)\right)}_{f_X(x)} \cdot
         \underbrace{\left(\frac{1}{\sigma_Y \sqrt{2\pi}}
         \exp\left(-\frac{(y - \mu_Y)^2}{2\sigma_Y^2}\right)\right)}_{f_Y(y)}
-        = f_X(x) \cdot f_Y(y) \end{align*}
+        = f_X(x) \cdot f_Y(y). \end{align*}
         The point is that jointly Gaussian PDFs factor nicely when $\Cov(X, Y) = 0$,
         which implies $X \perp Y$. ~ $\blacksquare$
     \end{quote}
     (When $X$ and $Y$ are not jointly Gaussian, 
     a counterexample is $X \sim \mathcal{N}(0, 1)$
-    and $Y = ZX$ where $Z \sim \mathrm{Unif}\{\pm 1\}$.)
+    and $Y = ZX$, where $Z \sim \mathrm{Unif}\{-1, 1\}$ is
+    a coin flip independent of $X$.)
 
     Back to the original problem.  First, a simplification:
     take $S := X + Y$, so $\begin{pmatrix} X \\ S \end{pmatrix} =

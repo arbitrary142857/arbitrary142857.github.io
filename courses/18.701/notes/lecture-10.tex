@@ -14,15 +14,15 @@
 \end{theorem}
 
 \begin{proof}
-    To eliminate the ``up to translation'' freedom, write $f(x) = g(x) + f(0)$.  So $g(x)$ is an isometry satisfying $g(0) = 0$, and we would like to show $g(x)$ must look like $g: x \mapsto Ax$ for some $A \in O_n(x)$.
+    To eliminate the ``up to translation'' freedom, write $f(x) = g(x) + f(0)$.  So $g(x)$ is an isometry satisfying $g(0) = 0$, and we would like to show $g(x)$ must look like $g: x \mapsto Ax$ for some $A \in O_n(\mathbb{R})$.
 
     Why is $g(0) = 0$ useful to know?  Well, since $g$ is an isometry, it allows us to write:
     \[ |x| = |x - 0| = |g(x) - g(0)| = |g(x) - 0| = |g(x)| \]
     Thus, $g$ preserves magnitudes.  Unfortunately, we don't know that $g$ is a linear operator, so we can't use the ``Properties of Orthogonal Matrices'' theorem from last lecture.  Let's fix that!
     \begin{enumerate}
         \item Observe that inner products $\langle x, y \rangle$ can be encoded in terms of magnitudes using the Polarization Identity.
-        \[ \langle x, y \rangle = \frac{|x + y|^2 - |x|^2 - |y|^2}{2} \]
-        Thus, since $g$ preserves magnitudes, $g$ must also preserve the inner product; that is, $\langle x, y \rangle = \langle g(x), g(y) \rangle$.
+        \[ \langle x, y \rangle = \frac{|x|^2 + |y|^2 - |x - y|^2}{2} \]
+        Thus, since $g$ preserves magnitudes and distances, $g$ must also preserve the inner product; that is, $\langle x, y \rangle = \langle g(x), g(y) \rangle$.
         \item Observe that additivity $z = x + y$ can be encoded in terms of inner products.
         \[ z = x + y \iff |z - x - y|^2 = 0 \iff |x|^2 + |y|^2 + |z|^2 - 2 \langle x, z \rangle - 2 \langle y, z \rangle + 2 \langle x, y \rangle = 0. \]
         Thus, since $g$ preserves the inner product, $g$ must also preserve additivity; that is, $g(x + y) = g(x) + g(y)$.
@@ -38,13 +38,13 @@
 Some interesting properties of $M_n$ include:
 \begin{itemize}
     \item Given the homomorphism $\pi: M_n \to O_n(\mathbb{R})$ via $\pi: (x \mapsto Ax + b) \mapsto A$, then $\ker \pi = T_n$ is the set of translations.
-    \item However, we cannot write $M_n \cong T_n \times O_n(\mathbb{R})$.  This is because the group operation in $O_n$ looks like:
+    \item However, we cannot write $M_n \cong T_n \times O_n(\mathbb{R})$.  This is because the group operation in $M_n$ looks like:
 \[ \text{If } f_1 = A_1x + b_1 \text{ and } f_2 = A_2x + b_2, \text{ then } f_1 \circ f_2 = (A_1A_2)x + (A_1b_2 + b_1). \]
     Thus, $(A_1, b_1) \circ (A_2, b_2) = (A_1A_2, A_1b_2 + b_1)$ instead of the expected $(A_1, b_1) \circ (A_2, b_2) = (A_1A_2, b_1 + b_2)$.  Rather than writing $M_n \cong T_n \times O_n(\mathbb{R})$, we instead write $M_n \cong T_n \rtimes O_n(\mathbb{R})$, the semidirect product.
 \end{itemize}
 
 \begin{remark}
-Recall from a problem set that if $H$ and $K$ are normal subgroups of $G$ such that $H \cap K = \{1\}$ and $G = \{hg \mid h \in H, g \in G\}$, then $G \cong H \times K$.  If we adjust this setup so that $K$ need not be normal, then we instead write $G \cong H \ltimes K$, the \emph{semidirect product}.  Thus, since $T_n$ is a normal subgroup of $M_n$, but $O_n(\mathbb{R})$ is not, we can write $M_n = T_n \ltimes O_n(\mathbb{R})$.
+Recall from a problem set that if $H$ and $K$ are normal subgroups of $G$ such that $H \cap K = \{1\}$ and $G = \{hk \mid h \in H, k \in K\}$, then $G \cong H \times K$.  If we adjust this setup so that $K$ need not be normal, then we instead write $G \cong H \rtimes K$, the \emph{semidirect product}.  Thus, since $T_n$ is a normal subgroup of $M_n$, but $O_n(\mathbb{R})$ is not, we can write $M_n = T_n \rtimes O_n(\mathbb{R})$.
 \end{remark}
 
 \subsection{Sidenote: Affine Stuffs}
@@ -53,18 +53,18 @@ Recall from a problem set that if $H$ and $K$ are normal subgroups of $G$ such t
 
 \textbf{Example.} All linear transformations are affine.  All isometries are affine by the ``Isometry Classification'' theorem.
 
-\textbf{Definition (Affine Combinations).} A linear combination $\sum_{i = 1}^k \lambda_i x_i$ of $\{x_1, \dots, x_k \} \in \mathbb{R}^n$ is an \textbf{affine combination} if the coefficients sum to $1$; that is, $\sum_{i = 1}^k \lambda_i = 1$.
+\textbf{Definition (Affine Combinations).} A linear combination $\sum_{i = 1}^k \lambda_i x_i$ of $\{x_1, \dots, x_k \} \subseteq \mathbb{R}^n$ is an \textbf{affine combination} if the coefficients sum to $1$; that is, $\sum_{i = 1}^k \lambda_i = 1$.
 
 So an affine combination of vectors is a weighted average of vectors (with possibly negative coefficients).
 
-\textbf{Definition (Affine Subspace).} An subset $S \subseteq V$ is an \textbf{affine subspace} if $S = W + t$ for some subspace $W \subseteq V$ and vector $t \in V$; that is, $S$ is a translation of a subspace.
+\textbf{Definition (Affine Subspace).} A subset $S \subseteq V$ is an \textbf{affine subspace} if $S = W + t$ for some subspace $W \subseteq V$ and vector $t \in V$; that is, $S$ is a translation of a subspace.
 
 \begin{theorem}{Affine Subspaces Make Sense}
     For any affine subspace $S \subseteq V$, any affine combination of finitely many vectors in $S$ is also in $S$.
 \end{theorem}
 
 \begin{proof}
-    Say the finitely many vectors in $S$ are $\{w_i + t \mid w_i \in W\}$.  Then an affine combination of these vectors is:
+    Say the finitely many vectors in $S$ are $\{w_1 + t, \dots, w_k + t\}$, where each $w_i \in W$.  Then an affine combination of these vectors is:
     \[ \sum_{i = 1}^k \lambda_i(w_i + t) = \left(\sum_{i = 1}^k \lambda_i w_i\right) + \left(\sum_{i = 1}^k \lambda_i\right)t = (\text{a linear combination of $\{w_i\}$}) + t \in W + t. ~ \blacksquare\] \vspace{-0.6cm}
 \end{proof}
 
@@ -106,7 +106,7 @@ The key thing that makes $M_2$ nice is that all $A \in O_2$ fit in one of the fo
 
 What does it take to do this?  Well, we need to pick $x_0$ so that $b = x_0 - Ax_0$, or so that $(I_2 - A)x_0 = b$.
 
-This is doable as long as $I_2 - A$ is invertible.  Well, $I_2 - A$ is noninvertible if and only if $A$ has an eigenvalue of $1$.  But rotations $A = \begin{bsmallmatrix} \cos \theta & \sin \theta \\ \sin \theta & - \cos \theta \end{bsmallmatrix}$ have non-real eigenvalues as long as $A \neq I_2$. \vspace{0.1cm}
+This is doable as long as $I_2 - A$ is invertible.  Well, $I_2 - A$ is noninvertible if and only if $A$ has an eigenvalue of $1$.  But rotations $A = \begin{bsmallmatrix} \cos \theta & - \sin \theta \\ \sin \theta & \cos \theta \end{bsmallmatrix}$ have eigenvalues $e^{\pm i \theta} \neq 1$ as long as $A \neq I_2$. \vspace{0.1cm}
 
 \begin{boxed-text}[42em]
 \textbf{--- Summary of Case X ---} \vskip{0.5em}
@@ -133,7 +133,7 @@ Furthermore, we claim the translation $T: x \mapsto x + \frac{Ab + b}{2}$ is alo
 
 If $f(x) = Ax + b$ satisfies $Ab = -b$, then we may write $f(x) = A(x - x_0) + x_0$, which is a \textbf{\textcolor{cyan}{reflection}}: \\ specifically, a reflection about a line with angle $\frac{\theta}{2}$ through $x_0$. \vskip{0.5em}
  
-Otherwise, we write $f(x) = \left(Ax + \frac{b - Ab}{2}\right) + \left(\frac{Ab + b}{2}\right)$, which is a \textbf{\textcolor{cyan}{glide reflection}}: \\ a reflection about a line $\ell$ with angle $\frac{\theta}{2}$ through $x_0$ and a translation along $\ell$ with magnitude $\frac{Ab + b}{2}$.
+Otherwise, we write $f(x) = \left(Ax + \frac{b - Ab}{2}\right) + \left(\frac{Ab + b}{2}\right)$, which is a \textbf{\textcolor{cyan}{glide reflection}}: \\ a reflection about a line $\ell$ with angle $\frac{\theta}{2}$ through $x_0$ and a translation along $\ell$ by $\frac{Ab + b}{2}$.
 \end{boxed-text}
 
 In summary, the isometries in $\mathbb{R}^2$ are the \textcolor{cyan}{\textbf{rotation}}, \textcolor{cyan}{\textbf{translation}}, \textcolor{cyan}{\textbf{reflection}}, and \textcolor{cyan}{\textbf{glide reflection}}.
@@ -146,11 +146,11 @@ We've classified all of the isometries.  Naturally, it makes sense to try to ans
 \textbf{Question (Bad).} What do all the symmetry groups $G \subseteq M_2$ of a shape $S \subseteq \mathbb{R}^2$ look like?
 \end{boxed-text}
 
-Unfortunately, this question is very hard.  The answer isn't ``every subgroup of $M_2$'' because, say, the group of rotations by an angle $\mathbb{Q}\pi$ is not a symmetry group.
+Unfortunately, this question is very hard.  The answer isn't ``every subgroup of $M_2$'' because, say, the group $SO_2(\mathbb{R})$ of all rotations about the origin is not a symmetry group: any set it preserves is a union of circles centered at the origin, which the reflections preserve too.
 
 Some symmetry groups are also very stupid; for example, all of $M_2$ is the symmetry group of $\emptyset$.  We introduce the following definition to filter out subgroups of $M_2$ that feel overly ``dense''.
 
-\textbf{Definition (Discrete Subgroups).} A subgroup $G \subseteq M_2$ or $G \subseteq M_1$ is \textbf{discrete} if there is some $\varepsilon > 0$ such that no two elements of $g$ are less than $\varepsilon$ apart.  (A discrete subgroup of $M_n$ has no translation or rotation with magnitude less than $\varepsilon$.)
+\textbf{Definition (Discrete Subgroups).} A subgroup $G \subseteq M_2$ or $G \subseteq M_1$ is \textbf{discrete} if there is some $\varepsilon > 0$ such that no two elements of $G$ are less than $\varepsilon$ apart.  (A discrete subgroup of $M_n$ has no translation or rotation with magnitude less than $\varepsilon$.)
 
 This motivates the following alternative question.
 
@@ -163,7 +163,7 @@ This motivates the following alternative question.
 To end today's lecture, we'll answer the following simplified question.
 
 \begin{boxed-text}[42em]
-\textbf{Question (Good).} What do all the discrete subgroups of $O_2(\mathbb{R})$ look like?
+\textbf{Question (Simplified).} What do all the discrete subgroups of $O_2(\mathbb{R})$ look like?
 \end{boxed-text}
 
 In other words, only consider the symmetry groups without translations.  The answer is the following:
@@ -173,7 +173,7 @@ In other words, only consider the symmetry groups without translations.  The ans
 \[
     \begin{cases}
         C_n = \{1, x, \dots, x^{n - 1} \} \text{ where } x \text{ is a rotation by } \frac{2\pi}{n}. \\
-        D_n = \{1, x, \dots, x^{n - 1}, y, xy, \dots, xy^{n - 1} \} \text{ where } y \text{ is a reflection, and } x \text{ is a rotation by } \frac{2\pi}{n}.
+        D_n = \{1, x, \dots, x^{n - 1}, y, yx, \dots, yx^{n - 1} \} \text{ where } y \text{ is a reflection, and } x \text{ is a rotation by } \frac{2\pi}{n}.
     \end{cases}
 \] \vspace{-0.5cm}
 \end{theorem}
@@ -185,7 +185,7 @@ To prove this, we'll need the following helper theorem.
 \end{theorem}
 
 \begin{proof}
-    Let $S$ be a discrete subgroup of $(\mathbb{R}, +)$.  Then there is some smallest positive element $\alpha \in S$.
+    Let $S$ be a discrete subgroup of $(\mathbb{R}, +)$; if $S = \{0\}$, then $S = 0 \mathbb{Z}$, so assume otherwise.  Then there is some smallest positive element $\alpha \in S$.
     \begin{itemize}
         \item By additive closure, every integer multiple of $\alpha$ is in $S$, so $\alpha \mathbb{Z} \subseteq S$.
         \item For any real number $t \not \in \alpha \mathbb{Z}$, let $n$ be the unique integer such that $t \in (n \cdot \alpha, (n + 1) \cdot \alpha)$.  Then if $t$ were in $S$, so would $t - n \cdot \alpha$, contradicting the minimality of $\alpha$.  Thus, for all $t \not \in \alpha \mathbb{Z}$, we also have $t \not \in S$.
@@ -206,9 +206,9 @@ We're now ready to provide the proof to the ``Discrete Subgroups of $O_2(\mathbb
 
     Suppose for now that $G \subseteq SO_2(\mathbb{R})$.  Then $G$ consists only of rotations, so we may define the isomorphism:
     \[ \varphi: SO_2(\mathbb{R}) \to \mathbb{R}/2\pi \mathbb{Z} ~~~ \text{ defined so that } ~~~ \varphi: \begin{bsmallmatrix} \cos \theta & - \sin \theta \\ \sin \theta & \cos \theta \end{bsmallmatrix} \mapsto \theta + 2 \pi \mathbb{Z}. \]
-    Then $\varphi(G)$ is a finite subgroup of $\mathbb{R}$, meaning $\varphi(G) \cong \alpha \mathbb{Z}$.  So if $G$ is finite, then $G$ must look like $C_n$.
+    Then the preimage of $\varphi(G)$ in $\mathbb{R}$ is a discrete subgroup of $\mathbb{R}$ containing $2 \pi \mathbb{Z}$, meaning it is $\alpha \mathbb{Z}$ with $\alpha = \frac{2\pi}{n}$ for some positive integer $n$.  So $G$ must look like $C_n$.
 
-    We now confront the $G \not \subseteq SO_2(\mathbb{R})$ case.  By the reasoning above, we know $H = G \cap SO_2(\mathbb{R})$ is isomorphic to $C_n$.  Thus, $G \cong C_n \cup y \, C_n$.  By inspection, the only possibility then is that $y$ refers to a reflection, meaning $G \cong D_n$. ~ $\blacksquare$
+    We now confront the $G \not \subseteq SO_2(\mathbb{R})$ case.  By the reasoning above, we know $H = G \cap SO_2(\mathbb{R})$ is isomorphic to $C_n$.  Thus, $G = H \cup y \, H$ for any $y \in G \setminus H$.  By inspection, the only possibility then is that $y$ refers to a reflection, meaning $G \cong D_n$. ~ $\blacksquare$
 \end{proof}
 
 

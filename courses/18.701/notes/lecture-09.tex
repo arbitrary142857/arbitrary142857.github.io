@@ -13,7 +13,7 @@ Let's generalize this in 18.701 terms.
 
 \textbf{Definition (Dot / Inner Product).} For vectors $x, y \in \mathbb{R}^n$, we say their \textbf{dot / inner product} is $\langle x, y \rangle := x^{\top}y \in \mathbb{R}$.
 
-\textbf{Definition (Length / Norm / Distance).} For vectors $x \in \mathbb{R}^n$, the \textbf{length / norm} of $x$ is $|x| := \sqrt{\langle x, x \rangle}$.  Furthermore, the \textbf{distance} between $x, y \in \mathbb{R}^n$ is said to be $|x - y|$.
+\textbf{Definition (Length / Norm / Distance).} For a vector $x \in \mathbb{R}^n$, the \textbf{length / norm} of $x$ is $|x| := \sqrt{\langle x, x \rangle}$.  Furthermore, the \textbf{distance} between $x, y \in \mathbb{R}^n$ is said to be $|x - y|$.
 
 Note that, for now, we are working only over $\mathbb{R}^n$.  We don't want to say $\begin{psmallmatrix} 1 \\ i \end{psmallmatrix}$ has length $0$, for example---and some fields don't even have a well-defined square root!
 
@@ -26,7 +26,7 @@ Note that, for now, we are working only over $\mathbb{R}^n$.  We don't want to s
 \end{theorem}
 
 \begin{proof}
-    The identity $|x + \lambda y|^2 \geq 0$ holds for all $\lambda \in \mathbb{R}$.  Expanding this, we have:
+    The inequality $|x + \lambda y|^2 \geq 0$ holds for all $\lambda \in \mathbb{R}$.  Expanding this, we have:
     \[ 0 \leq |x + \lambda y|^2 = \langle x + \lambda y, x + \lambda y \rangle = |x|^2 + 2\langle x, y \rangle \lambda + |y|^2 \lambda^2. \]
     The RHS of the above is a quadratic in $\lambda$ that is nonnegative everywhere, so its discriminant is nonpositive:
     \[ 0 \geq \text{discriminant} = \left ( 2 \langle x, y \rangle \right ) ^2 - 4 \left ( |x|^2 \right ) \left ( |y|^2 \right ) = 4 ( \langle x, y\rangle^2 - |x|^2 |y|^2). \]
@@ -42,13 +42,13 @@ Note that, for now, we are working only over $\mathbb{R}^n$.  We don't want to s
 \textbf{Definition (Orthogonal / Orthonormal Bases).} A basis of $\mathbb{R}^n$ is \textbf{orthogonal} if all vectors in the basis are pairwise orthogonal.  A basis of $\mathbb{R}^n$ is \textbf{orthonormal} if it is orthogonal and all vectors in the basis have unit length.
 
 \begin{theorem}{Orthogonal $\implies$ Independent}
-    Any set of pairwise orthogonal vectors $\{a_1, \dots, a_k \} \subseteq \mathbb{R}^n$ must be linearly independent.  In particular, $n$ pairwise orthogonal vectors of $\mathbb{R}^n$ must form a basis.
+    Any set of nonzero pairwise orthogonal vectors $\{a_1, \dots, a_k \} \subseteq \mathbb{R}^n$ must be linearly independent.  In particular, $n$ nonzero pairwise orthogonal vectors of $\mathbb{R}^n$ must form a basis.
 \end{theorem}
 
 \begin{proof}
-    Given any linear independence of $\{a_1, \dots, a_k\}$, we may write:
-    \[ c_1a_1 + \dots + c_k a_k  = 0 ~ \implies ~ \langle a_i, c_1 a_1 + \dots + c_k a_k \rangle = 0 \text{ for all } i = 1, 2, \dots, n. \]
-    But $\langle a_i, c_1 a_1 + \dots + c_k a_k \rangle = c_i |a_i|^2$, so $c_i = 0$ for all $i$. ~ $\blacksquare$
+    Given any linear dependence of $\{a_1, \dots, a_k\}$, we may write:
+    \[ c_1a_1 + \dots + c_k a_k  = 0 ~ \implies ~ \langle a_i, c_1 a_1 + \dots + c_k a_k \rangle = 0 \text{ for all } i = 1, 2, \dots, k. \]
+    But $\langle a_i, c_1 a_1 + \dots + c_k a_k \rangle = c_i |a_i|^2$ and $|a_i| \neq 0$, so $c_i = 0$ for all $i$. ~ $\blacksquare$
 \end{proof}
 
 \textbf{Definition (Orthogonal Matrices).} A matrix $A \in \mathbb{R}^{n \times n}$ is \textbf{orthogonal} if $\langle Ax, Ay \rangle = \langle x, y \rangle$ for all $x, y \in \mathbb{R}^n$.
@@ -77,15 +77,15 @@ In other words, an orthogonal matrix is a matrix that preserves the dot product.
         \item $(\#1) \implies (\#3)$.  Take a pair of basis vectors $(e_i, e_j)$, so $\langle Ae_i, Ae_j\rangle = \langle e_i, e_j \rangle$.  The LHS and RHS simplify as:
         \[ \text{LHS} = \langle Ae_i, Ae_j \rangle = e_i^{\top}(A^{\top}A)e_j = (A^{\top}A)_{ij} ~~~~ \text{ and } ~~~~ \text{RHS} = \langle e_i, e_j \rangle = \begin{cases} 1 & i = j \\ 0 & i \neq j \end{cases}. \]
         Thus, the equation $\langle Ae_i, Ae_j\rangle = \langle e_i, e_j \rangle$ gives us $(A^{\top}A)_{ij} = 1$ if and only if $i = j$, meaning $(A^{\top}A) = I_n$.
-        \item $(\#4) \iff (\#2)$.  Suppose the columns of $A$ form vectors $\{a_1, \dots, a_n\} \subseteq \mathbb{R}^n$.  Observe that:
+        \item $(\#4) \iff (\#3)$.  Suppose the columns of $A$ form vectors $\{a_1, \dots, a_n\} \subseteq \mathbb{R}^n$.  Observe that:
         \[ A^{\top}A = \begin{bsmallmatrix} - & a_1 & - \\ \vdots & \vdots & \vdots \\ - & a_n & - \end{bsmallmatrix} \begin{bsmallmatrix} \mid & \cdots & \mid \\ a_1 & \cdots & a_n \\ \mid & \cdots & \mid \end{bsmallmatrix} = \begin{bmatrix} \langle a_i, a_j \rangle \end{bmatrix}_{i, j}. \]
         Thus, if $A^{\top}A = I_n$, then $\langle a_i, a_j \rangle = 1$ if $i = j$, and $\langle a_i, a_j \rangle = 0$ otherwise, which implies $\{a_i\}$ is an orthonormal basis.  And it goes the other way, too; if $\{a_i\}$ is orthonormal, then $A^{\top}A = I_n$.
-        \item $(\# 5) \iff (\#2)$. If $A^{\top} A = I_n$, then $A^{\top}$ and $A$ are inverses.  So we also get $A A^{\top} = I_n$.  Now repeating the argument in $(\#2) \implies (\#4)$ with the equation $AA^{\top} = I_n$ implies the rows of $A$ are orthonormal.
+        \item $(\# 5) \iff (\#3)$. If $A^{\top} A = I_n$, then $A^{\top}$ and $A$ are inverses.  So we also get $A A^{\top} = I_n$.  Now repeating the argument in $(\#3) \implies (\#4)$ with the equation $AA^{\top} = I_n$ implies the rows of $A$ are orthonormal.
     \end{itemize}
     And that's good enough. ~ $\blacksquare$
 \end{proof}
 
-\subsection{Orthonormal Groups}
+\subsection{Orthogonal Groups}
 
 \textbf{Definition (Orthogonal Group).} The \textbf{orthogonal group} is $O_n(\mathbb{R}) := \{A \in \mathbb{R}^{n \times n} \mid A^{\top} A = I_n \}$.
 
@@ -97,7 +97,7 @@ For small $n$, what do the orthogonal groups look like?
 
 \textbf{Example.} Evidently $O_1(\mathbb{R}) \cong \{ \begin{bsmallmatrix} 1 \end{bsmallmatrix} , \begin{bsmallmatrix} -1 \end{bsmallmatrix} \}$, and $SO_1(\mathbb{R}) \cong \{\begin{bsmallmatrix} 1 \end{bsmallmatrix} \}$.
 
-\textbf{Example.} By inspection, for $n = 2$, we can describe the elements of $O_2$ and $SO_2$ as rotations:
+\textbf{Example.} By inspection, for $n = 2$, we can describe the elements of $O_2$ and $SO_2$ as rotations and reflections:
 \[ O_2(\mathbb{R}) = \left \{ \begin{bsmallmatrix} \cos \theta & - \sin \theta \\ \sin \theta & \cos \theta \end{bsmallmatrix}, \begin{bsmallmatrix} \cos \theta & \sin \theta \\ \sin \theta & - \cos \theta \end{bsmallmatrix} : \theta \in [0, 2\pi) \right \} \text{ and } SO_2(\mathbb{R}) = \left \{ \begin{bsmallmatrix} \cos \theta & -\sin \theta \\ \sin \theta & \cos \theta \end{bsmallmatrix}: \theta \in [0, 2\pi) \right \}. \]
 Notice that $SO_2(\mathbb{R})$ is just the group of rotation matrices.  Meanwhile, $O_2(\mathbb{R})$ includes rotations about the origin \emph{or} reflections about lines through the origin.
 
@@ -116,8 +116,8 @@ Notice that $SO_2(\mathbb{R})$ is just the group of rotation matrices.  Meanwhil
 \end{align*}
 But when $n$ is odd, the above means $\det (A - I_n) = 0$, meaning $A$ has an eigenvector $v$ with eigenvalue $1$.  In the particular case of $n = 3$, if we rewrite $A$ using an orthonormal basis containing $v = e_1$, we must have:
 \[ Ae_1 = e_1 ~  \implies ~ A = \begin{bsmallmatrix} 1 & 0 & 0 \\ 0 & \heartsuit & \heartsuit \\ 0 & \heartsuit & \heartsuit \end{bsmallmatrix}. \]
-Note that the top entries of $A$ must be zero because the columns of $A$ must be orthonormal.  And the submatrix of $\heartsuit$s is in $SO_2(\mathbb{R})$.  So any transformation in $A \in SO_3(\mathbb{R})$ may be understood as a planar rotation about an axis $v$.
+Note that the top entries of $A$ must be zero because the columns of $A$ must be orthonormal.  And the submatrix of $\heartsuit$s is in $SO_2(\mathbb{R})$.  So any transformation $A \in SO_3(\mathbb{R})$ may be understood as a planar rotation about an axis $v$.
 
-\textbf{Example.} It turns out that elements of $SO_4(\mathbb{R})$ (in appropriate coordinates) look like the composition of a rotation in two separate two-dimensional subspaces.
+\textbf{Example.} It turns out that elements of $SO_4(\mathbb{R})$ (in appropriate coordinates) look like the composition of rotations in two separate two-dimensional subspaces.
 
 \end{document}

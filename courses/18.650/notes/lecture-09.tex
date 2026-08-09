@@ -15,9 +15,9 @@ distinct values of $\theta$ necessarily yield distinct probability distributions
 $\{\mathcal{N}(\mu, \sigma^2) \mid \mu \in \mathbb{R}, \sigma \in \mathbb{R}^+\}$,
 we might say $\mu$ is a parameter of interest and $\sigma$ is a nuisance parameter.
 
-\textbf{Example.} The response to a drug dosage is modeled by
-$\mathcal{N}\left(E_0 + \frac{D \times E_{\text{max}}}{D + ED_{50}},\ \sigma^2\right)$,
-for some parameter $\theta = (\sigma^2, E_0, E_{\text{max}}, ED_{50})$.
+\textbf{Example.} The response to a drug dosage $D$ is modeled by
+$\mathcal{N}\left(E_0 + \frac{D \times E_{\text{max}}}{D + \mathrm{ED}_{50}},\ \sigma^2\right)$,
+for some parameter $\theta = (\sigma^2, E_0, E_{\text{max}}, \mathrm{ED}_{50})$.
 In this case, $\theta$ is not identifiable.
 
 \subsection{Defining the Maximum Likelihood Estimator (MLE)}
@@ -63,13 +63,13 @@ might be a good representation of $\mathbb{P}_{\theta^*}$.
         the MLE is $\hat{\theta} := \frac{1}{n} \sum_{i = 1}^n X_i$.
         \item For the model $\{\mathcal{N}(\theta, 1) \mid \theta \in \mathbb{R}\}$,
         the MLE is $\hat{\theta} := \frac{1}{n} \sum_{i = 1}^n X_i$.
-        \item For the model $\{\mathrm{Unif}([0, \theta]) \mid \theta \geq 0\}$,
-        the MLE is $\hat{\theta} := \max X_i$.
+        \item For the model $\{\mathrm{Unif}([0, \theta]) \mid \theta > 0\}$,
+        the MLE is $\hat{\theta} := \max(X_1, \dots, X_n)$.
     \end{itemize}
 \end{remark}
 
 Note that $L_n(\theta)$ and $\ell_n(\theta)$ are
-\emph{deterministic} functions whose behaviors are determined by \emph{random} samples
+\emph{random} functions, since their behaviors are determined by \emph{random} samples
 from $\mathbb{P}_{\theta^*}$.
 If one seeks a likelihood function that is instead determined by $\theta^*$ itself,
 one may opt for\dots

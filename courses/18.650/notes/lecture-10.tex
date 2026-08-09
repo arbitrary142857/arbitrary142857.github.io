@@ -5,9 +5,9 @@
 
 \subsection{Kullback-Leibler (KL) Divergence}
 
-Rather than maximizing the likelihood, the MLE can also be defined
-as the $\theta$ that minimizes the ``distance'' between
-$\mathbb{P}_{\theta^*}$ and $\mathbb{P}_{\hat{\theta}}$.
+Maximizing the likelihood turns out to be closely related to
+minimizing the ``distance'' between
+$\mathbb{P}_{\theta^*}$ and $\mathbb{P}_{\theta}$.
 Here's how we formalize that notion of ``distance''.
 
 \textbf{Definition.} Given distributions $\mathbb{P}_1$ and $\mathbb{P}_2$
@@ -47,7 +47,7 @@ Importantly, this implies the following.
 \end{theorem}
 
 \begin{proof}
-    The first sentence is true by Jensen's; the point is that $\log$ is concave, so:
+    The first sentence is true by Jensen's; the point is that $\log$ is strictly concave, so:
     \[ D_{\mathrm{KL}}(\mathbb{P}_{\theta^*} \parallel \mathbb{P}_{\theta})
     = -\mathbb{E}_{\theta^*} \left[ \log \left(\frac{f_{\theta}(X)}{f_{\theta^*}(X)}\right) \right]
     \geq -\log \left( \mathbb{E}_{\theta^*} \left[ \frac{f_{\theta}(X)}{f_{\theta^*}(X)} \right] \right)
@@ -59,9 +59,9 @@ Importantly, this implies the following.
     The second sentence follows because minimizing
     $D_{\mathrm{KL}}(\mathbb{P}_{\theta^*} \parallel \mathbb{P}_{\theta})$
     is equivalent to maximizing
-    $\int_{\mathbb{R}} f_{\theta^*}(x) \log f_{\theta}(x) \, \mathrm{d}x$;
+    $\int_{\mathcal{R}} f_{\theta^*}(x) \log f_{\theta}(x) \, \mathrm{d}x$;
     see the far-RHS of the definition of $D_{\mathrm{KL}}$.
-    But $\int_{\mathbb{R}} f_{\theta^*}(x) \log f_{\theta}(x) \, \mathrm{d}x = \ell(\theta)$
+    But $\int_{\mathcal{R}} f_{\theta^*}(x) \log f_{\theta}(x) \, \mathrm{d}x = \ell(\theta)$
     identically. ~ $\blacksquare$
 \end{proof}
 
@@ -69,11 +69,12 @@ Importantly, this implies the following.
 
 The upshot of introducing KL Divergence is the second sentence of the
 ``KL Divergence Minimization'' theorem.
-We will leverage this fact to prove that the MLE is always a consistent estimator.
+We will leverage this fact to prove that the MLE is a consistent estimator.
 
 \begin{theorem}{MLE Consistency}
-    The MLE is consistent; that is, if $\hat{\theta}_n$ is the MLE of the parameter $\theta$,
-    then $\hat{\theta}_n \convprob \theta^*$ always.
+    Under mild regularity conditions (identifiability in particular),
+    the MLE is consistent; that is, if $\hat{\theta}_n$ is the MLE of the parameter $\theta$,
+    then $\hat{\theta}_n \convprob \theta^*$.
 \end{theorem}
 
 \begin{proof}
@@ -89,7 +90,7 @@ We will leverage this fact to prove that the MLE is always a consistent estimato
         converges in probability to the constant $\ell(\theta')$.
     \end{itemize}
     These three points together imply $\hat{\theta}_n \convprob \theta^*$.
-    Roughly speaking, the third bullet point says $\ell_n \convprob \ell$,
+    Roughly speaking, the third bullet point says $\frac{1}{n}\ell_n \convprob \ell$,
     so the maximizer of $\ell_n$ should also converge in probability
     to the maximizer of $\ell$.
     (Yes, this needs to be justified---handwaving a little here.) ~ $\blacksquare$

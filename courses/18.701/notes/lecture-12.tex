@@ -8,7 +8,7 @@
 \textbf{Definition (Orbit and Stabilizer).} Let $G$ be a group acting on a set $S$.  Then for any $s \in S$:
 \begin{itemize}
     \item The \textbf{orbit} of $s$ is $Gs := \{gs : g \in G\} \subseteq S$.  \emph{(the set of reachable destinations)}
-    \item The \textbf{stabilizer} of $s$ is $\mathrm{Stab}_G(s) := \{g \in G: gs = s\} \subseteq G$.  \emph{(the subgroup of do-nothing actions)}
+    \item The \textbf{stabilizer} of $s$ is $\Stab_G(s) := \{g \in G: gs = s\} \subseteq G$.  \emph{(the subgroup of do-nothing actions)}
 \end{itemize}
 
 \textbf{Example.} Consider the group $D_4$ acting on the set $\mathbb{R}^2$.
@@ -57,7 +57,7 @@ Here's a natural answer:
 \begin{quote}
     \textbf{Answer:} Designate $G$ as a group action on $G / H$ by left multiplication, where $G / H$ is the set of left cosets of $H$ in $G$.  Then $G$ acts transitively on $G / H$.
     
-    Note that $|\Stab_G(gH)| = |H|$ for all $g \in G$.  If $H \unlhd G$, then in fact $\Stab_G(gH) = H$.
+    Note that $\Stab_G(gH) = gHg^{-1}$ for all $g \in G$; in particular, $\Stab_G(H) = H$.  If $H \unlhd G$, then in fact $\Stab_G(gH) = H$ for every $g$.
 \end{quote}
 It turns out that the above is the \emph{only} right answer!
 
@@ -101,9 +101,9 @@ The previous theorem can be interpreted combinatorially, too.
 
 \textbf{Example (Cube Symmetries).} Let $G \subseteq SO_3(\mathbb{R})$ be the symmetry group of the cube.
 \begin{itemize}
-    \item Since $G$ acts transitively on $V = \{\text{all $8$ vertices}\}$, and $|\Stab_G(V)| = 3$, we have $|G| = 8 \times 3 = 24$.
-    \item Since $G$ acts transitively on $E = \{\text{all $12$ edges}\}$, and $|\Stab_G(E)| = 2$, we have $|G| = 12 \times 2 = 24$.
-    \item Since $G$ acts transitively on $F = \{\text{all $6$ faces}\}$, and $|\Stab_G(F)| = 4$, we have $|G| = 6 \times 4 = 24$.
+    \item Since $G$ acts transitively on $V = \{\text{all $8$ vertices}\}$, and $|\Stab_G(v)| = 3$ for any vertex $v$, we have $|G| = 8 \times 3 = 24$.
+    \item Since $G$ acts transitively on $E = \{\text{all $12$ edges}\}$, and $|\Stab_G(e)| = 2$ for any edge $e$, we have $|G| = 12 \times 2 = 24$.
+    \item Since $G$ acts transitively on $F = \{\text{all $6$ faces}\}$, and $|\Stab_G(f)| = 4$ for any face $f$, we have $|G| = 6 \times 4 = 24$.
 \end{itemize}
 Of course, all three choices of orbit $Gs$ yield the same result $|Gs| \times |\Stab_G(s)| = 24$.
 
@@ -117,7 +117,7 @@ We've been classifying geometric groups in $\mathbb{R}^2$ so far.  Now it's time
 
 Let $G \subseteq SO_3(\mathbb{R})$ be a finite subgroup of $SO_3(\mathbb{R})$ with size $N = |G|$.  The nice thing about $SO_3(\mathbb{R})$ is that---as shown at the end of Lecture 9---it consists entirely of pure rotations about an axis through the origin.
 
-\textbf{Definition (Pole).} Let $S^2 := \{x \in \mathbb{R}^3: |x| = 1\}$ be the unit sphere.  Then every $g \in G \setminus \{\mathrm{id}\}$ has two \textbf{poles}, those being the two points $S^2$ fixed by $g$.  Furthermore, we define:
+\textbf{Definition (Pole).} Let $S^2 := \{x \in \mathbb{R}^3: |x| = 1\}$ be the unit sphere.  Then every $g \in G \setminus \{\mathrm{id}\}$ has two \textbf{poles}, those being the two points of $S^2$ fixed by $g$.  Furthermore, we define:
 \[ P := \{(g, p) \mid g \in G \setminus \{\mathrm{id}\} \text{ and } p \text{ is a pole of } g\}. \]
 Here comes the clever observation; the proof of the following theorem is plain computation.
 
@@ -134,9 +134,9 @@ Here comes the clever observation; the proof of the following theorem is plain c
     Thus, $g_2p_1$ is a pole if and only if $p_1$ is a pole!  It then remains to answer the question: which element of $G$ is $g_2p_1$ a pole of?  The answer is $g_2g_1g_2^{-1}$, again because $\Stab_G(g_2p_1)$ is the conjugation of $\Stab_G(p_1)$ by $g_2$.
 \end{remark}
 
-Say this group action partitions $P$ into $k$ orbits of sizes $n_1, \dots, n_k$.  We now count $|P|$ in two ways:
+Say the induced group action on the set of poles partitions it into $k$ orbits of sizes $n_1, \dots, n_k$.  We now count $|P|$ in two ways:
 \begin{itemize}
-    \item For each of the $n_i$ ordered pairs $(g, p)$ in the $i^{\text{th}}$ orbit, there are $\frac{N}{n_i} - 1$ nontrivial group actions that fix that ordered pair; this is because of the Orbit-Stabilizer theorem.
+    \item For each of the $n_i$ poles $p$ in the $i^{\text{th}}$ orbit, there are $\frac{N}{n_i} - 1$ nontrivial group actions that fix that pole; this is because of the Orbit-Stabilizer theorem.
     
     Thus, the $i^{\text{th}}$ orbit contributes $n_i \cdot \left(\frac{N}{n_i} - 1\right)$ ordered pairs $(g, p)$ to $P$.  Therefore, $|P| = \sum_{i = 1}^{k} n_i\left(\frac{N}{n_i} - 1\right)$.
     \item For each of the $N - 1$ group actions $g \in G$, there are $2$ poles $p$ that it fixes.  Therefore, $|P| = 2(N - 1)$.
@@ -150,7 +150,7 @@ The rest of the argument is solely number-theoretic; the first step is bounding.
     \emph{Proof:} This is because if $k = 1$, then the RHS is less than $1$, whereas the LHS is at least $1$ for $N > 1$.
     \item \textbf{Claim.} It is impossible to have $k \geq 4$.
 
-    \emph{Proof:} Recall that there are $\frac{N}{n_i} - 1 = r_i - 1$ nontrivial group actions that fix any pole in the $i^{\text{th}}$ orbit.  But every pole---by nature of being a pole---is fixed by at least $1$ group action.  Thus, $r_i \geq 2$ for all $i$.
+    \emph{Proof:} Recall that there are $\frac{N}{n_i} - 1 = r_i - 1$ nontrivial group actions that fix any pole in the $i^{\text{th}}$ orbit.  But every pole---by nature of being a pole---is fixed by at least $1$ nontrivial group action.  Thus, $r_i \geq 2$ for all $i$.
 
     This means that for $k \geq 4$, the RHS is at least $4 - \frac{4}{2} = 2$, whereas the LHS is less than $2$, contradiction.
 \end{itemize}
@@ -165,9 +165,9 @@ That's just five cases in total!  It still remains to consider what each of thes
 It turns out that these five solutions correspond to the following five symmetry groups.
 
 \begin{quote}
-    \textbf{Symmetry Groups in $\mathbb{R}^3$.}
+    \textbf{Rotation Symmetry Groups in $\mathbb{R}^3$.}
     \begin{itemize}
-        \item $(N, N, N)$: the symmetry group $G \cong C_n$ of a pyramid with a regular $n$-gon as a base.
+        \item $(N, N, N)$: the symmetry group $G \cong C_N$ of a pyramid with a regular $N$-gon as a base.
         \item $(2, 2, \tfrac{N}{2}, N)$: the symmetry group $G \cong D_n$ of a prism with a regular $n$-gon as a base.
         \item $(2, 3, 3, 12)$: the symmetry group $G$ of the tetrahedron.
         \item $(2, 3, 4, 24)$: the symmetry group $G$ of the cube (or its dual, the octahedron).
@@ -175,14 +175,14 @@ It turns out that these five solutions correspond to the following five symmetry
     \end{itemize}
 \end{quote}
 
-And that's all the finite symmetry groups in $\mathbb{R}^3$.
+And that's all the finite rotation symmetry groups in $\mathbb{R}^3$.
 
 \begin{remark}
     Recall the following step in the above argument.
     \begin{quote}
-        Say this group action partitions $P$ into $k$ orbits of sizes $n_1, \dots, n_k$.  We now count $|P|$ in two ways:
+        Say the induced group action on the set of poles partitions it into $k$ orbits of sizes $n_1, \dots, n_k$.  We now count $|P|$ in two ways:
         \begin{itemize}
-        \item For each of the $n_i$ ordered pairs $(g, p)$ in the $i^{\text{th}}$ orbit, there are $\frac{N}{n_i} - 1$ nontrivial group actions that fix that ordered pair; this is because of the Orbit-Stabilizer theorem.
+        \item For each of the $n_i$ poles $p$ in the $i^{\text{th}}$ orbit, there are $\frac{N}{n_i} - 1$ nontrivial group actions that fix that pole; this is because of the Orbit-Stabilizer theorem.
         
         Thus, the $i^{\text{th}}$ orbit contributes $n_i \cdot \left(\frac{N}{n_i} - 1\right)$ ordered pairs $(g, p)$ to $P$, so $|P| = \sum_{i = 1}^{k} n_i\left(\frac{N}{n_i} - 1\right)$.
         

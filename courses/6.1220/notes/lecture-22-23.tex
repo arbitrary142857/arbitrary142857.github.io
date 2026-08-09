@@ -3,9 +3,9 @@
 
 \begin{document}
 
-\textbf{Definition (Convolution).} Given sequences $\{a_j\}_{j = 0}^n$ and $\{b_k\}_{k = 0}^m$ of numbers, their \textbf{convolution} $a \ast b$ is:
+\textbf{Definition (Convolution).} Given sequences $\{a_j\}_{j = 0}^m$ and $\{b_k\}_{k = 0}^n$ of numbers, their \textbf{convolution} $a \ast b$ is:
 \[ \{c_\ell\}_{\ell = 0}^{n + m} ~~~~ \text{ given by } ~~~~ c_{\ell} = (a \ast b)_{\ell} := \sum_{j = 0}^{\ell} a_j b_{\ell - j}.\]
-This is just polynomial multiplication, or the PMF of the sum of two independent discrete PMFs.
+This is just polynomial multiplication, or the PMF of the sum of two independent discrete random variables.
 
 \begin{problem}{FFT}
     Given $\{a_j\}_{j = 0}^m$ and $\{b_k\}_{k = 0}^n$, compute their convolution $a \ast b$ in $O((m + n) \log (m + n))$ time.
@@ -32,27 +32,27 @@ Now let's un-black-box the solution to FFT.  How is FFT implemented in $O((m + n
 
     The driving principle behind our solution is the following.
     \begin{quote}
-        \textbf{Fact.} Any degree-$n$ polynomial is uniquely determined by its evaluations on any $n + 1$ values.
+        \textbf{Fact.} Any degree-$n$ polynomial is uniquely determined by its evaluations on any $n + 1$ distinct values.
     \end{quote}
-    A good choice of values to evaluate our polynomials on, it turns out, is any set of $(2^t)^{\text{th}}$ roots of unity.
+    A good choice of values to evaluate our polynomials on, it turns out, is the full set of $(2^t)^{\text{th}}$ roots of unity.
     \begin{quote}
-        \textbf{Claim (Discrete Fourier Transform).} Let $n$ be a power of two.  For any polynomial $p$ with degree $(n - 1)$ or lower, we can compute $\{p(\omega^{k}) \}_{k = 0}^n$ in $O(n \log n)$ time.
+        \textbf{Claim (Discrete Fourier Transform).} Let $n$ be a power of two, and let $\omega := e^{\frac{2\pi i}{n}}$.  For any polynomial $p$ with degree $(n - 1)$ or lower, we can compute $\{p(\omega^{k}) \}_{k = 0}^{n - 1}$ in $O(n \log n)$ time.
 
         \emph{Proof:} Divide and conquer.  Say the runtime is $T(n)$.
         \begin{itemize}
             \item Denote $p_{\text{even}}(x)$ and $p_{\text{odd}}(x)$ so that $p(x) = p_{\text{even}}(x^2) + x \cdot p_{\text{odd}}(x^2)$.
-            \item In $2T\left(\frac{n}{2}\right)$ time, compute $\{p_{\text{even}}(\omega^{2k})\}_{k = 0}^{n / 2}$ and $\{p_{\text{odd}}(\omega^{2k})\}_{k = 0}^{n / 2}$.
+            \item In $2T\left(\frac{n}{2}\right)$ time, compute $\{p_{\text{even}}(\omega^{2k})\}_{k = 0}^{n / 2 - 1}$ and $\{p_{\text{odd}}(\omega^{2k})\}_{k = 0}^{n / 2 - 1}$.
             \item In $O(n)$ time, we can then compute:
             \[ p(\omega^k) = \begin{cases}
                 p_{\text{even}}\left(\omega^{2k}\right) + \omega^k \cdot p_{\text{odd}}\left(\omega^{2k}\right) & \text{if $k < \frac{n}{2}$.} \\
-                p_{\text{even}}\left(\omega^{2k - n}\right) - \omega^k \cdot p_{\text{odd}}\left(\omega^{2k - n}\right) & \text{if $k \geq \frac{n}{2}$.}
+                p_{\text{even}}\left(\omega^{2k - n}\right) - \omega^{k - n/2} \cdot p_{\text{odd}}\left(\omega^{2k - n}\right) & \text{if $k \geq \frac{n}{2}$.}
             \end{cases} \]
         \end{itemize}
         This yields $T(n) = 2T\left(\frac{n}{2}\right) + O(n)$, which solves to $T(n) = O(n \log n)$. ~ $\square$
     \end{quote}
-    Thus, we select $\omega = e^{\frac{2\pi i}{T}}$ for some power-of-two $T > m + n$, then compute $\{p(\omega^k) \cdot q(\omega^k)\}_{k = 1}^{T}$ in $O((m + n) \log (m + n))$ time.  It remains to invert the DFT process above to extract $p(x) \cdot q(x)$ from here.
+    Thus, we select $\omega = e^{\frac{2\pi i}{N}}$ for some power-of-two $N > m + n$, then compute $\{p(\omega^k) \cdot q(\omega^k)\}_{k = 0}^{N - 1}$ in $O((m + n) \log (m + n))$ time.  It remains to invert the DFT process above to extract $p(x) \cdot q(x)$ from here.
     \begin{quote}
-        \textbf{Claim (Inverse Discrete Fourier Transform).} Given the values $\{p(\omega^k)\}_{k = 1}^n$ for some polynomial $p$ with degree $(n - 1)$ or lower, we can compute $p(x)$ in $O(n \log n)$ time.
+        \textbf{Claim (Inverse Discrete Fourier Transform).} Given the values $\{p(\omega^k)\}_{k = 0}^{n - 1}$ for some polynomial $p$ with degree $(n - 1)$ or lower, we can compute $p(x)$ in $O(n \log n)$ time.
 
         \emph{Proof:} The point is that the Inverse DFT is no harder than the DFT.
 
@@ -62,9 +62,9 @@ Now let's un-black-box the solution to FFT.  How is FFT implemented in $O((m + n
         We effectively wish to find an efficient way to multiply the LHS by $W^{-1}$.  The trick is that $W$ satisfies a really nice property:
         \[ \left(\overline{W} W\right)_{s, t} = \sum_{k = 0}^{n - 1} \overline{W}_{s, k} \cdot W_{k, t} = \sum_{k = 0}^{n - 1} \overline{\omega^{s \cdot k}} \cdot \omega^{k \cdot t} = \sum_{k = 0}^{n - 1} \omega^{k \cdot (t - s)} = \begin{cases} n & \text{ if } s = t. \\
             0 & \text{ otherwise.} \end{cases} \]
-        Therefore, $\overline{W}W = nI$, so all we need to do is perform the DFT on the LHS and divide by $n$. ~ $\square$
+        Therefore, $\overline{W}W = nI$, so all we need to do is perform the DFT (with $\overline{\omega}$ in place of $\omega$) on the LHS and divide by $n$. ~ $\square$
     \end{quote}
-    And that completes the implemntation of FFT! ~ $\blacksquare$
+    And that completes the implementation of FFT! ~ $\blacksquare$
 \end{solution}
 
 \begin{remark}

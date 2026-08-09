@@ -15,7 +15,7 @@ Today's lecture will look a lot like Lecture 8 on the Jordan Normal Form.  In Le
 In other words, we showed that all linear transformations---with an appropriate choice of basis---can be made to look like a matrix of Jordan Blocks.  Today is dedicated to proving the following analogous theorem:
 
 \begin{theorem}{Hermitian Form Classification}
-    Let $\langle \bullet, \bullet \rangle : \mathbb{C} \times \mathbb{C} \to \mathbb{C}$ be a Hermitian form with signature $(n_1, n_0, n_{-1})$.  Then with an appropriate choice of basis, $\langle \bullet, \bullet \rangle$ can be made to look like:
+    Let $\langle \bullet, \bullet \rangle : V \times V \to \mathbb{C}$ be a Hermitian form over a $\mathbb{C}$-vector space $V$, with signature $(n_1, n_0, n_{-1})$.  Then with an appropriate choice of basis, $\langle \bullet, \bullet \rangle$ can be made to look like:
     \[ \langle x, y \rangle = x^{\dagger}My ~~ \text{ where } ~~ M = \begin{bmatrix}
         I_{n_1} & 0 & 0 \\ 0 & -I_{n_{-1}} & 0 \\ 0 & 0 & 0_{n_0}
     \end{bmatrix} ~ \text{ (where $0_{n_0}$ is the $n_0 \times n_0$ zero matrix.)} \]
@@ -30,7 +30,7 @@ In other words, we'll show that all Hermitian forms---with an appropriate choice
     \end{center}
     Today's lecture will answer the following alternative question:
     \begin{center}
-        Take the group action of $GL_n(F)$ on $F^{n \times n}$, where $A \in GL_n(F)$ acts on $M \in \mathrm{Herm}_n(\mathbb{C})$ \\ via $M \mapsto A^{\dagger}MA$.  What are the orbits of this group action?
+        Take the group action of $GL_n(\mathbb{C})$ on $\mathrm{Herm}_n(\mathbb{C})$, where $A \in GL_n(\mathbb{C})$ acts on $M \in \mathrm{Herm}_n(\mathbb{C})$ \\ via $M \mapsto A^{\dagger}MA$.  What are the orbits of this group action?
     \end{center}
 \end{remark}
 
@@ -59,8 +59,8 @@ Our proof relies on a couple definitions.
 \textbf{Example.} Also as in the previous example, consider $V = \mathbb{C}^2$ with Hermitian form $\langle x, y \rangle = x^{\dagger} \begin{bsmallmatrix} 1 & 0 \\ 0 & -1 \end{bsmallmatrix} y$.
 \begin{itemize}
     \item This Hermitian form is nondegenerate.
-    \item The subspace $\mathbb{R}^2$ is also nondegenerate.
-    \item The subspace $W = \left \{ \begin{psmallmatrix} \lambda \\ \lambda \end{psmallmatrix} \mid \lambda \in \mathbb{R} \right\}$ is degenerate!  In particular, $W^{\perp} = W$.
+    \item The subspace $\left\{ \begin{psmallmatrix} \lambda \\ 0 \end{psmallmatrix} \mid \lambda \in \mathbb{C}\right\}$ is also nondegenerate.
+    \item The subspace $W = \left \{ \begin{psmallmatrix} \lambda \\ \lambda \end{psmallmatrix} \mid \lambda \in \mathbb{C} \right\}$ is degenerate!  In particular, $W^{\perp} = W$.
 \end{itemize}
 
 \begin{theorem}{Nondegenerate $\iff$ Invertible}
@@ -74,7 +74,7 @@ Our proof relies on a couple definitions.
 The previous theorem will be useful for our proof of Hermitian Classification.  This next one is just a fun fact.
 
 \begin{theorem}{Nondegenerate $\implies$ Injectivity}
-    Let $V$ be a $\mathbb{C}$-vector space with nondegenerate Hermitian form.  Suppose $v, v' \in V$ satisfies $\langle v, w \rangle = \langle v', w \rangle$ for all $w \in V$.  Then $v = v'$.
+    Let $V$ be a $\mathbb{C}$-vector space with nondegenerate Hermitian form.  Suppose $v, v' \in V$ satisfy $\langle v, w \rangle = \langle v', w \rangle$ for all $w \in V$.  Then $v = v'$.
 \end{theorem}
 
 \begin{proof}
@@ -91,7 +91,7 @@ Definitions aside, here's the driving theorem of our proof of Hermitian form cla
 
 Assuming this theorem to be true, we propose the following proof of Hermitian form classification: \vspace{0.1cm}
 \begin{quote}
-    \textit{Proof:} We may \textcolor{teal}{assume $V$ is nondegenerate,} as the degenerate subspace of $V$ may be ``taken out''. \vspace{0.2cm}
+    \textit{Proof:} We may \textcolor{teal}{assume $V$ is nondegenerate,} as the degenerate subspace $V^{\perp}$ may be ``taken out''. \vspace{0.2cm}
     
     Argue by induction on $\dim V$, where \textcolor{teal}{the base case of $\dim V = 1$ is trivial.}  Now \textcolor{teal}{pick a nondegenerate subspace $W \subseteq V$} and set the basis of $V$ to the union of bases of $W$ and $W^{\perp}$. \vspace{0.2cm}
     
@@ -117,19 +117,19 @@ Pretty simple, right?  It remains to \textcolor{teal}{justify the statements wri
 Now to justify the base case\dots
 
 \begin{theorem}{Justification \#2: The Base Case}
-    Let $\langle \bullet, \bullet \rangle$ be a Hermitian form over $\mathbb{C}$.  Under an appropriate choice of basis, $\langle \bullet, \bullet \rangle$ can be made to look like either $\begin{bsmallmatrix} 1 \end{bsmallmatrix}$, $\begin{bsmallmatrix} -1 \end{bsmallmatrix}$, or $\begin{bsmallmatrix} 0 \end{bsmallmatrix}$.
+    Let $\langle \bullet, \bullet \rangle$ be a Hermitian form over a one-dimensional $\mathbb{C}$-vector space.  Under an appropriate choice of basis, $\langle \bullet, \bullet \rangle$ can be made to look like either $\begin{bsmallmatrix} 1 \end{bsmallmatrix}$, $\begin{bsmallmatrix} -1 \end{bsmallmatrix}$, or $\begin{bsmallmatrix} 0 \end{bsmallmatrix}$.
 \end{theorem}
 
 \begin{proof}
     In the one-dimensional case, any change of basis $M \mapsto A^{\dagger}MA$ looks like the following:
     \[ \text{Given } M = \begin{bsmallmatrix} m \end{bsmallmatrix} \text{ and } A = \begin{bsmallmatrix} \lambda \end{bsmallmatrix}, ~ \text{we have } A^{\dagger}MA = \begin{bsmallmatrix} |\lambda|^2  m \end{bsmallmatrix}. \]
-    And $|\lambda|^2$ can be any positive real number, so $|\lambda^2|m$ can be made to equal either $1$, $-1$, or $0$ as needed. ~ $\blacksquare$
+    And $|\lambda|^2$ can be any positive real number, so $|\lambda|^2m$ can be made to equal either $1$, $-1$, or $0$ as needed. ~ $\blacksquare$
 \end{proof}
 
 For Justification \#3, we'll use the fact that $V$ is nondegenerate\dots \ (Do you see where?)
 
 \begin{theorem}{Justification \#3: Picking a Nondegenerate Subspace}
-    Let $V$ be a nondegenerate $\mathbb{C}$-vector space with Hermitian form $\langle \bullet, \bullet \rangle$.  Then $V$ has a nondegenerate subspace $W$.
+    Let $V$ be a nondegenerate $\mathbb{C}$-vector space with Hermitian form $\langle \bullet, \bullet \rangle$.  Then $V$ has a $1$-dimensional nondegenerate subspace $W$.
 \end{theorem}
 
 \begin{proof}
@@ -155,13 +155,13 @@ And finally, the most crucial step: justifying the ``Orthogonal Decomposition'' 
     \begin{quote}
         \textbf{Claim.} We always have $\dim W^{\perp} \geq n - k$ (regardless of whether $W$ or $V$ are degenerate or not!).
         
-        \emph{Proof:} The only constraints on elements $w^{\perp} \in W^{\perp}$ is that $\langle w^{\perp}, w \rangle = 0$ for all $w \in W$.  It's good enough to ensure this constraint holds for exactly $k$ choices of $w$, where these $k$ choices together span $W$.
+        \emph{Proof:} The only constraints on elements $w^{\perp} \in W^{\perp}$ are that $\langle w^{\perp}, w \rangle = 0$ for all $w \in W$.  It's good enough to ensure this constraint holds for exactly $k$ choices of $w$, where these $k$ choices together span $W$.
 
         So $W^{\perp}$ is the set of vectors $w^{\perp} \in V$ satisfying $k$ linear constraints of the form $\langle w^{\perp}, w \rangle = 0$, which must have dimension at least $n - k$. ~ $\square$
     \end{quote}
-    However, $W \cap W^{\perp} = \emptyset$ because $W$ is nondegenerate.  Thus, $V = W \oplus W^{\perp}$ follows for dimension reasons.
+    However, $W \cap W^{\perp} = \{0\}$ because $W$ is nondegenerate.  Thus, $V = W \oplus W^{\perp}$ follows for dimension reasons.
 
-    It remains to show $W^{\perp}$ is nondegenerate; this is where the nondegeneracy of $V$ becomes necessary.  Suppose, for the sake of contradiction, that some $v \in W^{\perp}$ were also in $(W^{\perp})^{\perp}$.  Then:
+    It remains to show $W^{\perp}$ is nondegenerate; this is where the nondegeneracy of $V$ becomes necessary.  Suppose, for the sake of contradiction, that some nonzero $v \in W^{\perp}$ were also in $(W^{\perp})^{\perp}$.  Then:
     \begin{itemize}
         \item Since $v \in (W^{\perp})^{\perp}$, it follows that $v$ is orthogonal to all of $W^{\perp}$.
         \item Since $v \in W^{\perp}$, it follows that $v$ is orthogonal to all of $W$.
@@ -195,7 +195,7 @@ And that's the proof!
 
 Okay, one more thing\dots \ does every Hermitian form have a \emph{unique} representation in this classification?
 
-\textbf{Definition (Signature).} Take a Hermitian matrix $M$ in the form described by this classification.  Its \textbf{signature} is the ordered triple $(n_1, n_0, n_{-1})$ with the number of $+1$s, $0$s, and $-1$s, respectively along the diagonal of $M$.
+\textbf{Definition (Signature).} Take a Hermitian matrix $M$ in the form described by this classification.  Its \textbf{signature} is the ordered triple $(n_1, n_0, n_{-1})$ with the number of $+1$s, $0$s, and $-1$s, respectively, along the diagonal of $M$.
 
 \begin{theorem}{Sylvester's Law of Inertia}
     Every Hermitian form has a unique signature, irrespective of basis.
@@ -212,7 +212,7 @@ Okay, one more thing\dots \ does every Hermitian form have a \emph{unique} repre
     Then $W_1' \cap (W_0 \oplus W_{-1}) \neq \{0\}$ for size reasons.  But this means there is some nonzero $v \in V$ such that:
     \begin{itemize}
         \item We have $v \in W_1'$, so $v$ is a nonzero vector with positive norm.
-        \item We have $v \in W_0 \cap W_{-1}$, so $v$ is a nonzero vector with nonpositive norm.
+        \item We have $v \in W_0 \oplus W_{-1}$, so $v$ is a nonzero vector with nonpositive norm.
     \end{itemize}
     And obviously, that's a contradiction. ~ $\blacksquare$
 \end{proof}

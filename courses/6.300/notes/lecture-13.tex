@@ -5,7 +5,7 @@
 
 \subsection{Lecture: Frequency Resolution}
 
-Recall from the end of \href{12.html#recitation-spectral-analysis-interpreting-the-dft}{Lecture 12}
+Recall from the end of the \href{12.html#recitation-spectral-analysis-interpreting-the-dft}{Lecture 12}
 notes what DT and DFT samples tell us about the original CT signal.
 
 \begin{center}
@@ -51,7 +51,7 @@ Let's consider one way we might increase the value of $N$.
 \begin{solution}
     Recall from \href{12.html#lecture-dft-vs-dtft-and-windows}{Lecture 12}
     that $Y[k]$ is the result of taking $8 \cdot N$ samples
-    from the DTFT of $y_w[n]$.  Here's the key:
+    from the DTFT of $y_w[n]$ and dividing them by $8 \cdot N$.  Here's the key:
     \begin{quote}
         \textbf{Claim.}
         The DTFT of $y_w[n]$ is identical to the DTFT of $x_w[n]$.
@@ -60,7 +60,8 @@ Let's consider one way we might increase the value of $N$.
         = \sum_{n = 0}^{N - 1} x[n] e^{-j\Omega n}
         = X_w(\Omega). ~~~ \square \]
     \end{quote}
-    Thus $Y[k]$ is just a more finely-discretized sampling of $X_w(\Omega)$ than $X[k]$.
+    Thus $8 \cdot Y[k]$ is just a more finely-discretized sampling
+    of $\frac{1}{N} X_w(\Omega)$ than $X[k]$.
     \begin{center}
         \frame{\includegraphics[width=0.4\textwidth]{lecture-13/octuple-DFT}}
     \end{center}
@@ -145,7 +146,7 @@ the DFT of a circular convolution is the product of the DFTs.
 
 \begin{problem}
     Consider a DT signal $x[n]$ of length $11$ whose DFT for $N = 16$ (found via zero-padding) is $X[k]$.
-    Determine how the signal $(x \circledast x)[n]$ relates to the signal
+    Determine how the length-$11$ circular convolution $(x \circledast x)[n]$ relates to the signal
     $x'[n] := 16 \cdot \mathrm{DFT}^{-1}(X^2[k])$.
 \end{problem}
 
@@ -184,11 +185,12 @@ An example of an impulse train and its DFT is shown above.
     \begin{itemize}
         \item Given $f[n] := \sum_{m = -\infty}^{\infty} \delta[n - mN]$, its DTFT is
         $F(\Omega) = \frac{2\pi}{N} \sum_{k = 0}^{N - 1}
-        \delta\left[\Omega - k \cdot \frac{2\pi}{N}\right]$.
+        \delta\left(\Omega - k \cdot \frac{2\pi}{N}\right)$.
         \item Given $f(t) := \sum_{m = -\infty}^{\infty} \delta(t - mT)$, its CTFT is
         $F(\omega) = \frac{2\pi}{T} \sum_{k = -\infty}^{\infty}
         \delta\left(\omega - k \cdot \frac{2\pi}{T}\right)$.
-        \item Given $f[n] := \sum_{m = 0}^{(N / L) - 1} \delta[n - mL]$ where $L \mid N$, its DFT is
+        \item Given $f[n] := \sum_{m = 0}^{(N / L) - 1} \delta[n - mL]$ where $L \mid N$,
+        its DFT for window size $N$ is
         $F[k] = \frac{1}{L} \sum_{m = 0}^{L - 1} \delta\left[k - m \cdot \frac{N}{L}\right]$.
     \end{itemize}
 \end{theorem}

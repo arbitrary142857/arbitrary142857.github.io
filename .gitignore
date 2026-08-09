@@ -5,3 +5,9 @@ courses/*/all.html
 courses/*/notes-html/
 katex/
 .DS_Store
+logs/
+review/
+run.log
+.vscode/
+.claude/
+review-notes.sh

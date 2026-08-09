@@ -6,7 +6,7 @@
 \begin{problem}{Interval Scheduling}
 Consider a set of $n$ requests $R = \{(a_i, b_i)\}_{i = 1}^n$, where:
 \begin{itemize}
-    \item Every \emph{request} $(a_i, b_i)$ is an open interval with real number endpoints $a_i< b_i$.
+    \item Every \emph{request} $r_i := (a_i, b_i)$ is an open interval with real number endpoints $a_i< b_i$.
     \item Two requests $r_i, r_j$ are \emph{compatible} if they do not intersect.
 \end{itemize}
 Determine any largest possible subset of mutually compatible requests.
@@ -24,16 +24,16 @@ We define the following:
     \item Let $S_{\textsc{GREEDY}} := \{s_i\}_{i = 1}^m$ be the \emph{ordered} greedy solution (sorted by endpoint).
     \item Let $S_{\textsc{OPT}} := \{s_i'\}_{i = 1}^{m'}$ be the \emph{ordered} optimal solution (sorted by endpoint).
 \end{itemize}
-If $S_{\textsc{GREEDY}} = S_{\textsc{OPT}}$, then we win.  Otherwise, let $j^*$ to be the first request where $S_{\textsc{GREEDY}}$ and $S_{\textsc{OPT}}$ differ.
+If $S_{\textsc{GREEDY}} = S_{\textsc{OPT}}$, then we win.  Otherwise, let $j^*$ be the first index where $S_{\textsc{GREEDY}}$ and $S_{\textsc{OPT}}$ differ.
 \begin{quote}
     \textbf{Claim 1.} If $j^* > 1$, then $b_{j^* - 1} \leq a_{j^*}'$.  This is because $s_{j^* - 1} = s_{j^* - 1}'$ is assumed compatible with $s_{j^*}'$.
 
     \textbf{Claim 2.} We must have $b_{j^*} \leq b_{j^*}'$.  This is because the greedy algorithm picked $s_{j^*}$, not $s_{j^*}'$.
 
     \textbf{Claim 3.} By Claim 1 and Claim 2, the optimal solution can be adjusted like so:
-    \[ \{s_1, \dots, s_{j^* - 1}, s_{j^*}', \dots, s_{m'}^*\} \mapsto \{s_1, \dots, s_{j^*}, s_{j^* + 1}', \dots, s_{m'}^*\}. \]
+    \[ \{s_1, \dots, s_{j^* - 1}, s_{j^*}', \dots, s_{m'}'\} \mapsto \{s_1, \dots, s_{j^*}, s_{j^* + 1}', \dots, s_{m'}'\}. \]
 \end{quote}
-By repeatedly applying Claim 3, we see $S = \{s_1, \dots, s_m, s_{m + 1}', \dots, s_{m'}'\}$ is an optimal solution.  But that's impossible!  If it were, the greedy algorithm would have added $(s_{m + 1}', \dots, s_{m'}')$, yet it didn't. ~ $\blacksquare$
+By repeatedly applying Claim 3, we see $S = \{s_1, \dots, s_m, s_{m + 1}', \dots, s_{m'}'\}$ is an optimal solution.  But $m' > m$ is impossible!  If it were, the greedy algorithm would have added $(s_{m + 1}', \dots, s_{m'}')$, yet it didn't.  So $m = m'$. ~ $\blacksquare$
 \end{proof}
 
 \begin{problem}{Weighted Interval Scheduling}
@@ -43,7 +43,7 @@ Consider a set of $n$ requests $R = \{(a_i, b_i)\}_{i = 1}^n$ together with weig
 \begin{solution}{Weighted Interval Scheduling}
     Just use DP.  Sort the intervals by start time.  Then:
     \[ W(R) = \max \{ W(\{r_2, \dots, r_n\}), \ \  w_1 + W(\{r_j \mid j \geq t_1\})\}, \]
-    where $t_i$ is the least index greater than $i$ for which $r_{t_i}$ does not intersect $r_i$.  Repeat, recurse, blah blah.
+    where $t_i$ is the least index $j > i$ for which $r_j$ does not intersect $r_i$.  Repeat, recurse, blah blah.
 \end{solution}
 
 \begin{remark}
@@ -53,7 +53,7 @@ Consider a set of $n$ requests $R = \{(a_i, b_i)\}_{i = 1}^n$ together with weig
 \end{remark}
 
 \begin{problem}{Online Interval Scheduling}
-Determine any largest possible subset of mutually compatible requests, given that requests come one at a time (in \emph{any} order!).
+Determine any largest possible subset of mutually compatible requests, given that requests come one at a time (in \emph{any} order!) and must be accepted or rejected on arrival.
 \end{problem}
 
 Unfortunately, an adversary can force the algorithm solver to always fail horribly.  (Why?)
@@ -63,3 +63,5 @@ Say the set of requests $R$ is fixed.  Now the algorithm receives these requests
 \end{problem}
 
 We'll figure out the solution to this updated problem during Probability Review on Sunday.
+
+\end{document}

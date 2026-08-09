@@ -36,7 +36,7 @@ $x$ would be better explained if the proposed $\theta$ were increased, and vice 
 
 \begin{proof}
     Just some integral manipulation.
-    \[ \mathbb{E}_{\theta^*}[s(x; \theta^*)]
+    \[ \mathbb{E}_{\theta^*}[s(X; \theta^*)]
     = \int_{\mathcal{R}} f_{\theta^*}(x) \cdot
     \left[\frac{\frac{\partial}{\partial\theta} f_{\theta}(x)}{f_{\theta}(x)}\right]_{\theta = \theta^*}
     \mathrm{d}x
@@ -97,7 +97,7 @@ In other words, singular observations $x$ carry more information.
 The Fisher information has one more alternative representation.
 
 \begin{theorem}{Equivalent Fisher}
-    Fisher information equals the negative expected curvature of the log-likelihood; that is,
+    Fisher information equals the negative expected curvature of the log likelihood; that is,
     \[ I(\theta) = -\mathbb{E}_{\theta}\left[
         \frac{\partial^2}{\partial\theta^2} \log f_{\theta}(X)
     \right]. \]
@@ -144,7 +144,8 @@ yields $n$ copies of $I(\theta)$ summed together.
 Now we can finally get to asymptotic normality of the MLE.
 
 \begin{theorem}{MLE Asymptotic Normality}
-    The MLE $\hat{\theta}_n$ has asymptotic variance $\frac{1}{I(\theta^*)}$; that is,
+    Under mild regularity conditions,
+    the MLE $\hat{\theta}_n$ has asymptotic variance $\frac{1}{I(\theta^*)}$; that is,
     \[ \sqrt{n}(\hat{\theta}_n - \theta^*) \rightsquigarrow
     \mathcal{N}\left(0, \frac{1}{I(\theta^*)}\right). \]
 \end{theorem}
@@ -203,7 +204,7 @@ as long as it is unbiased.
 
 \begin{theorem}{Cramér-Rao Lower Bound}
     Let $\hat{\theta}_n$ be any unbiased estimator of $\theta$.
-    Then $\mathbb{V}_{\theta}[\hat{\theta}_n] \geq \frac{1}{nI(\theta^*)}$.
+    Then $\mathbb{V}_{\theta^*}[\hat{\theta}_n] \geq \frac{1}{nI(\theta^*)}$.
 \end{theorem}
 
 \begin{proof}
@@ -220,7 +221,7 @@ as long as it is unbiased.
         ~ $\square$
     \end{quote}
     We'll invoke the above theorem on
-    $U := \hat{\theta}_n$ and $V := \sum_{i = 1}^n s(X_i, \theta^*)$.
+    $U := \hat{\theta}_n$ and $V := \sum_{i = 1}^n s(X_i; \theta^*)$.
     \begin{quote}
         \textbf{Lemma 1.} We have $\Var_{\theta^*}(V) = nI(\theta^*)$.
 
@@ -232,7 +233,7 @@ as long as it is unbiased.
         \textbf{Lemma 2.} We have $\Cov_{\theta^*}(U, V) = 1$.
 
         \emph{Proof:} Note that $\mathbb{E}_{\theta^*}\left[
-            \sum_{i = 1}^n s(X_i, \theta^*)
+            \sum_{i = 1}^n s(X_i; \theta^*)
         \right] = 0$ by ``Zero Mean Score''.
         Also note that we're considering
         the joint random variable $(X_1, \dots, X_n)$,
@@ -240,12 +241,12 @@ as long as it is unbiased.
         That said, the rest is computation.
         \begin{align*}
         \Cov_{\theta^*}(U, V)
-        & = \mathbb{E}_{\theta^*}\left[\hat{\theta} \cdot \sum_{i = 1}^n s(X_i, \theta^*)\right] -
+        & = \mathbb{E}_{\theta^*}\left[\hat{\theta} \cdot \sum_{i = 1}^n s(X_i; \theta^*)\right] -
         \mathbb{E}_{\theta^*}[\hat{\theta}] \cdot
-        \mathbb{E}_{\theta^*}\left[\sum_{i = 1}^n s(X_i, \theta^*)\right] \\
-        & = \mathbb{E}_{\theta^*}\left[\hat{\theta} \cdot \sum_{i = 1}^n s(X_i, \theta^*)\right] \\
+        \mathbb{E}_{\theta^*}\left[\sum_{i = 1}^n s(X_i; \theta^*)\right] \\
+        & = \mathbb{E}_{\theta^*}\left[\hat{\theta} \cdot \sum_{i = 1}^n s(X_i; \theta^*)\right] \\
         & = \int \cdots \int_{\mathcal{R}} \left(\prod_{i = 1}^n f_{\theta^*}(x_i)\right) \cdot
-        \hat{\theta}(x_1, x_2, \dots, x_n) \cdot \sum_{i = 1}^n s(x_i, \theta^*)
+        \hat{\theta}(x_1, x_2, \dots, x_n) \cdot \sum_{i = 1}^n s(x_i; \theta^*)
         \, \mathrm{d}x_1 \, \mathrm{d}x_2 \, \cdots \, \mathrm{d}x_n \\
         & = \int \cdots \int_{\mathcal{R}} \left(\prod_{i = 1}^n f_{\theta^*}(x_i)\right) \cdot
         \hat{\theta}(x_1, x_2, \dots, x_n) \cdot
@@ -257,7 +258,7 @@ as long as it is unbiased.
         & = \frac{\partial}{\partial\theta} \left[
         \int \cdots \int_{\mathcal{R}} \left(\prod_{i = 1}^n f_{\theta}(x_i)\right) \cdot
         \hat{\theta}(x_1, x_2, \dots, x_n)
-        \, \mathrm{d}x_1 \, \mathrm{d}x_2 \, \cdots \, \mathrm{d}x_n \\
+        \, \mathrm{d}x_1 \, \mathrm{d}x_2 \, \cdots \, \mathrm{d}x_n
         \right]_{\theta = \theta^*}.
         \end{align*}
         Here's the finish: $\hat{\theta}$ is \emph{unbiased}, so

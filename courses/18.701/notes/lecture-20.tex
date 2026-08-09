@@ -9,7 +9,7 @@
 
 \textbf{Definition ($n$-Ball).} The $n$-dimensional interior of a sphere is $B^n := \{x \in \mathbb{R}^n : |x| \leq 1\}$.
 
-\textbf{Example.} The \textbf{stereographic projection} is a continuous, bijective map \textit{(homeomorphism)} from $S^n \setminus\{N\}$ to $\mathbb{R}^n$. \vspace{-0.3cm}
+\textbf{Example.} The \textbf{stereographic projection} is a continuous, bijective map with continuous inverse \textit{(homeomorphism)} from $S^n \setminus\{N\}$ to $\mathbb{R}^n$. \vspace{-0.3cm}
 \begin{center}
     \frame{\includegraphics[width=0.3\textwidth]{lecture-20/stereographic-projection}}
 \end{center}
@@ -17,22 +17,22 @@ Analogously, reversing the stereographic projection yields a sense in which $\ma
 
 \textbf{Example.} Volumes behave very weirdly in higher dimensions!
 \begin{itemize}
-    \item The ratio of the volumes of $B_2$ and $0.99 \cdot B_2$ is $0.9801$.
-    \item The ratio of the volumes of $B_{1000}$ and $0.99 \cdot B_{1000}$ is roughly $4 \times 10^{-5}$.
+    \item The ratio of the volumes of $0.99 \cdot B^2$ and $B^2$ is $0.9801$.
+    \item The ratio of the volumes of $0.99 \cdot B^{1000}$ and $B^{1000}$ is roughly $4 \times 10^{-5}$.
 \end{itemize}
-For all $n$, almost all of the volume of $B_n$ comes from its outermost ``shell''.
+For large $n$, almost all of the volume of $B^n$ comes from its outermost ``shell''.
 
 \subsection{The Special Unitary Group $SU_2$}
 
 \textbf{Definition (Special Unitary Group).} The \textbf{special unitary group} in $\mathbb{C}^n$ is:
 \[ SU_n := SL_n(\mathbb{C}) \cap U_n = \{A \in \mathbb{C}^{n \times n} \mid AA^{\dagger} = I_n, \  \det A = 1\}. \]
 \begin{theorem}{$SU_2 \cong S^3$}
-    Matrices in $SU_2$ naturally map to points on $S^3$.
+    Matrices in $SU_2$ naturally map bijectively to points on $S^3$.
 \end{theorem}
 
 \begin{proof}
     If $A = \begin{bsmallmatrix} \alpha & \beta \\ \gamma & \delta \end{bsmallmatrix}$ is in $SU_2$, then:
-    \[ AA^{\dagger} = \begin{bmatrix} |\alpha|^2 + |\beta|^2 & \alpha \overline{\gamma} + \beta \overline{\gamma} \\ \overline{\alpha}\gamma + \overline{\beta}\delta & |\gamma|^2 + |\delta|^2 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} ~ \iff ~ \delta = \overline{\alpha} \text{ and } \gamma = - \overline{\beta} \text{ and } |\alpha|^2 + |\beta|^2 = 1 \]
+    \[ AA^{\dagger} = \begin{bmatrix} |\alpha|^2 + |\beta|^2 & \alpha \overline{\gamma} + \beta \overline{\delta} \\ \overline{\alpha}\gamma + \overline{\beta}\delta & |\gamma|^2 + |\delta|^2 \end{bmatrix} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix} \text{ and } \det A = 1 ~ \iff ~ \delta = \overline{\alpha} \text{ and } \gamma = - \overline{\beta} \text{ and } |\alpha|^2 + |\beta|^2 = 1 \]
     Thus, every $A$ in $SU_2$ is parametrized by $(\alpha, \beta) \in \mathbb{C}^2$ with $|\alpha|^2 + |\beta|^2 = 1$.
     
     If $\alpha = w + ix$ and $\beta = y + iz$, we see $SU_2$ is in fact $\{(w, x, y, z) \in \mathbb{R}^4 \mid w^2 + x^2 + y^2 + z^2 = 1\}$, which is $S^3$. ~ $\blacksquare$
@@ -56,11 +56,11 @@ We can rephrase our parametrization of $SU_2$ as follows.
 \end{theorem}
 And here's the definition of the quaternions.
 
-\textbf{Definition (Quaternion).} The \textbf{quaternion} group is the set $\mathbb{H} = \mathbb{R} + \mathbb{R}i + \mathbb{R}j + \mathbb{R}k$, constrained on:
+\textbf{Definition (Quaternion).} The \textbf{quaternions} are the set $\mathbb{H} = \mathbb{R} + \mathbb{R}i + \mathbb{R}j + \mathbb{R}k$, constrained on:
 \[ i^2 = j^2 = k^2 = -1 ~ \text{ and } ~ ij = k = -ji ~ \text{ and } ~ jk = i = -kj ~ \text{ and } ~ ki = j = -ik \]
 (Those last three equations are analogous to cross products in $\mathbb{R}^3$.)
 
-\textbf{Definition (Length.)} The length of any $\alpha = w + xi + yj + zk \in \mathbb{H}$ is $|\alpha| := \sqrt{w^2 + x^2 + y^2 + z^2}$.
+\textbf{Definition (Length).} The length of any $\alpha = w + xi + yj + zk \in \mathbb{H}$ is $|\alpha| := \sqrt{w^2 + x^2 + y^2 + z^2}$.
 
 \begin{theorem}{$SU_2$ are Unit Length $\mathbb{H}$}
     Matrices in $SU_2$ map bijectively with the elements $w + xi + yj + zk \in \mathbb{H}$ with coefficients satisfying $w^2 + x^2 + y^2 + z^2 = 1$.
@@ -102,7 +102,7 @@ Under this definition, things like $GL_n(\mathbb{H})$ still make sense!  Indeed,
 \begin{theorem}{Classification of Compact Connected Lie Groups}
     Suppose $G$ is a connected, bounded, and closed (under limits) subgroup of $GL_n(\mathbb{R})$.  Then it must be that $G \cong (\prod_i H_i) / K$, where:
     \begin{itemize}
-        \item Each $H_i$ is either $S^1$, $\mathrm{Spin}_k$ (i.e. a double-cover of $SO_n$), $SU_k$, or $U_k(\mathbb{H})$.
+        \item Each $H_i$ is either $S^1$, $\mathrm{Spin}_k$ (i.e. a double-cover of $SO_k$), $SU_k$, $U_k(\mathbb{H})$, or one of five exceptional groups.
         \item The group $K$ is a finite subgroup of the center of $\prod_i H_i$.
     \end{itemize}
 \end{theorem}
@@ -110,7 +110,7 @@ Under this definition, things like $GL_n(\mathbb{H})$ still make sense!  Indeed,
 \subsection{Sidenote: A Number Theoretic Application}
 
 Recall that the identity $|u \cdot v|^2 = |u|^2 \cdot |v|^2$ for $u, v \in \mathbb{C}$, upon taking $u = a + bi$ and $v = c + di$, yields:
-\[ (a^2 + b^2) \cdot (c^2 + d)^2 = (ac - bd)^2 + (ad + bc)^2. \]
+\[ (a^2 + b^2) \cdot (c^2 + d^2) = (ac - bd)^2 + (ad + bc)^2. \]
 This gives you the following theorem:
 
 \begin{theorem}{Sums of Two Squares}
@@ -123,7 +123,7 @@ The quaternionic version of this analogously gives another theorem:
     Let $S \subseteq \mathbb{Z}^+$ be the set of all positive integers that are the sums of four squares.  Then $S$ is multiplicatively closed.
 \end{theorem}
 
-(In fact, in the above theorem, it turns out that $S = \mathbb{Z}$.)
+(In fact, in the above theorem, it turns out that $S = \mathbb{Z}^+$.)
 
 However, if we replace ``four squares'' with ``three squares'', it turns out this theorem is NOT true!  For example, $3 = 1^2 + 1^2 + 1^2$ and $5 = 2^2 + 1^2 + 0^2$, but $15$ is not the sum of three squares.
 

@@ -69,16 +69,15 @@ we've discussed so far, and we know the asymptotic variance of all of them.
     its asymptotic variance is found by the CLT.
     \item Given the estimator $\hat{\theta}_n = g(\bar{X}_n)$\dots
     its asymptotic variance is found by the Delta method.
-    \item Given the estimator $\hat{\theta}_n = \theta^{\mathrm{MLE}}$\dots
+    \item Given the estimator $\hat{\theta}_n = \hat{\theta}^{\mathrm{MLE}}$\dots
     its asymptotic variance is found by the Fisher information.
 \end{itemize}
 In general, though, it might not be so easy to find the asymptotic variance.
 \begin{quote}
-    \textbf{Example.} Let $\theta$ be the median of the distribution $\mathrm{Poisson}(\lambda)$;
-    formally, the unique integer $\theta$ such that:
-    \[ \sum_{k = 0}^{\theta - 1} e^{-\lambda} \frac{\lambda^k}{k!} < 0.5
-    ~~~ \text{ and } ~~~
-    \sum_{k = 0}^{\theta} e^{-\lambda} \frac{\lambda^k}{k!} \geq 0.5. \]
+    \textbf{Example.} Let $\theta$ be the median of a distribution
+    with a strictly positive PDF $f$;
+    formally, the unique $\theta$ such that:
+    \[ \int_{-\infty}^{\theta} f(x) \, \mathrm{d}x = 0.5. \]
     We might naturally consider the estimator $\hat{\theta}_n :=
     \mathrm{Median}(X_1, X_2, \dots, X_n)$.
     But what is its asymptotic variance\dots?

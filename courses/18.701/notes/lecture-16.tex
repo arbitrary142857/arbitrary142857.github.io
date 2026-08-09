@@ -17,7 +17,7 @@ We now shift our focus to generalizations of the dot product known as \emph{bili
 
 We can also use adjectives to describe bilinear forms.
 
-\textbf{Definition (Symmetric, Semidefinite, Definite).} For a bilinear form $\langle \bullet, \bullet \rangle$ over a $\mathbb{R}$-vector space $V$,
+\textbf{Definition (Symmetric, Semidefinite, Definite).} For a bilinear form $\langle \bullet, \bullet \rangle$ over an $\mathbb{R}$-vector space $V$,
 \begin{itemize}
     \item Say $\langle \bullet ,\bullet \rangle$ is \textbf{symmetric} if $\langle x, y \rangle = \langle y, x \rangle$ for all $x, y \in V$.
     \begin{itemize}
@@ -47,14 +47,14 @@ We can also use adjectives to describe bilinear forms.
 
 \begin{proof}
     Consider $x = \sum_{i} x_i b_i$ and $y = \sum_j y_j b_j$.  Then by the linearity of bilinear forms, \vspace{-0.15cm}
-    \[ \langle x, y \rangle := \left \langle \sum_i x_i b_i, \ \sum_j y_j b_j \right \rangle := \sum_{i, j} x_iy_j \langle b_i, b_j \rangle. \] \vspace{-0.15cm}
+    \[ \langle x, y \rangle = \left \langle \sum_i x_i b_i, \ \sum_j y_j b_j \right \rangle = \sum_{i, j} x_iy_j \langle b_i, b_j \rangle. \] \vspace{-0.15cm}
     Then if we take $A \in F^{n \times n}$ via $A_{i, j} = \langle b_i, b_j \rangle$, the above reads $\langle x, y \rangle = x^{\top}Ay$, as desired. ~ $\blacksquare$
 \end{proof}
 
 Notice the analogy with ``Linear Transformations $\implies$ Matrix (Only if You Choose a Basis!)''.  To be explicit,
 \begin{itemize}
     \item To define a linear transformation $T: V \to W$ given bases $\{v_i\}$ and $\{w_i\}$\dots \\
-    \dots decide on coefficients $A_{i, j}$ such that $Tv_i = \sum_{j} A_{i, j}w_j$.  Then $T$ is represented by the matrix $A$.
+    \dots decide on coefficients $A_{j, i}$ such that $Tv_i = \sum_{j} A_{j, i}w_j$.  Then $T$ is represented by the matrix $A$.
     \item To define a bilinear form $\langle \bullet, \bullet \rangle : V \times V \to F$ given a basis $\{v_i\}$\dots \\
     \dots decide on coefficients $A_{i, j}$ such that $\langle v_i, v_j \rangle = A_{i, j}$.  Then $\langle \bullet, \bullet \rangle$ is represented by $\langle x, y \rangle = x^{\top}Ay$.
 \end{itemize}
@@ -106,20 +106,20 @@ Notice the analogy with ``Linear Transformations $\implies$ Matrix (Only if You 
 So quadratic polynomials inject with ordered triples $(A, b, c) \in \mathbb{R}^{n \times n} \times \mathbb{R}^n \times \mathbb{R}$.  Specifically, both $A_{i, j}$ and $A_{j, i}$ correspond to the coefficient of $x_ix_j$, so the matrix $A$ better be symmetric.
 
 \begin{remark}
-    Only if we're working in a field $F$ where $2 \neq 0$.  If $F = \mathbb{F}_2$, for example, then there is no $A$ that yields $x^{\top}Ax = x_1x_2$.
+    Only if we're working in a field $F$ where $2 \neq 0$.  If $F = \mathbb{F}_2$, for example, then there is no symmetric $A$ that yields $x^{\top}Ax = x_1x_2$.
 \end{remark}
 
 This injection comes naturally with Taylor Series; the $2^{\text{nd}}$ degree Taylor polynomial of $f: \mathbb{R}^n \to \mathbb{R}$ at $x = 0$ is:
-\[ f(x) = \dfrac{1}{2} x^{\top} \!\underbrace{\left[\dfrac{\partial^2 f}{\partial x_i \partial x_j}(x)\right]}_{A} x  + \underbrace{\left[\nabla f(x)\right]}_{b} \!^{\top}x + \underbrace{f(0)}_{c}. \]
+\[ f(x) \approx \dfrac{1}{2} x^{\top} \!\underbrace{\left[\dfrac{\partial^2 f}{\partial x_i \partial x_j}(0)\right]}_{A} x  + \underbrace{\left[\nabla f(0)\right]}_{b} \!^{\top}x + \underbrace{f(0)}_{c}. \]
 The funny double-partial-derivative $A$ is called the \emph{Hessian}.  The Hessian is always symmetric, expectedly.
 
 
 
 \subsection{Hermitian Forms: Doing it all again\dots}
 
-What if bilinear forms were not actually bilinear and were forced to lived in $\mathbb{C}$?
+What if bilinear forms were not actually bilinear and were forced to live in $\mathbb{C}$?
 
-\textbf{Definition (Hermitian Form).} Let $V$ be a $\mathbb{C}$-vector space.  Then a \textbf{Hermitian form} is a function $\langle \bullet, \bullet \rangle : V \times V \to \mathbb{C}$ that is linear and ``symmetric'' in both of its parameters.  In other words, for all $x, y, z \in V$ and $\mu, \lambda \in \mathbb{C}$, we have:
+\textbf{Definition (Hermitian Form).} Let $V$ be a $\mathbb{C}$-vector space.  Then a \textbf{Hermitian form} is a function $\langle \bullet, \bullet \rangle : V \times V \to \mathbb{C}$ that is ``linear'' and ``symmetric'' in both of its parameters.  In other words, for all $x, y, z \in V$ and $\mu, \lambda \in \mathbb{C}$, we have:
 \[ \langle x + y, z \rangle = \langle x, z \rangle + \langle y, z \rangle ~ \text{ and } ~ \langle \lambda x, \mu z \rangle = \overline{\lambda} \mu \langle x, z \rangle ~ \text{ and } ~ \langle y, x \rangle = \overline{\langle x, y \rangle} .\]
 \begin{remark}
     Hermitian forms are not bilinear forms.  They're a completely separate thing.
@@ -156,7 +156,7 @@ Which linear transformations preserve a bilinear form?  Phrased more precisely,
 \textbf{Answer:} Work in a fixed basis, and say $\langle x, y \rangle = x^{\top}My$ in this basis.  The answer is all $A$ for which $A^{\top}MA = M$.  The proof follows immediately from the change-of-basis formula.
 
 \begin{remark}
-    This implies $A: V \to V$ preserves the dot product $\langle x, y \rangle = x^{\top}y$ if and only if $A^{\top}A = I_n$, as expected. \\ A subgroup of matrices that preserve a more general bilinear form is called an \emph{indefinite orthogonal group}.
+    This implies $A: V \to V$ preserves the dot product $\langle x, y \rangle = x^{\top}y$ if and only if $A^{\top}A = I_n$, as expected. \\ A subgroup of matrices that preserve a more general symmetric bilinear form is called an \emph{indefinite orthogonal group}.
 \end{remark}
 
 We can repeat the same thing for Hermitian forms, too.
@@ -165,7 +165,7 @@ We can repeat the same thing for Hermitian forms, too.
 
 Orthogonal matrices preserve bilinear forms $\langle x, y \rangle = x^{\top}y$.  Analogously\dots
 
-\textbf{Definition (Unitary).} Take the Hermitian form to be $\langle x, y \rangle = x^{\dagger}y$.  A matrix $A \in \mathbb{C}^{n \times n}$ is \textbf{unitary} if $\langle x, y \rangle = \langle Ax, Ay \rangle$ for all $x, y \in \mathbb{C}$.  Equivalently, $A$ is unitary if $A^{\dagger}A = I$.
+\textbf{Definition (Unitary).} Take the Hermitian form to be $\langle x, y \rangle = x^{\dagger}y$.  A matrix $A \in \mathbb{C}^{n \times n}$ is \textbf{unitary} if $\langle x, y \rangle = \langle Ax, Ay \rangle$ for all $x, y \in \mathbb{C}^n$.  Equivalently, $A$ is unitary if $A^{\dagger}A = I$.
 
 
 
@@ -186,7 +186,7 @@ We'll conclude lecture by discussing what happens when bilinear forms are symmet
 \begin{proof}
     For the bilinear form, the symmetry implies $\langle e_i, e_j \rangle = \langle e_j, e_i\rangle$, which reads $A_{i, j} = A_{j, i}$.  So $A^{\top} = A$.
 
-    For the Hermitian form, the symmetry $\langle e_i, e_j \rangle = \overline{\langle e_j, e_i \rangle}$, which reads $A_{i, j} = \overline{A_{j, i}}$.  So $A^{\dagger} = A$. ~ $\blacksquare$
+    For the Hermitian form, the symmetry implies $\langle e_i, e_j \rangle = \overline{\langle e_j, e_i \rangle}$, which reads $A_{i, j} = \overline{A_{j, i}}$.  So $A^{\dagger} = A$. ~ $\blacksquare$
 \end{proof}
 
 We now conclude with the following fun fact:
@@ -208,7 +208,7 @@ We now conclude with the following fun fact:
 For fun, here's another proof of the same theorem.
 
 \begin{proof}
-    Consider the Hermitian form $\langle x, y \rangle = x^{\dagger}Ay$.  Then $\langle v, v \rangle = \overline{\langle v, v \rangle}$, so $\langle v, v \rangle \in \mathbb{R}$.
+    Suppose $v$ has eigenvalue $\lambda$, and consider the Hermitian form $\langle x, y \rangle = x^{\dagger}Ay$.  Then $\langle v, v \rangle = \overline{\langle v, v \rangle}$, so $\langle v, v \rangle \in \mathbb{R}$.
 
     This reads $v^{\dagger}Av \in \mathbb{R}$.  But $v^{\dagger}Av = \lambda(v^{\dagger}v)$, and $v^{\dagger}v \in \mathbb{R}$ by inspection (i.e. it's $\sum_i \overline{v_i}v_i = \sum_i |v_i|^2 \in \mathbb{R}$).  So $\lambda \in \mathbb{R}$. ~ $\blacksquare$
 \end{proof}

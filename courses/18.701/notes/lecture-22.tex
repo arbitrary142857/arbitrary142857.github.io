@@ -5,7 +5,7 @@
 
 The previous few lectures have prepared us for the following definitions.
 
-\textbf{Definition (Lie Group).} A \textbf{Lie group} is a group isomorphic to a smooth manifold (i.e. looks like $\mathbb{R}^n$ locally).
+\textbf{Definition (Lie Group).} A \textbf{Lie group} is a group that is also a smooth manifold (i.e. looks like $\mathbb{R}^n$ locally).
 
 \textbf{Example.} All of the following are Lie groups: $\{GL_n(\mathbb{R}), GL_n(\mathbb{C}), SO_n, U_n, SU_n\}$.  However, $GL_n(\mathbb{Q})$ is not a Lie group---it has too many ``holes'' in it.
 
@@ -47,7 +47,7 @@ In fact, \emph{most} matrices are diagonalizable, so\dots
 The point of all this setup is the following observation:
 
 \begin{boxed-text}[28em]
-    \textbf{Observation.} For any $A \in \mathbb{C}^{n \times n}$, the map $\varphi_A: \mathbb{R} \to GL_n(\mathbb{C})$ via $\varphi_A(s) = e^{sA}$ is a one-parameter subgroup of $GL_n(\mathbb{C})$. \vskip{0.5em}
+    \textbf{Observation.} For any $A \in \mathbb{C}^{n \times n}$, the map $\varphi_A: \mathbb{R} \to GL_n(\mathbb{C})$ via $\varphi_A(s) = e^{sA}$ yields a one-parameter subgroup of $GL_n(\mathbb{C})$. \vskip{0.5em}
 
     In particular, the derivative is $\frac{d}{ds} \varphi_A(s) = A \varphi_A(s)$.
 \end{boxed-text}
@@ -65,7 +65,7 @@ And here's an even stronger observation.
 \begin{proof}
     This is effectively a functional equation, with constraints:
     \[ (1) ~~ \varphi(0) = I_n ~~~~~~~ (2) ~~ \varphi(s + t) = \varphi(s) \varphi(t) \]
-    Differentiating (2) and taking $s = 0$ yields $\varphi'(t) = \varphi'(0) \varphi(t)$.  Say $A = \varphi'(0)$.  The point is that $\varphi'(t) = A \varphi(t)$ is a linear first-order ODE, so it has a unique solution, and $\varphi: t \mapsto e^{tA}$ is such a solution. ~ $\blacksquare$
+    Differentiating (2) and taking $s = 0$ yields $\varphi'(t) = \varphi'(0) \varphi(t)$.  Say $A = \varphi'(0)$.  The point is that $\varphi'(t) = A \varphi(t)$ is a linear first-order ODE, so it has a unique solution satisfying (1), and $\varphi: t \mapsto e^{tA}$ is such a solution. ~ $\blacksquare$
 \end{proof}
 
 \begin{remark}
@@ -80,7 +80,7 @@ One can think of every one-parameter subgroup of $GL_n(\mathbb{C})$ as being par
 
 \subsection{One-Parameter Subgroups of $SL_n(\mathbb{C})$ and $O_n(\mathbb{R})$}
 
-More generally, for any subgroup $G \subseteq GL_n(\mathbb{C})$, the one-parameter subgroups of $G$ are precisely the maps $\varphi: \mathbb{R} \to G$ via $\varphi : s \mapsto e^{As}$ for some $A \in G$.  The only constraint on $A$ is that $e^{As} \in G$ for all $G$.
+More generally, for any subgroup $G \subseteq GL_n(\mathbb{C})$, the one-parameter subgroups of $G$ are precisely the images of maps $\varphi: \mathbb{R} \to G$ via $\varphi : s \mapsto e^{As}$ for some $A \in \mathbb{C}^{n \times n}$.  The only constraint on $A$ is that $e^{As} \in G$ for all $s \in \mathbb{R}$.
 
 Let's investigate this constraint for various $G \subseteq GL_n(\mathbb{C})$.
 
@@ -90,20 +90,20 @@ Let's investigate this constraint for various $G \subseteq GL_n(\mathbb{C})$.
 
 \begin{proof}
     We just need $e^{sA} \in SL_n(\mathbb{C})$ for all $s \in \mathbb{R}$, or:
-    \[ \det e^{sA} = 1 ~ \implies ~ 1 = \det e^{sA} = e^{\mathrm{tr}(sA)} = (e^{\mathrm{tr}(A)})^s. \]
-    And the above could only hold for all $s$ if $\mathrm{tr}(A) = 0$. $\blacksquare$
+    \[ \det e^{sA} = 1 ~ \implies ~ 1 = \det e^{sA} = e^{\mathrm{tr}(sA)} = e^{s \cdot \mathrm{tr}(A)}. \]
+    And the above could only hold for all $s$ if $\mathrm{tr}(A) = 0$. ~ $\blacksquare$
 \end{proof}
 
 Similarly, we can talk about one-parameter subgroups of $O_n(\mathbb{R})$.
 
 \begin{theorem}{One-Parameter Orthogonal Subgroups}
-    The one-parameter subgroups of $O_n(\mathbb{R})$ are precisely the images of $\varphi: s \mapsto e^{sA}$ for some $A \in \mathbb{C}^{n \times n}$ satisfying $A^{\top} = -A$ (i.e. \textbf{skew-symmetric} matrices).
+    The one-parameter subgroups of $O_n(\mathbb{R})$ are precisely the images of $\varphi: s \mapsto e^{sA}$ for some $A \in \mathbb{R}^{n \times n}$ satisfying $A^{\top} = -A$ (i.e. \textbf{skew-symmetric} matrices).
 \end{theorem}
 
 \begin{proof}
     We just need $e^{sA} \in O_n(\mathbb{R})$ for all $s \in \mathbb{R}$, or:
-    \[ I_n = e^{sA}(e^{sA})^{\top} = e^{sA} e^{s A^{\top}} = \left(e^{A + A^{\top}}\right)^s. \]
-    As before, this forces $A + A^{\top} = 0$, so $A^{\top} = -A$. ~ $\blacksquare$
+    \[ I_n = e^{sA}(e^{sA})^{\top} = e^{sA} e^{s A^{\top}}. \]
+    Differentiating at $s = 0$ forces $A + A^{\top} = 0$, so $A^{\top} = -A$. ~ $\blacksquare$
 \end{proof}
 
 The one-parameter subgroups of $O_n(\mathbb{R})$ actually tell us about its dimension!
@@ -120,21 +120,21 @@ The one-parameter subgroups of $O_n(\mathbb{R})$ actually tell us about its dime
     This is pretty hard to show without inspecting the one-parameter subgroups!
 \end{remark}
 
-Note that if $\varphi: s \to e^{sA}$ describes a one-parameter subgroup of $G$, we need not have $A \in G$.  For example, $A = \begin{bsmallmatrix} 1 & 0 \\ 0 & -1 \end{bsmallmatrix}$ generates a one-parameter subgroup of $SL_2(\mathbb{C})$, but $\begin{bsmallmatrix} 1 & 0 \\ 0 & -1 \end{bsmallmatrix}$ is not in $SL_2(\mathbb{C})$.  We only need $A \in \mathbb{C}^{n \times n}$.
+Note that if $\varphi: s \mapsto e^{sA}$ describes a one-parameter subgroup of $G$, we need not have $A \in G$.  For example, $A = \begin{bsmallmatrix} 1 & 0 \\ 0 & -1 \end{bsmallmatrix}$ generates a one-parameter subgroup of $SL_2(\mathbb{C})$, but $\begin{bsmallmatrix} 1 & 0 \\ 0 & -1 \end{bsmallmatrix}$ is not in $SL_2(\mathbb{C})$.  We only need $A \in \mathbb{C}^{n \times n}$.
 
 \begin{remark}
     (Reading Comprehension) Show that the one-parameter subgroups of $SU_2$ are precisely the images of $\varphi: s \mapsto e^{sA}$ for some $A \in \mathbb{C}^{n \times n}$ satisfying $A^{\dagger} = -A$ and $\mathrm{tr}(A) = 0$.  For example, $A = \begin{bsmallmatrix} i & -6 \\ 6 & -i \end{bsmallmatrix}$ works.
 
-    If $A \in SU_2$ does not satisfy this, then the path $\varphi(s) := e^{sA}$ will ``fly off'' the surface $S^3$.
+    If $A \in \mathbb{C}^{n \times n}$ does not satisfy this, then the path $\varphi(s) := e^{sA}$ will ``fly off'' the surface $S^3$.
 \end{remark}
 
 \subsection{Lie Algebras and Lie Brackets}
 
-\textbf{Definition (Lie Algebra).} If $G$ is a Lie group, then its \textbf{Lie algebra} $\mathrm{Lie}(G)$ is the tangent space at its identity---in other words, the set of all possible $\varphi'(\mathrm{id})$ for one-parameter subgroups $\varphi: \mathbb{R} \to G$.
+\textbf{Definition (Lie Algebra).} If $G$ is a Lie group, then its \textbf{Lie algebra} $\mathrm{Lie}(G)$ is the tangent space at its identity---in other words, the set of all possible $\varphi'(0)$ for one-parameter subgroups $\varphi: \mathbb{R} \to G$.
 
-\textbf{Definition (Lie Bracket).} Every Lie algebra is equipped with the \textbf{Lie bracket} $[A, B] := AB - BA$.
+\textbf{Definition (Lie Bracket).} Every Lie algebra of matrices is equipped with the \textbf{Lie bracket} $[A, B] := AB - BA$.
 
-\textbf{Example.} The Lie algebra of $SL_n(\mathbb{C})$ is $\{A \in \mathbb{C}^{n \times n} : \mathrm{tr}(A) = 0\}$, and that of $O_n(\mathbb{C})$ is $\{ A \in \mathbb{C}^{n \times n} : A^{\dagger} = -A \}$.  Meanwhile, the Lie algebra of $GL_n(\mathbb{C})$ is just all of $\mathbb{C}^{n \times n}$.
+\textbf{Example.} The Lie algebra of $SL_n(\mathbb{C})$ is $\{A \in \mathbb{C}^{n \times n} : \mathrm{tr}(A) = 0\}$, and that of $O_n(\mathbb{R})$ is $\{ A \in \mathbb{R}^{n \times n} : A^{\top} = -A \}$.  Meanwhile, the Lie algebra of $GL_n(\mathbb{C})$ is just all of $\mathbb{C}^{n \times n}$.
 
 In the specific case of matrix groups, we have the following alternative definition:
 
@@ -147,7 +147,7 @@ Let's check some closure properties of Lie algebras and the Lie bracket.
 \end{theorem}
 
 \begin{proof}
-    The fact that $A, B \in \mathrm{Lie}(G)$ is equivalent to the fact that $e^{sA}$ and $e^{sB}$ are in $G$ for all $s \in \mathbb{R}$.  Therefore, their product $e^{s(A + B)}$ must also be in $G$ for all $s \in \mathbb{R}$, meaning $A + B \in \mathrm{Lie}(G)$. ~ $\blacksquare$
+    The fact that $A, B \in \mathrm{Lie}(G)$ is equivalent to the fact that $e^{sA}$ and $e^{sB}$ are in $G$ for all $s \in \mathbb{R}$.  Therefore, their product $e^{sA}e^{sB} = I_n + (A + B)s + O(s^2)$ is in $G$ for all $s \in \mathbb{R}$, so $A + B$ is a valid direction in the tangent space at the identity, meaning $A + B \in \mathrm{Lie}(G)$. ~ $\blacksquare$
 \end{proof}
 
 \begin{theorem}{Closure of Lie Bracket}
@@ -157,7 +157,7 @@ Let's check some closure properties of Lie algebras and the Lie bracket.
 \begin{proof}
     The idea is to consider the following expression:
     \begin{align*}
-        e^{As} e^{Bs} e^{-As} e^{-Bs} = \ & \left(1 + As + \frac{A^2s^2}{2} + O(s^3) \right) \left(1 + Bs + \dfrac{B^2s^2}{2} + O(s^3) \right)\left(\dots \text{$e^{-As}$}\dots \right)\left(\dots \text{$e^{-Bs}$}\dots \right) \\
+        e^{As} e^{Bs} e^{-As} e^{-Bs} = \ & \left(1 + As + \frac{A^2s^2}{2} + O(s^3) \right) \left(1 + Bs + \frac{B^2s^2}{2} + O(s^3) \right)\left(\dots \text{$e^{-As}$}\dots \right)\left(\dots \text{$e^{-Bs}$}\dots \right) \\
         = \ & 1 + (AB - BA)s^2 + O(s^3) ~ \text{ after much simplification.}    \end{align*}
     The above is in $G$ for all $s \in \mathbb{R}$.  Thus, sending $s \to 0$, we see $e^{s^2(AB - BA)}$ is in $G$.  Therefore, ``locally'' speaking, $AB - BA$ is a valid direction in the tangent space at the identity, so $AB - BA = [A, B]$ is in $\mathrm{Lie}(G)$. ~ $\blacksquare$
 \end{proof}
@@ -167,7 +167,7 @@ Let's check some closure properties of Lie algebras and the Lie bracket.
     It is not the case that $A, B \in \mathrm{Lie}(G)$ implies $AB \in \mathrm{Lie}(G)$.  (Try to find a counterexample!)
 \end{remark}
 
-The Lie Bracket also has a bunch of identities, which one can check if they really wanted to.
+The Lie Bracket also has a bunch of identities, which one can check if they really want to.
 
 \begin{theorem}{Lie Bracket Identities}
     The following identities are true for any $A, B, C \in \mathrm{Lie}(G)$ and $c \in \mathbb{R}$.
@@ -183,7 +183,7 @@ The Lie Bracket also has a bunch of identities, which one can check if they real
 
 Every Lie group has a corresponding Lie algebra, found via ``differentiation''.  However, just as ``integration'' always has a $+C$ term, not every Lie algebra has a unique Lie group; uniqueness is only guaranteed up to coverings.
 
-\textbf{Example.} Both $\mathbb{Z}$ and $S^1$ have isomorphic Lie algebras, and $\mathbb{R} / \mathbb{Z} \cong S^1$ indicates their mutual covering group.
+\textbf{Example.} Both $\mathbb{R}$ and $S^1$ have isomorphic Lie algebras, and $\mathbb{R} / \mathbb{Z} \cong S^1$ indicates their mutual covering group.
 
 We care about Lie algebras because they turn geometry and physics problems (i.e. Lie groups) into linear algebra problems (i.e. Lie algebras).
 

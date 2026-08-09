@@ -4,14 +4,16 @@
 \begin{document}
 
 \begin{problem}{Max Flow}
-    Consider a directed graph $G = (V, E)$ with a source vertex $s$ and a sink vertex $t$.  Every (directed) edge has a capacity $c: E \to \mathbb{R}^{\geq 0}$.  We'd like to assign a flow to every edge such that:
+    Consider a directed graph $G = (V, E)$ with a source vertex $s$ and a sink vertex $t$.  Every (directed) edge has a capacity $c: E \to \mathbb{R}^{\geq 0}$, extended to all of $V \times V$ by $c(u, v) = 0$ when $(u, v) \not \in E$.
+    
+    We'd like to assign a flow to every edge such that:
     \begin{enumerate}
         \item For any $e \in E$, the flow across $e$ is at most the capacity of $e$.
         \item There is zero net flow into or out of any vertex other than $s$ or $t$.
     \end{enumerate}
-    Formally, let $f: V \times V \to \mathbb{R}$ such that $f(u, v)$ is the (signed) flow from $u$ to $v$, with $f(u, v) = 0$ if $(u, v) \not \in E$.
+    Formally, let $f: V \times V \to \mathbb{R}$ such that $f(u, v)$ is the (signed) flow from $u$ to $v$, with $f(u, v) = -f(v, u)$ and $f(u, v) \leq c(u, v)$ for all $u, v \in V$ (so $f(u, v) = 0$ if neither $(u, v)$ nor $(v, u)$ is in $E$).
 
-    The net flow is defined by $\sum_{v \in V} f(s, v)$.  Find the maximum possible total flow.
+    The net flow $|f|$ is defined by $\sum_{v \in V} f(s, v)$.  Find the maximum possible total flow.
 \end{problem}
 
 \begin{center}
@@ -48,14 +50,14 @@ Evidently, $f(S) \leq c(S)$.
 Be careful, though---the above does \emph{not} say that all cuts have the same cut.  It only says that all cuts have the same \emph{flow}---that is, the same measure with respect to edge weights with divergence $0$ everywhere.
 
 \begin{boxed-text}
-    \textbf{Claim.} The maximum possible flow of a graph equal the minimum possible cut.
+    \textbf{Claim.} The maximum possible flow of a graph equals the minimum possible cut.
 \end{boxed-text}
 
 Here's the key idea.
 
-\textbf{Definition (Residual Network).} Given an assigned flow $f$ to a graph $G = (V, E)$, the \textbf{residual network} consists of $G_f = (V, E_f)$ with edge weights $c_f(u, v) := c(u, v) - f(u, v)$, and edges $E_f := \{(u, v) \in E \mid c_f(u, v) > 0\}$.
+\textbf{Definition (Residual Network).} Given an assigned flow $f$ to a graph $G = (V, E)$, the \textbf{residual network} consists of $G_f = (V, E_f)$ with edge weights $c_f(u, v) := c(u, v) - f(u, v)$, and edges $E_f := \{(u, v) \in V \times V \mid c_f(u, v) > 0\}$.
 
-Importantly, some edges in $G_f$ will have \emph{greater} weight than edge in $G$, because an edge $u \to v$ increases $c_f(v, u)$.
+Importantly, some edges in $G_f$ will have \emph{greater} weight than the corresponding edge in $G$, because flow along an edge $u \to v$ increases $c_f(v, u)$.
 
 \begin{center}
     \frame{\includegraphics[width=0.75\textwidth]{lecture-09/residual-network}}
@@ -63,12 +65,14 @@ Importantly, some edges in $G_f$ will have \emph{greater} weight than edge in $G
 
 Think of this as reflecting our ability to ``undo our mistakes''.
 
+\textbf{Definition (Augmenting Path).} An \textbf{augmenting path} is a path $s \to \dots \to t$ in the residual network $G_f$.
+
 \begin{claim}
     The max flow is zero if and only if there is a cut of zero.
 \end{claim}
 
 \begin{proof}
-    If there's a zero cut, there's obviously zero flow.  If there is zero possible flow, that means there is no path from $s$ to $t$, so the cut defined by $S := \{v \in V \mid \text{there is a path from } s \text{ to } v\}$ works. ~ $\blacksquare$
+    If there's a zero cut, there's obviously zero flow.  If there is zero possible flow, that means there is no path from $s$ to $t$ of positive capacity, so the cut defined by $S := \{v \in V \mid \text{there is a positive-capacity path from } s \text{ to } v\}$ works. ~ $\blacksquare$
 \end{proof}
 
 It turns out that the zero case is all we need!  (Like proving JNF\dots)
@@ -91,7 +95,7 @@ It turns out that the zero case is all we need!  (Like proving JNF\dots)
 More generally, the following is true.
 
 \begin{claim}
-    Given any network $G$, the following statements are equivalent.
+    Given any network $G$ and any flow $f$, the following statements are equivalent.
     \begin{enumerate}
         \item We have that $f$ is a max flow.
         \item We have that $|f| = c(S)$ for some cut $S$.

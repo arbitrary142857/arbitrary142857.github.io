@@ -62,7 +62,7 @@ is $\mathrm{MSE}(\hat{\theta}) := \mathbb{E}_{\theta}[(\hat{\theta} - \theta)^2]
     uses the notation $\mathbb{E}_{\theta}$ to reflect that in the definition
     $\hat{\theta} := g(X_1, \dots, X_n)$ of $\hat{\theta}$,
     the random variables $\{X_i\}_{i = 1}^n$ are sampled (i.i.d.) from $\mathbb{P}_{\theta}$.
-    So there's implicit dependencies on the value of $\theta$ everywhere.
+    So there are implicit dependencies on the value of $\theta$ everywhere.
 \end{remark}
 
 It turns out that the MSE is just a combination of bias and standard error.
@@ -109,8 +109,8 @@ consider these three estimators for $\mu$.
 \end{itemize}
 
 \begin{theorem}{Consistency and MSE}
-    If $\mathrm{MSE}(\hat{\theta}) \to 0$ as $n \to \infty$,
-    then $\hat{\theta}$ is consistent.
+    If $\mathrm{MSE}(\hat{\theta}_n) \to 0$ as $n \to \infty$,
+    then $\hat{\theta}_n$ is consistent.
 \end{theorem}
 
 \begin{proof}
@@ -120,10 +120,10 @@ consider these three estimators for $\mu$.
         we have $\Pr_{\theta}(|\hat{\theta}_n - \theta| > \epsilon) \to 0$
         as $n \to \infty$. 
     \end{quote}
-    Well, taking $X_n := (\hat{\theta}_n - \theta)^2$, we are given that
-    $\mathbb{E}_{\theta}[X_n] \to 0$ as $n \to \infty$.  The finish is Markov's inequality:
+    Well, taking $Y_n := (\hat{\theta}_n - \theta)^2$, we are given that
+    $\mathbb{E}_{\theta}[Y_n] \to 0$ as $n \to \infty$.  The finish is Markov's inequality:
     \[ \Pr_{\theta}(|\hat{\theta}_n - \theta| > \epsilon)
-    = \Pr_{\theta}(X_n > \epsilon^2) \leq \frac{\mathbb{E}_{\theta}[X_n]}{\epsilon^2}
+    = \Pr_{\theta}(Y_n > \epsilon^2) \leq \frac{\mathbb{E}_{\theta}[Y_n]}{\epsilon^2}
     \to 0 ~ \text{ as } n \to \infty. ~~~ \blacksquare \]
 \end{proof}
 
