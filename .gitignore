@@ -1,6 +1,7 @@
 node_modules/
 index.html
-courses/*/index.html
+sitemap.xml
+robots.txt
 courses/*/all.html
 courses/*/notes-html/
 katex/

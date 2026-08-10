@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://arbitrary142857.github.io/sitemap.xml
