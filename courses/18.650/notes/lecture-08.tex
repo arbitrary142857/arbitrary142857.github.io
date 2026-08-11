@@ -35,29 +35,46 @@ $\hat{\theta}_n \approx \theta + \frac{\sigma}{\sqrt{n}}Z$, where $Z \sim \mathc
     $g'(p)^2 = 4p^2$, so it's $4p^3(1 - p)$.
 \end{solution}
 
-Asymptotic normality implies $\hat{\theta} \approx \mathcal{N}(\theta, \sigma^2 / n)$.
-But wait---the variance of $\hat{\theta}$ is also just $\mathrm{se}^2(\hat{\theta})$,
-so $\mathrm{se}(\hat{\theta}) = \frac{\sigma}{\sqrt{n}}$, right?
-
 \begin{remark}
-    The following claim is not true.
-    \begin{quote}
-        \textbf{False Claim.} If $\hat{\theta}_n$ is asymptotically normal with
-        asymptotic variance $\sigma^2$, then
-        $\frac{\mathrm{se}(\hat{\theta}_n)}{\sigma / \sqrt{n}} \to 1$ as $n \to \infty$.
-    \end{quote}
-    To construct a counterexample, consider:
+    If $\hat{\theta}_n$ is asymptotically normal
+    with asymptotic variance $\sigma^2$,
+    that tells us that
+    $\hat{\theta}_n \approx \mathcal{N}(\theta, \frac{\sigma^2}{n})$.
+
+    However, that does \emph{not} imply that
+    the variance of $\hat{\theta}_n$ equals---or even
+    \emph{converges to}---the variance of
+    $\mathcal{N}(\theta, \frac{\sigma^2}{n})$.
+    Convergence in distribution does not imply
+    convergence of moments.
+
+    Here's an explicit counterexample:
+    consider an estimator $\hat{\theta}_n$ that happens to satisfy
+    $\hat{\theta}_n := \theta + \frac{Y_n}{\sqrt{n}}$,
+    with the random variable $Y_n$ defined as below.
     \[ Z \sim \mathcal{N}(0, \sigma^2) ~~~ \parallel ~~~
     Y_n := \begin{cases}
     Z & \text{ with probability } 1 - \frac{1}{n}. \\
     n & \text{ with probability } \frac{1}{n}.
     \end{cases} \]
-    The point is that $Y_n \rightsquigarrow \mathcal{N}(0, \sigma^2)$,
-    but $\mathbb{V}[Y_n] \approx n$.
-    
-    Thus, the estimator $\hat{\theta}_n := \theta + \frac{Y_n}{\sqrt{n}}$
-    is asymptotically normal with asymptotic variance $\sigma^2$,
-    but $\mathrm{se}(\hat{\theta}_n) \approx 1$.
+    Then we have a convergence in distribution
+    $Y_n \rightsquigarrow \mathcal{N}(0, \sigma^2)$, implying that
+    $\sqrt{n}(\hat{\theta}_n - \theta) \rightsquigarrow
+    \mathcal{N}(0, \sigma^2)$.
+    In other words, the estimator $\hat{\theta}_n$
+    is asymptotically normal with asymptotic variance $\sigma^2$.
+    However, we may compute
+    $\mathbb{V}[\hat{\theta}_n]
+    = \frac{1}{n} \cdot \mathbb{V}[Y_n] \approx 1$ as
+    $n \to \infty$, which
+    does not match the asymptotic variance $\sigma^2/n \to 0$.
+
+    That said, in most well-behaved cases (read: under regularity conditions),
+    it will generally be true that
+    $\mathbb{V}[\hat{\theta}_n] \approx \frac{\sigma^2}{n}$.
+    So it is still generally fine to intuit
+    $\sigma^2$ and $n \cdot \mathbb{V}[\hat{\theta}_n]$
+    as the same things.
 \end{remark}
 
 \subsection{Confidence Intervals}

@@ -23,10 +23,11 @@ Not very surprising, and not hard to prove.
 
 \subsection{Constructing CIs}
 
-For \emph{any} estimator $\hat{\theta}_n$,
-we can now compute an estimate $v_{\mathrm{boot}}$ of its variance.
+Recall from \href{13.html#bootstrapping}{Lecture 13} that,
+for \emph{any} estimator $\hat{\theta}_n$,
+we can use bootstrapping to compute an estimate $v_{\mathrm{boot}}$ of its variance.
 \[ v_{\mathrm{boot}} \approx \mathbb{V}_{\hat{\mathbb{P}}_n}[\hat{\theta}_n]
-\approx \mathbb{V}_{\theta^*}[\hat{\theta}_n]. \]
+\approx \mathbb{V}_{\mathbb{P}}[\hat{\theta}_n]. \]
 Let's say $\hat{\theta}_0 := \hat{\theta}_n(X_1, \dots, X_n)$
 is the observed point estimate we retrieved after considering all $n$ samples.
 Then if $\hat{\theta}_n$ is asymptotically normal,
@@ -72,17 +73,102 @@ Here's what we do instead.
     But we can estimate them using our bootstrap samples and $\hat{\theta}_0$.
     \begin{enumerate}
         \item Find $\hat{q}_{\alpha/2}$ such that
-        $\frac{\alpha}{2}$ of the $\{\hat{\theta}_b\}_{b = 1}^B$ are less than $\hat{q}_{\alpha/2}$,
+        $\frac{\alpha}{2}$ of the $\{\hat{\theta}_b\}_{b = 1}^B$
+        are at most $\hat{q}_{\alpha/2}$,
         and find $\hat{q}_{1 - \alpha/2}$ such that
-        $\frac{\alpha}{2}$ of the $\{\hat{\theta}_b\}_{b = 1}^B$ are greater than $\hat{q}_{1 - \alpha/2}$.
+        $\frac{\alpha}{2}$ of the $\{\hat{\theta}_b\}_{b = 1}^B$
+        are at least $\hat{q}_{1 - \alpha/2}$.
+        \begin{itemize}
+            \item (Here, we estimate $q_{\alpha / 2}$ and $q_{1 - \alpha / 2}$
+            by estimating $\mathbb{P}_{\theta^*}$ using
+            the $B$ bootstrap estimates $\{\hat{\theta}_b\}_{b = 1}^B$.)
+        \end{itemize}
         \item Set $\hat{r}_2 = \hat{\theta}_0 - \hat{q}_{\alpha/2}$ and
         $\hat{r}_1 = \hat{q}_{1 - \alpha/2} - \hat{\theta}_0$.
+        \begin{itemize}
+            \item (Here, we estimate $\theta^*$ by taking
+            $\theta^* \approx \hat{\theta}_0$,
+            recalling $\hat{\theta}_0$ was our
+            $n$-sample point estimate for $\theta^*$.)
+        \end{itemize}
     \end{enumerate}
     After retrieving $\hat{r}_1$ and $\hat{r}_2$ as above,
     we set our CI to be $(\hat{\theta}_0 - \hat{r}_1, \hat{\theta}_0 + \hat{r}_2)$.
 \end{quote}
 
-If you want to be stupid, you can also use the \textbf{percentile CI},
+You can also use the (inferior) \textbf{percentile CI},
 which just returns $(\hat{q}_{\alpha/2}, \hat{q}_{1 - \alpha/2})$.
+
+We discussed earlier in \href{8.html#confidence-intervals}{Lecture 8}
+why random CIs (the pivotal CI) are preferred over
+deterministic intervals (the percentile CI).
+\begin{itemize}
+    \item Say the pivotal CI is a random interval $\mathcal{I}$.
+    That tells us that
+    $\mathrm{Pr}_{\theta^*}(\theta^* \in \mathcal{I}) = 1 - \alpha$.
+    \item Say the percentile CI is a constant interval $\mathcal{I}$.
+    That tells us that
+    $\mathrm{Pr}_{\theta^*}(\hat{\theta}_n \in \mathcal{I}) = 1 - \alpha$.
+\end{itemize}
+Stated more explicitly,
+the pivotal CI is a random interval
+that captures the fixed $\theta^*$,
+whereas the percentile CI is a fixed interval
+that captures the random $\hat{\theta}_n$.
+
+\begin{remark}
+    Okay, to be fair, the percentile CI is technically
+    a random interval, too; its endpoints
+    $\hat{q}_{\alpha / 2}$ and $\hat{q}_{1 - \alpha / 2}$
+    do depend on random samples.
+    But the point is that the percentile CI
+    is trying to \emph{estimate} a \emph{constant} interval,
+    whereas the pivotal CI is trying to \emph{estimate} a \emph{random} one.
+\end{remark}
+
+\subsection{Example: Bootstrapping a Median CI}
+
+Recall the example from
+\href{13.html#example-bootstrapping-the-median}{Lecture 13}:
+\begin{itemize}
+    \item Taking $n = 5$ samples $\{0.3, 0.5, 0.9, 1.4, 3.1\}$
+    gave a point estimate of $\hat{\theta}_0 = 0.9$.
+    \item Taking $B = 4$ bootstrap samples gave
+    $B = 4$ additional point estimates
+    $\{\hat{\theta}_b\}_{b = 1}^4 = \{0.9,\, 0.3,\, 1.4,\, 0.9\}$
+    with $v_{\mathrm{boot}} \approx 0.1519$.
+\end{itemize}
+If we just assume that $\hat{\theta}_n$ is asymptotically normal,
+we get a $50\%$ CI immediately:
+\[ \hat{\theta}_0 \pm 0.674\sqrt{v_{\mathrm{boot}}}
+\approx 0.9 \pm 0.26 = (0.64, 1.16). \]
+Now suppose we don't assume asymptotic normality.
+To compute a $50\%$ CI, we note:
+\begin{itemize}
+    \item We have $\hat{q}_{0.25} = 0.3$ because
+    $25\%$ of the $\{\hat{\theta}_b\}_{b = 1}^4$
+    are at or below $0.3$.
+    Similarly, we have $\hat{q}_{0.75} = 1.4$.
+    \item Therefore, we take
+    $\hat{r}_2 = \hat{\theta}_0 - \hat{q}_{0.25} = 0.6$
+    and $\hat{r}_1 = \hat{q}_{0.75} - \hat{\theta}_0 = 0.5$.
+\end{itemize}
+And so our $50\%$ CIs are:
+\begin{itemize}
+    \item The pivotal CI is the random interval
+    $(\hat{\theta}_n - 0.5, \hat{\theta}_n + 0.6)$.
+    Given the point estimate $\hat{\theta}_0 = 0.9$,
+    this simplifies to $(0.4, 1.5)$.
+    \item The percentile CI is just $(\hat{q}_{0.25}, \hat{q}_{0.75})
+    = (0.3, 1.4)$, which is estimating a constant interval.
+\end{itemize}
+
+\begin{remark}
+    In general, the pivotal CI and the percentile CI
+    are reflections of each other about $\hat{\theta}_0$.
+    So they agree for all confidence levels
+    only if the bootstrap estimates $\{\hat{\theta}_b\}_{b = 1}^B$
+    are symmetric about $\hat{\theta}_0$.
+\end{remark}
 
 \end{document}

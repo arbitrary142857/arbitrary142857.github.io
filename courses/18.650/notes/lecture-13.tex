@@ -42,7 +42,7 @@ just as we did for computing the MLE.
 
 It also turns out that the MoM estimator is consistent and asymptotically normal,
 with a computable asymptotic variance $\Sigma^{\mathrm{MoM}}$;
-roughly speaking, the asymptotic variance found by applying the delta method
+roughly speaking, the asymptotic variance is found by applying the delta method
 to the inverse of the moment map.
 Note that the MoM estimator, unlike the MLE,
 need not attain the Cramér-Rao lower bound with equality.
@@ -128,5 +128,87 @@ is $\{7.3, 7.3, 6.8, 7.3\}$.
 
 Thus, instead of independent real batches,
 we can just take $B$ bootstrap samples of size $n$.
+
+\subsection{Example: Bootstrapping the Median}
+
+Let's use the estimator
+$\hat{\theta}_n := \mathrm{Median}(X_1, \dots, X_n)$
+to estimate the median of a mystery distribution $\mathbb{P}$,
+then use bootstrapping to estimate
+the asymptotic variance of $\hat{\theta}_n$.
+Say we take $n = 5$ samples, and they come out as:
+\[ \{X_1, X_2, X_3, X_4, X_5\}
+= \{0.3, 0.5, 0.9, 1.4, 3.1\}. \]
+Then the observed point estimate (call it $\hat{\theta}_0$,
+for the original sample) is $\hat{\theta}_0 = 0.9$.
+Now we draw $B = 4$ bootstrap samples of size $m = 5$ from
+the empirical distribution $\hat{\mathbb{P}}_5$
+and compute the median of each.
+\begin{align*}
+    \{0.5,\, 3.1,\, 0.9,\, 0.5,\, 1.4\} &\mapsto \hat{\theta}_1 = 0.9 \\
+    \{0.3,\, 0.3,\, 1.4,\, 0.9,\, 0.3\} &\mapsto \hat{\theta}_2 = 0.3 \\
+    \{1.4,\, 0.9,\, 3.1,\, 1.4,\, 0.5\} &\mapsto \hat{\theta}_3 = 1.4 \\
+    \{0.9,\, 0.5,\, 0.3,\, 3.1,\, 0.9\} &\mapsto \hat{\theta}_4 = 0.9
+\end{align*}
+
+\begin{remark}
+    The size $m = 5$ of the bootstrap samples
+    really should be the same as the total number $n = 5$ of samples.
+    Otherwise, our bootstrap samples would be describing
+    the spread of $\hat{\theta}_m$, not $\hat{\theta}_n$.
+\end{remark}
+
+The four medians average to
+$\frac{1}{4}(0.9 + 0.3 + 1.4 + 0.9) = 0.875$, so
+their variance is:
+\[ v_{\mathrm{boot}} = \frac{(0.9 - 0.875)^2 + (0.3 - 0.875)^2
++ (1.4 - 0.875)^2 + (0.9 - 0.875)^2}{4} \approx 0.1519. \]
+Thus, our estimate of the asymptotic variance of $\hat{\theta}_n$ is
+$\hat{\sigma}^2 = n \cdot v_{\mathrm{boot}} \approx 0.76$.
+
+\begin{remark}
+    To be explicit about the exact reason why bootstrapping works\dots
+    \begin{itemize}
+        \item For large enough $B$, the law of large numbers says
+        we should expect $v_{\mathrm{boot}} \approx
+        \mathbb{V}_{\hat{\mathbb{P}}_n}[\hat{\theta}_n]$.
+        \item For large enough $n$,
+        we should expect $\hat{\mathbb{P}}_n \approx \mathbb{P}$,
+        which yields $\mathbb{V}_{\hat{\mathbb{P}}_n}[\hat{\theta}_n]
+        \approx \mathbb{V}_{\mathbb{P}}[\hat{\theta}_n]$.
+        \item And if $\hat{\theta}_n$ is asymptotically normal with
+        asymptotic variance $\sigma^2$, then
+        $\mathbb{V}_{\mathbb{P}}[\hat{\theta}_n] \approx \frac{\sigma^2}{n}$.
+        \begin{itemize}
+            \item For this third bullet point,
+            keep in mind the caveat from
+            \href{8.html#asymptotic-normality}{Lecture 8}.
+        \end{itemize}
+    \end{itemize}
+    Altogether, this means $n \cdot v_{\mathrm{boot}}$ is indeed
+    a reasonable estimator of the asymptotic variance $\sigma^2$.
+\end{remark}
+
+Next lecture, we'll see how
+computing this asymptotic variance will be helpful
+towards constructing confidence intervals.
+
+\begin{remark}
+    Recall that a confidence interval only really cares about
+    $\mathbb{V}_{\mathbb{P}}[\hat{\theta}_n]$ itself;
+    the asymptotic variance $\sigma^2$ is just
+    an alternative $n$-scaled way of interpreting it.
+
+    Consequently, the next lecture on confidence intervals
+    can avoid using the ``third bullet point'' and rely instead
+    only on the approximation
+    $v_{\mathrm{boot}} \approx \mathbb{V}_{\theta}[\hat{\theta}_n]$.
+
+    The upshot of this is that the caveat from
+    \href{8.html#asymptotic-normality}{Lecture 8}
+    will not be relevant to the ``pivotal CI'' at all!
+    (Though it will still be relevant
+    for the ``normal approximation CI''.)
+\end{remark}
 
 \end{document}
