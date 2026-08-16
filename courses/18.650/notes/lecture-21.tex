@@ -1,0 +1,147 @@
+\lecture{21}
+\title{Bayesian Inference I}
+
+\begin{document}
+
+\subsection{Review: Likelihood and Multivariate Distributions}
+
+Suppose we have $n$ independent random variables $X_1, \dots, X_n$,
+each with a PDF $f_i(x_i \mid \theta)$ with a dependency
+on a parameter $\theta$.
+As an example, we might have something like $X_i \sim \mathcal{N}(\theta, i)$.
+
+If we're given the values $X_1, \dots, X_n$,
+that lets us compute a likelihood function $L_n(\theta)$
+that tells us how likely it would be
+to have observed this data given that the parameter had value $\theta$.
+(Recall \href{9.html#defining-the-maximum-likelihood-estimator-mle}{Lecture 9}.)
+\[ L_n(\theta) := \prod_{i = 1}^n f_i(X_i \mid \theta)
+= f(X_1, \dots, X_n \mid \theta). \]
+In the above, $f(x_1, \dots, x_n \mid \theta)$ is the joint PDF.
+(Recall \href{6.html#multivariate-pdfs}{Lecture 6}.)
+
+\subsection{Priors and Posteriors}
+
+Now suppose we have some \emph{prior} belief
+about the distribution of the parameter $\theta$.
+As an example, perhaps $\theta$ is a probability
+that we believe to be more likely to be high than low.
+
+\textbf{Definition.}
+A \textbf{prior} is a PDF $f(\theta)$
+that describes the probability distribution
+taken on by the parameter $\theta$.
+
+We now read in some data $X_1, \dots, X_n$
+that has a dependency on $\theta$.
+Bayes' rule tells us the following:
+\[ \mathrm{Pr}(\theta \mid X_1, \dots, X_n)
+= \frac{
+    \mathrm{Pr}(X_1, \dots, X_n \mid \theta) \cdot \mathrm{Pr}(\theta)
+}{
+    \mathrm{Pr}(X_1, \dots, X_n)
+}
+= \frac{L_n(\theta) \cdot f(\theta)}{\mathrm{Pr}(X_1, \dots, X_n)}
+\propto L_n(\theta) \cdot f(\theta). \]
+The LHS is our updated, \emph{posterior} belief
+about the distribution of the parameter $\theta$.
+
+\begin{remark}
+    Notice how we don't care about
+    the exact value of $\mathrm{Pr}(X_1, \dots, X_n)$,
+    because it is effectively a normalizing constant
+    that works only to make the integral of
+    $\mathrm{Pr}(\theta \mid X_1, \dots, X_n)$
+    equal to one.
+\end{remark}
+
+\textbf{Definition.}
+The posterior $f(\theta \mid X_1, \dots, X_n)$
+is the probability distribution proportional to
+$L_n(\theta) \cdot f(\theta)$.
+
+\subsection{Conjugate Priors}
+
+\textbf{Definition.}
+The \textbf{Beta} distribution $\mathrm{Beta}(a, b)$ (where $a, b > 0$)
+has PDF $f \colon [0, 1] \to \mathbb{R}^{\geq 0}$
+given by $f(p) \propto p^{a - 1} \cdot (1 - p)^{b - 1}$.
+
+\begin{remark}
+    For example, the PDF of $\mathrm{Beta}(2, 2)$
+    is $f(p) = 6 \cdot p \cdot (1 - p)$.
+\end{remark}
+
+\begin{center}
+    \frame{\includegraphics[width=0.35\textwidth]{lecture-21/beta-distribution}}
+\end{center}
+
+\begin{problem}
+    Suppose we sample data i.i.d. from $\mathrm{Ber}(\theta)$,
+    and our prior is $\theta \sim \mathrm{Beta}(a, b)$.
+    In terms of the data $X_1, \dots, X_n$,
+    what is the posterior distribution?
+\end{problem}
+
+\begin{solution}
+    Suppose $A$ of the samples are one,
+    and the remaining $B = n - A$ samples are zero.
+    Then we have:
+    \begin{align*}
+    f(\theta \mid X_1, \dots, X_n) & \propto L_n(\theta) \cdot f(\theta) \\
+    & \propto \left[\theta^A \cdot (1 - \theta)^B\right] \cdot
+    \left[\theta^{a - 1} \cdot (1 - \theta)^{b - 1}\right] \\
+    & = \theta^{(a + A) - 1} \cdot (1 - \theta)^{(b + B) - 1}.
+    \end{align*}
+    Therefore, the posterior distribution is
+    $\mathrm{Beta}(a + A, b + B)$.
+\end{solution}
+
+\textbf{Definition.}
+If the prior and posterior live in the same family of distributions,
+we say that we have a \textbf{conjugate prior}.
+
+\begin{remark}
+    In the previous example,
+    $\mathrm{Beta}(a, b)$ was a conjugate prior.
+    But this fact relies on the distributions of the sample data
+    all being $X_i \sim \mathrm{Ber}(\theta)$, rather than, say,
+    $X_i \sim \mathcal{N}(\theta, i)$.
+\end{remark}
+
+\subsection{Bayes Estimator and Max A Posteriori}
+
+As we read in more data,
+our posterior distribution becomes more informative.
+In fact, one can show that the standard deviation
+of the posterior decreases as $1/\sqrt{n}$
+with the number of samples $n$.
+
+\begin{center}
+    \frame{\includegraphics[width=0.35\textwidth]{lecture-21/posterior-accuracy}}
+\end{center}
+
+Eventually, we might want to summarize the posterior distribution
+$f(\theta \mid X_1, \dots, X_n)$ with a single point estimate for $\theta$.
+
+\textbf{Definition.}
+The \textbf{Bayes estimator} (or \textbf{mean a posteriori})
+is the expected value of $\theta$ under the posterior distribution.
+
+\textbf{Definition.}
+The \textbf{max a posteriori (MAP)} is the mode of the posterior;
+that is, the value of $\theta$ that maximizes
+$f(\theta \mid X_1, \dots, X_n)$.
+
+Generally, the MAP is much easier to compute than the Bayes estimator,
+because it doesn't require computing any normalizing factors.
+
+\begin{remark}
+    If we have no priors at all---that is,
+    our prior $f(\theta)$ is the uniform distribution---then
+    the max a posteriori is just the MLE.
+    The spirit of Bayesian inference
+    is that we must now account for priors.
+\end{remark}
+
+\end{document}
