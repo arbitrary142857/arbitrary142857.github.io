@@ -11,6 +11,6 @@ export interface TocPart {
   export const TOC_PARTS: TocPart[] = [
     { title: "Random Variables", from: 1, to: 6 },
     { title: "Estimators", from: 7, to: 14 },
-    { title: "Hypothesis Testing", from: 15, to: 19 },
+    { title: "Hypothesis Testing", from: 15, to: 20 },
   ];
   
