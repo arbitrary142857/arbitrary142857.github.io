@@ -1,0 +1,109 @@
+\lecture{22}
+\title{Bayesian Inference II}
+
+\begin{document}
+
+\subsection{Computing the Bayes Estimator and MAP}
+
+\begin{quote}
+    \textbf{Question \#1.} Determine how one might compute the Bayes estimator
+    $\hat{\theta}^{\text{Bayes}}
+    := \int \theta \cdot f(\theta \mid X_1, \dots, X_n)
+    \, \mathrm{d}\theta$.
+\end{quote}
+
+Here's the first idea:
+instead of computing an integral,
+just sample $N$ points according to the distribution
+$f(\theta \mid X_1, \dots, X_n)$ and take their average.
+But there's a problem---we know what $f(\theta \mid X_1, \dots, X_n)$
+is \emph{proportional} to, but we know nothing
+about the exact probabilities.
+How do we actually sample from this distribution?
+
+\begin{remark}
+    To see why sampling from such a distribution might be hard,
+    consider the following challenge.
+    \begin{quote}
+        \textbf{Challenge.} Randomly shuffle a deck of $52$ cards
+        so that the probability of any given ordering
+        is proportional to $\sum_{n = 1}^{52} a_n \cdot \pi^n$,
+        where the $n^{\text{th}}$ card has rank $a_n$.
+    \end{quote}
+    It's not computationally feasible to sum up all $52!$ weights.
+\end{remark}
+
+It turns out that there's a universal solution
+to sampling from a distribution that we only know up to a proportion.
+The solution is \textbf{Markov Chain Monte Carlo (MCMC)}.
+We won't explain it here; for further details, see
+\href{../../6.1220/notes-html/21.html}{Lecture 21 of 6.1220}.
+
+\begin{quote}
+    \textbf{Question \#2.}
+    Determine how one might compute the maximum a posteriori
+    $\hat{\theta}^{\text{MAP}} := \argmax_{\theta}
+    f(\theta \mid X_1, \dots, X_n)$.
+\end{quote}
+
+The simplifying trick is to maximize the log of the posterior instead,
+and do so via gradient ascent.  This looks like:
+\[ \theta^{(k + 1)} = \theta^{(k)} +
+\eta_k \cdot \left[
+    \nabla \ell_n(\theta^{(k)}) + \nabla \log f(\theta^{(k)})
+\right]. \]
+
+\begin{quote}
+    \textbf{Question \#3.}
+    Determine how one might construct a \textbf{posterior interval}.
+\end{quote}
+
+Well, it's kinda obvious: a $(1 - \alpha)$ posterior interval
+is any interval over which the integral of the posterior is $1 - \alpha$.
+
+\subsection{Gaussian Conjugate Priors}
+
+\begin{problem}
+    Suppose our data is sampled i.i.d. as
+    $X_1, \dots, X_n \sim \mathcal{N}(\theta, 1)$,
+    and our prior is $\theta \sim \mathcal{N}(0, \sigma^2)$.
+    Compute the posterior.
+\end{problem}
+
+\begin{solution}
+    Plug it into the posterior formula.
+    \begin{align*}
+        f(\theta \mid X_1, \dots, X_n)
+        & \propto \exp\left(
+            -\frac{1}{2} \cdot \sum_{i = 1}^n (X_i - \theta)^2
+        \right) \cdot \exp\left(
+                -\frac{1}{2} \cdot \frac{\theta^2}{\sigma^2}
+        \right) \\
+        & = \exp\left(-\frac{1}{2} \left[
+            \left[n + \frac{1}{\sigma^2}\right]\theta^2
+            - 2\theta \sum_{i = 1}^n X_i
+        \right]\right) \cdot
+        \textcolor{teal}{
+            \exp\left(-\frac{1}{2} \cdot \sum_{i = 1}^n X_i^2\right)
+         } \\
+        & \propto \exp\left(
+            -\frac{\left[n + \frac{1}{\sigma^2}\right]}{2} \left(
+                \theta - \frac{\sum_{i = 1}^n X_i}{
+                    \left[n + \frac{1}{\sigma^2}\right]
+                }
+            \right)^2
+        \right) \cdot
+        \textcolor{teal}{\text{[constant, non-functions of $\theta$]}}
+    \end{align*}
+    We can throw away the constant, non-functions of $\theta$
+    that accumulate when completing the square.  The result is:
+    \[ \text{posterior} = \mathcal{N}\left(
+        \frac{\sum_{i = 1}^n X_i}{\left[n + \frac{1}{\sigma^2}\right]},
+        \frac{1}{\left[n + \frac{1}{\sigma^2}\right]}
+    \right). \]
+\end{solution}
+
+There's not much insightful commentary to give here,
+other than pointing out the obvious conjugate prior.
+
+\end{document}
