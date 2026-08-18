@@ -13,6 +13,6 @@ export interface TocPart {
     { title: "Estimators", from: 7, to: 14 },
     { title: "Hypothesis Testing", from: 15, to: 20 },
     { title: "Bayesian Inference", from: 21, to: 22 },
-    { title: "Linear Regression", from: 23, to: 24 },
+    { title: "Linear Regression", from: 23, to: 25 },
   ];
   
