@@ -17,18 +17,24 @@
 <link rel="stylesheet" href="/highlight/github.css">
 <style>
 :root {
+  /* Global sizing scale: multiplies every absolute length on the page
+     (root font size, body font size, gutters, rules). 1 is the unscaled
+     design; 0.8 renders at 100% browser zoom exactly as 1 did at 80%. */
+  --ui-scale: 0.8;
+
   /* Lecture note page gutters (customize here). */
   --lecture-page-padding-block: 2rem;
   --lecture-page-padding-inline: 1.5rem;
   /* Floor for left/right inset on narrow viewports; never closer than this. */
   --lecture-page-padding-inline-min: 1.25rem;
 
-  /* Minimum rendered width for figures on narrow viewports (customize here). */
+  /* Minimum rendered width for figures on narrow viewports (customize here).
+     Scaled by --ui-scale through the zoom on img.note-figure. */
   --note-figure-min-width: 240px;
 
   /* Audio player background (customize here). */
   --note-audio-bg: #fff;
-  --note-audio-mobile-break: 52em;
+  --note-audio-mobile-break: 41.6em; /* 52em * 0.8 */
   --note-audio-mobile-width: 22em;
 
   /* Lecture footer navigation (customize here). */
@@ -53,7 +59,7 @@
   --lecture-nav-btn-border-color: #b8aea2;
   --lecture-nav-preview-font-size: 0.95em;
   --lecture-nav-disabled-opacity: 0.35;
-  --lecture-nav-mobile-break: 36em;
+  --lecture-nav-mobile-break: 28.8em; /* 36em * 0.8 */
 
   /* Top lecture navbar (customize here). */
   --lecture-navbar-bg: var(--lecture-nav-bg);
@@ -83,10 +89,14 @@
   font-weight: 700;
   font-style: normal;
 }
+html {
+  /* Scales every rem-based length; percentage keeps the reader's own default. */
+  font-size: calc(100% * var(--ui-scale));
+}
 body {
   background: #faf8f5;
   font-family: "TeX Gyre Termes", "Times New Roman", serif;
-  font-size: 14pt;
+  font-size: calc(14pt * var(--ui-scale));
   line-height: 1.2;
   margin: 0;
   padding: 2rem 1.5rem;
@@ -98,7 +108,7 @@ body.lecture-page {
   padding-inline: max(var(--lecture-page-padding-inline-min), var(--lecture-page-padding-inline));
   scroll-behavior: smooth;
 }
-@media (max-width: 36em) { /* match --lecture-nav-mobile-break above */
+@media (max-width: 28.8em) { /* match --lecture-nav-mobile-break above */
   body.lecture-page {
     /* Scale gutters with viewport width on phones; raise min to taste. */
     --lecture-page-padding-inline-min: max(1.25rem, 5vw);
@@ -146,12 +156,14 @@ a:hover {
   text-align: center;
 }
 img.note-figure {
+  /* Scales the image's intrinsic pixel size along with the rest of the page. */
+  zoom: var(--ui-scale);
   display: block;
   height: auto;
   margin: 0.75em auto;
   max-width: min(100%, 40em);
 }
-@media (max-width: 52em) {
+@media (max-width: 41.6em) {
   img.note-figure {
     min-width: min(var(--note-figure-min-width), 100%);
   }
@@ -165,6 +177,8 @@ img.note-figure.framed {
   width: 100%;
 }
 audio.note-audio {
+  /* Scales the browser's built-in control chrome along with the rest of the page. */
+  zoom: var(--ui-scale);
   display: block;
   width: 100%;
   box-shadow: 0 0 0 1px #000;
@@ -176,7 +190,7 @@ audio.note-audio::-webkit-media-controls-panel {
 audio.note-audio::-webkit-media-controls-enclosure {
   background-color: var(--note-audio-bg);
 }
-@media (max-width: 52em) { /* match --note-audio-mobile-break above */
+@media (max-width: 41.6em) { /* match --note-audio-mobile-break above */
   .note-audio-wrap {
     width: min(100%, var(--note-audio-mobile-width)) !important;
     max-width: min(100%, var(--note-audio-mobile-width)) !important;
@@ -207,7 +221,7 @@ pre.verbatim {
   overflow-x: auto;
   background: #fff;
   border: 1px solid #e1e4e8;
-  border-radius: 6px;
+  border-radius: calc(6px * var(--ui-scale));
   white-space: pre-wrap;
   word-break: break-word;
 }
@@ -297,7 +311,7 @@ pre.verbatim code {
 .note-widget-row input[type="range"] {
   flex: 1;
   min-width: 0;
-  height: 4px;
+  height: calc(4px * var(--ui-scale));
   margin: 0;
   accent-color: #1a1a1a;
   cursor: pointer;
@@ -309,6 +323,8 @@ pre.verbatim code {
   text-align: right;
 }
 .note-widget-icon-btn {
+  /* See .lecture-navbar-toggle: pin the button font so its em box scales. */
+  font-size: 0.8333rem;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
@@ -371,7 +387,7 @@ section.env > p:first-child {
   margin-top: 0;
 }
 blockquote.quote {
-  border-left: 3px solid #ccc;
+  border-left: calc(3px * var(--ui-scale)) solid #ccc;
   margin: 1em 0;
   padding-left: 1em;
 }
@@ -521,7 +537,7 @@ nav.toc-outline {
   display: block;
   margin: 0 0 1.5em;
   padding-left: 1em;
-  border-left: 2px solid #ddd;
+  border-left: calc(2px * var(--ui-scale)) solid #ddd;
   text-align: left;
 }
 section.toc-part {
@@ -588,6 +604,9 @@ a.toc-subsection-link .katex {
   z-index: 100;
 }
 .lecture-navbar-toggle {
+  /* Buttons don't inherit font-size; 0.8333rem restates the UA default so the
+     em box below scales with the root font instead of ignoring --ui-scale. */
+  font-size: 0.8333rem;
   align-items: center;
   background: var(--lecture-navbar-toggle-bg);
   border: 1px solid var(--lecture-navbar-toggle-border-color);
@@ -614,6 +633,9 @@ a.toc-subsection-link .katex {
 }
 .lecture-navbar-toggle-icon {
   display: block;
+  /* Overrides the svg's width/height attributes so the icon scales too. */
+  width: 1.5em;
+  height: 1.5em;
 }
 .lecture-navbar-shell.is-open {
   background: var(--lecture-navbar-bg);
@@ -686,7 +708,7 @@ a.toc-subsection-link .katex {
 }
 .lecture-navbar-marker-dot {
   background: #fff;
-  border: 1.5px solid var(--lecture-nav-num-border-color);
+  border: calc(1.5px * var(--ui-scale)) solid var(--lecture-nav-num-border-color);
   border-radius: 50%;
   box-sizing: border-box;
   display: block;
@@ -857,7 +879,7 @@ a.lecture-nav-btn:hover {
   font-weight: 400;
   white-space: nowrap;
 }
-@media (max-width: 36em) { /* match --lecture-nav-mobile-break above */
+@media (max-width: 28.8em) { /* match --lecture-nav-mobile-break above */
   .lecture-nav-btn-title {
     white-space: normal;
   }
@@ -868,13 +890,11 @@ a.lecture-nav-btn:hover {
 .lecture-nav-preview-tpl {
   display: none;
 }
-main p,
-main li,
-section.env,
-blockquote.quote,
-.boxed-text {
-  text-wrap: pretty;
-}
+/* No text-wrap: pretty here. Where it is implemented (Chrome, and WebKit as of
+   Safari 26) it buys a slightly better last line by ending earlier lines short,
+   and in a narrow column that reads as a broken line break: a line stops with a
+   third of its width unused while the next word sits below. Greedy wrapping
+   keeps every line as full as it can be. */
 </style>
 </head>
 <body>
