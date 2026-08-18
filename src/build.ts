@@ -262,16 +262,27 @@ function siteHomeMetaDescription(): string {
   return `Lecture notes for ${courses} — algebra, algorithms, signal processing, statistics, machine learning, and more.`;
 }
 
+/** Lets a course summary be authored as an indented multi-line template literal. */
+function collapseWhitespace(text: string): string {
+  return text.replace(/\s+/g, " ").trim();
+}
+
 function renderSiteHome(): string {
-  const items = COURSES.map(
-    (course) =>
-      `<li><a href="/${course.id}/"><strong>MIT ${escapeHtml(course.title)}</strong> — ${escapeHtml(course.subtitle)}</a></li>`,
+  const cards = COURSES.map(
+    (course) => `<a class="course-card" href="/${course.id}/">
+<span class="course-card-head">
+<span class="course-card-number">${escapeHtml(course.title)}</span>
+<span class="course-card-term">${escapeHtml(course.semester)}</span>
+</span>
+<span class="course-card-title">${escapeHtml(course.subtitle)}</span>
+<span class="course-card-summary">${escapeHtml(collapseWhitespace(course.summary))}</span>
+</a>`,
   ).join("\n");
 
-  return `<h1>${escapeHtml(SITE_PAGE_TITLE)}</h1>
-<ul class="note-list">
-${items}
-</ul>`;
+  return `<h1 class="site-title">${escapeHtml(SITE_PAGE_TITLE)}</h1>
+<div class="course-grid">
+${cards}
+</div>`;
 }
 
 function renderCourseHome(

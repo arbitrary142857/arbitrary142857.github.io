@@ -4,6 +4,8 @@ export interface Course {
   id: string;
   title: string;
   subtitle: string;
+  semester: string;
+  summary: string;
 }
 
 export const COURSES: Course[] = [
@@ -11,27 +13,60 @@ export const COURSES: Course[] = [
     id: "18.701",
     title: "18.701",
     subtitle: "Algebra I",
+    semester: "🍂 Fall 2025",
+    summary: `
+      A demanding introduction to abstract algebra and linear algebra,
+      dedicating roughly equal time to each.
+      Begins with group and vector space definitions,
+      and covers topics such as Jordan Normal Form,
+      the Crystallographic Restriction, Sylow's Theorems,
+      Sylvester's Law of Inertia, the Spectral Theorem,
+      and matrix groups.
+    `,
   },
   {
     id: "6.1220",
     title: "6.1220",
     subtitle: "Design and Analysis of Algorithms",
+    semester: "🌸 Spring 2026",
+    summary: `
+      A survey of classic algorithms and data structures
+      (Union-Find, MST, Max Flow, MCMC, and FFT),
+      fundamental elements of algorithmic design
+      (e.g., amortized analysis, hash functions, linear programming),
+      and specialized models of computation
+      (e.g., approximation, streaming, and sublinear algorithms).
+    `,
   },
   {
     id: "6.300",
     title: "6.300",
     subtitle: "Signal Processing",
+    semester: "☀️ Summer 2026",
+    summary: `
+      An introduction to Fourier analysis
+      and its applications to audio and images.
+      Topics include Fourier series and transforms,
+      the Discrete Fourier Transform, sampling, convolution,
+      filtering, and noise reduction.
+      Notes taken through Lecture 18 of 22.
+    `,
   },
   {
     id: "18.650",
     title: "18.650",
-    subtitle: "Fundamentals of Statistics"
+    subtitle: "Fundamentals of Statistics",
+    semester: "☀️ Summer 2026",
+    summary: `
+      A fast-paced introduction to
+      foundational statistical concepts and methods
+      from a mathematical perspective.
+      The original course occasionally handwaves
+      the mathematical detail;
+      these notes fill in some of those gaps.
+      Notes taken through Lecture 25 of 32.
+    `,
   },
-  {
-    id: "6.790",
-    title: "6.790",
-    subtitle: "Grad ML"
-  }
 ];
 
 export function courseDir(root: string, courseId: string): string {

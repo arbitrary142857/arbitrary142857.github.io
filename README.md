@@ -77,7 +77,7 @@ The build also writes `sitemap.xml` and `robots.txt` at the site root (canonical
 ## Adding a course
 
 1. Create `courses/<course-id>/` with `preamble.tex`, `notes/`, `images/`, and `audio/` as needed.
-2. Add an entry to `COURSES` in `src/courses.ts`.
+2. Add an entry to `COURSES` in `src/courses.ts` (`id`, `title`, `subtitle`, plus `semester` and `summary`, which fill the course's card on the site home page).
 3. Run `npm run build`.
 
 Use `\lecture{N}` or `\lectures{N,M}` in note file headers, as before.

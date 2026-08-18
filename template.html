@@ -70,6 +70,24 @@
   --lecture-navbar-toggle-border-color: #c8bfb3;
   --lecture-navbar-toggle-size: 2.75em;
   --lecture-navbar-marker-size: 0.55em;
+
+  /* Home page course cards (customize here). */
+  --course-card-bg: #fff;
+  --course-card-hover-bg: #f2f5f7;
+  --course-card-border-color: #b0a496;
+  --course-card-border-width: calc(1.5px * var(--ui-scale));
+  --course-card-hover-border-width: calc(2.5px * var(--ui-scale));
+  --course-card-summary-color: #463f37;
+  --course-card-gap: 1.15em;
+  --course-card-padding: 1.1em 1.25em 1.3em;
+  --course-card-min-height: 12em;
+  --course-card-number-size: 1.75em;
+  --course-card-title-size: 1.15em;
+  --course-card-term-size: 1em;
+  /* Optical nudge so the term's cap height lines up with the course number's. */
+  --course-card-term-offset: 0.3em;
+  --course-card-summary-size: 0.9em;
+  --course-card-mobile-break: 41.6em; /* 52em * 0.8 */
 }
 @font-face {
   font-family: "TeX Gyre Termes";
@@ -524,14 +542,83 @@ h1 {
   margin: 0 0 1em;
   text-align: center;
 }
-ul.note-list {
-  list-style: none;
-  margin: 0 0 1.5em;
-  padding: 0;
-  text-align: center;
+h1.site-title {
+  /* Matches the course/lecture page titles in header.lecture-header. */
+  font-size: 2em;
+  margin: 0 0 1.15em;
 }
-ul.note-list li {
-  margin: 0.4em 0;
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* 1fr rows give every card the same height, across rows as well as within one. */
+  grid-auto-rows: 1fr;
+  gap: var(--course-card-gap);
+  margin: 0 0 1.5em;
+}
+@media (max-width: 41.6em) { /* match --course-card-mobile-break above */
+  .course-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+a.course-card:link,
+a.course-card:visited {
+  color: inherit;
+  text-decoration: none;
+}
+a.course-card {
+  background: var(--course-card-bg);
+  border: var(--course-card-border-width) solid var(--course-card-border-color);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  min-height: var(--course-card-min-height);
+  padding: var(--course-card-padding);
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+a.course-card:hover {
+  background: var(--course-card-hover-bg);
+  border-color: var(--lecture-nav-accent);
+  /* Inset ring instead of a thicker border, so hovering never shifts the layout. */
+  box-shadow: inset 0 0 0 var(--course-card-hover-border-width) var(--lecture-nav-accent);
+}
+a.course-card:focus-visible {
+  outline: calc(2px * var(--ui-scale)) solid var(--lecture-nav-accent);
+  outline-offset: calc(2px * var(--ui-scale));
+}
+.course-card-head {
+  align-items: flex-start;
+  display: flex;
+  gap: 0.75em;
+  justify-content: space-between;
+}
+.course-card-number {
+  font-size: var(--course-card-number-size);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+}
+.course-card-term {
+  font-size: var(--course-card-term-size);
+  margin-top: var(--course-card-term-offset);
+  white-space: nowrap;
+}
+.course-card-title {
+  font-size: var(--course-card-title-size);
+  line-height: 1.25;
+  margin-top: 0.2em;
+}
+.course-card-summary {
+  align-items: center;
+  color: var(--course-card-summary-color);
+  display: flex;
+  /* Fills the space under the title, so the summary sits centered in it. */
+  flex: 1;
+  font-size: var(--course-card-summary-size);
+  justify-content: center;
+  line-height: 1.4;
+  margin-top: 0.85em;
+  text-align: center;
+  text-wrap: balance;
 }
 nav.toc-outline {
   display: block;
