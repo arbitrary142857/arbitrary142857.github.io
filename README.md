@@ -19,7 +19,7 @@ courses/
     images/...
 ```
 
-Each course has its own preamble, notes, images, and audio. The site home page lists courses; each course has its own index, all-lectures page, and per-lecture HTML under `courses/<id>/notes-html/`.
+Each course has its own preamble, notes, images, and audio. The site home page lists courses; each course has its own index and per-lecture HTML under `courses/<id>/notes-html/`.
 
 ### Images and audio in notes
 

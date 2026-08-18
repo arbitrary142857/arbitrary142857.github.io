@@ -42,9 +42,7 @@ const sitemapPaths: string[] = ["/index.html"];
 
 interface PageSeo {
   description: string;
-  /** Omit to skip rel=canonical (e.g. aggregate pages marked noindex). */
-  canonicalPath?: string;
-  robots?: string;
+  canonicalPath: string;
 }
 
 for (const course of COURSES) {
@@ -123,18 +121,6 @@ for (const course of COURSES) {
     },
   );
   sitemapPaths.push(`/courses/${course.id}/index.html`);
-
-  const allPageTitle = `All lectures — ${courseTitle}`;
-  writePage(
-    join(siteDir, "all.html"),
-    allPageTitle,
-    { assetPrefix, coursePrefix: "" },
-    renderCourseAll(course, parsed, assetPrefix),
-    {
-      description: `All MIT ${course.title} lectures in one page (${course.subtitle}). Prefer individual lecture pages for reading and search indexing.`,
-      robots: "noindex, follow",
-    },
-  );
 }
 
 const siteHomeDescription = siteHomeMetaDescription();
@@ -172,22 +158,15 @@ function writePage(
   const resolvedContent = content
     .replaceAll("{{ASSET_PREFIX}}", prefixes.assetPrefix)
     .replaceAll("{{COURSE_PREFIX}}", prefixes.coursePrefix);
-  const canonicalUrl = seo.canonicalPath ? siteUrl(seo.canonicalPath) : "";
-  const publicPath = seo.canonicalPath ?? `/${path.slice(root.length + 1).replaceAll("\\", "/")}`;
-  const ogUrl = siteUrl(publicPath);
-  const canonicalTag = canonicalUrl
-    ? `<link rel="canonical" href="${escapeHtml(canonicalUrl)}">`
-    : "";
-  const robotsTag = seo.robots
-    ? `<meta name="robots" content="${escapeHtml(seo.robots)}">`
-    : "";
+  const canonicalUrl = siteUrl(seo.canonicalPath);
+  const ogUrl = canonicalUrl;
+  const canonicalTag = `<link rel="canonical" href="${escapeHtml(canonicalUrl)}">`;
   const description = escapeHtml(seo.description);
   const page = template
     .replaceAll("{{ASSET_PREFIX}}", prefixes.assetPrefix)
     .replaceAll("{{TITLE}}", escapeHtml(title))
     .replaceAll("{{META_DESCRIPTION}}", description)
     .replace("{{CANONICAL}}", canonicalTag)
-    .replace("{{ROBOTS}}", robotsTag)
     .replaceAll("{{OG_URL}}", escapeHtml(ogUrl))
     .replace("{{CONTENT}}", resolvedContent);
   writeFileSync(path, page);
@@ -236,14 +215,12 @@ function renderCourseHome(
   courseRoot: string,
 ): string {
   const nav = `<nav class="site-nav"><a href="${assetPrefix}index.html">Home</a></nav>`;
-  const allLink = `<p class="all-link"><a href="all.html">Read all lectures</a></p>`;
   const tocParts = getTocParts(course.id);
   const tocHtml = tocParts
     ? renderCourseTocWithParts(parsed, tocParts, preamble, courseRoot)
     : renderCourseTocFlat(parsed, preamble, courseRoot);
 
   return `${nav}<header class="lecture-header"><h1>MIT ${escapeHtml(course.title)}</h1><p class="lecture-title">${escapeHtml(course.subtitle)}</p></header>
-${allLink}
 ${tocHtml}`;
 }
 
@@ -316,23 +293,6 @@ ${lectureItems}
     .join("\n");
 
   return `<nav class="toc-outline" aria-label="Lectures">\n${partsHtml}\n</nav>`;
-}
-
-function renderCourseAll(
-  course: (typeof COURSES)[number],
-  parsed: ParsedNote[],
-  assetPrefix: string,
-): string {
-  const nav = `<nav class="site-nav"><a href="${assetPrefix}index.html">Home</a> · <a href="index.html">${escapeHtml(course.title)}</a></nav>`;
-  const pageHeader = `<header class="lecture-header"><h1>MIT ${escapeHtml(course.title)} — All lectures</h1><p class="lecture-title">${escapeHtml(course.subtitle)}</p></header>`;
-  const sections = parsed
-    .map(
-      ({ note, result, titleHtml }) =>
-        `<section class="lecture">${lectureHeaderHtml(note, course.title, titleHtml)}${result.html}</section>`,
-    )
-    .join("\n");
-
-  return `${nav}${pageHeader}\n<hr class="all-lectures-divider">\n${sections}`;
 }
 
 function escapeHtml(text: string): string {

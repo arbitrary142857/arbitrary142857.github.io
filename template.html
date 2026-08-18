@@ -6,7 +6,6 @@
 <title>{{TITLE}}</title>
 <meta name="description" content="{{META_DESCRIPTION}}">
 {{CANONICAL}}
-{{ROBOTS}}
 <meta property="og:type" content="website">
 <meta property="og:title" content="{{TITLE}}">
 <meta property="og:description" content="{{META_DESCRIPTION}}">
@@ -467,10 +466,6 @@ hr {
   margin: 1.5em 0;
   width: min(100%, 24em);
 }
-hr.all-lectures-divider {
-  display: block;
-  margin: 0 auto 2.5em;
-}
 header.lecture-header {
   margin-bottom: 2.5em;
   text-align: center;
@@ -490,8 +485,7 @@ h2.heading-section {
   font-weight: 700;
   margin: 2.25em 0 0.75em;
 }
-main > h2.heading-section:first-of-type,
-section.lecture > h2.heading-section:first-of-type {
+main > h2.heading-section:first-of-type {
   margin-top: 1.5em;
 }
 h3.heading-subsection {
@@ -507,17 +501,6 @@ h4.heading-subsubsection {
   font-size: 1em;
   font-weight: 700;
   margin: 1.25em 0 0.5em;
-}
-section.lecture {
-  line-height: 1.5;
-  margin-bottom: 2.5em;
-  padding-bottom: 2.5em;
-  border-bottom: 1px solid #ccc;
-}
-section.lecture:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
 }
 h1 {
   font-size: 1.1em;
@@ -594,10 +577,6 @@ a.toc-subsection-link .katex {
 }
 .toc-subsection-marker {
   opacity: 0.65;
-}
-p.all-link {
-  margin: 0 0 1.25em;
-  text-align: left;
 }
 .lecture-navbar-shell {
   box-sizing: border-box;

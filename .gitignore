@@ -2,7 +2,6 @@ node_modules/
 index.html
 sitemap.xml
 robots.txt
-courses/*/all.html
 courses/*/notes-html/
 katex/
 .DS_Store
