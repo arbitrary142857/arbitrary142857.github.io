@@ -69,7 +69,7 @@ for the DFT look like.
 \end{theorem}
 
 These formulas look \emph{exactly} the same as the DT Fourier series
-formulas presented in \href{5.html#lecture-dt-fourier-series}{Lecture 5}, expectedly.
+formulas presented in \href{/6.300/lectures/5/#lecture-dt-fourier-series}{Lecture 5}, expectedly.
 
 \subsection{Lecture: DFT vs. DTFT and Windows}
 
@@ -97,7 +97,7 @@ they're exactly the same.  What about the DFT and the DTFT?
 
 \begin{proof}
     Recall from
-    \href{7.html#lecture-the-dt-fourier-transform}{Lecture 7}
+    \href{/6.300/lectures/7/#lecture-the-dt-fourier-transform}{Lecture 7}
     that the DTFT $X_w(\Omega)$ is defined via
     $X_w(\Omega) = \sum_{n = -\infty}^{\infty} x_w[n] e^{-j \Omega n}$.
     Comparing with the formula
@@ -145,9 +145,8 @@ that our DFT takes into account.
         \sin \left(\frac{\Omega}{2}\right)
     }\right] \cdot e^{-j \Omega(N - 1) / 2}. \]
     Now we invoke a ``dual'' of one of the properties from
-    \href{
-        7.html#lecture-and-recitation-properties-of-the-dt-fourier-transform
-    }{Lecture 7}: the DTFT of $w[n] \cdot x[n] = w[n] \cdot e^{j\Omega_0 n}$
+    \href{/6.300/lectures/7/#lecture-and-recitation-properties-of-the-dt-fourier-transform}{Lecture
+    7}: the DTFT of $w[n] \cdot x[n] = w[n] \cdot e^{j\Omega_0 n}$
     is just $W(\Omega - \Omega_0)$.
 
     Thus, the DFT of $x[n]$ is the result of
@@ -197,7 +196,7 @@ that our DFT takes into account.
     discrete-time angular frequency $\Omega_0 = 7 \times \frac{2\pi}{N}$.
     
     In continuous-time, this translates to
-    (recalling \href{4.html#recitation-dimensional-analysis}{Lecture 4})
+    (recalling \href{/6.300/lectures/4/#recitation-dimensional-analysis}{Lecture 4})
     a continuous-time angular frequency of
     $\omega_0 = 7 \times \frac{2\pi}{N} \times f_s$.
 \end{solution}

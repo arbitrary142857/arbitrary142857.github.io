@@ -3,7 +3,7 @@
 
 \begin{document}
 
-See \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23}
+See \href{/6.1220/lectures/22-23/}{Lectures 22 and 23}
 of 6.1220 for an alternative perspective on the content from this lecture.
 
 \begin{remark}
@@ -11,7 +11,7 @@ of 6.1220 for an alternative perspective on the content from this lecture.
     \begin{itemize}
         \item In 6.300, the DFT is
         $X[k] := \frac{1}{N} \sum_{n = 0}^{N - 1} x[n] e^{-j\frac{2\pi k}{N}n}$;
-        refer to \href{12.html#lecture-discrete-fourier-transform}{Lecture 12}.
+        refer to \href{/6.300/lectures/12/#lecture-discrete-fourier-transform}{Lecture 12}.
         \item In 6.1220, the DFT is
         $X[k] := \sum_{n = 0}^{N - 1} x[n] e^{j\frac{2\pi k}{N}n}$;
         simpler for abstract purposes,
@@ -36,7 +36,7 @@ as suggested by 6.1220.
 
 \begin{proof}
     Follows immediately from the DFT analysis and synthesis equations from
-    \href{12.html#lecture-discrete-fourier-transform}{Lecture 12}. ~ $\blacksquare$
+    \href{/6.300/lectures/12/#lecture-discrete-fourier-transform}{Lecture 12}. ~ $\blacksquare$
 \end{proof}
 
 The above reinterpretation makes it much easier to argue
@@ -74,7 +74,7 @@ A corollary of this reinterpretation is the following.
 \end{theorem}
 
 \begin{proof}
-    From 6.1220, the \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23} notes
+    From 6.1220, the \href{/6.1220/lectures/22-23/}{Lectures 22 and 23} notes
     provide a linear-algebra-based argument from the fundamentals.
     But we don't need that:
     this follows immediately from the relationship between
@@ -86,7 +86,7 @@ A corollary of this reinterpretation is the following.
     has, in some sense, been deferred
     to the mathematical content of
     the consistency of the synthesis and analysis equations
-    from \href{12.html#lecture-discrete-fourier-transform}{Lecture 12}.
+    from \href{/6.300/lectures/12/#lecture-discrete-fourier-transform}{Lecture 12}.
 \end{remark}
 
 % \begin{proof}
@@ -119,7 +119,7 @@ A corollary of this reinterpretation is the following.
 %         encoding the map $n \mapsto (-n) \% N$.
 
 %         \emph{Proof:} Recall that $W\overline{W} = NI$ from the
-%         \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23}
+%         \href{/6.1220/lectures/22-23/}{Lectures 22 and 23}
 %         notes from 6.1220 (or just verify this via straightforward computation).
 %         The result $W^2 = NP$ then follows from noting easily
 %         that $\overline{W} = WP$. $\square$
@@ -167,7 +167,7 @@ def FFT(x):
     return FFT_x
 \end{verbatim}
 
-Refer to \href{../../6.1220/notes-html/22-23.html}{Lectures 22 and 23}
+Refer to \href{/6.1220/lectures/22-23/}{Lectures 22 and 23}
 for details on how this algorithm works;
 keep in mind the difference in convention.
 

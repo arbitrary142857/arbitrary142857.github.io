@@ -54,8 +54,9 @@ export function courseAudioDir(root: string, courseId: string): string {
   return join(courseDir(root, courseId), "audio");
 }
 
+/** Published location of a course, under the generated `dist/` tree. */
 export function courseSiteDir(root: string, courseId: string): string {
-  return join(root, "courses", courseId);
+  return join(root, "dist", courseId);
 }
 
 export function findCourse(courseId: string): Course {

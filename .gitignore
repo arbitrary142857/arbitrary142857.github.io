@@ -1,9 +1,5 @@
 node_modules/
-index.html
-sitemap.xml
-robots.txt
-courses/*/notes-html/
-katex/
+dist/
 .DS_Store
 logs/
 review/

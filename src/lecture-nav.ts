@@ -46,8 +46,14 @@ function renderNextButton(note: NoteMeta, titleHtml: string, href: string): stri
   return `<a class="lecture-nav-btn lecture-nav-next" href="${href}" rel="next">${body}${arrow}${previewTemplate(label, titleHtml)}</a>`;
 }
 
+/** Root-relative URL of a lecture page, so nav links are depth-independent. */
+function lectureHref(courseId: string, slug: string): string {
+  return `/${courseId}/lectures/${slug}/`;
+}
+
 export function lectureNavHtml(entries: LectureNavEntry[], current: NoteMeta): string {
   const notes = entries.map((entry) => entry.note);
+  const courseId = current.courseId;
 
   const sorted = [...entries].sort((a, b) => a.note.lectures[0] - b.note.lectures[0]);
   const currentIndex = sorted.findIndex(
@@ -79,12 +85,12 @@ export function lectureNavHtml(entries: LectureNavEntry[], current: NoteMeta): s
       if (currentNumbers.has(num)) {
         return `<span class="lecture-nav-num is-current" aria-current="page">${tpl}${num}</span>`;
       }
-      return `<a class="lecture-nav-num" href="${slug}.html">${tpl}${num}</a>`;
+      return `<a class="lecture-nav-num" href="${lectureHref(courseId, slug)}">${tpl}${num}</a>`;
     })
     .join("\n");
 
   const nextHtml = next
-    ? renderNextButton(next.note, next.titleHtml, `${lectureSlug(next.note.lectures)}.html`)
+    ? renderNextButton(next.note, next.titleHtml, lectureHref(courseId, lectureSlug(next.note.lectures)))
     : "";
 
   const navClass = next ? "lecture-nav" : "lecture-nav is-final";

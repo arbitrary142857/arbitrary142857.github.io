@@ -88,7 +88,7 @@ we might hope to just, say, shift its Fourier transform to the right, like so:
 \end{center}
 
 Recall from
-\href{6.html#lecture-and-recitation-properties-of-the-ct-fourier-transform}{Lecture 6}
+\href{/6.300/lectures/6/#lecture-and-recitation-properties-of-the-ct-fourier-transform}{Lecture 6}
 that the effect of this is that $y(t) = e^{j \omega_c t} x(t)$.
 By picking a large enough $\omega_c$,
 we can bring the frequencies of $y(t)$ close to $3$ GHz,
@@ -335,7 +335,7 @@ we won't get into those details.
 
 \subsection{Recitation: Implementing Band-Pass Filters (BPFs)}
 
-Recalling \href{10.html#recitation-filter-types}{Lecture 10},
+Recalling \href{/6.300/lectures/10/#recitation-filter-types}{Lecture 10},
 we already have designed systems that function as low-pass filters.
 Now let's design a band-pass filter instead:
 a filter that accepts frequencies within some margin $\pm \Omega_d$
@@ -393,7 +393,7 @@ let's try defining it in the time domain.
 
 \begin{proof}
     Recalling the relationship between a system and its unit-sample response from
-    \href{9.html#lecture-and-recitation-unit-sample-response-and-convolution}{Lecture 9},
+    \href{/6.300/lectures/9/#lecture-and-recitation-unit-sample-response-and-convolution}{Lecture 9},
     we can directly read off:
     \begin{align*}
         y[n] & = (x * h)[n] \\
@@ -422,7 +422,7 @@ what the system above is actually accomplishing.
 \begin{quote}
     % \textbf{Philosophy of BPF \#2.}
     % Recall from
-    % \href{7.html#lecture-and-recitation-properties-of-the-dt-fourier-transform}{Lecture 7}
+    % \href{/6.300/lectures/7/#lecture-and-recitation-properties-of-the-dt-fourier-transform}{Lecture 7}
     % that the Fourier transform of a real DT signal $f[n]$
     % satisfies $F(-\Omega) = \overline{F(\Omega)}$.
     % Therefore, if we split $F(\Omega)$ into its real and imaginary components
@@ -547,7 +547,7 @@ or \emph{Single-Sideband Suppressed-Carrier}---actually works.
     $x(t)$ is real, meaning that $X(\omega)$ satisfies Hermitian symmetry.
     Note that this only guarantees $X(-\omega) = \overline{X(\omega)}$,
     not that $X(\omega)$ is even!  See
-    \href{6.html#lecture-and-recitation-properties-of-the-ct-fourier-transform}{Lecture 6}.
+    \href{/6.300/lectures/6/#lecture-and-recitation-properties-of-the-ct-fourier-transform}{Lecture 6}.
 \end{remark}
 
 Rather than transmitting a signal that deposits copies of $X(\omega)$

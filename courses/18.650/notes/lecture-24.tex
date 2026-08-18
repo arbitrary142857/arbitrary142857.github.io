@@ -8,7 +8,7 @@
 Here's an alternative way of presenting the assumptions
 we made about the relationship between feature vectors $X$
 and response variables $Y$ from
-\href{23.html#linear-regression-mle}{Lecture 23}.
+\href{/18.650/lectures/23/#linear-regression-mle}{Lecture 23}.
 
 \begin{quote}
     \textbf{Assumption.}
@@ -47,9 +47,9 @@ How far does it tend to be off from the true value $\beta^*$?
     )
     = \beta^* + (\mathbb{X}^{\top}\mathbb{X})^{-1}\mathbb{X}^{\top}\epsilon. \]
     The rest of the proof is just multivariate Gaussian properties; recall
-    \href{6.html#multivariate-gaussian-properties-and-theorems}{Lecture 6},
+    \href{/18.650/lectures/6/#multivariate-gaussian-properties-and-theorems}{Lecture 6},
     or more fundamentally, the properties of
-    covariance matrices from \href{5.html}{Lecture 5}.
+    covariance matrices from \href{/18.650/lectures/5/}{Lecture 5}.
 
     The mean of the RHS is clearly $\beta^*$,
     whereas the covariance is:
@@ -142,7 +142,7 @@ to use the training data to estimate $\sigma$.
         Then $\hat{\epsilon} = (I_n - H)\epsilon$.
 
         \emph{Proof:}
-        Recalling from \href{23.html#interpreting-the-ls-solution}{Lecture 23}
+        Recalling from \href{/18.650/lectures/23/#interpreting-the-ls-solution}{Lecture 23}
         that $HY = \mathbb{X}\hat{\beta}^{\mathrm{LS}}$,
         we can rewrite the definition of $\hat{\epsilon}$ like so:
         \begin{align*}
@@ -169,7 +169,7 @@ to use the training data to estimate $\sigma$.
     where $\epsilon \sim \mathcal{N}_n(0, \sigma^2 I_n)$.
 
     To proceed, we'll need some deeper linear algebra tricks; refer to
-    \href{../../18.701/notes-html/18.html#the-spectral-theorem}{18.701 Notes}
+    \href{/18.701/lectures/18/#the-spectral-theorem}{18.701 Notes}
     for reference.
 
     \begin{quote}

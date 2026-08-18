@@ -68,7 +68,7 @@ is known as the \textbf{Short-Time Fourier Transform (STFT)}.
 
 \subsection{Lecture: Streaming Windows}
 
-Recall from \href{10.html#recitation-filter-types}{Lecture 10} that
+Recall from \href{/6.300/lectures/10/#recitation-filter-types}{Lecture 10} that
 applying a band-pass filter to a DT signal $x[n]$
 is equivalent to multiplying its DTFT $X(\Omega)$ by
 a box-shaped frequency response $H(\Omega)$,
@@ -88,7 +88,7 @@ two issues arise.
     it is not feasible to filter the entire signal at once.
     \item Filtering DT signals via \emph{circular} convolution
     gives rise to \emph{time aliasing}
-    (see \href{13.html#lecture-and-recitation-circular-convolution}{Lecture 13}),
+    (see \href{/6.300/lectures/13/#lecture-and-recitation-circular-convolution}{Lecture 13}),
     yielding buggy noises.
 \end{enumerate}
 
@@ -345,7 +345,7 @@ Expectedly, the parameter settings affect the spectrogram as follows.
     \item Increasing $\mathrm{len}(w[n])$ increases the frequency resolution,
     at the cost of time resolution.
     \item Increasing $N$ increases the fineness of frequency measurements---but
-    only superficially.  (Recall \href{13.html#lecture-frequency-resolution}{Lecture 13}.)
+    only superficially.  (Recall \href{/6.300/lectures/13/#lecture-frequency-resolution}{Lecture 13}.)
     \item Decreasing $s$ increases the fineness of time measurements.
 \end{itemize}
 Of course, these improvements to parameter settings
