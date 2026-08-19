@@ -267,9 +267,22 @@ function collapseWhitespace(text: string): string {
   return text.replace(/\s+/g, " ").trim();
 }
 
+/**
+ * Seasonal tint class for a course card, read out of the free-form semester label
+ * ("🍂 Fall 2025"). A label naming no season (say, "IAP 2027") tints nothing and
+ * falls back to the plain card.
+ */
+function seasonModifier(semester: string): string {
+  const label = semester.toLowerCase();
+  if (label.includes("fall") || label.includes("autumn")) return " course-card--fall";
+  if (label.includes("spring")) return " course-card--spring";
+  if (label.includes("summer")) return " course-card--summer";
+  return "";
+}
+
 function renderSiteHome(): string {
   const cards = COURSES.map(
-    (course) => `<a class="course-card" href="/${course.id}/">
+    (course) => `<a class="course-card${seasonModifier(course.semester)}" href="/${course.id}/">
 <span class="course-card-head">
 <span class="course-card-number">${escapeHtml(course.title)}</span>
 <span class="course-card-term">${escapeHtml(course.semester)}</span>

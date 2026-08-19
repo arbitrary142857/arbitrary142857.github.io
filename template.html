@@ -22,6 +22,7 @@
      design; 0.8 renders at 100% browser zoom exactly as 1 did at 80%. */
   --ui-scale: 0.8;
 
+
   /* Lecture note page gutters (customize here). */
   --lecture-page-padding-block: 2rem;
   --lecture-page-padding-inline: 1.5rem;
@@ -71,10 +72,33 @@
   --lecture-navbar-toggle-size: 2.75em;
   --lecture-navbar-marker-size: 0.55em;
 
+
+  /* Course card tints, keyed to the semester a course was taken (customize here).
+     Each season redefines the generic --course-card-* variables below. */
+  --card-fall-bg: #fdf5ea;
+  --card-fall-border: #d9bd92;
+  --card-fall-hover-bg: #fbeeda;
+  --card-fall-border-strong: #b38c4e;
+  --card-spring-bg: #fdf1f4;
+  --card-spring-border: #dfb2bd;
+  --card-spring-hover-bg: #fae6ec;
+  --card-spring-border-strong: #b57387;
+  --card-summer-bg: #fdf9e6;
+  --card-summer-border: #d8c684;
+  --card-summer-hover-bg: #fbf4d3;
+  --card-summer-border-strong: #ac9542;
+
   /* Home page course cards (customize here). */
   --course-card-bg: #fff;
   --course-card-hover-bg: #f2f5f7;
   --course-card-border-color: #b0a496;
+  --course-card-hover-border-color: var(--lecture-nav-accent);
+  /* Card drop shadow, currently off. Disable it with this no-op shadow rather than
+     the keyword `none`: the hover rule composes this variable into a shadow list,
+     and `none` is illegal inside a list, which silently voids the whole declaration
+     and takes the hover ring with it. For the solid, unblurred version, use:
+     calc(4px * var(--ui-scale)) calc(4px * var(--ui-scale)) 0 #e2d7c5 */
+  --course-card-shadow: 0 0 0 0 transparent;
   --course-card-border-width: calc(1.5px * var(--ui-scale));
   --course-card-hover-border-width: calc(2.5px * var(--ui-scale));
   --course-card-summary-color: #463f37;
@@ -112,7 +136,7 @@ html {
   font-size: calc(100% * var(--ui-scale));
 }
 body {
-  background: #faf8f5;
+  background: var(--page-bg);
   font-family: "TeX Gyre Termes", "Times New Roman", serif;
   font-size: calc(14pt * var(--ui-scale));
   line-height: 1.2;
@@ -568,6 +592,7 @@ a.course-card:visited {
 a.course-card {
   background: var(--course-card-bg);
   border: var(--course-card-border-width) solid var(--course-card-border-color);
+  box-shadow: var(--course-card-shadow);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -577,9 +602,31 @@ a.course-card {
 }
 a.course-card:hover {
   background: var(--course-card-hover-bg);
-  border-color: var(--lecture-nav-accent);
-  /* Inset ring instead of a thicker border, so hovering never shifts the layout. */
-  box-shadow: inset 0 0 0 var(--course-card-hover-border-width) var(--lecture-nav-accent);
+  border-color: var(--course-card-hover-border-color);
+  /* Inset ring instead of a thicker border, so hovering never shifts the layout.
+     The offset shadow has to be restated here or it drops out on hover. */
+  box-shadow:
+    inset 0 0 0 var(--course-card-hover-border-width) var(--course-card-hover-border-color),
+    var(--course-card-shadow);
+}
+/* Seasonal tints: each modifier only redefines the generic card variables. */
+a.course-card--fall {
+  --course-card-bg: var(--card-fall-bg);
+  --course-card-border-color: var(--card-fall-border);
+  --course-card-hover-bg: var(--card-fall-hover-bg);
+  --course-card-hover-border-color: var(--card-fall-border-strong);
+}
+a.course-card--spring {
+  --course-card-bg: var(--card-spring-bg);
+  --course-card-border-color: var(--card-spring-border);
+  --course-card-hover-bg: var(--card-spring-hover-bg);
+  --course-card-hover-border-color: var(--card-spring-border-strong);
+}
+a.course-card--summer {
+  --course-card-bg: var(--card-summer-bg);
+  --course-card-border-color: var(--card-summer-border);
+  --course-card-hover-bg: var(--card-summer-hover-bg);
+  --course-card-hover-border-color: var(--card-summer-border-strong);
 }
 a.course-card:focus-visible {
   outline: calc(2px * var(--ui-scale)) solid var(--lecture-nav-accent);
