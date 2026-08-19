@@ -197,7 +197,14 @@ writePage(join(distDir, "index.html"), SITE_PAGE_TITLE, "", renderSiteHome(), {
 });
 
 syncPath(katexDist, katexOut);
-for (const asset of ["highlight", "fonts", "lecture-navbar.js", "mobile.js", GOOGLE_VERIFICATION]) {
+for (const asset of [
+  "highlight",
+  "fonts",
+  "lecture-navbar.js",
+  "mobile.js",
+  "favicon.svg",
+  GOOGLE_VERIFICATION,
+]) {
   syncPath(join(root, asset), join(distDir, asset));
 }
 // Keep GitHub Pages from running the output through Jekyll.
@@ -292,7 +299,10 @@ function renderSiteHome(): string {
 </a>`,
   ).join("\n");
 
-  return `<h1 class="site-title">${escapeHtml(SITE_PAGE_TITLE)}</h1>
+  return `<header class="site-header">
+<img class="site-mark" src="/favicon.svg" alt="" width="512" height="512">
+<h1 class="site-title"><span class="site-title-flourish" aria-hidden="true"></span>${escapeHtml(SITE_PAGE_TITLE)}<span class="site-title-flourish site-title-flourish--end" aria-hidden="true"></span></h1>
+</header>
 <div class="course-grid">
 ${cards}
 </div>`;

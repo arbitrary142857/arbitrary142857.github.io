@@ -1,5 +1,5 @@
 {
-  "watch": ["courses", "template.html", "src"],
+  "watch": ["courses", "template.html", "favicon.svg", "src"],
   "ext": "tex,html,ts,png,jpg,jpeg,webp,gif,svg",
   "exec": "tsx src/build.ts"
 }

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 512 512"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
+   sodipodi:docname="favicon.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:zoom="0.5"
+     inkscape:cx="255"
+     inkscape:cy="256"
+     inkscape:window-width="1440"
+     inkscape:window-height="847"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1">
+    <sodipodi:guide
+       position="0,512"
+       orientation="0,512"
+       id="guide59"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="512,512"
+       orientation="512,0"
+       id="guide60"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="512,0"
+       orientation="0,-512"
+       id="guide61"
+       inkscape:locked="false" />
+    <sodipodi:guide
+       position="0,0"
+       orientation="-512,0"
+       id="guide62"
+       inkscape:locked="false" />
+    <inkscape:grid
+       id="grid115"
+       units="px"
+       originx="0"
+       originy="0"
+       spacingx="1"
+       spacingy="1"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       enabled="true"
+       visible="false" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient92"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#32739d;stop-opacity:1;"
+         offset="0"
+         id="stop92" />
+      <stop
+         style="stop-color:#32739d;stop-opacity:0;"
+         offset="1"
+         id="stop93" />
+    </linearGradient>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="4.005215 : 511.13104 : 1"
+       inkscape:vp_y="0 : 1067.2269 : 0"
+       inkscape:vp_z="514.43367 : -1.268637 : 1"
+       inkscape:persp3d-origin="208.55659 : 74.940558 : 1"
+       id="perspective13" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient92"
+       id="linearGradient93"
+       x1="431.22583"
+       y1="420.47876"
+       x2="-213.59784"
+       y2="-212.25446"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Layer 2"
+     transform="translate(-287.0495,-102.44145)" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="fill-opacity:1;fill:url(#linearGradient93)">
+    <rect
+       style="opacity:1;fill:#24536b;fill-opacity:1;fill-rule:nonzero;stroke-width:24;stroke:#d3a862;stroke-dasharray:none;stroke-opacity:1"
+       id="rect162"
+       width="362"
+       height="362"
+       x="-437"
+       y="75"
+       transform="scale(-1,1)" />
+    <path
+       id="circle164"
+       style="opacity:1;fill:#d3a862;fill-opacity:1;fill-rule:nonzero;stroke:#d3a862;stroke-width:24;stroke-dasharray:none;stroke-opacity:1"
+       d="m 179.48267,278.90316 v 206.08425 a 257.27408,239.60502 0 0 0 76.37825,11.05782 257.27408,239.60502 0 0 0 124.11465,-30.41861 z" />
+    <path
+       id="circle163"
+       style="opacity:1;fill:#d3a862;fill-opacity:1;fill-rule:nonzero;stroke:#d3a862;stroke-width:24;stroke-dasharray:none;stroke-opacity:1"
+       d="M 256.13908,15.954663 A 257.27408,239.60515 0 0 0 132.02443,46.373285 L 332.51732,233.09682 V 26.793127 A 257.27408,239.60515 0 0 0 256.13908,15.954663 Z" />
+  </g>
+</svg>

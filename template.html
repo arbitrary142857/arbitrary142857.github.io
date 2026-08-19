@@ -13,6 +13,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="{{TITLE}}">
 <meta name="twitter:description" content="{{META_DESCRIPTION}}">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/katex/katex.min.css">
 <link rel="stylesheet" href="/highlight/github.css">
 <style>
@@ -108,10 +109,23 @@
   --course-card-number-size: 1.75em;
   --course-card-title-size: 1.15em;
   --course-card-term-size: 1em;
-  /* Optical nudge so the term's cap height lines up with the course number's. */
-  --course-card-term-offset: 0.3em;
+  /* Optical nudge to line the term's cap height up with the course number's.
+     Currently disabled: the term sits flush with the top of the card head. */
+  --course-card-term-offset: 0;
   --course-card-summary-size: 0.9em;
   --course-card-mobile-break: 41.6em; /* 52em * 0.8 */
+
+  /* Home page header (customize here). */
+  --site-mark-size: 4em;
+  --site-title-size: 2.1em;
+  --site-title-color: var(--lecture-nav-accent);
+  /* Ornaments flanking the title; the gold is the site mark's own. */
+  --site-title-flourish-color: #d3a862;
+  --site-title-flourish-length: 2em;
+  --site-title-flourish-thickness: calc(1.5px * var(--ui-scale));
+  --site-title-flourish-diamond: 0.38em;
+  --site-title-flourish-gap: 0.4em;
+  --site-title-flourish-inset: 0.7em;
 }
 @font-face {
   font-family: "TeX Gyre Termes";
@@ -566,10 +580,50 @@ h1 {
   margin: 0 0 1em;
   text-align: center;
 }
+header.site-header {
+  margin: 0 0 2em;
+  text-align: center;
+}
+img.site-mark {
+  display: block;
+  height: auto;
+  margin: 0 auto 0.55em;
+  width: var(--site-mark-size);
+}
 h1.site-title {
-  /* Matches the course/lecture page titles in header.lecture-header. */
-  font-size: 2em;
-  margin: 0 0 1.15em;
+  align-items: center;
+  color: var(--site-title-color);
+  display: flex;
+  font-size: var(--site-title-size);
+  gap: var(--site-title-flourish-inset);
+  justify-content: center;
+  margin: 0;
+}
+/* Flanking ornament: a rule running outward from a small diamond, in the gold
+   of the site mark. Each span holds both parts; the trailing one is reversed so
+   the diamond always sits nearest the title. */
+.site-title-flourish {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--site-title-flourish-gap);
+}
+.site-title-flourish--end {
+  flex-direction: row-reverse;
+}
+.site-title-flourish::before,
+.site-title-flourish::after {
+  background: var(--site-title-flourish-color);
+  content: "";
+}
+.site-title-flourish::before {
+  height: var(--site-title-flourish-thickness);
+  /* Shrinks with the viewport so the title never overflows on a phone. */
+  width: clamp(0.7em, 7vw, var(--site-title-flourish-length));
+}
+.site-title-flourish::after {
+  height: var(--site-title-flourish-diamond);
+  transform: rotate(45deg);
+  width: var(--site-title-flourish-diamond);
 }
 .course-grid {
   display: grid;
