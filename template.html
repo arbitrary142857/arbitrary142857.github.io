@@ -1089,5 +1089,8 @@ a.lecture-nav-btn:hover {
 <main>{{CONTENT}}</main>
 <script src="/lecture-navbar.js" defer></script>
 <script src="/mobile.js" defer></script>
+<!-- Cloudflare Web Analytics. type="module" is already deferred; the attribute
+     must keep single quotes, since its value is JSON containing double ones. -->
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2f82f3cc2b67487faaf4ead7c2c0de22"}'></script>
 </body>
 </html>

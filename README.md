@@ -88,6 +88,10 @@ The record must stay **DNS only**. Proxying it (orange cloud) blocks GitHub's HT
 
 To move to another domain later: edit `SITE_ORIGIN`, rebuild, then update the Cloudflare record and the custom domain in repo settings. Nothing else in the repo hardcodes the host.
 
+### Analytics
+
+Cloudflare Web Analytics runs from a beacon `<script>` at the end of `template.html`, so every generated page carries it. The site token in `data-cf-beacon` is public by design (every visitor downloads it) and grants no account access, so it lives in the repo rather than in a secret. The beacon is used instead of Cloudflare's automatic injection because the DNS record is unproxied — no traffic passes through Cloudflare's edge for it to inject into.
+
 ### Sitemap and robots
 
 The build writes `sitemap.xml` and `robots.txt` at the site root, with absolute URLs derived from `SITE_ORIGIN`. Every page the build writes appears in the sitemap exactly once: `assertSitemapMatchesOutput` in `src/build.ts` compares the sitemap paths against the files actually produced and throws if they disagree, so a sitemap advertising 404s cannot reach a deploy.
