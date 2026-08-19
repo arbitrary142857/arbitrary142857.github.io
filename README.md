@@ -1,8 +1,8 @@
-# arbitrary142857.github.io
+# notes.jasonmao.me
 
 MIT course notes, built as static HTML from LaTeX.
 
-Live site: [https://arbitrary142857.github.io/](https://arbitrary142857.github.io/)
+Live site: [https://notes.jasonmao.me/](https://notes.jasonmao.me/)
 
 ## Layout
 
@@ -72,7 +72,27 @@ Pushes to `main` deploy via GitHub Actions. In repo settings, set **Pages → So
 
 The workflow runs `npm run build` and publishes `dist/` as-is, so the deployed tree is exactly what a local build produces. Note that `.tex` sources are not copied into `dist/` and so are not served by the site.
 
-The build also writes `sitemap.xml` and `robots.txt` at the site root (canonical URLs use `SITE_ORIGIN` in `src/site.ts`). Submit the sitemap in [Google Search Console](https://search.google.com/search-console) under **Sitemaps** → `https://arbitrary142857.github.io/sitemap.xml`.
+### Custom domain
+
+The site is served at `https://notes.jasonmao.me`. The GitHub repo keeps its original `arbitrary142857.github.io` name; only the served domain changed.
+
+`SITE_ORIGIN` in `src/site.ts` is the single source of truth for the host. The build derives `SITE_HOST` from it and writes `dist/CNAME`, which is what GitHub Pages reads to serve the custom domain. A repo-root `CNAME` does not work here: the deployed artifact is `dist/`, and `pruneStale` deletes anything in `dist/` the build did not produce, so the file has to be generated rather than committed.
+
+DNS lives in Cloudflare:
+
+| Type | Name | Target | Proxy |
+| --- | --- | --- | --- |
+| CNAME | `notes` | `arbitrary142857.github.io` | DNS only (grey cloud) |
+
+The record must stay **DNS only**. Proxying it (orange cloud) blocks GitHub's HTTP-01 certificate challenge, so the certificate never issues and **Enforce HTTPS** stays greyed out. Because the record is unproxied, Cloudflare's SSL/TLS mode and "Always Use HTTPS" settings do not apply to this hostname.
+
+To move to another domain later: edit `SITE_ORIGIN`, rebuild, then update the Cloudflare record and the custom domain in repo settings. Nothing else in the repo hardcodes the host.
+
+### Sitemap and robots
+
+The build writes `sitemap.xml` and `robots.txt` at the site root, with absolute URLs derived from `SITE_ORIGIN`. Every page the build writes appears in the sitemap exactly once: `assertSitemapMatchesOutput` in `src/build.ts` compares the sitemap paths against the files actually produced and throws if they disagree, so a sitemap advertising 404s cannot reach a deploy.
+
+Search Console is verified with a **DNS TXT record on the `jasonmao.me` domain property**, which covers every subdomain. (The old `google*.html` file was a per-property token scoped to the `.github.io` origin and has been removed.) Submit the sitemap in [Google Search Console](https://search.google.com/search-console) under **Sitemaps** → `https://notes.jasonmao.me/sitemap.xml`.
 
 ## Adding a course
 

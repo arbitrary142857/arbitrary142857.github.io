@@ -9,7 +9,7 @@ import {
   unlinkSync,
   writeFileSync,
 } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   COURSES,
@@ -28,15 +28,13 @@ import {
   type Note,
 } from "./notes.js";
 import { parseTex, renderInlineFragment, titlePlainText, extractSubsections } from "./parser.js";
-import { SITE_PAGE_TITLE, siteUrl } from "./site.js";
+import { SITE_HOST, SITE_PAGE_TITLE, siteUrl } from "./site.js";
 import { getTocParts, groupNotesByTocParts, type TocPart } from "./toc-sections.js";
 import { lectureNavHtml } from "./lecture-nav.js";
 import { lectureNavbarHtml } from "./lecture-navbar.js";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const distDir = join(root, "dist");
-/** Google Search Console verification file; must stay at the site root. */
-const GOOGLE_VERIFICATION = "google7d30abf698d487de.html";
 const templatePath = join(root, "template.html");
 const katexDist = join(root, "node_modules/katex/dist");
 const katexOut = join(distDir, "katex");
@@ -197,19 +195,17 @@ writePage(join(distDir, "index.html"), SITE_PAGE_TITLE, "", renderSiteHome(), {
 });
 
 syncPath(katexDist, katexOut);
-for (const asset of [
-  "highlight",
-  "fonts",
-  "lecture-navbar.js",
-  "mobile.js",
-  "favicon.svg",
-  GOOGLE_VERIFICATION,
-]) {
+for (const asset of ["highlight", "fonts", "lecture-navbar.js", "mobile.js", "favicon.svg"]) {
   syncPath(join(root, asset), join(distDir, asset));
 }
 // Keep GitHub Pages from running the output through Jekyll.
 writeIfChanged(join(distDir, ".nojekyll"), "");
+// Custom domain. GitHub Pages reads only the first line, and the deployed artifact
+// is dist/, so a repo-root CNAME would never be published.
+writeIfChanged(join(distDir, "CNAME"), `${SITE_HOST}\n`);
 
+// Check before writing, so a failed build never leaves a bad sitemap on disk.
+assertSitemapMatchesOutput();
 writeIfChanged(join(distDir, "sitemap.xml"), renderSitemap(sitemapPaths));
 writeIfChanged(
   join(distDir, "robots.txt"),
@@ -253,6 +249,34 @@ function renderSitemap(paths: string[]): string {
     )
     .join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
+}
+
+/**
+ * Fail the build if the sitemap advertises a URL this build did not write, or omits
+ * a page it did. Both sides derive from the same variables today, so this can only
+ * fire if that coupling is broken later — which would otherwise ship silent 404s to
+ * search engines, since a bad deploy is only visible after it is live.
+ */
+function assertSitemapMatchesOutput(): void {
+  const pageFiles = new Set(
+    [...producedPaths].filter((path) => path.endsWith(`${sep}index.html`)),
+  );
+  const advertised = new Set(
+    sitemapPaths.map((path) => join(distDir, path, "index.html")),
+  );
+  const missingFile = [...advertised].filter((path) => !pageFiles.has(path));
+  const missingEntry = [...pageFiles].filter((path) => !advertised.has(path));
+  if (missingFile.length === 0 && missingEntry.length === 0) return;
+
+  const report = (label: string, paths: string[]): string =>
+    paths.length === 0
+      ? ""
+      : `\n${label}:\n${paths.map((path) => `  ${relative(distDir, path)}`).join("\n")}`;
+  throw new Error(
+    "sitemap.xml does not match the generated pages." +
+      report("In the sitemap but never written", missingFile) +
+      report("Written but missing from the sitemap", missingEntry),
+  );
 }
 
 function escapeXml(text: string): string {
