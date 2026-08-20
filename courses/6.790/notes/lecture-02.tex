@@ -10,11 +10,10 @@ but say we don't know what $p$ is.
     This isn't entirely realistic---sensor data, say, might have temporal correlations.
 \end{remark}
 
-\subsection{Empirical Risk Minimization \dots}
+\subsection{Empirical Risk Minimization}
 
-Let's start simple: what's the \emph{stupidest} thing we can do?
-
-Well, one idea is to use our training data $\{(x^{(n)}, y^{(n)})\}_{n = 1}^N$ to
+Here's a very simple idea:
+Use our training data $\{(x^{(n)}, y^{(n)})\}_{n = 1}^N$ to
 derive an \textbf{empirical distribution} like so:
 \[ \widehat{p}(x, y) := \frac{1}{N} \sum_{n = 1}^N \delta_{(x^{(n)}, y^{(n)})}(x, y). \]
 Here, $\delta_k(x)$ is the Dirac delta function, defined so that
@@ -26,7 +25,7 @@ And so we might choose $h$ according to \textbf{Empirical Risk Minimization (ERM
 \[ h_{\textsc{Erm}} = \argmin_{h \in \mathcal{H}} \widehat{\text{risk}}(h), \]
 where $\mathcal{H}$ is some class of candidate decision rules.
 
-\subsection{\dots Fails Miserably}
+\subsection{Overfitting}
 
 Of course, this stupid solution fails in stupid ways.
 
@@ -48,15 +47,16 @@ Let's take the latter of the two approaches for now: how can we better estimate 
 \subsection{Maximum Likelihood Estimation}
 
 \begin{remark}
-    This section is written with the assumption of knowledge from
-    18.650 up to Lecture 12.
+    This section is written with the assumption of 18.650,
+    particularly up through \href{/18.650/lectures/9}{Lecture 9},
+    which covers the MLE.
 \end{remark}
 
-Rather than naively approximating $p(x, y)$ using the empirical distribution $\hat{p}(x, y)$,
+Rather than naively approximating $p(x, y)$ using the empirical distribution $\widehat{p}(x, y)$,
 let's suppose $p$ belongs to a \emph{parametric model}
 and estimate the parameter of $p$ via the \emph{MLE}.
 
-\begin{problem}{MLE Example}
+\begin{problem}{Bernoulli MLE}
     Suppose, for simplicity, that we only care about
     approximating the distribution of labels $\{y^{(n)}\}_{n = 1}^N$
     and ignore the features $\{x^{(n)}\}_{n = 1}^N$.
@@ -99,7 +99,7 @@ The MLE has some advantages!
 \begin{itemize}
     \item \textbf{Computation.}
     As long as the likelihood is differentiable,
-    it is very easy and fast to computationally find the MLE.
+    it is often very easy and fast to computationally find the MLE.
     \item \textbf{Reparametrization.}
     The MLE is invariant to reparametrization
     by a bijective function $\eta = f(\theta)$.
@@ -115,7 +115,7 @@ But it also has some disadvantages.
     \item \textbf{Poor Performance for Small $N$.}
     If we sample from $\mathrm{Ber}(0.2)$,
     it's likely the MLE will be stuck at $\hat{\theta} = 0$ for a while\dots
-    \item \textbf{Likelihood Inflation}.
+    \item \textbf{Likelihood Inflation.}
     Consider a \emph{mixture model} of two Gaussians
     $\mathcal{N}(\mu_0, \sigma_0^2)$ and $\mathcal{N}(\mu_1, \sigma_1^2)$
     with mixture weight $\lambda$.

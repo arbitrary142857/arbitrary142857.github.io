@@ -1,0 +1,268 @@
+\lecture{5}
+\title{Bayesian Linear Regression}
+
+\begin{document}
+
+\subsection{Problems with Linear Regression}
+
+Recall that $\hat{\theta} = (X^{\top}X)^{-1}X^{\top}Y$
+is the minimizer of
+$\mathrm{RSS}(\theta) := (X\theta - Y)^{\top}(X\theta - Y)$
+(the ``Residual Sum of Squares'').
+One possible problem is that $X$ might not be full rank;
+two or more features might be perfectly collinear,
+making $\hat{\theta}$ non-unique.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-05/not-full-rank}}
+\end{center}
+
+Maybe in practice, there's some tiny amount of noise
+in our observations, so $X$ is ``almost always'' guaranteed to be full rank.
+That doesn't actually fix the issue at hand, though---the effect of that noise
+is still to effectively pick one of the infinitely-many maximum-likelihood
+choices for $\hat{\theta}$ at \emph{random}.
+
+\begin{remark}
+    To clarify, collinearity of features isn't uncommon at all;
+    take ``credit card limit'' and ``credit card rating''
+    as a practical example of two nearly-collinear features.
+\end{remark}
+
+The issue is that linear regression is \textbf{overconfident};
+it always returns a \emph{single} point estimate $\hat{\theta}$.
+Rather than decisively estimating the exact value of $\hat{\theta}$,
+perhaps we should take a \textbf{Bayesian approach}:
+let incoming data $\{(x^{(n)}, y^{(n)})\}_{n = 1}^N$
+\emph{update our priors} on the distribution of $\theta$ instead.
+
+\subsection{Bayesian Linear Regression: Theory}
+
+Here's the model;
+refer to \href{/18.650/lectures/21}{Lecture 21} of 18.650
+for a reminder on Bayesian inference.
+\begin{itemize}
+    \item Our prior on $\theta$ is that
+    $\theta \sim \mathcal{N}(\mu_0, \Sigma_0)$,
+    for arbitrary initial constants $\mu_0$ and $\Sigma_0$.
+    \item We will assume that data $(x^{(n)}, y^{(n)})$
+    is such that $y^{(n)} \sim \mathcal{N}(\theta^{\top}x^{(n)}, \sigma^2)$
+    for all $n$.
+\end{itemize}
+A prior and a model for our data
+are enough for us to determine the posteriors
+that result from reading in data.
+
+\begin{theorem}{Linear Regression Posterior}
+    Suppose we collect $N$ data points,
+    represented by a matrix $X$ and a column vector $Y$.
+    Then the posterior is
+    $[\theta \mid X, Y] \sim \mathcal{N}(\mu_N, \Sigma_N)$,
+    where $\mu_N$ and $\Sigma_N$ satisfy:
+    \[
+    \Sigma_N^{-1} = \Sigma_0^{-1} + \frac{1}{\sigma^2}X^{\top}X
+    ~~~ \text{ and } ~~~
+    \Sigma_N^{-1}\mu_N = \Sigma_0^{-1}\mu_0 + \frac{1}{\sigma^2}X^{\top}Y
+    \]
+\end{theorem}
+
+\begin{remark}
+    Goes without saying, but\dots
+    even though these aren't explicit formulas for $\Sigma_N$ and $\mu_N$,
+    they do provide enough information
+    to fully compute them if desired.
+\end{remark}
+
+\begin{proof}
+    Plain computation, with some simplifying tricks.
+    Recall that $p(\theta \mid X, Y) \propto p(\theta) \cdot L_N(\theta)$,
+    where $p(\theta)$ is the PDF of a multivariable Gaussian,
+    and $L_N(\theta)$ is a product of $N$ single-variable Gaussian PDFs.
+    \[
+        p(\theta) = \frac{1}{\sqrt{(2\pi)^D \det(\Sigma_0)}}
+        \exp\left(-\frac{1}{2}(\theta - \mu_0)^{\top}\Sigma_0^{-1}(\theta - \mu_0)\right)
+        ~~~ \text{ and } ~~~
+        L_N(\theta) = \frac{1}{\sqrt{(2\pi\sigma^2)^N}}
+        \exp\left(-\frac{1}{2\sigma^2}\|Y - X\theta\|^2\right).
+    \]
+    See \href{/18.650/lectures/6/#multivariate-gaussian}{Lecture 6}
+    of 18.650 for a derivation of the multivariable case.
+
+    For ease of computation,
+    it helps to instead work with $\log p(\theta \mid X, Y)$.
+    Also recall that we only care about
+    $p(\theta \mid X, Y)$ up to a proportionality constant
+    (as indicated by the $\propto$ symbol),
+    so after taking logs,
+    we can throw away any \textcolor{teal}{$+C$} terms.
+
+    We'll compute the logarithm in two steps,
+    starting with $\log p(\theta)$.
+    (Note that all terms in $\log p(\theta)$ are real numbers.)
+
+    \begin{align*}
+        \log p(\theta)
+        & = -\frac{1}{2}(\theta - \mu_0)^{\top}\Sigma_0^{-1}(\theta - \mu_0)
+        \textcolor{teal}{+C} \\
+        & = -\frac{1}{2}\left[\theta^{\top}\Sigma_0^{-1}\theta
+        - \mu_0^{\top}\Sigma_0^{-1}\theta
+        - \theta^{\top}\Sigma_0^{-1}\mu_0
+        \textcolor{teal}{+ \mu_0^{\top}\Sigma_0^{-1}\mu_0}\right]
+        \textcolor{teal}{+C} \\
+        & = -\frac{1}{2}\left[\theta^{\top}\Sigma_0^{-1}\theta
+        \textcolor{purple}{- \mu_0^{\top}\Sigma_0^{-1}\theta}
+        \textcolor{purple}{- \theta^{\top}\Sigma_0^{-1}\mu_0}\right]
+        \textcolor{teal}{+C} & (\bigstar_1) \\
+        & = \textcolor{blue}{\theta^{\top}\left(
+            -\frac{1}{2}\Sigma_0^{-1}
+        \right)\theta}
+        \textcolor{purple}{+ \left(\mu_0^{\top}\Sigma_0^{-1}\right)\theta}
+        \textcolor{teal}{+C} & (\bigstar_2)
+    \end{align*}
+    Two subtle simplifying tricks just took place:
+    \begin{itemize}
+        \item To arrive at line $(\bigstar_1)$,
+        we absorbed the $\textcolor{teal}{+ \mu_0^{\top}\Sigma_0^{-1}\mu_0}$
+        into the $\textcolor{teal}{+C}$
+        because it is a real-number constant (i.e. has no $\theta$s).
+        \item To arrive at line $(\bigstar_2)$,
+        we replaced \textcolor{purple}{$\theta^{\top}\Sigma_0^{-1}\mu_0$}
+        with \textcolor{purple}{$\mu_0^{\top}\Sigma_0^{-1}\theta$}.
+        We can do this because
+        they are real numbers and transposes of each other,
+        so they are equal.
+        In particular, $(\Sigma_0^{-1})^{\top} = \Sigma_0^{-1}$
+        because covariance matrices $\Sigma_0$ are symmetric.
+    \end{itemize}
+    Using some similar tricks,
+    we can compute $\log L_N(\theta)$ as well.
+    \begin{align*}
+        \log L_N(\theta)
+        & = -\frac{1}{2\sigma^2}(Y - X\theta)^{\top}(Y - X\theta)
+        \textcolor{teal}{+C} \\
+        & = -\frac{1}{2\sigma^2}\left[
+            \textcolor{teal}{Y^{\top}Y}
+            \textcolor{purple}{-\theta^{\top}X^{\top}Y}
+            \textcolor{purple}{-Y^{\top}X\theta}
+            + \theta^{\top}X^{\top}X\theta
+        \right] \textcolor{teal}{+C} \\
+        & = \textcolor{blue}{
+            \theta^{\top}\left(
+                -\frac{1}{2\sigma^2} X^{\top}X
+            \right)\theta
+        } \textcolor{purple}{
+            +\left(\frac{1}{\sigma^2}Y^{\top}X\right)\theta
+        } \textcolor{teal}{+C}.
+    \end{align*}
+    So altogether, we have the following:
+    \[
+        (\clubsuit_1) ~~~
+        \log p(\theta \mid X, Y)
+        = \textcolor{blue}{
+            \theta^{\top}\left(
+                -\frac{1}{2}\left[
+                    \Sigma_0^{-1} + \frac{1}{\sigma^2}X^{\top}X
+                \right]
+            \right) \theta
+        } \textcolor{purple}{+ \left(
+            \mu_0^{\top}\Sigma_0^{-1} + \frac{1}{\sigma^2}Y^{\top}X
+        \right)\theta} \textcolor{teal}{+C}.
+    \]
+    We just need to compare this with
+    the log of the PDF of $\mathcal{N}(\mu_N, \Sigma_N)$\dots
+    well, we already computed what the logarithm looks like---it's
+    just line $(\bigstar_2)$ from earlier!
+    \[
+        (\clubsuit_2) ~~~
+        \log \left[\text{PDF of } \mathcal{N}(\mu_N, \Sigma_N)\right]
+        = \textcolor{blue}{\theta^{\top}\left(
+            -\frac{1}{2}\Sigma_N^{-1}
+        \right)\theta}
+        \textcolor{purple}{+ \left(\mu_N^{\top}\Sigma_N^{-1}\right)\theta}
+        \textcolor{teal}{+C}
+    \]
+    Pattern-matching $(\clubsuit_1)$ against $(\clubsuit_2)$
+    (and taking the transpose of the latter equation\dots)
+    yields the desired result. ~ $\blacksquare$
+\end{proof}
+
+\begin{remark}
+    The constant simplification of everything
+    into the form $\theta^{\top}A\theta + b\theta + c$
+    isn't a coincidence---every multivariable quadratic polynomial
+    is expressible in such a form!  See
+    \href{/18.701/lectures/16/#foreshadowing-quadratic-polynomials-are-bilinear-forms}{Lecture 16}
+    of 18.701 for further detail.
+\end{remark}
+
+\subsection{Bayesian Linear Regression: Performance}
+
+The whole point of Bayesian linear regression
+is to avoid overconfidence.
+To what extent have we been successful?
+
+\begin{quote}
+    \textbf{Example Set-Up.}
+    We draw features $x^{(n)} \sim \mathrm{Unif}[-1, 1]$
+    and generate responses via
+    $y^{(n)} \sim \mathcal{N}(\theta_1^*x^{(n)} + \theta_0^*, \sigma^2)$,
+    where $\theta_0^* = -0.3$, $\theta_1^* = 0.5$, and $\sigma = 0.2$.
+    The algorithm assumes the prior $\theta \sim \mathcal{N}(0, I_2)$.
+\end{quote}
+
+Under this set-up,
+Bayesian linear regression performs expectedly well;
+as more data comes in, the posterior becomes
+more focused around the correct value of $\theta$.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-05/example-1}}
+\end{center}
+
+But ordinary linear regression would do just as well here;
+there is no feature collinearity here.
+
+\begin{quote}
+    \textbf{Altered Set-Up.}
+    Everything held constant, except the only feature value
+    that is observed is $x^{(n)} = 1$.
+\end{quote}
+
+This is equivalent to feature collinearity.
+(Recall that, for \emph{affine} linear regression,
+all feature vectors have an extra ``1'' appended to their front
+to allow for ``y-intercepts''; see
+\href{/18.650/lectures/24/#affine-linear-regression}{Lecture 24}
+of 18.650.)
+Bayesian linear regression still performs well here!
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-05/example-2}}
+\end{center}
+
+The regression is able to be confident about $\theta^*$
+in some parameter directions, but not all parameter directions.
+There's still a one-dimensional space of
+potential values of $\theta^* = (\theta_0^*, \theta_1^*)$
+that the regression sees as possible---still
+a strong improvement over the two-dimensional prior!
+
+\begin{quote}
+    \textbf{Further Altered Set-Up.}
+    The Bayesian regression believes responses are generated via
+    $y^{(n)} \sim \mathcal{N}(\theta_1 x^{(n)} + \theta_0, \sigma^2)$,
+    but they're actually generated by
+    $y^{(n)} \sim \mathcal{N}(0.5 - (x^{(n)})^2, \sigma^2)$.
+\end{quote}
+
+Bayesian regression can't save you from model \emph{misspecification}.
+As more data arrives, the posterior becomes more and more resolute
+in its estimate for $\theta$,
+even though the regression hasn't come close
+to actually understanding the response generation.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-05/example-3}}
+\end{center}
+
+\end{document}

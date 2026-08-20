@@ -33,9 +33,9 @@ Here's the classic machine learning setup.
 \subsection{The Optimal Hypothesis (Given the Distribution!)}
 
 \textbf{Definition (Risk).} A decision rule $h$ has \textbf{risk} defined by
-$\mathrm{risk}(h) := \mathbb{E}[L(Y, h(X))]$
+$\mathrm{risk}(h) := \mathbb{E}[L(Y, h(X))]$.
 
-Assume that all data $(x^{(i)}, y^{(i)})$ (training or not) is drawn i.i.d. from the same distribution.
+Assume that all data $(x^{(n)}, y^{(n)})$ (training or not) is drawn i.i.d. from the same distribution.
 Unsurprisingly, if we know this distribution $p(x, y)$ exactly, finding the best $h$ is not hard.
 
 \begin{theorem}{Optimal Hypothesis}
@@ -53,6 +53,8 @@ Unsurprisingly, if we know this distribution $p(x, y)$ exactly, finding the best
 
 The optimal $h$ takes a pretty nice form when we consider regression problems
 with a particular choice of loss.
+(Refer to \href{/18.650/lectures/24}{Lecture 24} from 18.650
+for additional context on why the loss function is what it is.)
 
 \begin{theorem}{Optimal Regression Hypothesis}
     Assume $\mathcal{X} = \mathbb{R}^D$, $\mathcal{Y} = \mathbb{R}$, and $L(a, g) = (a - g)^2$.
