@@ -31,7 +31,7 @@ export const COURSES: Course[] = [
     semester: "🌸 Spring 2026",
     summary: `
       A survey of classic algorithms and data structures
-      (Union-Find, MST, Max Flow, MCMC, and FFT),
+      (e.g., Union-Find, MST, Max Flow, MCMC, and FFT),
       fundamental elements of algorithmic design
       (e.g., amortized analysis, hash functions, linear programming),
       and specialized models of computation
@@ -73,7 +73,7 @@ export const COURSES: Course[] = [
     subtitle: "Machine Learning",
     semester: "☀️ Summer 2026",
     summary: `
-      Notes taken through Lecture 2 of 24.
+      Notes taken through Lecture 5 of 24.
     `,
   },
 ];

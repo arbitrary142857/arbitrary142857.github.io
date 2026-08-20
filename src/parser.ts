@@ -143,12 +143,74 @@ export function renderInlineFragment(
   return parseInline(fragment.trim(), ctx);
 }
 
+/**
+ * TeX title reduced to bare text. Feeds subsection slugs, so its output must stay
+ * stable — changing it silently rewrites every "#heading" anchor already published.
+ * For text a reader sees, use {@link titleDisplayText} instead.
+ */
 export function titlePlainText(titleTex: string): string {
+  return stripTitleMarkup(titleTex, false);
+}
+
+/**
+ * TeX title reduced to text meant for human eyes — page titles, meta descriptions,
+ * social cards. Identical to {@link titlePlainText} except that math sub- and
+ * superscripts become real characters ("$S_n$" reads as "S\u2099", not "S_n"), since
+ * search results and link previews cannot render KaTeX.
+ */
+export function titleDisplayText(titleTex: string): string {
+  return stripTitleMarkup(titleTex, true);
+}
+
+function stripTitleMarkup(titleTex: string, unicodeScripts: boolean): string {
   let plain = titleTex.trim();
   while (/\\[a-zA-Z@*]+\{/.test(plain)) {
     plain = plain.replace(/\\[a-zA-Z@*]+\{([^{}]*(?:\{[^{}]*\}[^{}]*)*)\}/g, "$1");
   }
+  // Must run while braces survive, so "x_{ij}" is read as one script and not as "x_i" + "j".
+  if (unicodeScripts) plain = applyUnicodeScripts(plain);
   return plain.replace(/\$([^$]*)\$/g, "$1").replace(/[{}\\]/g, "").trim();
+}
+
+const SUBSCRIPTS = buildScriptTable(
+  "0123456789+-=()aeohklmnpstxiruvj",
+  "\u2080\u2081\u2082\u2083\u2084\u2085\u2086\u2087\u2088\u2089\u208a\u208b\u208c\u208d\u208e\u2090\u2091\u2092\u2095\u2096\u2097\u2098\u2099\u209a\u209b\u209c\u2093\u1d62\u1d63\u1d64\u1d65\u2c7c",
+);
+
+const SUPERSCRIPTS = buildScriptTable(
+  "0123456789+-=()abcdefghijklmnoprstuvwxyz",
+  "\u2070\u00b9\u00b2\u00b3\u2074\u2075\u2076\u2077\u2078\u2079\u207a\u207b\u207c\u207d\u207e\u1d43\u1d47\u1d9c\u1d48\u1d49\u1da0\u1d4d\u02b0\u2071\u02b2\u1d4f\u02e1\u1d50\u207f\u1d52\u1d56\u02b3\u02e2\u1d57\u1d58\u1d5b\u02b7\u02e3\u02b8\u1dbb",
+);
+
+function buildScriptTable(plain: string, scripted: string): Map<string, string> {
+  const scriptedChars = [...scripted];
+  if (scriptedChars.length !== plain.length) {
+    throw new Error("script table is misaligned");
+  }
+  return new Map([...plain].map((char, index) => [char, scriptedChars[index]]));
+}
+
+/**
+ * Rewrite "_x" / "^{xy}" inside math as Unicode sub- and superscripts. Only math is
+ * touched, so an escaped underscore in prose stays an underscore. A script converts
+ * only when every one of its characters has a Unicode form, leaving anything exotic
+ * ("$L^\\infty$") in its literal TeX shape rather than half-translated.
+ */
+function applyUnicodeScripts(text: string): string {
+  return text.replace(/\$([^$]*)\$/g, (_whole: string, math: string) => `$${scriptsInMath(math)}$`);
+}
+
+function scriptsInMath(math: string): string {
+  return math.replace(
+    /([_^])(?:\{([^{}]*)\}|(.))/g,
+    (whole: string, marker: string, braced: string | undefined, single: string | undefined) => {
+      const body = braced ?? single ?? "";
+      const table = marker === "_" ? SUBSCRIPTS : SUPERSCRIPTS;
+      const scripted = [...body].map((char) => table.get(char));
+      if (body.length === 0 || scripted.some((char) => char === undefined)) return whole;
+      return scripted.join("");
+    },
+  );
 }
 
 export function extractSubsections(source: string): SubsectionEntry[] {

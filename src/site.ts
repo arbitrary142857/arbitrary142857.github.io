@@ -7,7 +7,11 @@ export const SITE_ORIGIN = "https://notes.jasonmao.me";
  */
 export const SITE_HOST = new URL(SITE_ORIGIN).host;
 
-export const SITE_PAGE_TITLE = "MIT Course Notes";
+/** Visible <h1> on the home page. */
+export const SITE_PAGE_TITLE = "MIT Lecture Notes";
+
+/** Home page <title> and social title; adds the byline a search result cannot infer. */
+export const SITE_META_TITLE = `${SITE_PAGE_TITLE} | Jason Mao`;
 
 export function siteUrl(path: string): string {
   const normalized = path.startsWith("/") ? path : `/${path}`;

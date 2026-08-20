@@ -106,8 +106,14 @@ export function mitCourseNumber(courseNumber: string): string {
   return `MIT ${courseNumber}`;
 }
 
+/** Course identity as it reads inside a sentence: "MIT 18.701 (Algebra I)". */
+export function courseLabel(courseNumber: string, courseSubtitle: string): string {
+  return `${mitCourseNumber(courseNumber)} (${courseSubtitle})`;
+}
+
+/** Course <title>, which says what the page holds: "MIT 18.701 Lecture Notes (Algebra I)". */
 export function coursePageTitle(courseNumber: string, courseSubtitle: string): string {
-  return `${mitCourseNumber(courseNumber)} — ${courseSubtitle}`;
+  return `${mitCourseNumber(courseNumber)} Lecture Notes (${courseSubtitle})`;
 }
 
 export function lecturePageTitle(
@@ -115,7 +121,26 @@ export function lecturePageTitle(
   courseNumber: string,
   titlePlain = note.title,
 ): string {
-  return `${mitCourseNumber(courseNumber)} ${formatLectureLabel(note.lectures)}: ${titlePlain}`;
+  return `${mitCourseNumber(courseNumber)} ${lectureLabelWithTitle(note, titlePlain)}`;
+}
+
+/**
+ * Meta description for a lecture page. Leads with the topics, since that is what a
+ * reader scanning a search result is actually looking for, and trails the course and
+ * lecture number that the <title> has already established.
+ */
+export function lectureDescription(
+  note: NoteMeta,
+  courseNumber: string,
+  courseSubtitle: string,
+  titlePlain = note.title,
+): string {
+  const course = courseLabel(courseNumber, courseSubtitle);
+  return `${titlePlain} — lecture notes from ${course}, ${formatLectureLabel(note.lectures)}.`;
+}
+
+function lectureLabelWithTitle(note: NoteMeta, titlePlain: string): string {
+  return `${formatLectureLabel(note.lectures)}: ${titlePlain}`;
 }
 
 export function lectureHeaderHtml(

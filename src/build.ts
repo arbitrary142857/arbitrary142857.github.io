@@ -19,16 +19,19 @@ import {
   courseSiteDir,
 } from "./courses.js";
 import {
+  courseLabel,
   coursePageTitle,
   formatLectureLabel,
+  lectureDescription,
   lectureHeaderHtml,
   lecturePageTitle,
   lectureSlug,
   loadNotes,
   type Note,
 } from "./notes.js";
-import { parseTex, renderInlineFragment, titlePlainText, extractSubsections } from "./parser.js";
-import { SITE_HOST, SITE_PAGE_TITLE, siteUrl } from "./site.js";
+import { parseTex, renderInlineFragment, titleDisplayText, extractSubsections } from "./parser.js";
+import { SITE_HOST, SITE_META_TITLE, SITE_PAGE_TITLE, siteUrl } from "./site.js";
+import { createLastmod } from "./lastmod.js";
 import { getTocParts, groupNotesByTocParts, type TocPart } from "./toc-sections.js";
 import { lectureNavHtml } from "./lecture-nav.js";
 import { lectureNavbarHtml } from "./lecture-navbar.js";
@@ -38,6 +41,9 @@ const distDir = join(root, "dist");
 const templatePath = join(root, "template.html");
 const katexDist = join(root, "node_modules/katex/dist");
 const katexOut = join(distDir, "katex");
+
+/** Where search results stop rendering a description; longer text is indexed but unseen. */
+const META_DESCRIPTION_LIMIT = 155;
 
 const template = readFileSync(templatePath, "utf8");
 
@@ -106,7 +112,17 @@ interface ParsedNote {
 }
 
 const parsedByCourse = new Map<string, ParsedNote[]>();
-const sitemapPaths: string[] = ["/"];
+const lastmod = createLastmod(root);
+
+interface SitemapEntry {
+  path: string;
+  /** W3C datetime, or null when git history cannot date the page. */
+  lastmod: string | null;
+}
+
+// The home page renders only the course cards defined in src/, so nothing beyond the
+// site-wide sources dates it.
+const sitemapEntries: SitemapEntry[] = [{ path: "/", lastmod: lastmod([]) }];
 
 interface PageSeo {
   description: string;
@@ -123,7 +139,7 @@ for (const course of COURSES) {
     note,
     result: parseTex(note.source, preamble, courseRoot, "images", "audio", "widgets"),
     titleHtml: renderInlineFragment(note.title, preamble, courseRoot),
-    titlePlain: titlePlainText(note.title),
+    titlePlain: titleDisplayText(note.title),
   }));
   parsedByCourse.set(course.id, parsed);
 
@@ -162,11 +178,14 @@ for (const course of COURSES) {
       coursePrefix,
       `${navbar}${header}\n${result.html}\n${footer}`,
       {
-        description: `${pageTitle}. MIT lecture notes for ${course.subtitle}.`,
+        description: lectureDescription(note, course.title, course.subtitle, titlePlain),
         canonicalPath,
       },
     );
-    sitemapPaths.push(canonicalPath);
+    sitemapEntries.push({
+      path: canonicalPath,
+      lastmod: lastmod(lectureSourcePaths(course.id, note.filename)),
+    });
   }
 
   for (const assetDir of ["images", "audio"]) {
@@ -181,15 +200,27 @@ for (const course of COURSES) {
     coursePrefix,
     renderCourseHome(course, parsed, preamble, courseRoot),
     {
-      description: `Lecture notes for ${courseTitle}.`,
+      description: courseMetaDescription(course),
       canonicalPath: coursePrefix,
     },
   );
-  sitemapPaths.push(coursePrefix);
+  // A course page lists every lecture, so any note in the course re-dates it.
+  sitemapEntries.push({
+    path: coursePrefix,
+    lastmod: lastmod([`courses/${course.id}/notes`]),
+  });
 }
 
-const siteHomeDescription = siteHomeMetaDescription();
-writePage(join(distDir, "index.html"), SITE_PAGE_TITLE, "", renderSiteHome(), {
+/**
+ * Hand-written so the subjects can be named the way a person would search for them
+ * ("algorithms", not "Design and Analysis of Algorithms"). Not derived from COURSES,
+ * so {@link assertHomeDescriptionNamesEveryCourse} keeps it honest.
+ */
+const siteHomeDescription =
+  "Student-written lecture notes for MIT 18.701 (algebra), 6.1220 (algorithms), " +
+  "6.300 (signal processing), 18.650 (statistics), and 6.790 (machine learning).";
+assertHomeDescriptionNamesEveryCourse();
+writePage(join(distDir, "index.html"), SITE_META_TITLE, "", renderSiteHome(), {
   description: siteHomeDescription,
   canonicalPath: "/",
 });
@@ -206,7 +237,7 @@ writeIfChanged(join(distDir, "CNAME"), `${SITE_HOST}\n`);
 
 // Check before writing, so a failed build never leaves a bad sitemap on disk.
 assertSitemapMatchesOutput();
-writeIfChanged(join(distDir, "sitemap.xml"), renderSitemap(sitemapPaths));
+writeIfChanged(join(distDir, "sitemap.xml"), renderSitemap(sitemapEntries));
 writeIfChanged(
   join(distDir, "robots.txt"),
   `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl("/sitemap.xml")}\n`,
@@ -242,11 +273,24 @@ function writePage(
   writeIfChanged(path, page);
 }
 
-function renderSitemap(paths: string[]): string {
-  const urls = paths
-    .map(
-      (path) => `  <url>\n    <loc>${escapeXml(siteUrl(path))}</loc>\n  </url>`,
-    )
+/**
+ * A lecture's own sources: its .tex plus the per-lecture asset directories, which are
+ * named after the note file ("lecture-19.tex" -> "images/lecture-19").
+ */
+function lectureSourcePaths(courseId: string, filename: string): string[] {
+  const stem = filename.replace(/\.tex$/, "");
+  return [
+    `courses/${courseId}/notes/${filename}`,
+    ...["images", "audio", "widgets"].map((dir) => `courses/${courseId}/${dir}/${stem}`),
+  ];
+}
+
+function renderSitemap(entries: SitemapEntry[]): string {
+  const urls = entries
+    .map(({ path, lastmod }) => {
+      const stamp = lastmod ? `\n    <lastmod>${escapeXml(lastmod)}</lastmod>` : "";
+      return `  <url>\n    <loc>${escapeXml(siteUrl(path))}</loc>${stamp}\n  </url>`;
+    })
     .join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
 }
@@ -262,7 +306,7 @@ function assertSitemapMatchesOutput(): void {
     [...producedPaths].filter((path) => path.endsWith(`${sep}index.html`)),
   );
   const advertised = new Set(
-    sitemapPaths.map((path) => join(distDir, path, "index.html")),
+    sitemapEntries.map(({ path }) => join(distDir, path, "index.html")),
   );
   const missingFile = [...advertised].filter((path) => !pageFiles.has(path));
   const missingEntry = [...pageFiles].filter((path) => !advertised.has(path));
@@ -288,9 +332,51 @@ function escapeXml(text: string): string {
     .replaceAll("'", "&apos;");
 }
 
-function siteHomeMetaDescription(): string {
-  const courses = COURSES.map((c) => `MIT ${c.title}`).join(", ");
-  return `Lecture notes for ${courses} — algebra, algorithms, signal processing, statistics, machine learning, and more.`;
+/**
+ * Course meta description: identity, term, then as much of the authored summary as a
+ * search result will actually render. The summaries run past 300 characters, so this
+ * is the one description that has to be cut rather than composed to fit.
+ */
+function courseMetaDescription(course: (typeof COURSES)[number]): string {
+  const label = courseLabel(course.title, course.subtitle);
+  const summary = collapseWhitespace(course.summary);
+  return truncateAtWord(
+    `Student-written lecture notes for ${label}, ${termName(course.semester)}: ${openLowercase(summary)}`,
+    META_DESCRIPTION_LIMIT,
+  );
+}
+
+/**
+ * Drop the summary's opening capital, since it now continues a sentence rather than
+ * starting one. Every summary opens with an article or "Notes"; one that opened with a
+ * proper noun would need rewording, not a smarter rule.
+ */
+function openLowercase(text: string): string {
+  return text.charAt(0).toLowerCase() + text.slice(1);
+}
+
+/**
+ * The home description is hand-written, so nothing makes it follow COURSES. Fail the
+ * build rather than ship a page that silently omits a course someone just added.
+ */
+function assertHomeDescriptionNamesEveryCourse(): void {
+  const missing = COURSES.filter((course) => !siteHomeDescription.includes(course.title));
+  if (missing.length === 0) return;
+  throw new Error(
+    "The hand-written home page description does not name every course. Missing: " +
+      missing.map((course) => course.title).join(", "),
+  );
+}
+
+/** Semester label without its decorative emoji: "🍂 Fall 2025" reads as "Fall 2025". */
+function termName(semester: string): string {
+  return semester.replace(/^[^\p{L}\p{N}]+/u, "").trim();
+}
+
+function truncateAtWord(text: string, limit: number): string {
+  if (text.length <= limit) return text;
+  const cut = text.lastIndexOf(" ", limit - 1);
+  return `${text.slice(0, cut > 0 ? cut : limit - 1).replace(/[,;:.\u2014-]+$/, "")}\u2026`;
 }
 
 /** Lets a course summary be authored as an indented multi-line template literal. */
