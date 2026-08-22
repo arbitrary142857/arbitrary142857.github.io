@@ -1,0 +1,292 @@
+\lecture{7}
+\title{Kernels, Evaluations, and Hyperparameter Learning}
+
+\begin{document}
+
+\subsection{Kernels: Properties and Examples}
+
+\begin{problem}
+    Suppose our input space is $\mathcal{X} = \mathbb{R}^2$,
+    and our kernel is $k: \mathbb{R}^2 \times \mathbb{R}^2 \to \mathbb{R}$
+    via $k(a, b) := (a^{\top}b)^2$.
+    What feature map $\phi$ is represented by this kernel,
+    and what is the implied feature dimension?
+\end{problem}
+
+\begin{solution}
+    Given inputs $a = \begin{bmatrix} a_1 & a_2 \end{bmatrix}^{\top}$
+    and $b = \begin{bmatrix} b_1 & b_2 \end{bmatrix}^{\top}$,
+    the kernel can be expressed as:
+    \[ k(a, b) = a_1^2b_1^2 + 2a_1a_2b_1b_2 + a_2^2b_2^2
+    = \begin{bmatrix}
+    a_1^2 \\ \sqrt{2} a_1a_2 \\ a_2^2
+    \end{bmatrix}^{\top}
+    \begin{bmatrix}
+    b_1^2 \\ \sqrt{2} b_1b_2 \\ b_2^2
+    \end{bmatrix}. \]
+    Having ``decoupled'' the kernel in this way,
+    it is now clear that the feature map is
+    $\phi(x) := \begin{bmatrix}
+        x_1^2 & \sqrt{2}x_1x_2 & x_2^2
+    \end{bmatrix}^{\top}$,
+    and the implied feature dimension is $3$.
+    (More generally, the implied feature dimension
+    is the ``number of terms'' in the kernel.)
+\end{solution}
+
+To really emphasize how much cleaner kernels are to work with
+than features, here's a much larger example.
+
+\begin{problem}
+    Suppose our input space is $\mathcal{X} = \mathbb{R}^D$,
+    and our kernel is $k: \mathbb{R}^D \times \mathbb{R}^D \to \mathbb{R}$
+    via $k(a, b) := (a^{\top}b)^M$.
+    What is the implied feature dimension?
+    Compare the difficulty of computing the matrices $K$ versus $\Phi$
+    (using the notation from \href{/6.790/lectures/6}{Lecture 6}).
+\end{problem}
+
+\begin{solution}
+    The feature dimension is the ``number of terms'' in
+    the expansion of $k(a, b) := (a^{\top}b)^{M}$.
+    This is equivalent to the number of monomials of degree $M$
+    in $D$ variables, which (by Stars and Bars) is:
+    \[ \text{feature dimension} = \binom{M + D - 1}{D - 1}. \]
+    Now for the computational difficulty comparisons.
+    \begin{itemize}
+        \item Computing $K$ costs $O(D \cdot N^2)$.
+        \begin{itemize}
+            \item We need the $N^2$ values $k(x^{(i)}, x^{(j)})$
+        across all $N^2$ pairs of inputs $\{x^{(n)}\}_{n = 1}^N$,
+        and computing each value takes $O(D)$.
+        \end{itemize}
+        \item Computing $\Phi$ costs $\Omega\left(
+            N \cdot \binom{M + D - 1}{D - 1}
+        \right)$.
+        \begin{itemize}
+            \item This bound comes from the space of $\Phi$, alone:
+            the dimensions of $\Phi$ are
+            $N \times \binom{M + D - 1}{D - 1}$.
+        \end{itemize}
+    \end{itemize}
+    Evidently, it is much more convenient to work with kernels
+    than it is to work with features.
+\end{solution}
+
+And it turns out that kernels do everything that features can do.
+
+\begin{theorem}{Mercer's Theorem}
+    If, for every choice of inputs $\{x^{(n)}\}_{n = 1}^N$,
+    the kernel matrix $K_{i, j} := k(x^{(i)}, x^{(j)})$
+    is symmetric and positive semidefinite, and
+    the kernel $k\colon \mathcal{X} \times \mathcal{X} \to \mathbb{R}$
+    is continuous,
+    then $k$ corresponds to some feature map $\phi$.
+\end{theorem}
+
+The proof is fairly nontrivial, so we omit it.
+The upshot is that we can now declare any kernel we'd like
+(so long as it satisfies the conditions of Mercer's theorem),
+and we need not have any concern for what features are involved.
+
+\begin{remark}
+    If we can choose kernels arbitrarily,
+    that raises the question:
+    what makes one choice of kernel better than another?
+
+    Here's one possible answer,
+    from the ``feature'' perspective.
+
+    \begin{quote}
+        \textbf{Answer 1.}
+        The kernel ultimately describes a collection of $P$ features,
+        and a ridge regression models the relationship between
+        $\mathcal{X}$ and $\mathcal{Y}$ via
+        a linear combination of those features,
+        with preference towards linear combinations
+        with smaller coefficients.
+
+        Therefore, a good kernel should imply a collection of features
+        that is capable of modeling the relationship
+        between $\mathcal{X}$ and $\mathcal{Y}$
+        using relatively small coefficients.
+    \end{quote}
+
+    Here's another possible answer,
+    from the ``hypothesis'' perspective.
+
+    \begin{quote}
+        \textbf{Answer 2.}
+        Recall from
+        \href{/6.790/lectures/6/#kernels-unlimited-features}{Lecture 6}
+        that, ultimately, our hypothesis $h\colon \mathcal{X} \to \mathbb{R}$
+        looks like
+        $h(x) = Y^{\top}(\lambda I_N + K)^{-1}k(x)$.
+        Expressed component-wise, that looks like:
+        \[ h(x)
+        = \left[(\lambda I_N + K)^{-1}Y\right]^{\top} k(x)
+        = \sum_{n = 1}^N \alpha_n \cdot k(x^{(n)}, x)
+        ~~~ \text{ where } ~~~
+        \alpha = (\lambda I_N + K)^{-1}Y \in \mathbb{R}^N.  \]
+        In other words, $h(x)$ is a weighted sum of the $\alpha_n$,
+        with weights given by $k(x^{(n)}, x)$.
+        This brings out a sense in which $k(a, b)$
+        reflects a \emph{similarity score} between $a$ and $b$.
+        The more similar $x^{(n)}$ is to $x$,
+        the more impact $\alpha_n$ has on $h(x)$.
+
+        The kernel can also be seen as a similarity score
+        by recalling that $k(a, b) := \phi^{\top}(a) \phi(b)$
+        is just the dot product of $\phi(a)$ and $\phi(b)$
+        in the feature space $\mathbb{R}^P$.
+        Indeed, if we normalize the kernel
+        so that $k(x, x) \equiv 1$, then we have
+        \[ \|\phi(a) - \phi(b)\|^2 = 2 - 2 k(a, b) \]
+        by the Law of Cosines.
+        The similarity score $k(a, b)$
+        captures the similarity of $\phi(a)$ and $\phi(b)$
+        as positions in the feature space.
+    \end{quote}
+\end{remark}
+
+\textbf{Definition.}
+One common choice of kernel is the
+\textbf{Gaussian} or \textbf{RBF} kernel, given by:
+\[ k(a, b) := \exp\left(
+    -\frac{\|a - b\|^2}{2\ell^2}
+\right) ~ \text{ for some } \ell > 0. \]
+Note that this kernel has an
+\emph{infinite-dimensional feature map}.
+(All of the work done in the previous lecture
+works just as well in infinite-dimensional vector spaces,
+so there's nothing to be worried about.)
+
+\subsection{Recap: Two Approaches to Regression}
+
+Let's summarize all that we've discussed about regression so far.
+
+Given some data $\{(x^{(n)}, y^{(n)})\}_{n = 1}^N$,
+there are two approaches to learning a hypothesis
+$h \colon \mathcal{X} \to \mathcal{Y}$.
+\[
+    h(x) := \theta^{\top}\phi(x)
+    ~ \text{ where } ~
+    \theta = \Phi^{\top}(\lambda I_N + K)^{-1}Y
+    ~~~~~ \parallel ~~~~~
+    h(x) := Y^{\top}(\lambda I_N + K)^{-1}k(x).
+\]
+These two approaches conceptually differ in the following way:
+\begin{itemize}
+    \item The former involves learning a parameter $\theta$
+    in the feature space described by $\phi(x)$.
+    \item The latter is a nonparametric definition of
+    a function in a sample space whose behavior
+    depends on the kernel $k(x^{(i)}, x^{(j)})$.
+\end{itemize}
+Besides their conceptual differences, however,
+these two approaches are the same:
+the hypotheses $h(x)$ they generate are identical.
+
+\subsection{Learning Algorithms and Hyperparameters}
+
+There are two types of objects
+that appear in the previous section,
+and it's important to distinguish them clearly.
+\begin{itemize}
+    \item A \textbf{hypothesis} (or \textbf{decision rule})
+    $h \colon \mathcal{X} \to \mathcal{Y}$
+    (recalling \href{/6.790/lectures/1/#setting-up}{Lecture 1})
+    takes an input $x$ and returns a hypothesis $h(x)$.
+    \item A \textbf{learning algorithm} $\mathcal{A}$
+    takes training data $\mathcal{D} = \{(x^{(n)}, y^{(n)})\}_{n = 1}^N$
+    and returns a hypothesis $h = \mathcal{A}(\mathcal{D})$.
+\end{itemize}
+In the previous section,
+the two approaches described are both
+(the same) \emph{learning algorithm},
+whereas the results $h(x)$ produced by these approaches
+are \emph{hypotheses} (or \emph{decision rules}).
+
+Notably, the behavior of the hypothesis $h(x)$,
+as presented by the first of the two approaches,
+depends on a \textbf{parameter} $\theta$.
+In contrast, the behavior of the
+learning algorithm $\mathcal{A}_{\lambda}$
+depends on a \textbf{hyperparameter} $\lambda$.
+
+\subsection{Evaluating Learning Algorithms}
+
+Recall that in
+\href{/6.790/lectures/1/#the-optimal-hypothesis-given-the-distribution}{Lecture 1}
+we defined the \textbf{risk}
+of a hypothesis $h$ to be:
+\[ \mathrm{risk}(h) := \mathbb{E}\left[L(Y, h(X))\right], \]
+where $L \colon \mathcal{Y} \times \mathcal{Y} \to \mathbb{R}$
+is a loss function of our choice.
+Note that risk is a property of a hypothesis,
+not of a learning algorithm---but
+the risk of a hypothesis
+can be controlled by carefully setting the
+hyperparameter of its learning algorithm.
+
+Here's the focus of this section:
+
+\begin{quote}
+    \textbf{Question.} How do we evaluate
+    a learning algorithm $\mathcal{A}_{\lambda}$
+    to determine the best values
+    for its hyperparameters?
+\end{quote}
+
+As with bootstrapping (discussed in
+\href{/18.650/lectures/13/#bootstrapping}{Lecture 13} of 18.650),
+the idea is to empirically estimate
+the expected risk of the hypothesis produced,
+using our own training data as validation data.
+Stated more precisely:
+\begin{enumerate}
+    \item Randomly partition the data $\mathcal{D}$
+    into a training set $\mathcal{D}_T$
+    and a validation set $\mathcal{D}_V$.
+    \item Run the learning algorithm on the training set
+    to obtain a hypothesis
+    $h_{\mathcal{D}_T, \lambda} := \mathcal{A}_{\lambda}(\mathcal{D}_T)$.
+    \item Estimate the risk of this hypothesis
+    to be the average loss across the validation data $\mathcal{D}_V$.
+    \[ \widehat{\mathrm{risk}}(h_{\mathcal{D}_T, \lambda})
+    = \frac{1}{|\mathcal{D}_V|} \sum_{(x, y) \in \mathcal{D}_V}
+    L(y, h_{\mathcal{D}_T, \lambda}(x)). \]
+    \item Repeat the previous three steps across many trials,
+    and average the results from step 3 across all trials.
+\end{enumerate}
+The Law of Large Numbers says that
+the risk estimates in step 3
+will approach the true risk for large $|\mathcal{D}_V|$,
+assuming all data is sampled i.i.d. from the same distribution.
+You can then quantify the (epistemic) uncertainty
+in the estimate of expected risk produced by step 4 by using
+basic statistics as well.
+
+\begin{remark}
+    Pay attention to the difference between
+    \emph{risk} and \emph{expected risk}.
+    \begin{itemize}
+        \item An iteration of step 3 produces an estimate of
+        the \emph{risk} of $h_{\mathcal{D}_T, \lambda}$.
+        \item Step 4 estimates the \emph{expected risk}
+        by averaging the risk estimates from step 3
+        across multiple different hypotheses
+        $\{h_{\mathcal{D}_T^{(b)}, \lambda}\}_{b = 1}^B$,
+        each trained on its own training set $\mathcal{D}_T^{(b)}$
+        and evaluated on its own validation set $\mathcal{D}_V^{(b)}$.
+    \end{itemize}
+\end{remark}
+
+Whereas the parameter $\theta$ is
+evaluated by its risk
+and learned by the learning algorithm,
+the hyperparameter $\lambda$ is
+evaluated by its expected risk
+and learned by us.
+
+\end{document}
