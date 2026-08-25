@@ -1,0 +1,233 @@
+\lecture{8}
+\title{Classification and Logistic Regression}
+
+\begin{document}
+
+\subsection{Classification}
+
+Over the past few lectures on linear regression,
+we've assumed that the output space $\mathcal{Y}$ is $\mathbb{R}$.
+In classification problems,
+we instead take $\mathcal{Y}$ to be discrete;
+for now, let's further assume $\mathcal{Y}$ is binary,
+meaning $\mathcal{Y} = \{+1, -1\}$.
+
+This is the setup for logistic regression,
+covered in \href{/18.650/lectures/25/}{Lecture 25} of 18.650.
+These notes will assume knowledge of that lecture.
+
+\subsection{Bayes Classifier}
+
+Here's the most common choice of loss function
+for (binary) classification problems.
+
+\textbf{Definition.}
+The \textbf{zero-one loss} is
+$\mathcal{L}(\hat{y}, y) := \mathds{1}[\hat{y} \neq y]$.
+The loss equals zero if the classification was right,
+and one otherwise.
+
+In this case, it's clear that the best classifier
+is the \textbf{Bayes classifier}.
+
+\begin{theorem}{Bayes Classifier}
+    The best (lowest-risk) classifier under zero-one loss is:
+    \[ h(x) := \begin{cases}
+    +1 & \text{ if } \mathbb{P}(Y = +1 \mid X = x) > \frac{1}{2}. \\
+    -1 & \text{ otherwise}.
+    \end{cases} \]
+\end{theorem}
+
+Of course, the challenge is that
+we don't know what the distribution $[Y \mid X = x]$
+exactly looks like.
+
+\subsection{Nearest Neighbor Classifier}
+
+Here's a simple design of a binary classifier.
+
+\textbf{Definition.}
+Given an input space $\mathcal{X}$, impose some distance metric
+$d \colon \mathcal{X} \times \mathcal{X} \to \mathbb{R}^{\geq 0}$.
+Then predict the label $h(x)$ like so:
+\begin{quote}
+    Identify the set $N_k(x)$
+    of the indices of the $k$ training points closest to $x$.
+    Then return $h(x) = \mathrm{sgn}\left(\sum_{i \in N_k(x)} y^{(i)}\right)$.
+\end{quote}
+This is called the \textbf{nearest neighbor classifier}
+(or \textbf{NN}, or \textbf{KNN}).
+It's simple, but slow:
+making a single prediction requires
+scanning the entire training set.
+
+\subsection{ERM: Linear Classifier}
+
+Let's try an ERM approach instead;
+here's the set of hypotheses we'll restrict ourselves to.
+
+\textbf{Definition.}
+A \textbf{linear classifier} is a map
+$h \colon \mathcal{X} \to \{+1, -1\}$ via
+$h(x) := \mathrm{sgn}\left(w^{\top}x\right)$,
+for some parameter $w$.
+
+\begin{remark}
+    We'll often pad every vector in $\mathcal{X}$ with an extra one, as usual;
+    recall \href{/18.650/lectures/24/#affine-linear-regression}{Lecture 24}
+    of 18.650.
+\end{remark}
+
+Then ERM tells us we should choose $w$
+to minimize the empirical risk $\widehat{\mathrm{risk}}(h_w)$, given below:
+\[ \widehat{\mathrm{risk}}(h_w)
+:= \frac{1}{n} \sum_{i = 1}^n \mathcal{L}\left(w^{\top}x^{(i)} \cdot y^{(i)}\right)
+~~~ \text{ where } ~~~
+\mathcal{L}(z) := \mathds{1}[z < 0]. \]
+Note that $\mathcal{L}(z)$ is just
+a one-variable form of zero-one loss.
+Unfortunately, the empirical risk described above
+is hard to optimize (via gradient descent, say)
+because $\mathcal{L}(z)$ is not convex or differentiable.
+Here's a better alternative:
+
+\textbf{Definition.}
+A convex variant of zero-one loss is
+\textbf{logistic loss}, given by
+$\mathcal{L}_{\mathrm{logistic}}(z) := \log_2(1 + e^{-z})$.
+
+\begin{center}
+    \frame{\includegraphics[width=0.3\textwidth]{lecture-08/log-loss}}
+\end{center}
+
+\subsection{Addendum: Convexity}
+
+We provide a brief reminder of convexity here;
+it's important to know for optimization purposes.
+
+\textbf{Definition.}
+A twice-differentiable function
+$f \colon \mathbb{R}^n \to \mathbb{R}$ is \textbf{convex}
+if any of the following (equivalent) statements is true.
+\begin{enumerate}
+    \item We have $\nabla^2 f(x) \succeq 0$ for all $x$;
+    that is, $\nabla^2 f(x)$ is positive semidefinite.
+    \begin{itemize}
+        \item Note that $\nabla^2 f(x)$ here is the \textbf{Hessian},
+        which is the $n \times n$ matrix given by
+        $\left[\nabla^2 f(x)\right]_{i, j} :=
+        \frac{\partial^2 f}{\partial x_i \partial x_j}(x)$.
+    \end{itemize}
+    \item We have $f\left(\lambda \cdot u + (1 - \lambda) \cdot v\right)
+    \leq \lambda \cdot f(u) + (1 - \lambda) \cdot f(v)$
+    for all $u, v \in \mathbb{R}^n$ and $\lambda \in [0, 1]$.
+    \begin{itemize}
+        \item That is, any line segment connecting two points
+        on the graph of $f$ lies above the graph.
+    \end{itemize}
+    \item We have $f(u) \geq f(v) + \nabla f(v)^{\top}(u - v)$
+    for all $u, v \in \mathbb{R}^n$.
+    \begin{itemize}
+        \item That is, the tangent plane to $f$ at $v$
+        lives underneath the graph of $f$ everywhere.
+    \end{itemize}
+\end{enumerate}
+
+Here's why we care about convexity so much:
+
+\begin{theorem}{Local = Global}
+    For any convex objective over a convex domain,
+    any local minimum is a global minimum.
+\end{theorem}
+
+So techniques that seek out local minima (e.g., gradient descent)
+are really seeking out the global minimum.
+You can check that logistic loss is convex.
+
+\subsection{MLE: Logistic Regression}
+
+As in \href{/18.650/lectures/25/}{Lecture 25},
+we'll switch our hypothesis to be a map
+$p_w \colon \mathcal{X} \to [0, 1]$,
+where the goal is to have
+$p_w(x)$ be a solid approximation of $\mathbb{P}(Y = +1 \mid X = x)$.
+Then our classification model is
+$h_w(x) := \mathrm{sgn}\left(p_w(x) - \frac{1}{2}\right)$, naturally.
+
+Specifically, we'll assume that $p_w$ takes the form
+$p_w(x) = \sigma\left(w^{\top}x\right)$,
+where $\sigma(z) := \frac{e^z}{1 + e^z}$
+is the sigmoid function.
+
+\begin{theorem}{Logistic Loss}
+    The log (base 2) likelihood of $p_w(x)$ is:
+    \[ \ell(w) = -\sum_{i = 1}^n
+        \log_2\left(
+            1 + \exp\left(-y^{(i)}w^{\top}x^{(i)}\right)
+        \right)
+    = - \sum_{i = 1}^n \mathcal{L}_{\mathrm{logistic}}\left(
+        w^{\top} x^{(i)} \cdot y^{(i)}
+    \right). \]
+    The $w^{\top}x^{(i)} \cdot y^{(i)}$ term is called
+    the \textbf{margin}, whose sign determines correctness
+    and whose magnitude determines confidence.
+\end{theorem}
+
+The proof is just plain computation, so we omit it.
+Note that this differs slightly from the result in
+\href{/18.650/lectures/25/#mle-for-logistic-regression}{Lecture 25}
+of 18.650 because of the convention that
+$y^{(i)} \in \{+1, -1\}$ instead of
+$y^{(i)} \in \{0, 1\}$.
+
+The interesting part is the coincidence that
+logistic loss shows up once again.
+The following are therefore identical:
+\begin{itemize}
+    \item Maximizing the likelihood, given a model
+    $p_w(x) = \sigma(w^{\top}x)$ designed to approximate
+    $\mathbb{P}(Y = +1 \mid X = x)$.
+    \item Minimizing the logistic loss, given a hypothesis
+    $h(x) := \mathrm{sgn}(w^{\top}x)$ designed to
+    predict the classification of $x$.
+\end{itemize}
+
+\subsection{Addendum: Log-Odds and Linear-Logistic Equivalence}
+
+\textbf{Definition.}
+The \textbf{log-odds} is defined as the value
+$f(x) := \log \left[
+    \frac{\mathbb{P}(Y = +1 \mid X = x)}{\mathbb{P}(Y = -1 \mid X = x)}
+\right]$.
+
+\begin{theorem}{Linear-Logistic Equivalence}
+    Given a classification model,
+    consider the following two procedures.
+    \begin{itemize}
+        \item Logistic regression,
+        seeking a parameter $w_1$ for which
+        $p_{w_1}(x) := \sigma(w_1^{\top}x)$
+        equals the probability
+        $\mathbb{P}(Y = +1 \mid X = x)$.
+        \item Linear regression,
+        seeking a parameter $w_2$ for which
+        $h_{w_2}(x) := w_2^{\top}x$
+        equals the log-odds $f(x)$.
+    \end{itemize}
+    Then the two procedures seek the same parameter: $w_1 = w_2$.
+\end{theorem}
+
+\begin{proof}
+    Obvious; the log-odds function $f(x)$
+    is just the inverse of $\sigma(\dots)$, in that
+    $\log\left[
+        \frac{\sigma(w_1^{\top}x)}{1 - \sigma(w_1^{\top}x)}
+    \right] = w_1^{\top}x$.
+    ~ $\blacksquare$
+\end{proof}
+
+So all of the discussion about features and kernels
+concerning linear regression
+applies equally well to logistic regression.
+
+\end{document}
