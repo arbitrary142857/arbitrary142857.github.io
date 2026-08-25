@@ -1,5 +1,5 @@
 \lecture{9}
-\title{Optimization}
+\title{Gradient Descent}
 
 \begin{document}
 
@@ -22,7 +22,7 @@ that we can say ``\emph{global} minimum'' rather than
 
 \textbf{Definition.}
 Let $f \colon \mathbb{R}^n \to \mathbb{R}$ be a differentiable function.
-In \textbf{gradient descent},
+In \textbf{gradient descent (GD)},
 we start with some $w_0 \in \mathbb{R}^n$
 and proceed via:
 \[ w_{t + 1} \leftarrow w_t - \eta \nabla f(w_t). \]
@@ -54,13 +54,13 @@ to saddle points and whatnot, see
 and \href{/18.701/lectures/19/#spectral-application-1-classifying-quadric-surfaces}{Lecture 19}
 of 18.701 (specifically the subsections linked above).
 
-\subsection{1D Informal Analysis}
+\subsection{Lower-Bounding GD Efficiency}
 
 For one-dimensional functions $f \colon \mathbb{R} \to \mathbb{R}$,
 we can upper-bound the number of steps required
 to get close to a stationary point.
 
-\begin{theorem}{Descent Lemma}
+\begin{theorem}{One-Dimensional Descent Lemma}
     Suppose $f \colon \mathbb{R} \to \mathbb{R}$ is twice differentiable,
     and $|f''(w)| \leq \beta$ for all $w$.
     Then if we set $\eta = \frac{1}{\beta}$,
@@ -96,7 +96,7 @@ to get close to a stationary point.
 
 An immediate corollary of the Descent Lemma is the following.
 
-\begin{theorem}{Gradient Descent Speed}
+\begin{theorem}{One-Dimensional GD Efficiency}
     Suppose, in the setting of the Descent Lemma,
     that $f(w_0) - \min_w f(w) = M$.
     If gradient descent yields $\{w_t\}_{t = 0}^{\infty}$,
@@ -109,6 +109,38 @@ An immediate corollary of the Descent Lemma is the following.
     Note that none of the reasoning here
     carries an assumption that $f$ is convex.
 \end{remark}
+
+For some reason, 6.790 does not state
+the multivariate versions of these theorems,
+even though their statements and proofs
+are nearly identical to the one-dimensional case.
+We state them here for completeness.
+
+\begin{theorem}{Multivariate Descent Lemma}
+    Suppose $f \colon \mathbb{R}^n \to \mathbb{R}$ is twice differentiable,
+    and $-\beta I \preceq \nabla^2 f(w) \preceq \beta I$ for all $w$.
+    Then if we set $\eta = \frac{1}{\beta}$,
+    the iterates of gradient descent satisfy:
+    \[ f(w_{t + 1}) - f(w_t) \leq -\frac{1}{2\beta} \|\nabla f(w_t)\|^2. \]
+    In particular, each step of gradient descent
+    produces an improvement
+    of at least $\frac{1}{2\beta} \|\nabla f(w_t)\|^2$.
+\end{theorem}
+
+\begin{remark}
+    The ordering $A \preceq B$ is
+    the \emph{Loewner order} on symmetric matrices:
+    $A \preceq B$ if and only if $B - A$ is positive semidefinite.
+\end{remark}
+
+\begin{theorem}{Multivariate GD Efficiency}
+    Suppose, in the setting of the Descent Lemma,
+    that $f(w_0) - \min_w f(w) = M$.
+    If gradient descent yields $\{w_t\}_{t = 0}^{\infty}$,
+    then for any $\epsilon > 0$,
+    there is some $T \leq \frac{2 \beta M}{\epsilon^2}$
+    for which $\|\nabla f(w_T)\| < \epsilon$.
+\end{theorem}
 
 \subsection{Linear Regression Convergence Rate}
 
