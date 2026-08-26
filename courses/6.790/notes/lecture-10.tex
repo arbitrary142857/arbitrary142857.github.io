@@ -1,0 +1,208 @@
+\lecture{10}
+\title{Stochastic Gradient Descent and Estimation Error Bounding}
+
+\begin{document}
+
+\subsection{Stochastic Gradient Descent}
+
+One issue with gradient descent is that
+it's slow to compute when the function being minimized
+is the average of $n$ loss functions across $n$ data points,
+like so, because computing the gradient $\nabla f(w_t)$
+becomes an $O(n)$ task.
+\[ f(w) := \frac{1}{n} \sum_{i = 1}^n f_i(w). \]
+Stochastic gradient descent sacrifices accuracy for speed like so:
+
+\textbf{Definition.}
+To compute $w_{t + 1}$ from $w_t$ in \textbf{stochastic gradient descent},
+sample $i \sim \mathrm{Unif}\{1, \dots, n\}$
+and compute $g_{t + 1} = \nabla f_i(w_t)$.
+Then set $w_{t + 1} \leftarrow w_t - \eta_{t + 1} g_{t + 1}$;
+the point is that $g_{t + 1}$ is an
+unbiased estimate for $\nabla f(w_t)$,
+since $\mathbb{E}[g_{t + 1}] = \nabla f(w_t)$.
+
+\begin{remark}
+    If you want to decrease the variance of the approximation
+    $g_{t + 1} \approx \nabla f(w_t)$, you can also
+    set $g_{t + 1}$ to be the average of $\nabla f_i(w_t)$
+    across $b$ randomly-sampled indices $i$.
+\end{remark}
+
+Importantly, the loss $f(w_t)$ may increase
+on some iterations of SGD,
+even for arbitrarily small step sizes $\eta_t$.
+
+We conclude our discussion on SGD
+with the statement of a theorem, without proof.
+
+\begin{theorem}{SGD Convergence}
+    Suppose $f$ is convex with minimizer $w^*$ and satisfies
+    $\|\nabla f(w)\| \leq B$ for all $w$.
+    Suppose:
+    \begin{itemize}
+        \item We have $\|w^* - w_0\| \leq D$,
+        where $w_0$ is the initial value for SGD.
+        \item We have $\mathbb{E}[g_{t + 1} \mid w_t] = \nabla f(w_t)$
+        for all $t$.
+        \item We have $\mathbb{E}\left[\|g_t\|^2\right] \leq B^2$
+        for all $t$.
+    \end{itemize}
+    Then SGD with step size $\eta_t := \frac{D}{B\sqrt{t}}$ yields:
+    \[ 
+    \mathbb{E}\left[
+        f(\overline{w}_t) - f(w^*)
+    \right] \leq DB \cdot \left[
+        \frac{2 + \log t}{2\sqrt{t}}
+    \right]
+    ~~~ \text{ where } ~~~
+    \overline{w}_t :=
+    \frac{\sum_{s = 1}^t \eta_s w_{s - 1}}{\sum_{s = 1}^t \eta_s}.
+    \]
+\end{theorem}
+
+\begin{remark}
+    The 6.790 notes claim the RHS should have a coefficient of $DB^2$
+    rather than $DB$, but this is incorrect
+    by dimensional analysis alone.
+    The details here, for 6.790's sake,
+    are not too important regardless.
+\end{remark}
+
+\subsection{Estimation Error Bounding}
+
+Recently, we've been restricting ourselves
+to specific classes of hypotheses (regression, parametric models).
+Let's consider machine learning
+at a much more general level;
+what can we say \emph{regardless} of
+what the hypothesis class $\mathcal{H}$ looks like?
+
+\textbf{Definition.}
+For any hypothesis $h \in \mathcal{H}$,
+there are two types of errors (or risks).
+\begin{itemize}
+    \item The \textbf{expected (test) error} of $h$ is
+    $\mathcal{R}(h) := \mathbb{E}\left[\mathcal{L}(h(X), Y)\right]$.
+    \item The \textbf{empirical (training) error} of $h$ is
+    $\hat{\mathcal{R}}(h) := \frac{1}{n} \sum_{i = 1}^n
+    \mathcal{L}(h(x_i), y_i)$.
+\end{itemize}
+
+Can we upper-bound the \textbf{estimation error}
+between the expected error and the empirical error?
+
+\begin{theorem}{Estimation Error Bound}
+    Assume $\mathcal{L}(x, y) \in [0, 1]$
+    and pick some $\delta \in (0, 1)$.
+    Then with probability $1 - \delta$,
+    the following is true
+    for \emph{all} hypotheses $h \in \mathcal{H}$:
+    \[
+    \left|\hat{\mathcal{R}}(h) - \mathcal{R}(h)\right|
+    \leq \sqrt{\frac{\log|\mathcal{H}| + \log(2/\delta)}{2n}}.
+    \]
+\end{theorem}
+
+Note that the assumption $\mathcal{L}(x, y) \in [0, 1]$
+makes sense for classification problems, say.
+More generally, one can achieve a similar bound
+up to a constant factor for models with bounded loss functions.
+
+\begin{remark}
+    It should make sense that the RHS grows as $|\mathcal{H}|$ grows.
+    The reason why is that larger $|\mathcal{H}|$ yield
+    higher rates of overfitting,
+    in which case the empirical error
+    becomes a less accurate estimation of the expected error.
+
+    One might question what happens in the case of linear regression,
+    where $\mathcal{H}$ is an \emph{infinitely-sized}
+    hypothesis class, with one hypothesis for each of the
+    infinitely many parameters $\theta \in \mathbb{R}^d$.
+    The trick, then, is to replace $\mathbb{R}$
+    with, say, the set of $64$-bit floating point numbers.
+    This way, $|\mathcal{H}| \approx 2^{64d}$ and
+    $\log |\mathcal{H}| \approx 64d \log 2$,
+    and the RHS doesn't blow up.
+\end{remark}
+
+We'll now provide a proof of this theorem.
+Expect the proof to be ``simplistic''---after all,
+it has to work no matter what $\mathcal{H}$ is!
+
+\begin{proof}
+    The proof will rely on a statistical fact
+    known as \textbf{Hoeffding's Inequality},
+    which we state below without proof.
+    \begin{quote}
+        \textbf{Hoeffding's Inequality.}
+        If $U_1, \dots, U_n \in [0, 1]$ are
+        sampled (i.i.d.) from the same distribution $\mathbb{P}$, then:
+        \[
+        \mathbb{P}\left(
+            \left|\bar{U}_n - \mu\right| \geq t
+        \right) \leq 2 \exp\left(-2nt^2\right).
+        \]
+        Note that $\bar{U}_n$ is the average of the $\{U_i\}_{i = 1}^n$,
+        and $\mu$ is the expected value $\mu = \mathbb{E}[U_i]$
+        (the same for all $i$).
+    \end{quote}
+    Directly applying Hoeffding's Inequality
+    with $U_i := \mathcal{L}(h(x_i), y_i)$ yields:
+    \[ \mathbb{P}\left(
+    \left|\hat{\mathcal{R}}(h) - \mathcal{R}(h)\right| \geq t
+    \right) \leq 2\exp\left(-2nt^2\right). \]
+    Then the union bound across all $h \in \mathcal{H}$ yields:
+    \[ \mathbb{P}\left(
+    \left|\hat{\mathcal{R}}(h) - \mathcal{R}(h)\right| \geq t
+    ~ \text{ for some } h \in \mathcal{H}
+    \right) \leq 2|\mathcal{H}|\exp\left(-2nt^2\right). \]
+    Plugging in $t = \sqrt{\frac{\log|\mathcal{H}| + \log(2/\delta)}{2n}}$
+    now directly yields the promised bound;
+    you can check this in your head. ~ $\blacksquare$
+\end{proof}
+
+We conclude with one more similar-looking theorem.
+
+\textbf{Definition.}
+We establish the notation
+$\hat{h} := \argmin_{h \in \mathcal{H}} \hat{\mathcal{R}}(h)$
+and $h^* := \argmin_{h \in \mathcal{H}} \mathcal{R}(h)$.
+
+Clearly $h^*$ is preferred to $\hat{h}$,
+but training data and ERM can only get us to $\hat{h}$.
+How do $h^*$ and $\hat{h}$ compare?
+
+\begin{theorem}{ERM Risk Bound}
+    Assuming $\mathcal{L}(x, y) \in [0, 1]$,
+    for all $\delta \in (0, 1)$
+    we have with probability $1 - \delta$ that:
+    \[
+    \mathcal{R}(\hat{h}) - \mathcal{R}(h^*)
+    \leq 2 \cdot 
+    \sqrt{\frac{\log |\mathcal{H}| + \log\left(2 / \delta\right)}{2n}}.
+    \]
+\end{theorem}
+
+\begin{proof}
+    The point is the following:
+    \[ \mathcal{R}(\hat{h}) - \mathcal{R}(h^*)
+    = \underbrace{\left[
+        \mathcal{R}(\hat{h}) - \hat{\mathcal{R}}(\hat{h})
+    \right]}_{\text{bound \#1}}
+    + \underbrace{\left[
+        \hat{\mathcal{R}}(\hat{h}) - \hat{\mathcal{R}}(h^*)
+    \right]}_{\leq \ 0}
+    + \underbrace{\left[
+        \hat{\mathcal{R}}(h^*) - \mathcal{R}(h^*)
+    \right]}_{\text{bound \#2}}. \]
+    The RHS has two bracketed expressions marked
+    ``bound \#1'' and ``bound \#2''
+    that can each be upper-bounded using the
+    ``Estimation Error Bound'' theorem.
+    Summing these two upper bounds
+    yields the promised result. ~ $\blacksquare$
+\end{proof}
+
+\end{document}
