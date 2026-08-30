@@ -12,5 +12,5 @@ export const TOC_PARTS: TocPart[] = [
   { title: "Prerequisites", from: 1, to: 3 },
   { title: "Regression", from: 4, to: 8 },
   { title: "Optimization and Learnability", from: 9, to: 11 },
-  { title: "Neural Networks", from: 12, to: 13 },
+  { title: "Neural Networks", from: 12, to: 14 },
 ];

@@ -1,0 +1,248 @@
+\lecture{14}
+\title{Convolutional Neural Networks}
+
+\begin{document}
+
+\subsection{Motivating Convolutional Neural Networks}
+
+\begin{remark}
+    These notes assume familiarity with \emph{convolutions},
+    specifically for 2D images.  See \href{/6.300/}{6.300} for reference.
+\end{remark}
+
+Suppose we want to build a neural network
+for classifying images.
+How many parameters would we need?
+
+\begin{problem}
+    Suppose we take a $1000\,\mathrm{px} \times 1000\,\mathrm{px}$ image
+    as the input to a neural network.
+    If the first hidden layer has $1000$ features,
+    then how many parameters connect
+    the input layer to the first hidden layer?
+\end{problem}
+
+\begin{solution}
+    The input layer has $10^6$ nodes, and the hidden layer has $10^3$ nodes,
+    so the neural network between the input layer and the first hidden layer
+    appears like a $K_{10^6, 10^3}$ graph.
+    That's a total of $\boxed{10^9}$ parameters, one for each edge.
+
+    (And that's assuming the image is grayscale;
+    adding color complicates things even more!)
+\end{solution}
+
+That's too many to feasibly perform backpropagation on.
+The issue isn't the number of nodes in the layers---it's
+the number of parameters needed to describe
+the relationship between them.
+
+Maybe we don't need the full $K_{10^6, 10^3}$ graph, though.
+Or maybe we don't need a unique parameter for every edge
+connecting an input node to
+the pre-activation of a node in the next layer.
+
+Maybe there's a meaningful subfamily of
+linear maps on 2D images
+that requires far fewer parameters to specify\dots
+
+\subsection{Convolutions and Pooling}
+
+Technically, these 2D images aren't \emph{really} 2D.
+Most images have color channels, too---three of them (RGB), to be precise.
+So more generally, we should think of each layer of our NN
+as being a three-dimensional $H \times W \times C$ grid of nodes.
+
+The input layer might be a $1000 \times 1000 \times C$ grid, for example.
+Importantly, our hidden layers might also have more than one channel.
+So our maps between layers must be able to
+meaningfully accept three-dimensional \emph{tensors} as input.
+
+We now introduce our two maps
+from 3D tensors to 3D tensors:
+pooling and convolving.
+
+\textbf{Definition.}
+Given an $H \times W \times C$ image,
+we apply \textbf{pooling} to downsample the image
+down to $H' \times W' \times C$.
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-14/max-pooling}}
+\end{center}
+The image above depicts \textbf{max pooling}.
+There's also \textbf{average pooling}---you
+can probably imagine how that looks.
+
+\begin{remark}
+    Pooling always treats each channel independently of every other.
+    It may be more accurate to view pooling
+    as a map from 2D tensors to smaller 2D tensors;
+    to apply pooling on 3D tensors,
+    simply apply pooling on each channel separately.
+\end{remark}
+
+\textbf{Definition.}
+Given an $H \times W \times C$ image,
+we may \textbf{convolve} it using a
+$Y \times X \times C$ filter (with zero-padding).
+By sliding the filter along the width and height of the image,
+the resulting output is an $H \times W \times 1$ image.
+
+\begin{center}
+    \frame{\includegraphics[width=0.4\textwidth]{lecture-14/convolution}}
+\end{center}
+
+(The figure above omits zero-padding,
+so its output is smaller than its input.)
+
+\begin{remark}
+    There are many possible variations
+    of tensor convolution that one might imagine. 
+    For example, when sliding the filter,
+    you might take a \emph{stride} of length (say) $2$.
+    Then the output image instead has dimensions
+    $\frac{H}{2} \times \frac{W}{2} \times 1$.
+    \begin{center}
+        \frame{\includegraphics[width=0.6\textwidth]{lecture-14/stride}}
+    \end{center}
+    Ordinary convolution, by default,
+    uses strides of length $1$.
+\end{remark}
+
+If we want the output of convolution to have
+more than one channel,
+we can simply \textbf{stack} convolutions together.
+
+\textbf{Definition.}
+Given an $H \times W \times C$ image,
+we may perform \textbf{stacked convolution}
+using a $Y \times X \times C \times C'$ tensor of parameters.
+This tensor contains $C'$ different $Y \times X \times C$ filters
+stacked together.  Applying each of the $C'$ filters
+to the input $H \times W \times C$ image
+yields $C'$ different $H \times W \times 1$ results.
+Stacking all $C'$ results together
+yields an $H \times W \times C'$ output image.
+
+\subsection{Convolutional Neural Networks}
+
+We can now put stacked convolution and pooling together
+to make a CNN.  Here's an example.
+
+\begin{center}
+    \frame{\includegraphics[width=0.9\textwidth]{lecture-14/CNN-example}}
+\end{center}
+
+Let's walk through how this CNN works.
+\begin{itemize}
+    \item The input image is a $32 \times 32 \times 3$ image
+    of a happy face.
+    \item To reach the $1^{\mathrm{st}}$ hidden layer,
+    we apply a \textbf{stacked convolution} using a
+    $3 \times 3 \times 3 \times 4$ tensor of parameters.
+    \begin{itemize}
+        \item The $1^{\mathrm{st}}$ hidden layer is then
+        a $32 \times 32 \times 4$ image.
+    \end{itemize}
+    \item To reach the $2^{\mathrm{nd}}$ hidden layer,
+    we apply \textbf{max pooling} to downsample the image
+    to $16 \times 16 \times 4$.
+    \item To reach the $3^{\mathrm{rd}}$ hidden layer,
+    we apply a \textbf{stacked convolution} using a
+    $3 \times 3 \times 4 \times 8$ tensor of parameters.
+    \begin{itemize}
+        \item The $3^{\mathrm{rd}}$ hidden layer is then
+        a $16 \times 16 \times 8$ image.
+    \end{itemize}
+    \item To reach the $4^{\mathrm{th}}$ hidden layer,
+    we apply \textbf{max pooling} to downsample the image
+    to $8 \times 8 \times 8$.
+    \item To reach the $5^{\mathrm{th}}$ hidden layer,
+    we apply a \textbf{stacked convolution} using a
+    $3 \times 3 \times 8 \times 16$ tensor of parameters.
+    \begin{itemize}
+        \item The $5^{\mathrm{th}}$ hidden layer is then
+        an $8 \times 8 \times 16$ image.
+    \end{itemize}
+    \item To reach the $6^{\mathrm{th}}$ hidden layer,
+    we apply \textbf{average pooling} to downsample the image
+    to $1 \times 1 \times 16$.
+    \begin{itemize}
+        \item The effect of average pooling here
+        is to replace every $8 \times 8$ channel
+        with the average of all $64$ of its pixel values.
+    \end{itemize}
+    \item Finally, we interpret the $6^{\mathrm{th}}$ hidden layer
+    simply as $16$ nodes, and finish with
+    an ordinary \textbf{dense NN}.
+    \begin{itemize}
+        \item Since the output layer has $3$ nodes,
+        this is a $K_{16, 3}$ bipartite graph
+        with $48$ edges (hence $48$ parameters).
+    \end{itemize}
+\end{itemize}
+
+And that's how a CNN works!
+
+\subsection{Commentary on CNNs}
+
+Some miscellaneous additional notes on CNNs:
+\begin{itemize}
+    \item Each stacked convolution only affects the number of channels,
+    whereas each pooling only affects the width and height.
+    \item It was left unstated earlier, but
+    after each convolution, a bias should be added to each cell,
+    then a ReLU (or similar activation).
+    \begin{itemize}
+        \item Each channel gets a different bias that is
+        added to every cell in that channel.
+        \item So the $1^{\mathrm{st}}$ stacked convolution with a
+        $3 \times 3 \times 3 \times 4$ tensor of parameters
+        also requires $4$ bias parameters.
+    \end{itemize}
+    \item Compare the CNN above with an ordinary dense NN.
+    \begin{itemize}
+        \item In a dense NN, reaching the first layer
+        would require $(32 \times 32 \times 3) \times (32 \times 32 \times 4)$
+        parameters.
+        \item In this CNN, reaching the first layer
+        only requires $3 \times 3 \times 3 \times 4 = 108$ parameters.
+        \item Max pooling isn't implementable in an ordinary NN.
+        And it requires zero parameters in this CNN.
+        \item \dots something something, sparse matrices,
+        something something \dots
+    \end{itemize}
+    \item Backpropagation is performed in the same way in CNNs
+    as with NNs.
+    \begin{itemize}
+        \item The main difference is
+        that each parameter now affects multiple pre-activations,
+        not just one.
+        But this just amounts to
+        having to do more additions in the backwards pass.
+    \end{itemize}
+    \item In practice, here's what
+    the learned filters for the first hidden layer might look like.
+    \begin{center}
+        \frame{\includegraphics[width=0.2\textwidth]{lecture-14/learned-filters}}
+    \end{center}
+    A lot of these filters should make sense from a
+    \href{/6.300/lectures/17}{signal} \href{/6.300/lectures/18}{processing}
+    perspective.
+\end{itemize}
+
+There are a lot more things that can be said
+about CNN architecture, including
+the endless possibilities for variations
+on the overall structure.
+Here's the structure of
+\href{https://en.wikipedia.org/wiki/AlexNet}{AlexNet}---a
+highly-successful image classifier released in 2012---for example.
+
+\begin{center}
+    \frame{\includegraphics[width=0.8\textwidth]{lecture-14/alex-net}}
+\end{center}
+
+But we won't get into too much detail on that here.
+
+\end{document}
